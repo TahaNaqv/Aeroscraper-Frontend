@@ -4,32 +4,21 @@ import { ExitIcon, LogoSecondary } from '@/components/Icons/Icons';
 import NotificationDropdown from '@/app/app/dashboard/_components/NotificationDropdown';
 import usePageData from '@/contracts/app/usePageData';
 import { PriceServiceConnection } from '@pythnetwork/price-service-client';
-import { useWallet } from '@/contexts/WalletProvider';
 import { isNil } from 'lodash';
 import { WalletInfoMap, WalletType } from '@/enums/WalletType';
-import { useCompass } from '@/services/compass';
-import { useFin } from '@/services/fin';
-import { useKeplr } from '@/services/keplr';
-import { useLeap } from '@/services/leap';
 import InjectiveAccountModal from '@/components/AccountModal/InjectiveAccountModal';
 import { convertAmount } from '@/utils/contractUtils';
 import InjectiveNotification from '@/components/Modal/InjectiveNotification';
 import WalletButton from '@/components/Buttons/WalletButton';
-import useMetamask from '@/services/metamask';
-import { useNinji } from '@/services/ninji';
+import useBalances from '@/hooks/useBalances';
+import useChainAdapter from '@/hooks/useChainAdapter';
 
 const ArchwayTheme = () => {
-  const { balanceByDenom, baseCoin } = useWallet();
+  const { isWalletConnected, wallet, username, baseCoin, address, disconnect } = useChainAdapter();
+  const balanceByDenom = useBalances();
+
   const [basePrice, setBasePrice] = useState(0);
   const { pageData, getPageData } = usePageData({ basePrice });
-  const wallet = useWallet();
-
-  const keplr = useKeplr();
-  const leap = useLeap();
-  const fin = useFin();
-  const compass = useCompass();
-  const metamask = useMetamask();
-  const ninji = useNinji();
 
   const [accountModal, setAccountModal] = useState(false);
 
@@ -56,13 +45,8 @@ const ArchwayTheme = () => {
     getPrice()
   }, []);
 
-  const disconnect = () => {
-    keplr.disconnect();
-    leap.disconnect();
-    fin.disconnect();
-    compass.disconnect();
-    metamask.disconnect();
-    ninji.disconnect();
+  const disconnectWallet = () => {
+    disconnect();
 
     localStorage.removeItem("profile-detail");
   }
@@ -75,24 +59,24 @@ const ArchwayTheme = () => {
           <LogoSecondary className='w-6 md:w-10 h-6 md:h-10' />
           <Text size='2xl'>Aeroscraper</Text>
         </div>
-        {wallet.initialized && !isNil(baseCoin) ?
+        {isWalletConnected && !isNil(baseCoin) ?
           <div className='md:hidden block -mr-4'>
             <button onClick={() => { setAccountModal(true); }} className='flex ml-12 gap-2 items-center hover:blur-[1px] transition-all duration-300'>
               <img
                 alt="user-profile-image"
-                src={wallet.profileDetail?.photoUrl ?? "/images/profile-images/profile-i-1.jpg"}
+                src={/*wallet.profileDetail?.photoUrl ??*/ "/images/profile-images/profile-i-1.jpg"}
                 className='rounded-sm bg-raisin-black w-12 h-12'
               />
               <div className='flex flex-col'>
                 <div className='flex items-center ml-auto'>
-                  <img alt={wallet.walletType} className='w-4 h-4 object-contain rounded' src={WalletInfoMap[wallet.walletType ?? WalletType.NOT_SELECTED].thumbnailURL} />
-                  <Text size='lg' weight='font-regular' className='truncate ml-2'>{wallet.name}</Text>
+                  <img alt={wallet?.name} className='w-4 h-4 object-contain rounded' src={wallet?.logo as string} />
+                  <Text size='lg' weight='font-regular' className='truncate ml-2'>{username}</Text>
                 </div>
-                <Text size='sm'>{wallet.address.slice(0, 6)}...{wallet.address.slice(-6)}</Text>
+                <Text size='sm'>{address?.slice(0, 6)}...{address?.slice(-6)}</Text>
                 <div>
                 </div>
               </div>
-              <button className='w-10 h-10 flex items-center justify-center' onClick={(e) => { e.stopPropagation(); disconnect(); }}>
+              <button className='w-10 h-10 flex items-center justify-center' onClick={(e) => { e.stopPropagation(); disconnectWallet(); }}>
                 <ExitIcon className='text-white' />
               </button>
             </button>
@@ -116,25 +100,25 @@ const ArchwayTheme = () => {
               <img alt={baseCoin.name} className="w-5 h-5" src={baseCoin.tokenImage} />
             </div>
           }
-          {wallet.initialized && !isNil(baseCoin) ?
+          {isWalletConnected && !isNil(baseCoin) ?
             <>
               <NotificationDropdown />
               <button onClick={() => { setAccountModal(true); }} className='flex ml-12 gap-2 items-center hover:blur-[1px] transition-all duration-300'>
                 <img
                   alt="user-profile-image"
-                  src={wallet.profileDetail?.photoUrl ?? "/images/profile-images/profile-i-1.jpg"}
+                  src={/*wallet.profileDetail?.photoUrl ??*/ "/images/profile-images/profile-i-1.jpg"}
                   className='rounded-sm bg-raisin-black w-12 h-12'
                 />
                 <div className='flex flex-col'>
                   <div className='flex items-center ml-auto'>
-                    <img alt={wallet.walletType} className='w-4 h-4 object-contain rounded' src={WalletInfoMap[wallet.walletType ?? WalletType.NOT_SELECTED].thumbnailURL} />
-                    <Text size='lg' weight='font-regular' className='truncate ml-2'>{wallet.name}</Text>
+                    <img alt={wallet?.name} className='w-4 h-4 object-contain rounded' src={wallet?.logo as string} />
+                    <Text size='lg' weight='font-regular' className='truncate ml-2'>{username}</Text>
                   </div>
-                  <Text size='sm'>{wallet.address.slice(0, 6)}...{wallet.address.slice(-6)}</Text>
+                  <Text size='sm'>{address?.slice(0, 6)}...{address?.slice(-6)}</Text>
                   <div>
                   </div>
                 </div>
-                <button className='w-12 h-12 flex items-center justify-center' onClick={(e) => { e.stopPropagation(); disconnect(); }}>
+                <button className='w-12 h-12 flex items-center justify-center' onClick={(e) => { e.stopPropagation(); disconnectWallet(); }}>
                   <ExitIcon className='text-white' />
                 </button>
               </button>
@@ -158,7 +142,7 @@ const ArchwayTheme = () => {
           onClose={() => { setAccountModal(false); }}
         />
       </header>
-      {wallet.initialized && !isNil(baseCoin) &&
+      {isWalletConnected && !isNil(baseCoin) &&
         <div className='items-center md:hidden flex border h-[50px] border-white/20 mx-6 rounded-lg mt-8 pl-4 z-50'>
           <div className="flex items-center gap-2 mr-8">
             <Text size='base'>$1.00</Text>
@@ -171,7 +155,7 @@ const ArchwayTheme = () => {
               <img alt={baseCoin.name} className="w-5 h-5" src={baseCoin.tokenImage} />
             </div>
           }
-          {(wallet.initialized && !isNil(baseCoin)) &&
+          {(isWalletConnected && !isNil(baseCoin)) &&
             <div className='ml-auto'>
               <NotificationDropdown />
             </div>
