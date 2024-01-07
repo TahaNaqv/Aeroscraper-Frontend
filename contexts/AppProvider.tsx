@@ -17,9 +17,12 @@ const AppProvider: React.FC<PropsWithChildren> = ({ children }) => {
     const value = useMemo<AppContextState>(() => ({
         selectedChainName,
         setSelectedChainName
-    }), [selectedChainName])
+    }), [
+        selectedChainName,
+        setSelectedChainName
+    ])
 
-    //TODO: Get prev selected chain from local storage
+    //TODO: Get prev selected chain from local storage or rehydrate from cosmos-kit
 
     return (
         <AppContext.Provider value={value}>

@@ -1,7 +1,6 @@
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import Text from "@/components/Texts/Text"
 import { INotification, useNotification } from '@/contexts/NotificationProvider';
-import { useWallet } from '@/contexts/WalletProvider';
 import useAppContract from '@/contracts/app/useAppContract';
 import { getValueByRatio, getIsInjectiveResponse } from '@/utils/contractUtils';
 import { isNil } from 'lodash';
@@ -12,6 +11,7 @@ import TransactionButton from '@/components/Buttons/TransactionButton';
 import { ArrowDownIcon, ArrowLeftIcon, Logo, LogoSecondary, RedeemIcon } from '@/components/Icons/Icons';
 import BorderedNumberInput from '@/components/Input/BorderedNumberInput';
 import BorderedContainer from '@/components/Containers/BorderedContainer';
+import useChainAdapter from '@/hooks/useChainAdapter';
 
 interface Props {
   pageData: PageData,
@@ -22,7 +22,7 @@ interface Props {
 
 const RedeemTab: FC<Props> = ({ pageData, getPageData, refreshBalance, basePrice }) => {
 
-  const { baseCoin } = useWallet();
+  const { baseCoin } = useChainAdapter();
   const [redeemAmount, setRedeemAmount] = useState(0);
   const [injAmount, setInjAmount] = useState(0);
   const [processLoading, setProcessLoading] = useState<boolean>(false);
@@ -138,7 +138,7 @@ const RedeemTab: FC<Props> = ({ pageData, getPageData, refreshBalance, basePrice
             !isNil(baseCoin) ?
               <div className="flex items-center gap-2">
                 <img alt="token" src={baseCoin.tokenImage} className="w-6 h-6" />
-                <Text size="base"  weight="font-medium">{baseCoin.name}</Text>
+                <Text size="base" weight="font-medium">{baseCoin.name}</Text>
               </div>
               :
               <Text size="2xl" weight="font-medium" className='flex-1 text-center'>-</Text>

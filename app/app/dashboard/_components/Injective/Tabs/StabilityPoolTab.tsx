@@ -9,11 +9,12 @@ import { NumericFormat } from 'react-number-format';
 import { motion } from 'framer-motion';
 import useAppContract from '@/contracts/app/useAppContract';
 import { useNotification } from '@/contexts/NotificationProvider';
-import { useWallet } from '@/contexts/WalletProvider';
 import { getIsInjectiveResponse } from '@/utils/contractUtils';
 import { PageData } from '../../../_types/types';
 import Checkbox from '@/components/Checkbox';
 import BorderedNumberInput from '@/components/Input/BorderedNumberInput';
+import useChainAdapter from '@/hooks/useChainAdapter';
+import useBalances from '@/hooks/useBalances';
 
 enum TABS {
   DEPOSIT = 0,
@@ -26,9 +27,9 @@ type Props = {
 }
 
 const StabilityPoolTab: FC<Props> = ({ pageData, getPageData }) => {
-  const { baseCoin, refreshBalance } = useWallet();
+  const { refreshBalance } = useBalances();
   const contract = useAppContract();
-  const { addNotification,processLoading,setProcessLoading } = useNotification();
+  const { addNotification, processLoading, setProcessLoading } = useNotification();
 
   const [selectedTab, setSelectedTab] = useState<TABS>(TABS.DEPOSIT);
 
@@ -153,7 +154,7 @@ const StabilityPoolTab: FC<Props> = ({ pageData, getPageData }) => {
             </GradientButton>
           </motion.div>
         )}
-        {pageData.stakedAmount > 0 && <Checkbox label={'Withdraw'} checked={selectedTab === TABS.WITHDRAW} onChange={() => { setSelectedTab(TABS.WITHDRAW); }} className="mt-8"/>}      {selectedTab === TABS.WITHDRAW && (
+        {pageData.stakedAmount > 0 && <Checkbox label={'Withdraw'} checked={selectedTab === TABS.WITHDRAW} onChange={() => { setSelectedTab(TABS.WITHDRAW); }} className="mt-8" />}      {selectedTab === TABS.WITHDRAW && (
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}

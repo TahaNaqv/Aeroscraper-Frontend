@@ -7,10 +7,12 @@ import { INotification, useNotification } from '@/contexts/NotificationProvider'
 import Link from 'next/link';
 import { ClientEnum } from '@/types/types';
 import { ClientTransactionUrlByName } from '@/constants/walletConstants';
-import { useWallet } from '@/contexts/WalletProvider';
+import useChainAdapter from '@/hooks/useChainAdapter';
+import { ChainName } from '@/enums/Chain';
+import { TransactionDomainByChainName } from '@/constants/chainConstants';
 
 type ItemProps = {
-    clientType: ClientEnum,
+    selectedChainName: ChainName,
     text: string;
     hasDivider?: boolean;
     isRead?: boolean;
@@ -19,7 +21,7 @@ type ItemProps = {
 }
 
 const NotificationDropdown: FC = () => {
-    const { clientType } = useWallet();
+    const { selectedChainName } = useChainAdapter();
     const listenNotification = useNotification();
     const [notifications, setNotifications] = useState<INotification[]>([]);
 
@@ -47,7 +49,7 @@ const NotificationDropdown: FC = () => {
     return (
         <Dropdown
             toggleButton={
-                (clientType === ClientEnum.INJECTIVE || clientType === ClientEnum.ARCHWAY) ?
+                (selectedChainName === ChainName.INJECTIVE || selectedChainName === ChainName.ARCHWAY) ?
                     <div
                         className='w-full h-full flex justify-center items-center'
                     >
@@ -64,11 +66,11 @@ const NotificationDropdown: FC = () => {
                     </BorderedContainer>
             }
         >
-            {(clientType === ClientEnum.INJECTIVE || clientType === ClientEnum.ARCHWAY) ?
+            {(selectedChainName === ChainName.INJECTIVE || selectedChainName === ChainName.ARCHWAY) ?
                 <BorderedContainer containerClassName='w-[342px] -translate-x-[144px] md:w-[446px] h-[226px] notification-dropdown-gradient p-[1.5px]' className='relative p-4 overflow-auto scrollbar-hidden'>
                     <div className='flex flex-col-reverse gap-2'>
                         {notifications.map((item, index) => {
-                            return clientType && <NotificationItem clientType={clientType} key={index} text={item.message ?? ""} isRead={item.isRead} directLink={item.directLink} handleReadNotification={() => { handleReadNotification(index); }} />
+                            return selectedChainName && <NotificationItem selectedChainName={selectedChainName} key={index} text={item.message ?? ""} isRead={item.isRead} directLink={item.directLink} handleReadNotification={() => { handleReadNotification(index); }} />
 
                         })}
                         {notifications.filter(item => item.status === "success").length === 0 && (
@@ -84,7 +86,7 @@ const NotificationDropdown: FC = () => {
                         <div className='absolute inset-10 top-20 bg-white -z-10 blur-3xl opacity-[0.15]' />
                         <Text>Notifications</Text>
                         {notifications.map((item, index) => {
-                            return clientType && <NotificationItem clientType={clientType} key={index} text={item.message ?? ""} isRead={item.isRead} directLink={item.directLink} handleReadNotification={() => { handleReadNotification(index); }} />
+                            return selectedChainName && <NotificationItem selectedChainName={selectedChainName} key={index} text={item.message ?? ""} isRead={item.isRead} directLink={item.directLink} handleReadNotification={() => { handleReadNotification(index); }} />
                         })}
                         {notifications.filter(item => item.status === "success").length === 0 && (
                             <div className='flex flex-col h-full gap-4 mt-10 items-center justify-center'>
@@ -99,9 +101,9 @@ const NotificationDropdown: FC = () => {
 
 export default NotificationDropdown
 
-const NotificationItem: FC<ItemProps> = ({ text, isRead, directLink, hasDivider = true, clientType, handleReadNotification }) => {
+const NotificationItem: FC<ItemProps> = ({ text, isRead, directLink, hasDivider = true, selectedChainName, handleReadNotification }) => {
 
-    let scanDomain = ClientTransactionUrlByName[clientType!]?.txDetailUrl
+    let scanDomain = TransactionDomainByChainName[selectedChainName]?.txDetailUrl
 
     if (!text) {
         return null

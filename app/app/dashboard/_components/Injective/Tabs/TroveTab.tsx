@@ -6,7 +6,6 @@ import React, { FC, useMemo, useState } from 'react'
 import { NumberFormatValues } from 'react-number-format/types/types';
 import OutlinedButton from '@/components/Buttons/OutlinedButton';
 import { useNotification } from '@/contexts/NotificationProvider';
-import { useWallet } from '@/contexts/WalletProvider';
 import { convertAmount, getIsInjectiveResponse, getRatioColor, getRatioText } from '@/utils/contractUtils';
 import { isNil } from 'lodash';
 import { PageData } from '../../../_types/types';
@@ -14,6 +13,8 @@ import InjectiveStatisticCard from '@/components/Cards/InjectiveStatisticCard';
 import BorderedNumberInput from '@/components/Input/BorderedNumberInput';
 import Checkbox from '@/components/Checkbox';
 import { NumericFormat } from 'react-number-format';
+import useBalances from '@/hooks/useBalances';
+import useChainAdapter from '@/hooks/useChainAdapter';
 
 enum TABS {
   COLLATERAL = 0,
@@ -28,7 +29,8 @@ type Props = {
 
 const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
   const contract = useAppContract();
-  const { balanceByDenom, baseCoin, refreshBalance } = useWallet();
+  const { balanceByDenom, refreshBalance } = useBalances();
+  const { baseCoin } = useChainAdapter();
   const [openTroveAmount, setOpenTroveAmount] = useState<number>(0);
   const [borrowAmount, setBorrowAmount] = useState<number>(0);
   const [collateralAmount, setCollateralAmount] = useState<number>(0);

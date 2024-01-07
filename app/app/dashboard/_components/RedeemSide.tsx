@@ -12,8 +12,8 @@ import { PageData } from '../_types/types'
 import useAppContract from '@/contracts/app/useAppContract'
 import { INotification, useNotification } from '@/contexts/NotificationProvider'
 import TransactionButton from '@/components/Buttons/TransactionButton'
-import { useWallet } from '@/contexts/WalletProvider'
 import { isNil } from 'lodash'
+import useChainAdapter from '@/hooks/useChainAdapter'
 
 interface Props {
   pageData: PageData,
@@ -23,7 +23,7 @@ interface Props {
 }
 
 const RedeemSide: FC<Props> = ({ pageData, getPageData, refreshBalance, basePrice }) => {
-  const { baseCoin } = useWallet();
+  const { baseCoin } = useChainAdapter();
   const [redeemAmount, setRedeemAmount] = useState(0);
   const [seiAmount, setSeiAmount] = useState(0);
   const [processLoading, setProcessLoading] = useState<boolean>(false);

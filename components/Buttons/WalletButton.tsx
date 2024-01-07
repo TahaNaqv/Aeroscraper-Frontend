@@ -2,7 +2,6 @@
 
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react'
 import GradientButton from '@/components/Buttons/GradientButton'
-import { useWallet } from '@/contexts/WalletProvider'
 import Text from '@/components/Texts/Text'
 import { motion } from 'framer-motion'
 import useOutsideHandler from '@/hooks/useOutsideHandler'
@@ -33,7 +32,7 @@ type Props = {
 const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePrice = 0, className = "w-[268px] h-[69px]" }) => {
     const ref = useRef<HTMLDivElement>(null);
     const [walletSelectionOpen, setWalletSelectionOpen] = useState(false);
-    const { baseCoin } = useWallet();
+    const { baseCoin } = useChainAdapter();
     const {
         selectedChainName,
         setSelectedChainName,

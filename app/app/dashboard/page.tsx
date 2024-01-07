@@ -10,7 +10,6 @@ import Text from "@/components/Texts/Text"
 import { NumericFormat } from 'react-number-format'
 import { PageData } from "./_types/types";
 import { convertAmount } from "@/utils/contractUtils";
-import { useWallet } from "@/contexts/WalletProvider";
 import RedeemSide from "./_components/RedeemSide";
 import Tooltip from "@/components/Tooltip/Tooltip";
 import NotificationDropdown from "./_components/NotificationDropdown";
@@ -20,25 +19,26 @@ import SeiDashboard from "./_chain/SeiDashboard";
 import ArchwayDashboard from "./_chain/ArchwayDashboard";
 import NeutronDashboard from "./_chain/NeutronDashboard";
 import InjectiveDashboard from "./_chain/InjectiveDashboard";
+import useChainAdapter from "@/hooks/useChainAdapter";
+import { ChainName } from "@/enums/Chain";
 
 export default function Dashboard() {
-    const { clientType } = useWallet();
+    const { selectedChainName } = useChainAdapter();
 
-
-    if (!isNil(clientType)) {
-        if (clientType === ClientEnum.SEI) {
+    if (!isNil(selectedChainName)) {
+        if (selectedChainName === ChainName.SEI) {
             return <SeiDashboard />
         }
 
-        if (clientType === ClientEnum.ARCHWAY) {
+        if (selectedChainName === ChainName.ARCHWAY) {
             return <ArchwayDashboard />
         }
 
-        if (clientType === ClientEnum.NEUTRON) {
+        if (selectedChainName === ChainName.NEUTRON) {
             return <NeutronDashboard />
         }
 
-        if (clientType === ClientEnum.INJECTIVE) {
+        if (selectedChainName === ChainName.INJECTIVE) {
             return <InjectiveDashboard />
         }
     }

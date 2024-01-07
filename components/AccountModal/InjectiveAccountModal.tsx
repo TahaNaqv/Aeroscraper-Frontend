@@ -1,4 +1,3 @@
-import { useWallet } from "@/contexts/WalletProvider";
 import useOutsideHandler from "@/hooks/useOutsideHandler";
 import { motion } from "framer-motion";
 import { FC, useMemo, useRef, useState } from "react";
@@ -20,6 +19,7 @@ import { isNil } from "lodash";
 import useChainAdapter from "@/hooks/useChainAdapter";
 import { TransactionDomainByChainName } from "@/constants/chainConstants";
 import { ChainName } from "@/enums/Chain";
+import { useProfile } from "@/contexts/ProfileProvider";
 
 interface Props {
   showModal: boolean,
@@ -35,7 +35,7 @@ const AccountModal: FC<Props> = (props: Props) => {
   const qrCodeViewRef = useRef<HTMLDivElement>(null);
 
   const { username, address, baseCoin, wallet, chain, disconnect } = useChainAdapter();
-  const { profileDetail, setProfileDetail } = useWallet();
+  const { profileDetail, setProfileDetail } = useProfile();
 
   const [selectedTab, setSelectedTab] = useState<Tabs | null>(null);
 

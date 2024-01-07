@@ -29,7 +29,15 @@ export const BaseCoinByChainName: Record<ChainName, BaseCoin> = {
         tokenImage: "/images/token-images/inj.svg",
         decimal: 18,
         ausdDecimal: 18
-    }
+    },
+    [ChainName.NEUTRON]: {
+        name: "NTRN",
+        denom: "untrn",
+        image: "/images/token-images/neutron.svg",
+        tokenImage: "/images/token-images/neutron.svg",
+        decimal: 6,
+        ausdDecimal: 6
+    },
 }
 
 export const TransactionDomainByChainName: Record<ChainName, { accountUrl: string, txDetailUrl: string }> = {
@@ -44,5 +52,44 @@ export const TransactionDomainByChainName: Record<ChainName, { accountUrl: strin
     [ChainName.INJECTIVE]: {
         txDetailUrl: "https://testnet.explorer.injective.network/transaction/",
         accountUrl: "https://testnet.explorer.injective.network/account/"
+    },
+    [ChainName.NEUTRON]: {
+        txDetailUrl: "https://neutron.celat.one/transactions/",
+        accountUrl: "https://neutron.celat.one/account/"
+    },
+}
+
+export const getContractAddressesByChain = (chainName?: ChainName) => {
+    if (chainName === ChainName.SEI) {
+        return {
+            contractAddress: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS as string,
+            ausdContractAddress: process.env.NEXT_PUBLIC_AUSD_CONTRACT_ADDRESS as string,
+            oraclecontractAddress: process.env.NEXT_PUBLIC_ORACLE_CONTRACT_ADDRESS as string
+        }
+    }
+    else if (chainName === ChainName.ARCHWAY) {
+        return {
+            contractAddress: process.env.NEXT_PUBLIC_ARCH_CONTRACT_ADDRESS as string,
+            ausdContractAddress: process.env.NEXT_PUBLIC_ARCH_AUSD_CONTRACT_ADDRESS as string,
+            oraclecontractAddress: ''
+        }
+    } else if (chainName === ChainName.NEUTRON) {
+        return {
+            contractAddress: process.env.NEXT_PUBLIC_NEUTRON_CONTRACT_ADDRESS as string,
+            ausdContractAddress: process.env.NEXT_PUBLIC_NEUTRON_AUSD_CONTRACT_ADDRESS as string,
+            oraclecontractAddress: process.env.NEXT_PUBLIC_NEUTRON_ORACLE_CONTRACT_ADDRESS as string
+        }
+    } else if (chainName === ChainName.INJECTIVE) {
+        return {
+            contractAddress: process.env.NEXT_PUBLIC_INJECTIVE_CONTRACT_ADDRESS as string,
+            ausdContractAddress: process.env.NEXT_PUBLIC_INJECTIVE_AUSD_CONTRACT_ADDRESS as string,
+            oraclecontractAddress: process.env.NEXT_PUBLIC_INJECTIVE_ORACLE_CONTRACT_ADDRESS as string
+        }
+    }
+
+    return {
+        contractAddress: '',
+        ausdContractAddress: '',
+        oraclecontractAddress: '',
     }
 }

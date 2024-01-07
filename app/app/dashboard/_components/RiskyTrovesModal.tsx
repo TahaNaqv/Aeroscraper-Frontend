@@ -14,7 +14,7 @@ import { ClientEnum, RiskyTroves } from '@/types/types';
 import { convertAmount, getIsInjectiveResponse, getRatioColor } from '@/utils/contractUtils';
 import { getCroppedString } from '@/utils/stringUtils';
 import SkeletonLoading from '@/components/Table/SkeletonLoading';
-import { useWallet } from '@/contexts/WalletProvider';
+import useChainAdapter from '@/hooks/useChainAdapter';
 
 type Props = {
     open: boolean;
@@ -25,7 +25,7 @@ type Props = {
 }
 
 const RiskyTrovesModal: FC<Props> = ({ open, onClose, pageData, getPageData, basePrice }) => {
-    const { baseCoin } = useWallet();
+    const { baseCoin } = useChainAdapter();
     const contract = useAppContract();
     const [loading, setLoading] = useState(false);
     const [processLoading, setProcessLoading] = useState<boolean>(false);
@@ -62,8 +62,8 @@ const RiskyTrovesModal: FC<Props> = ({ open, onClose, pageData, getPageData, bas
             setClientType(localStorage.getItem("selectedClientType") as ClientEnum);
         }
     }, [])
-    const {requestTotalTroves ,requestRiskyTroves } = Deneme({clientType});
-    
+    const { requestTotalTroves, requestRiskyTroves } = Deneme({ clientType });
+
     const getRiskyTroves = useCallback(async () => {
         try {
             setLoading(true);

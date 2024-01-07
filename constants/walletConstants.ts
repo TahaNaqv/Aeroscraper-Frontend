@@ -35,6 +35,10 @@ export const WalletsByChainName: Record<ChainName, WalletTypeV2[]> = {
         WalletTypeV2.LEAP,
         WalletTypeV2.KEPLR,
     ],
+    [ChainName.NEUTRON]: [
+        WalletTypeV2.LEAP,
+        WalletTypeV2.KEPLR,
+    ],
     [ChainName.INJECTIVE]: [
         WalletTypeV2.METAMASK,
         WalletTypeV2.LEAP,
@@ -149,39 +153,4 @@ export const BaseCoinByClient: Record<ClientEnum, BaseCoin> = {
 
 export const getBaseCoinByClient = (clientType?: ClientEnum) => {
     return clientType && BaseCoinByClient[clientType];
-}
-
-export const getContractAddressesByClient = (clientType?: ClientEnum) => {
-    if (clientType === ClientEnum.SEI) {
-        return {
-            contractAddress: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS as string,
-            ausdContractAddress: process.env.NEXT_PUBLIC_AUSD_CONTRACT_ADDRESS as string,
-            oraclecontractAddress: process.env.NEXT_PUBLIC_ORACLE_CONTRACT_ADDRESS as string
-        }
-    }
-    else if (clientType === ClientEnum.ARCHWAY) {
-        return {
-            contractAddress: process.env.NEXT_PUBLIC_ARCH_CONTRACT_ADDRESS as string,
-            ausdContractAddress: process.env.NEXT_PUBLIC_ARCH_AUSD_CONTRACT_ADDRESS as string,
-            oraclecontractAddress: ''
-        }
-    } else if (clientType === ClientEnum.NEUTRON) {
-        return {
-            contractAddress: process.env.NEXT_PUBLIC_NEUTRON_CONTRACT_ADDRESS as string,
-            ausdContractAddress: process.env.NEXT_PUBLIC_NEUTRON_AUSD_CONTRACT_ADDRESS as string,
-            oraclecontractAddress: process.env.NEXT_PUBLIC_NEUTRON_ORACLE_CONTRACT_ADDRESS as string
-        }
-    } else if (clientType === ClientEnum.INJECTIVE) {
-        return {
-            contractAddress: process.env.NEXT_PUBLIC_INJECTIVE_CONTRACT_ADDRESS as string,
-            ausdContractAddress: process.env.NEXT_PUBLIC_INJECTIVE_AUSD_CONTRACT_ADDRESS as string,
-            oraclecontractAddress: process.env.NEXT_PUBLIC_INJECTIVE_ORACLE_CONTRACT_ADDRESS as string
-        }
-    }
-
-    return {
-        contractAddress: '',
-        ausdContractAddress: '',
-        oraclecontractAddress: '',
-    }
 }

@@ -15,7 +15,7 @@ import useChainAdapter from '@/hooks/useChainAdapter';
 
 const ArchwayTheme = () => {
   const { isWalletConnected, wallet, username, baseCoin, address, disconnect } = useChainAdapter();
-  const balanceByDenom = useBalances();
+  const { balanceByDenom } = useBalances();
 
   const [basePrice, setBasePrice] = useState(0);
   const { pageData, getPageData } = usePageData({ basePrice });

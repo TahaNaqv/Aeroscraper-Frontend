@@ -4,7 +4,6 @@ import { Table } from '@/components/Table/Table';
 import { TableBodyCol } from '@/components/Table/TableBodyCol';
 import { TableHeaderCol } from '@/components/Table/TableHeaderCol';
 import { useNotification } from '@/contexts/NotificationProvider';
-import { useWallet } from '@/contexts/WalletProvider';
 import useAppContract from '@/contracts/app/useAppContract';
 
 import { ClientEnum, RiskyTroves } from '@/types/types';
@@ -17,6 +16,8 @@ import Text from '@/components/Texts/Text';
 import { RocketIcon } from '@/components/Icons/Icons';
 import graphql from '@/services/graphql';
 import { delay } from '@/utils/promiseUtils';
+import useChainAdapter from '@/hooks/useChainAdapter';
+import { ChainName } from '@/enums/Chain';
 
 type Props = {
   pageData: PageData;
@@ -26,13 +27,13 @@ type Props = {
 
 const RiskyTrovesTab: FC<Props> = ({ getPageData, basePrice }) => {
 
-  const { baseCoin, clientType = ClientEnum.INJECTIVE } = useWallet();
+  const { baseCoin, selectedChainName = ChainName.INJECTIVE } = useChainAdapter();
   const contract = useAppContract();
   const [loading, setLoading] = useState(true);
   const [riskyTroves, setRiskyTroves] = useState<RiskyTroves[]>([]);
   const { addNotification, setProcessLoading, processLoading } = useNotification();
 
-  const { requestRiskyTroves } = graphql({ clientType });
+  const { requestRiskyTroves } = graphql({ selectedChainName });
 
   const liquidateTroves = async () => {
     try {
@@ -111,8 +112,8 @@ console.log(troveRes);
   }, [contract, baseCoin]);
 
   useEffect(() => {
-    clientType && getRiskyTroves();
-  }, [getRiskyTroves, clientType])
+    selectedChainName && getRiskyTroves();
+  }, [getRiskyTroves, selectedChainName])
 
   return (
     <div>
@@ -130,50 +131,50 @@ console.log(troveRes);
           loading={loading}
           renderItem={(item: RiskyTroves) => {
             return <div className="grid grid-cols-6 gap-4 border-b border-white/10">
-                <TableBodyCol col={2} text="XXXXXX" value={
-                  <Text size='xs' className='whitespace-nowrap text-start ml-4'>{getCroppedString(item.owner, 6, 8)}</Text>
-                } />
-                <TableBodyCol col={1} text="XXXXXX" value={
-                  <NumericFormat
-                    value={item.collateralAmount}
-                    thousandsGroupStyle="thousand"
-                    thousandSeparator=","
-                    fixedDecimalScale
-                    decimalScale={2}
-                    displayType="text"
-                    renderText={(value) =>
-                      <Text size='xs' responsive={true} className='whitespace-nowrap'>{value} {baseCoin?.name}</Text>
-                    }
-                  />} />
-                <TableBodyCol col={1} text="XXXXXX" value={
-                  <NumericFormat
-                    value={item.debtAmount}
-                    thousandsGroupStyle="thousand"
-                    thousandSeparator=","
-                    fixedDecimalScale
-                    decimalScale={2}
-                    displayType="text"
-                    renderText={(value) =>
-                      <Text size='xs' responsive={true} className='whitespace-nowrap'>{value} AUSD</Text>
-                    }
-                  />} />
-                <TableBodyCol col={2} text="XXXXXX" value={
-                  <NumericFormat
-                    value={item.liquidityThreshold}
-                    thousandsGroupStyle="thousand"
-                    thousandSeparator=","
-                    fixedDecimalScale
-                    decimalScale={2}
-                    displayType="text"
-                    renderText={(value) =>
-                      clientType === ClientEnum.INJECTIVE ?
-                        <Text size='xs' responsive={true} className='whitespace-nowrap text-end pr-10' dynamicTextColor={getRatioColor(item.liquidityThreshold)}>{item.liquidityThreshold}%</Text>
-                        :
-                        <Text size='xs' responsive={true} className='whitespace-nowrap text-end pr-10' dynamicTextColor={getRatioColor(((item.liquidityThreshold ?? 0) * (basePrice ?? 0))) ?? 0}>{Number((item.liquidityThreshold ?? 0) * (basePrice ?? 0)).toFixed(3)}%</Text>
-                    }
-                  />}
-                />
-              </div>
+              <TableBodyCol col={2} text="XXXXXX" value={
+                <Text size='xs' className='whitespace-nowrap text-start ml-4'>{getCroppedString(item.owner, 6, 8)}</Text>
+              } />
+              <TableBodyCol col={1} text="XXXXXX" value={
+                <NumericFormat
+                  value={item.collateralAmount}
+                  thousandsGroupStyle="thousand"
+                  thousandSeparator=","
+                  fixedDecimalScale
+                  decimalScale={2}
+                  displayType="text"
+                  renderText={(value) =>
+                    <Text size='xs' responsive={true} className='whitespace-nowrap'>{value} {baseCoin?.name}</Text>
+                  }
+                />} />
+              <TableBodyCol col={1} text="XXXXXX" value={
+                <NumericFormat
+                  value={item.debtAmount}
+                  thousandsGroupStyle="thousand"
+                  thousandSeparator=","
+                  fixedDecimalScale
+                  decimalScale={2}
+                  displayType="text"
+                  renderText={(value) =>
+                    <Text size='xs' responsive={true} className='whitespace-nowrap'>{value} AUSD</Text>
+                  }
+                />} />
+              <TableBodyCol col={2} text="XXXXXX" value={
+                <NumericFormat
+                  value={item.liquidityThreshold}
+                  thousandsGroupStyle="thousand"
+                  thousandSeparator=","
+                  fixedDecimalScale
+                  decimalScale={2}
+                  displayType="text"
+                  renderText={(value) =>
+                    selectedChainName === ChainName.INJECTIVE ?
+                      <Text size='xs' responsive={true} className='whitespace-nowrap text-end pr-10' dynamicTextColor={getRatioColor(item.liquidityThreshold)}>{item.liquidityThreshold}%</Text>
+                      :
+                      <Text size='xs' responsive={true} className='whitespace-nowrap text-end pr-10' dynamicTextColor={getRatioColor(((item.liquidityThreshold ?? 0) * (basePrice ?? 0))) ?? 0}>{Number((item.liquidityThreshold ?? 0) * (basePrice ?? 0)).toFixed(3)}%</Text>
+                  }
+                />}
+              />
+            </div>
           }} />
       </div>
       {(riskyTroves.length === 0 && !loading) && (

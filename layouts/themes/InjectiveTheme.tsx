@@ -14,9 +14,11 @@ import useBalances from '@/hooks/useBalances';
 
 const InjeciveTheme = () => {
   const { isWalletConnected, baseCoin, wallet, address, username, disconnect } = useChainAdapter();
-  const balanceByDenom = useBalances();
+  const { balanceByDenom } = useBalances();
   const [basePrice, setBasePrice] = useState(0);
   const { pageData, getPageData } = usePageData({ basePrice });
+
+  console.log(pageData)
 
   const [accountModal, setAccountModal] = useState(false);
 

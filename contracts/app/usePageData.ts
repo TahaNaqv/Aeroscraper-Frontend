@@ -1,5 +1,4 @@
 import { PageData } from "@/app/app/dashboard/_types/types";
-import { useWallet } from "@/contexts/WalletProvider";
 import { convertAmount } from "@/utils/contractUtils";
 import { delay, getSettledValue } from "@/utils/promiseUtils";
 import { useCallback, useEffect, useState } from "react";
@@ -7,18 +6,18 @@ import useAppContract from "./useAppContract";
 import { ClientEnum } from "@/types/types";
 import graphql from "@/services/graphql";
 import { debounce } from "lodash";
+import useChainAdapter from "@/hooks/useChainAdapter";
+import { ChainName } from "@/enums/Chain";
 
 interface Props {
   basePrice: number
 }
 
 const usePageData = ({ basePrice }: Props) => {
-  const [clientType, setClientType] = useState<ClientEnum>("INJECTIVE" as ClientEnum);
+  const { selectedChainName, baseCoin } = useChainAdapter();
 
-  const { requestTotalTroves } = graphql({ clientType });
+  const { requestTotalTroves } = graphql({ selectedChainName: selectedChainName ?? ChainName.INJECTIVE });
   const contract = useAppContract();
-
-  const { baseCoin } = useWallet();
 
   const [pageData, setPageData] = useState<PageData>({
     collateralAmount: 0,
@@ -37,12 +36,6 @@ const usePageData = ({ basePrice }: Props) => {
   });
 
   const [loading, setLoading] = useState<boolean>(true);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setClientType(localStorage.getItem("selectedClientType") as ClientEnum);
-    }
-  }, []);
 
   const getPageData = useCallback(async () => {
     try {

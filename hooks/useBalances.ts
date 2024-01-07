@@ -1,11 +1,11 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import useChainAdapter from "./useChainAdapter"
 import { Dictionary, keyBy } from "lodash";
 import { Coin } from "@cosmjs/proto-signing";
 
 const useBalances = () => {
     const { chain, address, baseCoin, getSigningCosmWasmClient } = useChainAdapter();
-    const [balancesByDenom, setBalancesByDenom] = useState<Dictionary<Coin | undefined>>({});
+    const [balanceByDenom, setBalancesByDenom] = useState<Dictionary<Coin | undefined>>({});
 
     const getBalances = useCallback(async () => {
         try {
@@ -20,11 +20,16 @@ const useBalances = () => {
         }
     }, [address, baseCoin])
 
+    const value = useMemo(() => ({
+        balanceByDenom,
+        refreshBalance: getBalances
+    }), [balanceByDenom, getBalances])
+
     useEffect(() => {
         getBalances();
     }, [getBalances])
 
-    return balancesByDenom;
+    return value;
 }
 
 export default useBalances;

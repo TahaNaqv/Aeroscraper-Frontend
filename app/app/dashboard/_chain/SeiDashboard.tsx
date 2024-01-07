@@ -8,7 +8,6 @@ import ShapeContainer from "@/components/Containers/ShapeContainer";
 import { InfoIcon, RightArrow } from "@/components/Icons/Icons";
 import Text from "@/components/Texts/Text"
 import Tooltip from "@/components/Tooltip/Tooltip";
-import { useWallet } from "@/contexts/WalletProvider";
 import usePageData from "@/contracts/app/usePageData";
 import { convertAmount } from "@/utils/contractUtils";
 import { PriceServiceConnection } from "@pythnetwork/price-service-client";
@@ -20,10 +19,13 @@ import RedeemSide from "../_components/RedeemSide";
 import RiskyTrovesModal from "../_components/RiskyTrovesModal";
 import StabilityPoolModal from "../_components/StabilityPoolModal";
 import TroveModal from "../_components/TroveModal";
+import useChainAdapter from "@/hooks/useChainAdapter";
+import useBalances from "@/hooks/useBalances";
 
 
 export default function SeiDashboard() {
-  const { balanceByDenom, baseCoin, walletType, refreshBalance } = useWallet();
+  const { balanceByDenom, refreshBalance } = useBalances();
+  const { baseCoin, wallet } = useChainAdapter();
   const [troveModal, setTroveModal] = useState(false);
   const [stabilityModal, setStabilityModal] = useState(false);
   const [riskyModal, setRiskyModal] = useState(false);
@@ -82,7 +84,7 @@ export default function SeiDashboard() {
             <NotificationDropdown />
             <WalletButton
               ausdBalance={pageData.ausdBalance}
-              baseCoinBalance={!isNil(baseCoin) ? Number(convertAmount(balanceByDenom[baseCoin.denom]?.amount ?? 0,baseCoin.decimal)) : 0}
+              baseCoinBalance={!isNil(baseCoin) ? Number(convertAmount(balanceByDenom[baseCoin.denom]?.amount ?? 0, baseCoin.decimal)) : 0}
               basePrice={basePrice}
             />
           </div>
@@ -108,7 +110,7 @@ export default function SeiDashboard() {
               />
               <StatisticCard
                 title="Troves"
-                description={`${isNil(walletType) ? "-" : pageData.totalTrovesAmount}`}
+                description={`${isNil(wallet) ? "-" : pageData.totalTrovesAmount}`}
                 className="w-[191px] h-14"
                 tooltip="The total number of active Troves in the system."
                 tooltipPlacement="top"
@@ -180,7 +182,7 @@ export default function SeiDashboard() {
               className="w-full max-w-[192px] 2xl:max-w-[221px] h-11 mt-6 2xl:mt-10 ml-auto 2xl:mx-auto"
               rounded="rounded-lg"
               disabledText="please choose chain and wallet first"
-              disabled={isNil(baseCoin) || isNil(walletType)}
+              disabled={isNil(baseCoin) || isNil(wallet)}
             >
               <Text>
                 {
@@ -220,14 +222,14 @@ export default function SeiDashboard() {
               className="w-full max-w-[192px] 2xl:max-w-[221px] h-11 mt-6 2xl:mt-10 ml-auto"
               rounded="rounded-lg"
               disabledText="please choose chain and wallet first"
-              disabled={isNil(baseCoin) || isNil(walletType)}
+              disabled={isNil(baseCoin) || isNil(wallet)}
             >
               <Text>Enter</Text>
             </GradientButton>
           </div>
         </ShapeContainer>
         <ShapeContainer layoutId="risky-troves" className="flex-1 cursor-pointer" width="" height="">
-          <div onClick={() => { !isNil(walletType) && setRiskyModal(true); }} className="w-full h-full flex flex-wrap justify-center items-center">
+          <div onClick={() => { !isNil(wallet) && setRiskyModal(true); }} className="w-full h-full flex flex-wrap justify-center items-center">
             <Text size="base" className="whitespace-nowrap">Risky Troves</Text>
             <RightArrow width="24" height="24" />
           </div>

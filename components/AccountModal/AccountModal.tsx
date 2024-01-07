@@ -1,9 +1,4 @@
-import { useWallet } from "@/contexts/WalletProvider";
 import useOutsideHandler from "@/hooks/useOutsideHandler";
-import { useCompass } from "@/services/compass";
-import { useFin } from "@/services/fin";
-import { useKeplr } from "@/services/keplr";
-import { useLeap } from "@/services/leap";
 import { AnimatePresence, motion } from "framer-motion";
 import { FC, useEffect, useMemo, useRef, useState } from "react";
 import { WaveModal } from "../Modal/WaveModal";
@@ -20,6 +15,8 @@ import ProfilePhotoSlider from "./ProfilePhotosSlider";
 import { AUSD_PRICE } from "@/utils/contractUtils";
 import { ClientEnum } from "@/types/types";
 import { ClientTransactionUrlByName } from "@/constants/walletConstants";
+import useChainAdapter from "@/hooks/useChainAdapter";
+import { useProfile } from "@/contexts/ProfileProvider";
 
 interface Props {
     showModal: boolean,
@@ -32,12 +29,8 @@ const AccountModal: FC<Props> = (props: Props) => {
     const avatarSelectRef = useRef<HTMLDivElement>(null);
     const qrCodeViewRef = useRef<HTMLDivElement>(null);
 
-    const keplr = useKeplr();
-    const leap = useLeap();
-    const fin = useFin();
-    const compass = useCompass();
-
-    const { walletType, name, address, profileDetail, baseCoin, setProfileDetail } = useWallet();
+    const { wallet, username, address, baseCoin } = useChainAdapter();
+    const { profileDetail, setProfileDetail } = useProfile();
 
     const [avatarSelectionOpen, setAvatarSelectionOpen] = useState(false);
     const [qrCodeViewOpen, setQrCodeViewOpen] = useState(false);
@@ -138,11 +131,11 @@ const AccountModal: FC<Props> = (props: Props) => {
     useOutsideHandler(avatarSelectRef, closeAvatarSelection);
     useOutsideHandler(qrCodeViewRef, closeQrCodeview);
 
-    let clientType = "INJECTIVE" 
+    let clientType = "INJECTIVE"
     useEffect(() => {
         if (typeof window !== "undefined") {
             clientType = localStorage.getItem("selectedClientType") as ClientEnum;
-          }
+        }
     }, [])
     //@ts-ignore
     let scanDomain = ClientTransactionUrlByName[clientType]?.accountUrl
@@ -158,7 +151,7 @@ const AccountModal: FC<Props> = (props: Props) => {
                             className='w-full h-full rounded-md bg-raisin-black'
                         />
                     </div>
-                    <Text size='3xl' textColor='text-white'>{name}</Text>
+                    <Text size='3xl' textColor='text-white'>{username}</Text>
                 </div>
                 <div className='col-span-6 lg:col-span-4 row-span-s flex flex-col gap-3 w-full '>
                     <div className="bg-raisin-black px-6 py-4 rounded-lg flex gap-16">
@@ -221,7 +214,7 @@ const AccountModal: FC<Props> = (props: Props) => {
                             </div>
                         </div>
                         <div className='flex flex-col lg:flex-row items-start lg:items-center gap-5 mt-6'>
-                            {walletType && <img alt={`walletType-${walletType}`} className='w-16 h-16 object-contain' src={WalletIconMap[walletType]} />}
+                            {wallet && <img alt={`walletType-${wallet.prettyName}`} className='w-16 h-16 object-contain' src={wallet.logo as string} />}
                             <div className='w-full flex flex-col justify-between'>
                                 <Text size='2xl'>{baseCoin?.name}</Text>
                                 <div className='w-full flex items-center gap-2'>
@@ -229,7 +222,7 @@ const AccountModal: FC<Props> = (props: Props) => {
                                     {isClipped === "WALLET" ?
                                         <Text size='base' textColor="text-[#37D489]">Copied!</Text>
                                         :
-                                        <button className='w-6 h-6' onClick={() => { setIsClipped("WALLET"); navigator.clipboard.writeText(address); }}>
+                                        <button className='w-6 h-6' onClick={() => { setIsClipped("WALLET"); navigator.clipboard.writeText(address ?? ''); }}>
                                             <img
                                                 alt="copy-to-clipboard"
                                                 src='/images/copy-to-clipboard.svg'
@@ -256,14 +249,14 @@ const AccountModal: FC<Props> = (props: Props) => {
                         >
                             <div className='relative w-full h-full flex flex-col gap-6 items-center bg-english-violet rounded-lg p-6'>
                                 <div className='w-[182px] h-[182px] lg:w-[132px] lg:h-[132px] bg-white rounded-lg p-3'>
-                                    <QRCode className='w-full h-full' value={address} />
+                                    <QRCode className='w-full h-full' value={address ?? ''} />
                                 </div>
                                 <div className='w-full max-w-[305px] flex justify-between items-center gap-2 rounded-lg px-2 py-1 bg-[#74517A]'>
                                     <Text textColor='text-white' size="lg" className='w-[228px] truncate'>{address}</Text>
                                     {isClipped === "QR" ?
                                         <Text size='base' textColor="text-[#37D489]">Copied!</Text>
                                         :
-                                        <button className='w-6 h-6' onClick={() => { setIsClipped("QR"); navigator.clipboard.writeText(address); }}>
+                                        <button className='w-6 h-6' onClick={() => { setIsClipped("QR"); navigator.clipboard.writeText(address ?? ''); }}>
                                             <img
                                                 alt="copy-to-clipboard"
                                                 src='/images/copy-to-clipboard.svg'
