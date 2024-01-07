@@ -1,9 +1,11 @@
 import { ClientTransactionUrlByName } from '@/constants/walletConstants';
 import { useNotification } from '@/contexts/NotificationProvider';
-import { ClientEnum } from '@/types/types';
 import { AnimatePresence, motion } from 'framer-motion';
 import React, { FC, useEffect } from 'react'
 import { ShapeNotification } from '../Icons/Icons'
+import useChainAdapter from '@/hooks/useChainAdapter';
+import { ChainName } from '@/enums/Chain';
+import { TransactionDomainByChainName } from '@/constants/chainConstants';
 
 const VARIANTS: Record<Status, any> = {
   success: {
@@ -23,17 +25,10 @@ const VARIANTS: Record<Status, any> = {
 type Status = "error" | "success"
 
 const ModalNotification: FC = () => {
-
+  const { selectedChainName } = useChainAdapter();
   const { notification } = useNotification();
 
-  let clientType = "INJECTIVE" 
-    useEffect(() => {
-        if (typeof window !== "undefined") {
-            clientType = localStorage.getItem("selectedClientType") as ClientEnum;
-          }
-    }, [])
-    //@ts-ignore
-  let scanDomain = ClientTransactionUrlByName[clientType]?.txDetailUrl
+  let scanDomain = TransactionDomainByChainName[selectedChainName ?? ChainName.INJECTIVE]?.txDetailUrl
 
   return (
     <>

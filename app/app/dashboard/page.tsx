@@ -14,7 +14,6 @@ import RedeemSide from "./_components/RedeemSide";
 import Tooltip from "@/components/Tooltip/Tooltip";
 import NotificationDropdown from "./_components/NotificationDropdown";
 import { isNil } from "lodash";
-import { ClientEnum } from "@/types/types";
 import SeiDashboard from "./_chain/SeiDashboard";
 import ArchwayDashboard from "./_chain/ArchwayDashboard";
 import NeutronDashboard from "./_chain/NeutronDashboard";

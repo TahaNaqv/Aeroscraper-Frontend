@@ -150,7 +150,3 @@ export const BaseCoinByClient: Record<ClientEnum, BaseCoin> = {
         ausdDecimal: 18
     }
 }
-
-export const getBaseCoinByClient = (clientType?: ClientEnum) => {
-    return clientType && BaseCoinByClient[clientType];
-}

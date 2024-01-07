@@ -1,10 +1,10 @@
 import { Logo } from "@/components/Icons/Icons"
 import { TowerAnimation } from "@/components/Icons/TowerAnimation"
-import { ClientEnum } from "@/types/types"
 import { FC } from "react"
 import Text from "@/components/Texts/Text"
+import { ChainName } from "@/enums/Chain"
 
-export const PrimaryTheme: FC<{ clientType: ClientEnum | undefined }> = ({ clientType }) => {
+export const PrimaryTheme: FC<{ selectedChainName: ChainName | undefined }> = ({ selectedChainName }) => {
 
   return <div className="px-8">
     <TowerAnimation />
@@ -16,19 +16,19 @@ export const PrimaryTheme: FC<{ clientType: ClientEnum | undefined }> = ({ clien
         <Text size='3xl'>Aeroscraper</Text>
         <Logo className='lg:w-[72px] lg:h-[72px] w-[64px] h-[64px]' />
       </div>
-      {clientType && (
-        <div className={`flex items-center absolute ${clientType === ClientEnum.ARCHWAY ? "top-20 right-32" : clientType === ClientEnum.NEUTRON ? "top-[84px] right-32" : clientType === ClientEnum.INJECTIVE ? "top-[90px] right-32" : "top-14 right-40"}`}>
+      {selectedChainName && (
+        <div className={`flex items-center absolute ${selectedChainName === ChainName.ARCHWAY ? "top-20 right-32" : selectedChainName === ChainName.NEUTRON ? "top-[84px] right-32" : selectedChainName === ChainName.INJECTIVE ? "top-[90px] right-32" : "top-14 right-40"}`}>
           <Text size='lg'>on</Text>
           {
-            clientType == ClientEnum.ARCHWAY ?
-              <img alt={clientType} src={"/images/token-images/archway.svg"} className='w-full h-12 -ml-1' /> :
-              clientType == ClientEnum.NEUTRON ?
-                <img alt={clientType} src={"/images/token-images/neutron-network.svg"} className='w-full h-5 ml-2' />
+            selectedChainName == ChainName.ARCHWAY ?
+              <img alt={selectedChainName} src={"/images/token-images/archway.svg"} className='w-full h-12 -ml-1' /> :
+              selectedChainName == ChainName.NEUTRON ?
+                <img alt={selectedChainName} src={"/images/token-images/neutron-network.svg"} className='w-full h-5 ml-2' />
                 :
-                clientType == ClientEnum.INJECTIVE ?
-                  <img alt={clientType} src={"/images/token-images/injective.svg"} className='w-full h-5 ml-2' />
+                selectedChainName == ChainName.INJECTIVE ?
+                  <img alt={selectedChainName} src={"/images/token-images/injective.svg"} className='w-full h-5 ml-2' />
                   :
-                  <img alt={clientType} src={"/images/token-images/sei-red.svg"} className='w-full h-24 -ml-2' />
+                  <img alt={selectedChainName} src={"/images/token-images/sei-red.svg"} className='w-full h-24 -ml-2' />
 
           }
         </div>

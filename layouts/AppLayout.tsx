@@ -13,9 +13,9 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
     const { selectedChainName } = useChainAdapter();
 
     const chainTheme: Record<ChainName, ReactNode> = {
-        [ChainName.SEI]: <PrimaryTheme clientType={ClientEnum.SEI} />,
+        [ChainName.SEI]: <PrimaryTheme selectedChainName={ChainName.SEI} />,
         [ChainName.ARCHWAY]: <ArchwayTheme />,
-        [ChainName.NEUTRON]: <PrimaryTheme clientType={ClientEnum.NEUTRON} />,
+        [ChainName.NEUTRON]: <PrimaryTheme selectedChainName={ChainName.NEUTRON} />,
         [ChainName.INJECTIVE]: <InjeciveTheme />,
     }
 

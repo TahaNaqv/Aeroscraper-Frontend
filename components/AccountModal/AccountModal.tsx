@@ -13,10 +13,11 @@ import Loading from "../Loading/Loading";
 import GradientButton from "../Buttons/GradientButton";
 import ProfilePhotoSlider from "./ProfilePhotosSlider";
 import { AUSD_PRICE } from "@/utils/contractUtils";
-import { ClientEnum } from "@/types/types";
 import { ClientTransactionUrlByName } from "@/constants/walletConstants";
 import useChainAdapter from "@/hooks/useChainAdapter";
 import { useProfile } from "@/contexts/ProfileProvider";
+import { TransactionDomainByChainName } from "@/constants/chainConstants";
+import { ChainName } from "@/enums/Chain";
 
 interface Props {
     showModal: boolean,
@@ -29,7 +30,7 @@ const AccountModal: FC<Props> = (props: Props) => {
     const avatarSelectRef = useRef<HTMLDivElement>(null);
     const qrCodeViewRef = useRef<HTMLDivElement>(null);
 
-    const { wallet, username, address, baseCoin } = useChainAdapter();
+    const { wallet, username, address, baseCoin, selectedChainName } = useChainAdapter();
     const { profileDetail, setProfileDetail } = useProfile();
 
     const [avatarSelectionOpen, setAvatarSelectionOpen] = useState(false);
@@ -66,10 +67,6 @@ const AccountModal: FC<Props> = (props: Props) => {
     }
 
     const disconnect = () => {
-        keplr.disconnect();
-        leap.disconnect();
-        fin.disconnect();
-        compass.disconnect();
         setProfileDetail(undefined);
         localStorage.removeItem("profile-detail");
         closeModal();
@@ -131,14 +128,7 @@ const AccountModal: FC<Props> = (props: Props) => {
     useOutsideHandler(avatarSelectRef, closeAvatarSelection);
     useOutsideHandler(qrCodeViewRef, closeQrCodeview);
 
-    let clientType = "INJECTIVE"
-    useEffect(() => {
-        if (typeof window !== "undefined") {
-            clientType = localStorage.getItem("selectedClientType") as ClientEnum;
-        }
-    }, [])
-    //@ts-ignore
-    let scanDomain = ClientTransactionUrlByName[clientType]?.accountUrl
+    let scanDomain = TransactionDomainByChainName[selectedChainName ?? ChainName.INJECTIVE]?.accountUrl
 
     return (
         <WaveModal layoutId="profile" title="Profile" showModal={props.showModal} onClose={closeModal}>
@@ -196,7 +186,7 @@ const AccountModal: FC<Props> = (props: Props) => {
                         <div className='flex items-center justify-between'>
                             <Text size='2xl' textColor='text-dark-silver'>Wallet</Text>
                             <div className='flex items-center gap-6'>
-                                <TooltipWrapper title={ClientEnum.ARCHWAY === clientType ? "MintScan" : "SeiScan"}>
+                                <TooltipWrapper title={ChainName.ARCHWAY === selectedChainName ? "MintScan" : "SeiScan"}>
                                     <a href={`${scanDomain}${address}`} target='_blank' rel="noreferrer" className='w-6 h-6'>
                                         <img alt='link' src="/images/external-link.svg" className='w-full h-full object-contain' />
                                     </a>

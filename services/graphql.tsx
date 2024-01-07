@@ -7,9 +7,9 @@ import {
 } from "@/types/types";
 import { request, gql } from "graphql-request";
 
-export default function graphql({selectedChainName} : {selectedChainName: ChainName}) {
+export default function graphql({ selectedChainName = ChainName.INJECTIVE }: { selectedChainName?: ChainName }) {
 
-  
+
   const URL = (): string => {
     switch (selectedChainName) {
       case ChainName.ARCHWAY:

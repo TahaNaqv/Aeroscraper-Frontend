@@ -6,7 +6,7 @@ import { TableHeaderCol } from '@/components/Table/TableHeaderCol';
 import { useNotification } from '@/contexts/NotificationProvider';
 import useAppContract from '@/contracts/app/useAppContract';
 
-import { ClientEnum, RiskyTroves } from '@/types/types';
+import { RiskyTroves } from '@/types/types';
 import { getIsInjectiveResponse, convertAmount, getRatioColor } from '@/utils/contractUtils';
 import { getCroppedString } from '@/utils/stringUtils';
 import React, { FC, useCallback, useEffect, useState } from 'react'

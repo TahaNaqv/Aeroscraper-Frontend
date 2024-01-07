@@ -5,7 +5,6 @@ import Text from '@/components/Texts/Text';
 import { BellIcon, RedDotIcon } from '@/components/Icons/Icons';
 import { INotification, useNotification } from '@/contexts/NotificationProvider';
 import Link from 'next/link';
-import { ClientEnum } from '@/types/types';
 import { ClientTransactionUrlByName } from '@/constants/walletConstants';
 import useChainAdapter from '@/hooks/useChainAdapter';
 import { ChainName } from '@/enums/Chain';
