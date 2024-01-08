@@ -47,7 +47,7 @@ const ArchwayTheme = () => {
 
   const disconnectWallet = () => {
     disconnect();
-
+    localStorage.removeItem("selectedChainName");
     localStorage.removeItem("profile-detail");
   }
 

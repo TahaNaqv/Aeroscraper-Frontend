@@ -35,7 +35,7 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
     const { baseCoin } = useChainAdapter();
     const {
         selectedChainName,
-        setSelectedChainName,
+        selectChainName,
         chain,
         walletRepo,
         isWalletConnected,
@@ -112,12 +112,12 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
         setShowDownloadExtension(undefined);
         if (!isWalletConnected) {
             //Reset client type selection
-            setSelectedChainName(undefined);
+            selectChainName(undefined);
         }
     }
 
     const resetChain = () => {
-        setSelectedChainName(undefined);
+        selectChainName(undefined);
     }
 
     useOutsideHandler(ref, closeWalletSelection);
@@ -317,7 +317,7 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
                                             isNil(selectedChainName) && availableChains.map((chain, idx) => {
                                                 return <Button
                                                     key={idx}
-                                                    onClick={() => { setSelectedChainName(chain.chain_name as ChainName) }}
+                                                    onClick={() => { selectChainName(chain.chain_name as ChainName) }}
                                                     className={`${selectedChainName !== ChainName.INJECTIVE ? "md:flex hidden" : ""}`}
                                                     onMouseEnter={() => setOnHoverChain(chain.chain_name as ChainName)}
                                                     onMouseLeave={() => setOnHoverChain(null)}

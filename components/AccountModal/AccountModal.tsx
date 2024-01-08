@@ -30,7 +30,7 @@ const AccountModal: FC<Props> = (props: Props) => {
     const avatarSelectRef = useRef<HTMLDivElement>(null);
     const qrCodeViewRef = useRef<HTMLDivElement>(null);
 
-    const { wallet, username, address, baseCoin, selectedChainName } = useChainAdapter();
+    const { wallet, username, address, baseCoin, selectedChainName, disconnect } = useChainAdapter();
     const { profileDetail, setProfileDetail } = useProfile();
 
     const [avatarSelectionOpen, setAvatarSelectionOpen] = useState(false);
@@ -66,9 +66,11 @@ const AccountModal: FC<Props> = (props: Props) => {
         props.onClose();
     }
 
-    const disconnect = () => {
+    const logout = () => {
+        disconnect();
         setProfileDetail(undefined);
         localStorage.removeItem("profile-detail");
+        localStorage.removeItem("selectedChainName");
         closeModal();
     }
 
@@ -197,7 +199,7 @@ const AccountModal: FC<Props> = (props: Props) => {
                                     </button>
                                 </TooltipWrapper>
                                 <TooltipWrapper title='Log Out'>
-                                    <button className='w-6 h-6' onClick={disconnect}>
+                                    <button className='w-6 h-6' onClick={logout}>
                                         <img alt='exit' src="/images/exit.svg" className='w-full h-full object-contain' />
                                     </button>
                                 </TooltipWrapper>

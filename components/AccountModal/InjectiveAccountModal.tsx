@@ -74,6 +74,7 @@ const AccountModal: FC<Props> = (props: Props) => {
     disconnect();
     setProfileDetail(undefined);
     localStorage.removeItem("profile-detail");
+    localStorage.removeItem("selectedChainName");
     closeModal();
   }
 

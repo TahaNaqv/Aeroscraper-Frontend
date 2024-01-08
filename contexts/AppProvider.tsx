@@ -1,28 +1,39 @@
 import { ChainName } from "@/enums/Chain";
-import { PropsWithChildren, createContext, useContext, useMemo, useState } from "react";
+import { isEmpty, isNil } from "lodash";
+import { PropsWithChildren, createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 export type AppContextState = {
     selectedChainName?: ChainName;
-    setSelectedChainName: (chainName?: ChainName) => void;
+    selectChainName: (chainName?: ChainName) => void;
 }
 
 const AppContext = createContext<AppContextState>({
     selectedChainName: ChainName.INJECTIVE,
-    setSelectedChainName: () => { }
+    selectChainName: () => { }
 });
 
 const AppProvider: React.FC<PropsWithChildren> = ({ children }) => {
     const [selectedChainName, setSelectedChainName] = useState<ChainName>();
 
+    const selectChainName = useCallback((chainName?: ChainName) => {
+        setSelectedChainName(chainName);
+        localStorage.setItem('selectedChainName', chainName || '');
+    }, [])
+
     const value = useMemo<AppContextState>(() => ({
         selectedChainName,
-        setSelectedChainName
+        selectChainName
     }), [
         selectedChainName,
-        setSelectedChainName
+        selectChainName
     ])
 
-    //TODO: Get prev selected chain from local storage or rehydrate from cosmos-kit
+    useEffect(() => {
+        const savedChainName = localStorage.getItem('selectedChainName');
+        if (!isNil(savedChainName) && !isEmpty(savedChainName)) {
+            setSelectedChainName(savedChainName as ChainName);
+        }
+    }, [])
 
     return (
         <AppContext.Provider value={value}>
