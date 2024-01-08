@@ -131,31 +131,31 @@ const InjectiveStatisticSide: FC<Props> = ({ basePrice }) => {
           layout
           initial={{ opacity: 0, translateY: -10 }}
           animate={{ opacity: 1, translateY: 0 }}
-          className="grid grid-cols-2 justify-center overflow-hidden gap-x-16 gap-y-4 mt-6">
+          className="grid grid-cols-2 justify-center overflow-hidden gap-x-16 gap-y-4 mt-6 z-[50]">
           <InjectiveStatisticCard
             title="Management Fee"
             description="0.5%"
             className="w-[191px] h-14"
             tooltip="This amount is deducted from the collateral amount as a management fee. There are no recurring fees for borrowing, which is thus interest-free."
-            tooltipPlacement="right-bottom"
+            tooltipPlacement="bottom"
           />
           <InjectiveStatisticCard
             title="Liquidation Threshold"
             description="115%"
             className="w-[191px] h-14"
             tooltip="Liquidation Threshold Ratio"
-            tooltipPlacement="top"
+            tooltipPlacement="bottom"
           />
           <InjectiveStatisticCard
             title="Total Value Locked"
             description={isNil(baseCoin) ? '-' : `${Number(pageData.totalCollateralAmount).toFixed(6)} ${baseCoin.name}`}
             className="w-[191px] h-14"
             tooltip="The Total Value Locked (TVL) is the total value of sei locked as collateral in the system."
-            tooltipPlacement="top"
+            tooltipPlacement="bottom"
           />
           <InjectiveStatisticCard
             title="AUSD in Stability Pool"
-            tooltipPlacement="top"
+            tooltipPlacement="left-bottom"
             description={Number(pageData.totalStakedAmount).toFixed(3).toString()}
             className="w-[191px] h-14"
             tooltip="The total AUSD currently held in the Stability Pool."
@@ -165,11 +165,11 @@ const InjectiveStatisticSide: FC<Props> = ({ basePrice }) => {
             description={`${isNil(walletType) ? "-" : pageData.totalTrovesAmount}`}
             className="w-[191px] h-14"
             tooltip="The total number of active Troves in the system."
-            tooltipPlacement="right-bottom"
+            tooltipPlacement="right-top"
           />
           <InjectiveStatisticCard
             title="Total Collateral Ratio"
-            tooltipPlacement="top"
+            tooltipPlacement="left-top"
             description={`${isFinite(Number(((pageData.totalCollateralAmount * basePrice) / pageData.totalDebtAmount) * 100)) ? Number(((pageData.totalCollateralAmount * basePrice) / pageData.totalDebtAmount) * 100).toFixed(3) : 0} %`}
             className="w-[191px] h-14"
             tooltip={`The ratio of the Dollar value of the entire system collateral at the current ${baseCoin?.name}:AUSD price, to the entire system debt.`}
