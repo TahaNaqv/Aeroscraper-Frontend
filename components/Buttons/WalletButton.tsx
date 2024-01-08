@@ -323,7 +323,7 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
                                 (<motion.div
                                     initial={{ opacity: 0.1 }}
                                     animate={{ opacity: 1 }}
-                                    className="mx-10 md:mx-[140px]"
+                                    className="mx-10 md:mx-[140px] md:block hidden"
                                 >
                                     <Text size='4xl' textColor='text-white' className='mb-4 md:mb-10 mt-4'>How do I connect my wallet?</Text>
                                     <div className='flex justify-center items-center gap-16 mb-8'>
@@ -351,6 +351,7 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
                                                 return <Button
                                                     key={idx}
                                                     onClick={() => { selectClient(clientType); }}
+                                                    className={`${clientType !== ClientEnum.INJECTIVE ? "md:flex hidden" : ""}`}
                                                     onMouseEnter={() => setOnHoverChain(clientType)}
                                                     onMouseLeave={() => setOnHoverChain(null)}
                                                     startIcon={<img alt={clientType} src={BaseCoinByClient[clientType].image} className='w-8 h-8' />}

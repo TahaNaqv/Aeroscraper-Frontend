@@ -22,7 +22,7 @@ const Button: FC<ButtonProps> = ({
   return (
     <button
       disabled={loading}
-      className={`rounded border ${active ? "border-[#E4462D]" : "border-white/10"} px-6 py-2 space-x-2 flex items-center ${rest.onClick ? "hover:gradient-background" : "cursor-default"} mx-auto`}
+      className={`rounded border ${className} ${active ? "border-[#E4462D]" : "border-white/10"} px-6 py-2 space-x-2 flex items-center ${rest.onClick ? "hover:gradient-background" : "cursor-default"} mx-auto`}
       {...rest}
     >
       {startIcon}

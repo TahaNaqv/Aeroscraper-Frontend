@@ -46,13 +46,13 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
   const collacteralRatio = isFinite(collacteralRatioCalculate) ? collacteralRatioCalculate : 0;
 
   const confirmDisabled = useMemo(() =>
-    borrowAmount <= 0 ||
-    borrowAmount > 999 ||
-    openTroveAmount <= 0 ||
-    openTroveAmount > 999 ||
-    collacteralRatio < 1.15 ||
-    collacteralRatio < (pageData.minCollateralRatio - 0.00001),
-    [openTroveAmount, borrowAmount, collacteralRatio, pageData])
+  borrowAmount <= 0 ||
+  openTroveAmount <= 0 ||
+  borrowAmount > 999 ||
+  openTroveAmount > 999 ||
+  collacteralRatio < 1.15 ||
+  collacteralRatio < (pageData.minCollateralRatio - 0.00001),
+  [openTroveAmount, borrowAmount, collacteralRatio, pageData])
 
   const withdrawDepositDisabled = useMemo(() => collateralAmount <= 0 || collateralAmount > 999, [collateralAmount])
   const repayBorrowDisabled = useMemo(() => borrowingAmount <= 0 || borrowingAmount > 999, [borrowingAmount])

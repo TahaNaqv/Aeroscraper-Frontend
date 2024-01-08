@@ -284,7 +284,7 @@ const TroveModal: FC<Props> = ({ open, pageData, onClose, getPageData, basePrice
                                         </div>
                                         <div className="flex items-center justify-end pr-4 gap-4">
                                             <OutlinedButton
-                                                disabled={repayBorrowDisabled}
+                                                disabled={withdrawDepositDisabled}
                                                 disabledText={"Enter the AUSD amount. 999 AUSD is the upper limit for now."}
                                                 loading={processLoading}
                                                 onClick={queryWithdraw}
@@ -293,7 +293,7 @@ const TroveModal: FC<Props> = ({ open, pageData, onClose, getPageData, basePrice
                                                 <Text>Withdraw</Text>
                                             </OutlinedButton>
                                             <GradientButton
-                                                disabled={repayBorrowDisabled}
+                                                disabled={withdrawDepositDisabled}
                                                 disabledText={"Enter the AUSD amount. 999 AUSD is the upper limit for now."}
                                                 loading={processLoading}
                                                 onClick={queryAddColletral}
