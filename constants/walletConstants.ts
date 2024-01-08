@@ -2,6 +2,7 @@ import { ChainName } from "@/enums/Chain";
 import { WalletType } from "@/enums/WalletType";
 import { WalletTypeV2 } from "@/enums/WalletTypeV2";
 import { BaseCoin, ClientEnum } from "@/types/types";
+import { Wallet } from "@injectivelabs/wallet-ts";
 
 export const WalletByClient: Record<ClientEnum, WalletType[]> = {
     [ClientEnum.SEI]: [
@@ -45,6 +46,13 @@ export const WalletsByChainName: Record<ChainName, WalletTypeV2[]> = {
         WalletTypeV2.KEPLR,
         // WalletTypeV2.NINJI
     ]
+}
+
+export const InjSdkWalletByCosmosWallet: Record<WalletTypeV2, Wallet> = {
+    [WalletTypeV2.KEPLR]: Wallet.Keplr,
+    [WalletTypeV2.LEAP]: Wallet.Leap,
+    [WalletTypeV2.METAMASK]: Wallet.Metamask,
+    [WalletTypeV2.NINJI]: Wallet.Ninji
 }
 
 export const WalletImagesByName: Record<WalletType, { image: string, thumbnail: string }> = {

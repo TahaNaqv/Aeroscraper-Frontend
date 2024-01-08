@@ -9,6 +9,8 @@ import { wallets as keplrWallets } from '@cosmos-kit/keplr';
 import { wallets as leapWallets } from '@cosmos-kit/leap';
 import { wallets as ninjiWallets } from '@cosmos-kit/ninji';
 import { wallets as cosmos_extension_mm } from "@cosmos-kit/cosmos-extension-metamask";
+import { ChainName } from '@/enums/Chain';
+import { GasPrice } from '@cosmjs/stargate';
 
 const Providers: FC<PropsWithChildren> = ({ children }) => {
     return (
@@ -21,6 +23,32 @@ const Providers: FC<PropsWithChildren> = ({ children }) => {
                 ninjiWallets[0],
                 ...cosmos_extension_mm,
             ]}
+            signerOptions={{
+                signingCosmwasm: (chain) => {
+                    switch (chain.chain_name) {
+                        case ChainName.INJECTIVE:
+                            return {
+                                gasPrice: GasPrice.fromString("0.025inj"),
+                            }
+                        case ChainName.SEI:
+                            return {
+                                gasPrice: GasPrice.fromString("0.025sei"),
+                            }
+                        case ChainName.ARCHWAY:
+                            return {
+                                gasPrice: GasPrice.fromString("0.025uatom"),
+                            }
+                        case ChainName.NEUTRON:
+                            return {
+                                gasPrice: GasPrice.fromString("0.025untrn"),
+                            }
+                        default:
+                            return {
+                                gasPrice: GasPrice.fromString("0.025inj"),
+                            }
+                    }
+                }
+            }}
         >
             <AppProvider>
                 <NotificationProvider>

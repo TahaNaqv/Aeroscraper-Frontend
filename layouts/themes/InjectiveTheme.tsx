@@ -18,8 +18,6 @@ const InjeciveTheme = () => {
   const [basePrice, setBasePrice] = useState(0);
   const { pageData, getPageData } = usePageData({ basePrice });
 
-  console.log(pageData)
-
   const [accountModal, setAccountModal] = useState(false);
 
   useEffect(() => {
