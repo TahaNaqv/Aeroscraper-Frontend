@@ -12,7 +12,7 @@ import { MsgBroadcaster, WalletStrategy } from "@injectivelabs/wallet-ts";
 import { WalletType } from "@/enums/WalletType";
 import { TotalCollateralModel } from "@/app/app/dashboard/_types/types";
 import { ChainName } from "@/enums/Chain";
-import { WalletTypeV2 } from "@/enums/WalletTypeV2";
+import { WalletType } from "@/enums/WalletType";
 import { Chain } from '@chain-registry/types';
 import { BaseCoinByChainName, getContractAddressesByChain } from "@/constants/chainConstants";
 
@@ -20,7 +20,7 @@ export const getAppEthContract = (
     chain: Chain,
     baseCoin: BaseCoin,
     chainName?: ChainName,
-    walletType?: WalletTypeV2
+    walletType?: WalletType
 ) => {
     const { contractAddress, oraclecontractAddress, ausdContractAddress } = getContractAddressesByChain(chainName);
     const ENDPOINTS = getNetworkEndpoints(Network.TestnetSentry);

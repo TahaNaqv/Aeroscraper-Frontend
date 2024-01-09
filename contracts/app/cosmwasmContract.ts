@@ -15,18 +15,18 @@ import { WalletType } from "@/enums/WalletType";
 import { TotalCollateralModel } from "@/app/app/dashboard/_types/types";
 import { ChainName } from "@/enums/Chain";
 import { getContractAddressesByChain } from "@/constants/chainConstants";
-import { WalletTypeV2 } from "@/enums/WalletTypeV2";
+import { WalletType } from "@/enums/WalletType";
 import { InjSdkWalletByCosmosWallet } from "@/constants/walletConstants";
 
 export const getAppContract = (
     client: SigningArchwayClient | SigningCosmWasmClient,
     baseCoin: BaseCoin,
     chainName?: ChainName,
-    walletType?: WalletTypeV2
+    walletType?: WalletType
 ) => {
     const { contractAddress, oraclecontractAddress, ausdContractAddress } = getContractAddressesByChain(chainName);
 
-    const injSdkWallet = walletType ? InjSdkWalletByCosmosWallet[walletType as WalletTypeV2] : Wallet.Keplr;
+    const injSdkWallet = walletType ? InjSdkWalletByCosmosWallet[walletType as WalletType] : Wallet.Keplr;
     const walletStrategy = new WalletStrategy({ chainId: ChainId.Testnet, wallet: injSdkWallet });
 
     const NETWORK = Network.TestnetSentry;

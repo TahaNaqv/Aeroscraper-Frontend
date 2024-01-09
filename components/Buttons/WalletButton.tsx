@@ -16,8 +16,8 @@ import { capitalizeFirstLetter } from '@/utils/stringUtils'
 import TransactionButton from './TransactionButton'
 import useChainAdapter from '@/hooks/useChainAdapter'
 import { ChainName } from '@/enums/Chain'
-import { MissingChainImageByName, availableChains } from '@/constants/chainConstants'
-import { WalletTypeV2 } from '@/enums/WalletTypeV2'
+import { ChainImagesByName, availableChains } from '@/constants/chainConstants'
+import { WalletType } from '@/enums/WalletType'
 
 type Props = {
     ausdBalance?: number;
@@ -43,17 +43,17 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
 
     const [accountModal, setAccountModal] = useState(false);
 
-    const [walletExtensions, setWalletExtensions] = useState<{ installed: { name: WalletTypeV2 }[], otherWallets: { name: WalletTypeV2, downloadLink: string }[] } | undefined>();
-    const [showDownloadExtension, setShowDownloadExtension] = useState<{ name: WalletTypeV2, downloadLink: string } | undefined>();
+    const [walletExtensions, setWalletExtensions] = useState<{ installed: { name: WalletType }[], otherWallets: { name: WalletType, downloadLink: string }[] } | undefined>();
+    const [showDownloadExtension, setShowDownloadExtension] = useState<{ name: WalletType, downloadLink: string } | undefined>();
 
     const [onHoverChain, setOnHoverChain] = useState<ChainName | null>();
 
     const filteredWallets = useMemo(() => walletRepo.wallets
-        .filter(wallet => selectedChainName && WalletsByChainName[selectedChainName].includes(wallet.walletInfo.name as WalletTypeV2)),
+        .filter(wallet => selectedChainName && WalletsByChainName[selectedChainName].includes(wallet.walletInfo.name as WalletType)),
         [walletRepo, selectedChainName])
 
     const hoveredChainWallets = useMemo(() => walletRepo.wallets
-        .filter(wallet => onHoverChain && WalletsByChainName[onHoverChain].includes(wallet.walletInfo.name as WalletTypeV2))
+        .filter(wallet => onHoverChain && WalletsByChainName[onHoverChain].includes(wallet.walletInfo.name as WalletType))
         , [onHoverChain, walletRepo])
 
     const {
@@ -79,14 +79,14 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
     const checkWalletExtensions = () => {
         const anyWindow: any = window;
 
-        const walletExtensions: { installed: { name: WalletTypeV2 }[], otherWallets: { name: WalletTypeV2, downloadLink: string }[] } = { installed: [], otherWallets: [] };
+        const walletExtensions: { installed: { name: WalletType }[], otherWallets: { name: WalletType, downloadLink: string }[] } = { installed: [], otherWallets: [] };
 
-        anyWindow.keplr?.getOfflineSigner ? walletExtensions.installed.push({ name: WalletTypeV2.KEPLR }) : walletExtensions.otherWallets.push({ name: WalletTypeV2.KEPLR, downloadLink: "https://www.keplr.app/" });
-        anyWindow.leap?.getOfflineSigner ? walletExtensions.installed.push({ name: WalletTypeV2.LEAP }) : walletExtensions.otherWallets.push({ name: WalletTypeV2.LEAP, downloadLink: "https://www.leapwallet.io/" });
+        anyWindow.keplr?.getOfflineSigner ? walletExtensions.installed.push({ name: WalletType.KEPLR }) : walletExtensions.otherWallets.push({ name: WalletType.KEPLR, downloadLink: "https://www.keplr.app/" });
+        anyWindow.leap?.getOfflineSigner ? walletExtensions.installed.push({ name: WalletType.LEAP }) : walletExtensions.otherWallets.push({ name: WalletType.LEAP, downloadLink: "https://www.leapwallet.io/" });
         // anyWindow.fin?.getOfflineSigner ? walletExtensions.installed.push({ name: WalletType.FIN }) : walletExtensions.otherWallets.push({ name: WalletType.FIN, downloadLink: "https://chrome.google.com/webstore/detail/fin-wallet-for-sei/dbgnhckhnppddckangcjbkjnlddbjkna" });
         // anyWindow.compass?.getOfflineSigner ? walletExtensions.installed.push({ name: WalletType.COMPASS }) : walletExtensions.otherWallets.push({ name: WalletType.COMPASS, downloadLink: "https://chrome.google.com/webstore/detail/compass-wallet-for-sei/anokgmphncpekkhclmingpimjmcooifb" });
-        anyWindow.ethereum ? walletExtensions.installed.push({ name: WalletTypeV2.METAMASK }) : walletExtensions.otherWallets.push({ name: WalletTypeV2.METAMASK, downloadLink: "https://chromewebstore.google.com/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?pli=1" });
-        anyWindow.ninji ? walletExtensions.installed.push({ name: WalletTypeV2.NINJI }) : walletExtensions.otherWallets.push({ name: WalletTypeV2.NINJI, downloadLink: "https://chromewebstore.google.com/detail/ninji-wallet/kkpllbgjhchghjapjbinnoddmciocphm" });
+        anyWindow.ethereum ? walletExtensions.installed.push({ name: WalletType.METAMASK }) : walletExtensions.otherWallets.push({ name: WalletType.METAMASK, downloadLink: "https://chromewebstore.google.com/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?pli=1" });
+        anyWindow.ninji ? walletExtensions.installed.push({ name: WalletType.NINJI }) : walletExtensions.otherWallets.push({ name: WalletType.NINJI, downloadLink: "https://chromewebstore.google.com/detail/ninji-wallet/kkpllbgjhchghjapjbinnoddmciocphm" });
 
         setWalletExtensions(walletExtensions);
     }
@@ -195,7 +195,7 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
                             <div className={`gap-y-4 flex flex-col mt-10 ${isNil(selectedChainName) ? "hidden" : ""}`}>
                                 {
                                     installedWallets.map((wallet, idx) => {
-                                        return <div key={idx} className={`mr-auto ${wallet.walletInfo.name === WalletTypeV2.LEAP ? "" : "md:inline-block hidden"}`} >
+                                        return <div key={idx} className={`mr-auto ${wallet.walletInfo.name === WalletType.LEAP ? "" : "md:inline-block hidden"}`} >
                                             {idx === 0 && <Text size='base' className='mb-4'>Installed Wallets</Text>}
                                             <Button
                                                 onClick={() => wallet.connect()}
@@ -208,10 +208,10 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
                                 }
                                 {
                                     otherWallets.map((wallet, idx) => (
-                                        <div key={idx} className={`mr-auto ${wallet.walletInfo.name === WalletTypeV2.LEAP ? "" : "md:inline-block hidden"}`}>
+                                        <div key={idx} className={`mr-auto ${wallet.walletInfo.name === WalletType.LEAP ? "" : "md:inline-block hidden"}`}>
                                             {idx === 0 && <Text size='base' className='mb-4'>Other Wallets</Text>}
                                             <Button
-                                                onClick={() => { setShowDownloadExtension({ name: wallet.walletPrettyName as WalletTypeV2, downloadLink: walletExtensions?.otherWallets.find(i => i.name === wallet.walletInfo.name)?.downloadLink! }); }}
+                                                onClick={() => { setShowDownloadExtension({ name: wallet.walletPrettyName as WalletType, downloadLink: walletExtensions?.otherWallets.find(i => i.name === wallet.walletInfo.name)?.downloadLink! }); }}
                                                 startIcon={<img className='w-6 h-6 object-contain' alt={wallet.walletInfo.name} src={wallet.walletInfo.logo as string} />}
                                             >
                                                 <span className='text-[18px] font-medium text-ghost-white'>{capitalizeFirstLetter(wallet.walletPrettyName)}</span>
@@ -257,7 +257,7 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
                                                 {idx === 0 && <Text size='base' className='mb-4'>Other Wallets</Text>}
                                                 <Button
                                                     disabled
-                                                    onClick={() => { setShowDownloadExtension({ name: wallet.walletPrettyName as WalletTypeV2, downloadLink: walletExtensions?.otherWallets.find(i => i.name === wallet.walletInfo.name)?.downloadLink! }); }}
+                                                    onClick={() => { setShowDownloadExtension({ name: wallet.walletPrettyName as WalletType, downloadLink: walletExtensions?.otherWallets.find(i => i.name === wallet.walletInfo.name)?.downloadLink! }); }}
                                                     startIcon={<img className='w-6 h-6 object-contain' alt={wallet.walletInfo.name} src={wallet.walletInfo.logo as string} />}
                                                 >
                                                     <span className='text-[18px] font-medium text-ghost-white'>{capitalizeFirstLetter(wallet.walletPrettyName)}</span>
@@ -297,7 +297,7 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
                                     <div className='flex justify-center items-center gap-16 mb-8'>
                                         {
                                             filteredWallets.map((wallet, idx) => {
-                                                return <img alt={wallet.walletInfo.name} key={idx} className={`w-6 h-6 object-contain ${wallet.walletInfo.name === WalletTypeV2.LEAP ? "" : "md:inline-block hidden"}`} src={wallet.walletInfo.logo as string} />
+                                                return <img alt={wallet.walletInfo.name} key={idx} className={`w-6 h-6 object-contain ${wallet.walletInfo.name === WalletType.LEAP ? "" : "md:inline-block hidden"}`} src={wallet.walletInfo.logo as string} />
                                             })
                                         }
                                     </div>
@@ -318,7 +318,7 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
                                                     className={`${selectedChainName !== ChainName.INJECTIVE ? "md:flex hidden" : ""}`}
                                                     onMouseEnter={() => setOnHoverChain(chain.chain_name as ChainName)}
                                                     onMouseLeave={() => setOnHoverChain(null)}
-                                                    startIcon={<img alt={chain.chain_name} src={chain.logo_URIs?.png ?? MissingChainImageByName[chain.chain_name]} className='w-8 h-8' />}
+                                                    startIcon={<img alt={chain.chain_name} src={ChainImagesByName[chain.chain_name as ChainName]} className='w-8 h-8' />}
                                                 >
                                                     <span className='text-[18px] font-medium text-ghost-white uppercase'>{chain.pretty_name}</span>
                                                 </Button>
@@ -333,7 +333,7 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
                             <Text size='base'>Chain</Text>
                             <Button
                                 onClick={resetChain}
-                                startIcon={<img alt={chain.pretty_name} src={chain.logo_URIs?.png ?? MissingChainImageByName[chain.chain_name]} className='w-6 h-6' />}
+                                startIcon={<img alt={chain.pretty_name} src={ChainImagesByName[chain.chain_name as ChainName]} className='w-6 h-6' />}
                             >
                                 {capitalizeFirstLetter(chain.pretty_name.toLocaleLowerCase())}
                             </Button>

@@ -5,7 +5,6 @@ import NotificationDropdown from '@/app/app/dashboard/_components/NotificationDr
 import usePageData from '@/contracts/app/usePageData';
 import { PriceServiceConnection } from '@pythnetwork/price-service-client';
 import { isNil } from 'lodash';
-import { WalletInfoMap, WalletType } from '@/enums/WalletType';
 import InjectiveAccountModal from '@/components/AccountModal/InjectiveAccountModal';
 import { convertAmount } from '@/utils/contractUtils';
 import InjectiveNotification from '@/components/Modal/InjectiveNotification';

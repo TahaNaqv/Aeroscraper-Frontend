@@ -5,7 +5,7 @@ import { SigningArchwayClient } from "@archwayhq/arch3.js/build";
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 import { getAppEthContract } from "./ethereumContract";
 import useChainAdapter from "@/hooks/useChainAdapter";
-import { WalletTypeV2 } from "@/enums/WalletTypeV2";
+import { WalletType } from "@/enums/WalletType";
 
 const useAppContract = () => {
     const {
@@ -20,9 +20,9 @@ const useAppContract = () => {
     const [client, setClient] = useState<SigningArchwayClient | SigningCosmWasmClient>();
 
     const contract = useMemo(() => (isWalletConnected && !isNil(baseCoin) && !isNil(client) && !isNil(wallet) && !isNil(chain)) ?
-        wallet.name === WalletTypeV2.METAMASK ?
-            getAppEthContract(chain, baseCoin, selectedChainName, wallet.name as WalletTypeV2)
-            : getAppContract(client, baseCoin, selectedChainName, wallet.name as WalletTypeV2)
+        wallet.name === WalletType.METAMASK ?
+            getAppEthContract(chain, baseCoin, selectedChainName, wallet.name as WalletType)
+            : getAppContract(client, baseCoin, selectedChainName, wallet.name as WalletType)
         : undefined,
         [isWalletConnected, baseCoin, wallet, selectedChainName, chain, client]);
 

@@ -4,10 +4,6 @@ import { chains } from 'chain-registry'
 
 export const availableChains = Object.values(chains).filter(chain => Object.values(ChainName).includes(chain.chain_name as ChainName));
 
-export const MissingChainImageByName: Record<string, string | undefined> = {
-    [ChainName.INJECTIVE]: "https://raw.githubusercontent.com/cosmos/chain-registry/master/injective/images/inj.png"
-}
-
 export const BaseCoinByChainName: Record<ChainName, BaseCoin> = {
     [ChainName.SEI]: {
         name: "SEI",
@@ -95,4 +91,11 @@ export const getContractAddressesByChain = (chainName?: ChainName) => {
         ausdContractAddress: '',
         oraclecontractAddress: '',
     }
+}
+
+export const ChainImagesByName: Record<ChainName, string> = {
+    [ChainName.SEI]: "/images/token-images/sei.png",
+    [ChainName.ARCHWAY]: "/images/token-images/archway-coin.png",
+    [ChainName.INJECTIVE]: "/images/token-images/inj.svg",
+    [ChainName.NEUTRON]: "/images/token-images/neutron.svg",
 }

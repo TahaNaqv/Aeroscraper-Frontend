@@ -4,7 +4,6 @@ import { FC, useMemo, useRef, useState } from "react";
 import { WaveModal } from "../Modal/WaveModal";
 import TooltipWrapper from "./TooltipWrapper";
 import QRCode from 'react-qr-code';
-import { WalletType } from "@/enums/WalletType";
 import { NumericFormat } from "react-number-format";
 import { CounterUp } from "../CounterUp";
 import Text from '../Texts/Text';
@@ -17,6 +16,7 @@ import useChainAdapter from "@/hooks/useChainAdapter";
 import { useProfile } from "@/contexts/ProfileProvider";
 import { TransactionDomainByChainName } from "@/constants/chainConstants";
 import { ChainName } from "@/enums/Chain";
+import { WalletType } from "@/enums/WalletType";
 
 interface Props {
     showModal: boolean,
@@ -321,11 +321,8 @@ export default AccountModal;
 export const WalletIconMap: Record<WalletType, string> = {
     [WalletType.KEPLR]: '/images/wallet-images/keplr-icon.svg',
     [WalletType.LEAP]: '/images/wallet-images/leap-icon.png',
-    [WalletType.FIN]: '/images/wallet-images/fin-icon.png',
-    [WalletType.COMPASS]: '/images/wallet-images/compass-icon.png',
     [WalletType.METAMASK]: 'images/wallet-images/metamask-icon.png',
     [WalletType.NINJI]: 'images/wallet-images/ninji-icon.png',
-    [WalletType.NOT_SELECTED]: ''
 }
 
 const profilePhotos = [
