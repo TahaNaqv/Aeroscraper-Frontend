@@ -35,8 +35,8 @@ const StabilityPoolTab: FC<Props> = ({ pageData, getPageData }) => {
   const [stakeAmount, setStakeAmount] = useState<number>(0);
   const [unstakeAmount, setUnstakeAmount] = useState<number>(0);
 
-  const stakeDisabled = useMemo(() => stakeAmount <= 0 || stakeAmount > 999, [stakeAmount]);
-  const unstakeDisabled = useMemo(() => unstakeAmount <= 0 || unstakeAmount > 999, [unstakeAmount]);
+  const stakeDisabled = useMemo(() => stakeAmount <= 0 || stakeAmount > 999 || stakeAmount > pageData.ausdBalance, [stakeAmount]);
+  const unstakeDisabled = useMemo(() => unstakeAmount <= 0 || unstakeAmount > 999 || unstakeAmount > pageData.ausdBalance, [unstakeAmount]);
 
   const stakePool = async () => {
     setProcessLoading(true);

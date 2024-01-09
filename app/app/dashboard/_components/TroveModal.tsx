@@ -285,7 +285,7 @@ const TroveModal: FC<Props> = ({ open, pageData, onClose, getPageData, basePrice
                                         <div className="flex items-center justify-end pr-4 gap-4">
                                             <OutlinedButton
                                                 disabled={withdrawDepositDisabled}
-                                                disabledText={"Enter the AUSD amount. 999 AUSD is the upper limit for now."}
+                                                disabledText={"Enter the SEI amount."}
                                                 loading={processLoading}
                                                 onClick={queryWithdraw}
                                                 className="min-w-[201px] h-11"
@@ -294,7 +294,7 @@ const TroveModal: FC<Props> = ({ open, pageData, onClose, getPageData, basePrice
                                             </OutlinedButton>
                                             <GradientButton
                                                 disabled={withdrawDepositDisabled}
-                                                disabledText={"Enter the AUSD amount. 999 AUSD is the upper limit for now."}
+                                                disabledText={"Enter the SEI amount."}
                                                 loading={processLoading}
                                                 onClick={queryAddColletral}
                                                 className="min-w-[201px] h-11"
@@ -344,13 +344,13 @@ const TroveModal: FC<Props> = ({ open, pageData, onClose, getPageData, basePrice
                                                 disabled={repayBorrowDisabled}
                                                 loading={processLoading}
                                                 onClick={queryRepay}
-                                                disabledText='Enter the AUSD amount. 999 AUSD is the upper limit for now.'
+                                                disabledText='Enter the AUSD amount.'
                                                 className="min-w-[201px] h-11"
                                             >
                                                 <Text>Repay</Text>
                                             </OutlinedButton>
                                             <GradientButton
-                                                disabledText='Enter the AUSD amount. 999 AUSD is the upper limit for now.'
+                                                disabledText='Enter the AUSD amount.'
                                                 disabled={repayBorrowDisabled}
                                                 loading={processLoading}
                                                 onClick={queryBorrow}

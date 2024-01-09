@@ -55,7 +55,7 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
   [openTroveAmount, borrowAmount, collacteralRatio, pageData])
 
   const withdrawDepositDisabled = useMemo(() => collateralAmount <= 0 || collateralAmount > 999, [collateralAmount])
-  const repayBorrowDisabled = useMemo(() => borrowingAmount <= 0 || borrowingAmount > 999, [borrowingAmount])
+  const repayBorrowDisabled = useMemo(() => borrowingAmount <= 0 || borrowingAmount > 999 || borrowingAmount > pageData.ausdBalance, [borrowingAmount])
 
   const changeOpenTroveAmount = (values: NumberFormatValues) => {
     setOpenTroveAmount(Number(values.value));
@@ -476,7 +476,7 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
               className="min-w-full md:min-w-[375px] h-11 md:mt-10 ml-auto"
               rounded="rounded-lg"
               disabled={confirmDisabled}
-              disabledText={"Fill in both INJ and AUSD amounts. 999 INJ is the upper limit, and 1 AUSD is the lower limit for now."}
+              disabledText={"Fill in both INJ and AUSD amounts. 999 INJ & AUSD is the upper limit, and 1 AUSD is the lower limit for now."}
             >
               <Text>Confirm</Text>
             </GradientButton>

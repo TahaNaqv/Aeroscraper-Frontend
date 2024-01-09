@@ -348,6 +348,10 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
                                                     return null;
                                                 }
 
+                                                if (clientType === ClientEnum.ARCHWAY) { // NEUTRON inj sunumu öncesi disabled yapıldı, tekrar açmak için bu yorum satırı silinebilir
+                                                    return null;
+                                                }
+
                                                 return <Button
                                                     key={idx}
                                                     onClick={() => { selectClient(clientType); }}
