@@ -225,7 +225,7 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
   return (
     <div className='overflow-hidden md:overflow-visible'>
       {
-        !isTroveOpened ?
+        isTroveOpened ?
           <>
             <Text size='3xl'>Manage your collateral</Text>
             <Text size='base' weight='font-regular' className='mt-1'>Mint AUSD or repay your debt.</Text>
