@@ -1,5 +1,8 @@
 import { ChainName } from "@/enums/Chain";
 import { BaseCoin } from "@/types/types";
+import { chains } from 'chain-registry'
+
+export const availableChains = Object.values(chains).filter(chain => Object.values(ChainName).includes(chain.chain_name as ChainName));
 
 export const MissingChainImageByName: Record<string, string | undefined> = {
     [ChainName.INJECTIVE]: "https://raw.githubusercontent.com/cosmos/chain-registry/master/injective/images/inj.png"

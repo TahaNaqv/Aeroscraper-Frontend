@@ -1,31 +1,8 @@
 import { ChainName } from "@/enums/Chain";
 import { WalletType } from "@/enums/WalletType";
 import { WalletTypeV2 } from "@/enums/WalletTypeV2";
-import { BaseCoin, ClientEnum } from "@/types/types";
+import { BaseCoin } from "@/types/types";
 import { Wallet } from "@injectivelabs/wallet-ts";
-
-export const WalletByClient: Record<ClientEnum, WalletType[]> = {
-    [ClientEnum.SEI]: [
-        WalletType.LEAP,
-        WalletType.KEPLR,
-        WalletType.COMPASS,
-        WalletType.FIN
-    ],
-    [ClientEnum.ARCHWAY]: [
-        WalletType.LEAP,
-        WalletType.KEPLR,
-    ],
-    [ClientEnum.NEUTRON]: [
-        WalletType.LEAP,
-        WalletType.KEPLR,
-    ],
-    [ClientEnum.INJECTIVE]: [
-        // WalletType.METAMASK,
-        WalletType.LEAP,
-        WalletType.KEPLR,
-        // WalletType.NINJI
-    ]
-}
 
 export const WalletsByChainName: Record<ChainName, WalletTypeV2[]> = {
     [ChainName.SEI]: [
@@ -83,78 +60,5 @@ export const WalletImagesByName: Record<WalletType, { image: string, thumbnail: 
     [WalletType.NOT_SELECTED]: {
         image: "",
         thumbnail: ""
-    }
-}
-
-export const ClientImagesByName: Record<ClientEnum, { image: string, thumbnail: string }> = {
-    [ClientEnum.SEI]: {
-        image: "/images/token-images/sei-network.png",
-        thumbnail: "sei"
-    },
-    [ClientEnum.ARCHWAY]: {
-        image: "/images/token-images/archway.svg",
-        thumbnail: "archway"
-    },
-    [ClientEnum.NEUTRON]: {
-        image: "/images/token-images/neutron-network.svg",
-        thumbnail: "neutron"
-    },
-    [ClientEnum.INJECTIVE]: {
-        image: "/images/token-images/injective.svg",
-        thumbnail: "injective"
-    }
-}
-
-export const ClientTransactionUrlByName: Record<ClientEnum, { accountUrl: string, txDetailUrl: string }> = {
-    [ClientEnum.SEI]: {
-        txDetailUrl: "https://sei.explorers.guru/transaction/",
-        accountUrl: "https://sei.explorers.guru/account/"
-    },
-    [ClientEnum.ARCHWAY]: {
-        txDetailUrl: "https://www.mintscan.io/archway/transactions/",
-        accountUrl: "https://www.mintscan.io/archway/account/"
-    },
-    [ClientEnum.NEUTRON]: {
-        txDetailUrl: "https://neutron.celat.one/transactions/",
-        accountUrl: "https://neutron.celat.one/account/"
-    },
-    [ClientEnum.INJECTIVE]: {
-        txDetailUrl: "https://testnet.explorer.injective.network/transaction/",
-        accountUrl: "https://testnet.explorer.injective.network/account/"
-    }
-}
-
-export const BaseCoinByClient: Record<ClientEnum, BaseCoin> = {
-    [ClientEnum.SEI]: {
-        name: "SEI",
-        denom: "usei",
-        image: "/images/token-images/sei.png",
-        tokenImage: "/images/token-images/sei.png",
-        decimal: 6,
-        ausdDecimal: 6
-    },
-    [ClientEnum.ARCHWAY]: {
-        name: "ATOM",
-        denom: "ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2",
-        image: "/images/token-images/archway-coin.png",
-        tokenImage: "/images/token-images/atom.svg",
-        decimal: 6,
-        ausdDecimal: 6
-    },
-    [ClientEnum.NEUTRON]: {
-        name: "NTRN",
-        denom: "untrn",
-        image: "/images/token-images/neutron.svg",
-        tokenImage: "/images/token-images/neutron.svg",
-        decimal: 6,
-        ausdDecimal: 6
-    },
-    [ClientEnum.INJECTIVE]: {
-        name: "INJ",
-        denom: "inj",
-        image: "/images/token-images/inj.svg",
-        tokenImage: "/images/token-images/inj.svg",
-        decimal: 18,
-        ausdDecimal: 18
     }
 }

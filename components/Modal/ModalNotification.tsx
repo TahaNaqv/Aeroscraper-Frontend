@@ -1,4 +1,3 @@
-import { ClientTransactionUrlByName } from '@/constants/walletConstants';
 import { useNotification } from '@/contexts/NotificationProvider';
 import { AnimatePresence, motion } from 'framer-motion';
 import React, { FC, useEffect } from 'react'

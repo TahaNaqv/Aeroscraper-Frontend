@@ -1,7 +1,6 @@
 'use client'
 
 import MaintenancePage from "@/components/MaintenancePage";
-import { ClientEnum } from "@/types/types";
 import { ReactNode, useState } from "react";
 import ArchwayTheme from "./themes/ArchwayTheme";
 import InjeciveTheme from "./themes/InjectiveTheme";

@@ -1,7 +1,6 @@
 "use client";
 import { ChainName } from "@/enums/Chain";
 import {
-  ClientEnum,
   RiskyTrovesResponse,
   TotalTrovesResponse,
 } from "@/types/types";

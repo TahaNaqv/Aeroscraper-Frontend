@@ -3,7 +3,6 @@ import { convertAmount } from "@/utils/contractUtils";
 import { delay, getSettledValue } from "@/utils/promiseUtils";
 import { useCallback, useEffect, useState } from "react";
 import useAppContract from "./useAppContract";
-import { ClientEnum } from "@/types/types";
 import graphql from "@/services/graphql";
 import { debounce } from "lodash";
 import useChainAdapter from "@/hooks/useChainAdapter";

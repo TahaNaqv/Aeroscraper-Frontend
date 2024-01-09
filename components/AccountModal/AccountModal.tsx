@@ -1,6 +1,6 @@
 import useOutsideHandler from "@/hooks/useOutsideHandler";
 import { AnimatePresence, motion } from "framer-motion";
-import { FC, useEffect, useMemo, useRef, useState } from "react";
+import { FC, useMemo, useRef, useState } from "react";
 import { WaveModal } from "../Modal/WaveModal";
 import TooltipWrapper from "./TooltipWrapper";
 import QRCode from 'react-qr-code';
@@ -13,7 +13,6 @@ import Loading from "../Loading/Loading";
 import GradientButton from "../Buttons/GradientButton";
 import ProfilePhotoSlider from "./ProfilePhotosSlider";
 import { AUSD_PRICE } from "@/utils/contractUtils";
-import { ClientTransactionUrlByName } from "@/constants/walletConstants";
 import useChainAdapter from "@/hooks/useChainAdapter";
 import { useProfile } from "@/contexts/ProfileProvider";
 import { TransactionDomainByChainName } from "@/constants/chainConstants";

@@ -15,12 +15,9 @@ import Button from './Button'
 import { capitalizeFirstLetter } from '@/utils/stringUtils'
 import TransactionButton from './TransactionButton'
 import useChainAdapter from '@/hooks/useChainAdapter'
-import { chains } from 'chain-registry'
 import { ChainName } from '@/enums/Chain'
-import { MissingChainImageByName } from '@/constants/chainConstants'
+import { MissingChainImageByName, availableChains } from '@/constants/chainConstants'
 import { WalletTypeV2 } from '@/enums/WalletTypeV2'
-
-const availableChains = Object.values(chains).filter(chain => Object.values(ChainName).includes(chain.chain_name as ChainName));
 
 type Props = {
     ausdBalance?: number;

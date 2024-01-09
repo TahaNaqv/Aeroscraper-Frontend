@@ -1,14 +1,3 @@
-import { SigningArchwayClient } from "@archwayhq/arch3.js/build";
-import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
-import { InjectiveStargate } from "@injectivelabs/sdk-ts";
-
-export enum ClientEnum {
-    INJECTIVE = "INJECTIVE",
-    ARCHWAY = "ARCHWAY",
-    SEI = "SEI",
-    NEUTRON = "NEUTRON"
-}
-
 export type RiskyTrovesResponse = {
     troves: {
         nodes: {
@@ -35,9 +24,7 @@ export type BaseCoin = {
     name: string,
     denom: string,
     image: string,
-    tokenImage:string,
-    decimal:number,
-    ausdDecimal:number
+    tokenImage: string,
+    decimal: number,
+    ausdDecimal: number
 }
-
-export const isClientInjective = (client: SigningArchwayClient | SigningCosmWasmClient | InjectiveStargate.InjectiveSigningStargateClient, clientEnum?: ClientEnum): client is InjectiveStargate.InjectiveSigningStargateClient => clientEnum === ClientEnum.INJECTIVE;
