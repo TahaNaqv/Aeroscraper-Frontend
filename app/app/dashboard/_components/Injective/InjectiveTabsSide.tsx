@@ -57,11 +57,9 @@ let TabList: InjectiveTabs[] = [isTroveOpened ? "trove" : "createTrove", "stabil
     getPrice()
   }, [])
 
-  useEffect(() => {
-    debounce(() => {
-      setIsTroveOpened(pageData.collateralAmount > 0);
-      setSelectedTab(pageData.collateralAmount > 0 ? "trove" : "createTrove");
-    }, 500)
+  useEffect(() => {    
+    setIsTroveOpened(pageData.collateralAmount > 0);
+    setSelectedTab(pageData.collateralAmount > 0 ? "trove" : "createTrove");
   }, [pageData]);
 
   useEffect(() => {

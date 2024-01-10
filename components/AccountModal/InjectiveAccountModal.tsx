@@ -196,43 +196,48 @@ const AccountModal: FC<Props> = (props: Props) => {
                   </button>
                 }
               </div>
-              <div className="flex flex-row w-full items-end justify-between mt-10">
-                <div>
+              <div className="grid grid-cols-3 gap-y-4 gap-x-20  w-full md:items-end justify-between mt-10">
+                <div className="md:col-span-1 col-span-3">
                   <Text size='sm' textColor='text-dark-silver'>Balance</Text>
                   <Text size='lg' className='mt-2'>${totalDollarBalance.toFixed(2)}</Text>
                 </div>
-                <NumericFormat
-                  value={props.balance.ausd}
-                  thousandsGroupStyle="thousand"
-                  thousandSeparator=","
-                  fixedDecimalScale
-                  decimalScale={2}
-                  displayType="text"
-                  renderText={(value) =>
-                    <Text size='lg' className='mt-2 flex gap-2 items-center'>
-                      <img alt="ausd" className="w-5 h-5" src="/images/token-images/ausd-blue.svg" />
-                      <CounterUp from={"0"} to={value} duration={0.5} />
-                      AUSD
-                    </Text>
-                  }
-                />
-                <NumericFormat
-                  value={props.balance.base}
-                  thousandsGroupStyle="thousand"
-                  thousandSeparator=","
-                  fixedDecimalScale
-                  decimalScale={2}
-                  displayType="text"
-                  renderText={(value) =>
-                    <Text size='lg' className='mt-2 flex gap-2 items-center ml-6'>
-                      {baseCoin && <img alt={baseCoin.name} className="w-5 h-5" src={baseCoin.tokenImage} />}
-                      <CounterUp from={"0"} fixed={6} to={value} duration={0.5} />
-                      {baseCoin?.name}
-                    </Text>
-                  }
-                />
+                <div className="col-span-1 md:ml-0 ml-4">
+                  <NumericFormat
+                    value={props.balance.ausd}
+                    thousandsGroupStyle="thousand"
+                    thousandSeparator=","
+                    fixedDecimalScale
+                    decimalScale={2}
+                    displayType="text"
+                    renderText={(value) =>
+                      <Text size='lg' className='mt-2 flex gap-2 items-center'>
+                        <img alt="ausd" className="w-5 h-5" src="/images/token-images/ausd-blue.svg" />
+                        <CounterUp from={"0"} to={value} duration={0.5} />
+                        AUSD
+                      </Text>
+                    }
+                  />
+                </div>
+                <div className="col-span-1">
+                  <NumericFormat
+                    className="col-span-1"
+                    value={props.balance.base}
+                    thousandsGroupStyle="thousand"
+                    thousandSeparator=","
+                    fixedDecimalScale
+                    decimalScale={2}
+                    displayType="text"
+                    renderText={(value) =>
+                      <Text size='lg' className='mt-2 flex gap-2 items-center ml-6'>
+                        {baseCoin && <img alt={baseCoin.name} className="w-5 h-5" src={baseCoin.tokenImage} />}
+                        <CounterUp from={"0"} fixed={6} to={value} duration={0.5} />
+                        {baseCoin?.name}
+                      </Text>
+                    }
+                  />
+                </div>
               </div>
-              <button className='flex md:hidden my-6' onClick={disconnect}>
+              <button className='flex md:hidden mt-10 mb-6' onClick={disconnect}>
                 <span className="text-[#ED0E00] text-sm md:text-base font-medium mr-2">Log out</span>
                 <ExitIcon className="text-[#ED0E00]" />
               </button>
