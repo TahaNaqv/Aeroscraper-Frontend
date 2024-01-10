@@ -51,8 +51,9 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
   borrowAmount > 999 ||
   openTroveAmount > 999 ||
   collacteralRatio < 1.15 ||
+  collateralAmount > convertAmount(balanceByDenom[baseCoin!.denom]?.amount ?? 0, baseCoin!.decimal)||
   collacteralRatio < (pageData.minCollateralRatio - 0.00001),
-  [openTroveAmount, borrowAmount, collacteralRatio, pageData])
+  [openTroveAmount, borrowAmount, collacteralRatio, pageData])  
 
   const withdrawDepositDisabled = useMemo(() => collateralAmount <= 0 || collateralAmount > 999, [collateralAmount])
   const repayBorrowDisabled = useMemo(() => borrowingAmount <= 0 || borrowingAmount > 999 || borrowingAmount > pageData.ausdBalance, [borrowingAmount])
@@ -299,7 +300,7 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
                         disabledText={"Enter the INJ amount. 999 INJ is the upper limit for now."}
                         loading={processLoading}
                         onClick={queryWithdraw}
-                        className="min-w-[146px] md:min-w-[201px] h-11"
+                        className="min-w-[136px] md:min-w-[201px] h-11"
                       >
                         <Text>Withdraw</Text>
                       </OutlinedButton>

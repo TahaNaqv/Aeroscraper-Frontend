@@ -2,6 +2,7 @@
 
 import React, { FC, PropsWithChildren, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
+import useIsMobile from '@/hooks/useIsMobile'
 
 export const PLACEMENT_CLASSES = {
     "bottom": "top-full left-1/2 -translate-x-1/2 translate-y-4",
@@ -45,6 +46,8 @@ const Tooltip: FC<PropsWithChildren<Props>> = ({
     width = 'w-[300px]',
     rounded = 'rounded-lg'
 }) => {
+    const isMobile = useIsMobile();
+
     const [hovered, setHovered] = useState(false)
 
     const showTooltip = () => {
@@ -58,7 +61,7 @@ const Tooltip: FC<PropsWithChildren<Props>> = ({
     }
 
     return (
-        <div className={`relative ${containerClassName}`} onMouseEnter={showTooltip} onMouseLeave={closeTooltip}>
+        <div className={`${isMobile ? "" : "relative"} ${containerClassName}`} onMouseEnter={showTooltip} onMouseLeave={closeTooltip}>
             {children}
             <AnimatePresence>
                 {
@@ -67,10 +70,9 @@ const Tooltip: FC<PropsWithChildren<Props>> = ({
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            style={{ position: 'absolute', zIndex: 100 }}
-                            className={`${PLACEMENT_CLASSES[placement]} ${titleRootClassName}`}
+                            className={`z-[100] ${isMobile ? `fixed bottom-28 left-10 right-10` : `absolute ${PLACEMENT_CLASSES[placement]}`} ${titleRootClassName}`}
                         >
-                            <div className={`${width} ${rounded} ${titleContainerClassName} bg-raisin-black p-2`}>
+                            <div className={`${isMobile ? `w-full` : `${width}`} ${rounded}  ${titleContainerClassName} bg-raisin-black p-2`}>
                                 {title}
                             </div>
                         </motion.div>
