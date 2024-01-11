@@ -46,16 +46,17 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
   const collacteralRatio = isFinite(collacteralRatioCalculate) ? collacteralRatioCalculate : 0;
 
   const confirmDisabled = useMemo(() =>
-  borrowAmount <= 0 ||
-  openTroveAmount <= 0 ||
-  borrowAmount > 999 ||
-  openTroveAmount > 999 ||
-  collacteralRatio < 1.15 ||
-  collateralAmount > convertAmount(balanceByDenom[baseCoin!.denom]?.amount ?? 0, baseCoin!.decimal)||
-  collacteralRatio < (pageData.minCollateralRatio - 0.00001),
-  [openTroveAmount, borrowAmount, collacteralRatio, pageData])  
+    borrowAmount <= 0 ||
+    openTroveAmount <= 0 ||
+    borrowAmount > 999 ||
+    openTroveAmount > 999 ||
+    collacteralRatio < 1.15 ||
+    openTroveAmount > convertAmount(balanceByDenom[baseCoin!.denom]?.amount ?? 0, baseCoin!.decimal) ||
+    collacteralRatio < (pageData.minCollateralRatio - 0.00001),
+    [openTroveAmount, borrowAmount, collacteralRatio, pageData])
 
-  const withdrawDepositDisabled = useMemo(() => collateralAmount <= 0 || collateralAmount > 999, [collateralAmount])
+  const withdrawDisabled = useMemo(() => collateralAmount <= 0 || collateralAmount > 999 || pageData.collateralAmount < collateralAmount, [collateralAmount])
+  const depositDisabled = useMemo(() => collateralAmount <= 0 || collateralAmount > 999 || (!isNil(baseCoin) ? Number(convertAmount(balanceByDenom[baseCoin.denom]?.amount ?? 0, baseCoin.decimal)) : 0) < collateralAmount, [collateralAmount])
   const repayBorrowDisabled = useMemo(() => borrowingAmount <= 0 || borrowingAmount > 999 || borrowingAmount > pageData.ausdBalance, [borrowingAmount])
 
   const changeOpenTroveAmount = (values: NumberFormatValues) => {
@@ -296,7 +297,7 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
                     </div>
                     <div className="flex items-center justify-end pr-4 gap-4 mt-10 md:mt-4">
                       <OutlinedButton
-                        disabled={withdrawDepositDisabled}
+                        disabled={withdrawDisabled}
                         disabledText={"Enter the INJ amount. 999 INJ is the upper limit for now."}
                         loading={processLoading}
                         onClick={queryWithdraw}
@@ -305,7 +306,7 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
                         <Text>Withdraw</Text>
                       </OutlinedButton>
                       <GradientButton
-                        disabled={withdrawDepositDisabled}
+                        disabled={depositDisabled}
                         disabledText={"Enter the INJ amount. 999 INJ is the upper limit for now."}
                         loading={processLoading}
                         onClick={queryAddColletral}
