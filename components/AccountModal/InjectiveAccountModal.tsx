@@ -231,7 +231,6 @@ const AccountModal: FC<Props> = (props: Props) => {
                       <Text size='lg' className='mt-2 flex gap-2 items-center ml-6'>
                         {baseCoin && <img alt={baseCoin.name} className="w-5 h-5" src={baseCoin.tokenImage} />}
                         <CounterUp from={"0"} fixed={6} to={value} duration={0.5} />
-                        {baseCoin?.name}
                       </Text>
                     }
                   />
