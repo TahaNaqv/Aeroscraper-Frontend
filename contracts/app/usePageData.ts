@@ -73,7 +73,7 @@ const usePageData = ({ basePrice }: Props) => {
         totalDebtRes,
       ] = await Promise.allSettled([
         contract.getTotalStake(),
-        contract.getTotalCollateralAmount(),
+        contract.getTotalCollateralAmounts(),
         contract.getTotalDebtAmount(),
       ]);
 
@@ -85,7 +85,7 @@ const usePageData = ({ basePrice }: Props) => {
         debtAmount,
         ausdBalance: convertAmount(getSettledValue(ausdBalanceRes)?.balance ?? 0, baseCoin?.decimal),
         stakedAmount: convertAmount(getSettledValue(stakeRes)?.amount ?? 0, baseCoin?.decimal),
-        totalCollateralAmount: convertAmount(getSettledValue(totalCollateralRes) ?? 0, baseCoin?.decimal),
+        totalCollateralAmount: convertAmount(getSettledValue(totalCollateralRes)?.find(item => item.denom)?.amount ?? 0, baseCoin?.decimal),
         totalDebtAmount: convertAmount(getSettledValue(totalDebtRes) ?? 0, baseCoin?.ausdDecimal),
         totalAusdSupply: convertAmount(getSettledValue(ausdInfoRes)?.total_supply ?? 0, baseCoin?.ausdDecimal),
         totalStakedAmount: convertAmount(getSettledValue(totalStakeRes) ?? 0, baseCoin?.decimal),
@@ -122,7 +122,7 @@ const usePageData = ({ basePrice }: Props) => {
 
   const debouncedEffect = useCallback(
     debounce(() => {
-      getPageData();      
+      getPageData();
     }, 2000),
     [contract]
   );

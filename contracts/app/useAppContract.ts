@@ -17,9 +17,9 @@ const useAppContract = () => {
             : getAppContract(wallet.getClient() as SigningArchwayClient | SigningCosmWasmClient, wallet.baseCoin, wallet.clientType, wallet.walletType))
         : undefined, [wallet]);
 
-    const getTotalCollateralAmount = useCallback(async () => {
+    const getTotalCollateralAmounts = useCallback(async () => {
         if (isNil(contract)) return;
-        return await contract.getTotalCollateralAmount();
+        return await contract.getTotalCollateralAmounts();
     }, [contract])
 
     const getTotalDebtAmount = useCallback(async () => {
@@ -119,7 +119,7 @@ const useAppContract = () => {
     }, [wallet, contract])
 
     const value = useMemo(() => ({
-        getTotalCollateralAmount,
+        getTotalCollateralAmounts,
         getTotalDebtAmount,
         getTrove,
         getTroveByAddress,
@@ -140,7 +140,7 @@ const useAppContract = () => {
         liquidateTroves,
         withdrawLiquidationGains
     }), [
-        getTotalCollateralAmount,
+        getTotalCollateralAmounts,
         getTotalDebtAmount,
         getTrove,
         getTroveByAddress,

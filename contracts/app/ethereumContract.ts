@@ -12,6 +12,7 @@ import { DEFAULT_BLOCK_TIMEOUT_HEIGHT, BigNumberInBase } from '@injectivelabs/ut
 import { getConfig } from "@/config";
 import { MsgBroadcaster, WalletStrategy } from "@injectivelabs/wallet-ts";
 import { WalletType } from "@/enums/WalletType";
+import { TotalCollateralModel } from "@/app/app/dashboard/_types/types";
 
 export const getAppEthContract = (
     client: any,
@@ -112,7 +113,7 @@ export const getAppEthContract = (
         }
     }
 
-    const getTotalCollateralAmount = async (): Promise<string | undefined> => {
+    const getTotalCollateralAmounts = async (): Promise<TotalCollateralModel[] | undefined> => {
         if (clientType === ClientEnum.INJECTIVE) {
             const res = await chainGrpcWasmApi.fetchSmartContractState(contractAddress, toBase64({ total_collateral_amount: {} }))
             const data: any = fromBase64(res.data as any);
@@ -286,7 +287,10 @@ export const getAppEthContract = (
             const msg1 = MsgExecuteContractCompat.fromJSON({
                 contractAddress: contractAddress,
                 sender: senderAddress,
-                msg: { remove_collateral: { collateral_amount: getRequestAmount(amount, baseCoin.decimal) } }
+                msg: { remove_collateral: { 
+                    collateral_denom: baseCoin.denom,
+                    collateral_amount: getRequestAmount(amount, baseCoin.decimal)
+                 } }
             })
 
             return await msgBroadcastClientWithEth(senderAddress, [msg, msg1]);
@@ -468,7 +472,7 @@ export const getAppEthContract = (
     }
 
     return {
-        getTotalCollateralAmount,
+        getTotalCollateralAmounts,
         getTotalDebtAmount,
         getTrove,
         getStake,

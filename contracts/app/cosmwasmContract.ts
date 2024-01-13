@@ -12,6 +12,7 @@ import { MsgBroadcaster, WalletStrategy } from '@injectivelabs/wallet-ts'
 import { ChainId } from '@injectivelabs/ts-types';
 import { isNil } from "lodash";
 import { WalletType } from "@/enums/WalletType";
+import { TotalCollateralModel } from "@/app/app/dashboard/_types/types";
 
 export const getAppContract = (
     client: SigningArchwayClient | SigningCosmWasmClient,
@@ -61,7 +62,7 @@ export const getAppContract = (
         }
     }
 
-    const getTotalCollateralAmount = async (): Promise<string> => {
+    const getTotalCollateralAmounts = async (): Promise<TotalCollateralModel[] | undefined> => {
         if (clientType === ClientEnum.INJECTIVE) {
             const res = await chainGrpcWasmApi.fetchSmartContractState(contractAddress, toBase64({ total_collateral_amount: {} }))
             const data: any = fromBase64(res.data as any);
@@ -185,7 +186,7 @@ export const getAppContract = (
             return await msgBroadcastClient.broadcast({
                 msgs: [msg, msg1],
                 injectiveAddress: senderAddress,
-                gas: { gas: 40000000}
+                gas: { gas: 40000000 }
             });
         }
 
@@ -287,7 +288,7 @@ export const getAppContract = (
             return await msgBroadcastClient.broadcast({
                 msgs: [msg, msg1],
                 injectiveAddress: senderAddress,
-                gas: { gas: 40000000}
+                gas: { gas: 40000000 }
             })
         }
 
@@ -356,13 +357,18 @@ export const getAppContract = (
             const msg1 = MsgExecuteContract.fromJSON({
                 contractAddress: contractAddress,
                 sender: senderAddress,
-                msg: { remove_collateral: { collateral_amount: getRequestAmount(amount, baseCoin.decimal) } }
+                msg: {
+                    remove_collateral: {
+                        collateral_denom: baseCoin.denom,
+                        collateral_amount: getRequestAmount(amount, baseCoin.decimal)
+                    }
+                }
             })
 
             return await msgBroadcastClient.broadcast({
                 msgs: [msg, msg1],
                 injectiveAddress: senderAddress,
-                gas: { gas: 40000000}
+                gas: { gas: 40000000 }
             })
         }
 
@@ -436,7 +442,7 @@ export const getAppContract = (
             return await msgBroadcastClient.broadcast({
                 msgs: [msg, msg1],
                 injectiveAddress: senderAddress,
-                gas: { gas: 40000000}
+                gas: { gas: 40000000 }
             })
         }
 
@@ -518,7 +524,7 @@ export const getAppContract = (
             return await msgBroadcastClient.broadcast({
                 msgs: [msgVAA, msg1],
                 injectiveAddress: senderAddress,
-                gas: { gas: 40000000}
+                gas: { gas: 40000000 }
             })
         }
 
@@ -565,7 +571,7 @@ export const getAppContract = (
             return await msgBroadcastClient.broadcast({
                 msgs: msg1,
                 injectiveAddress: senderAddress,
-                gas: { gas: 40000000}
+                gas: { gas: 40000000 }
             })
         }
 
@@ -589,7 +595,7 @@ export const getAppContract = (
             return await msgBroadcastClient.broadcast({
                 msgs: msg1,
                 injectiveAddress: senderAddress,
-                gas: { gas: 40000000}
+                gas: { gas: 40000000 }
             })
         }
 
@@ -656,7 +662,7 @@ export const getAppContract = (
             return await msgBroadcastClient.broadcast({
                 msgs: [msg0, msg1],
                 injectiveAddress: senderAddress,
-                gas: { gas: 40000000}
+                gas: { gas: 40000000 }
             })
         }
 
@@ -730,7 +736,7 @@ export const getAppContract = (
             return await msgBroadcastClient.broadcast({
                 msgs: [msg0, msg1],
                 injectiveAddress: senderAddress,
-                gas: { gas: 40000000}
+                gas: { gas: 40000000 }
             })
         }
 
@@ -769,7 +775,7 @@ export const getAppContract = (
             return await msgBroadcastClient.broadcast({
                 msgs: msg,
                 injectiveAddress: senderAddress,
-                gas: { gas: 40000000}
+                gas: { gas: 40000000 }
             })
         }
 
@@ -783,7 +789,7 @@ export const getAppContract = (
     }
 
     return {
-        getTotalCollateralAmount,
+        getTotalCollateralAmounts,
         getTotalDebtAmount,
         getTrove,
         getStake,

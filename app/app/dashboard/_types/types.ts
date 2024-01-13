@@ -1,6 +1,6 @@
 export type PageData = {
     collateralAmount: number;
-    totalCollateralAmount: number;
+    totalCollateralAmount: number
     debtAmount: number;
     totalDebtAmount: number;
     ausdBalance: number;
@@ -12,6 +12,11 @@ export type PageData = {
     minCollateralRatio: number;
     minRedeemAmount: number;
     totalTrovesAmount: number;
+}
+
+export type TotalCollateralModel = {
+    amount: number,
+    denom: string
 }
 
 export type Chain = {
