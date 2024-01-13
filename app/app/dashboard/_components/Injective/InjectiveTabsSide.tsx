@@ -17,8 +17,7 @@ interface Props {
   setTabPosition: Dispatch<InjectiveTabs>
 }
 
-/* export type InjectiveTabs = "trove" | "createTrove" | "stabilityPool" | "redeem" | "riskyTroves" | "rewards" | "leaderboard"; */
-export type InjectiveTabs = "trove" | "createTrove" | "stabilityPool" | "redeem" | "riskyTroves" | "rewards";
+export type InjectiveTabs = "trove" | "createTrove" | "stabilityPool" | "redeem" | "riskyTroves" | "rewards" | "Leaderboard & Missions"; 
 const InjectiveTabsSide: FC<Props> = ({ setTabPosition }) => {
 
   const ref = useRef<HTMLDivElement>(null);
@@ -29,8 +28,7 @@ const InjectiveTabsSide: FC<Props> = ({ setTabPosition }) => {
 
   const [isTroveOpened, setIsTroveOpened] = useState(false);
 
-/*   let TabList: InjectiveTabs[] = [isTroveOpened ? "trove" : "createTrove", "stabilityPool", "redeem", "riskyTroves", "rewards", "leaderboard"]; */
-let TabList: InjectiveTabs[] = [isTroveOpened ? "trove" : "createTrove", "stabilityPool", "redeem", "riskyTroves", "rewards"];
+  let TabList: InjectiveTabs[] = [isTroveOpened ? "trove" : "createTrove", "stabilityPool", "redeem", "riskyTroves", "rewards", "Leaderboard & Missions"]; 
 
   const [selectedTab, setSelectedTab] = useState<InjectiveTabs>(isTroveOpened ? "trove" : "createTrove");
 
@@ -69,7 +67,7 @@ let TabList: InjectiveTabs[] = [isTroveOpened ? "trove" : "createTrove", "stabil
   }, [selectedTab])
 
   return (
-    <div ref={ref} className='md:flex-1 md:max-w-[828px] px-3 md:px-0 md:mt-16 md:ml-auto'>
+    <div ref={ref} className='md:flex-1 md:max-w-[908px] px-3 md:px-0 md:mt-16 md:ml-auto'>
       <Tabs tabs={TabList} dots={pageData.rewardAmount > 0 ? ["rewards"] : undefined} selectedTab={selectedTab} onTabSelected={(e) => { setSelectedTab(e); setTabPosition(e); }} loading={loading} />
       {loading ? <>
         <div className='mt-16'>
@@ -93,8 +91,8 @@ let TabList: InjectiveTabs[] = [isTroveOpened ? "trove" : "createTrove", "stabil
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.7 }}
-          className={`md:mt-14 ${(isNil(walletType) /* && selectedTab !== "leaderboard" */) ? "blur-[2px]" : ""} relative`}>
-          {(isNil(walletType)/*  && selectedTab !== "leaderboard" */) &&
+          className={`md:mt-14 ${(isNil(walletType) && selectedTab !== "Leaderboard & Missions") ? "blur-[2px]" : ""} relative`}>
+          {(isNil(walletType) && selectedTab !== "Leaderboard & Missions") &&
             <div className='cursor-not-allowed h-full w-full absolute top-0 bottom-0 left-0 z-50'>
             </div>
           }
@@ -103,7 +101,7 @@ let TabList: InjectiveTabs[] = [isTroveOpened ? "trove" : "createTrove", "stabil
           {selectedTab === "redeem" && <RedeemTab pageData={pageData} getPageData={getPageData} refreshBalance={refreshBalance} basePrice={basePrice} />}
           {selectedTab === "riskyTroves" && <RiskyTrovesTab pageData={pageData} getPageData={getPageData} basePrice={basePrice} />}
           {selectedTab === "rewards" && <ClaimRewardTab pageData={pageData} getPageData={getPageData} refreshBalance={refreshBalance} basePrice={basePrice} />}
-          {/* {selectedTab === "leaderboard" && <LeaderboardTab />} */}
+          {selectedTab === "Leaderboard & Missions" && <LeaderboardTab />}
         </motion.main>
       }
 

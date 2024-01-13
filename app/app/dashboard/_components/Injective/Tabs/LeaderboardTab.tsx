@@ -83,7 +83,7 @@ const LeaderboardTab = () => {
   const [missionList, setMissionList] = useState<Record<string, ZealyMission> | null>(null);
   const [totalUsers, setTotalUsers] = useState<number | null>(null);
 
-  const [selectedTab, setSelectedTab] = useState<TABS>(TABS.LEADERBOARD);
+  const [selectedTab, setSelectedTab] = useState<TABS>(TABS.MISSIONS);
   const [informationLoading, setInformationLoading] = useState(false);
 
   const [loading, setLoading] = useState(true);
@@ -143,7 +143,7 @@ const LeaderboardTab = () => {
       if (data.items.length > 0) {
         setZealyId(data.items[0].userId);
       }
-      
+
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -198,7 +198,8 @@ const LeaderboardTab = () => {
           ...acc,
           [mission.id]: {
             ...mission,
-            currentXP: 0
+            currentXP: 0,
+            status:null
           }
         };
       }, {});
@@ -236,11 +237,11 @@ const LeaderboardTab = () => {
       let tempMissionList = { ...missionList }
 
       data.data.forEach((claim: any) => {
-        const { questId, xp } = claim;
-        console.log(questId, xp);
+        const { questId, xp,status } = claim;
 
         if (tempMissionList[questId]) {
           tempMissionList[questId].currentXP = xp;
+          tempMissionList[questId].status = status;
         }
       });
 
@@ -256,6 +257,49 @@ const LeaderboardTab = () => {
       <Text size='3xl'>See your ranking among users</Text>
       <Text size='base' weight='font-regular' className='mt-1'>Earn points and increase your ranking</Text>
       <div className='flex flex-col'>
+        <Checkbox className='mt-8' label={'Missions'} checked={selectedTab === TABS.MISSIONS} onChange={() => { setSelectedTab(TABS.MISSIONS); }} />
+        {
+          selectedTab === TABS.MISSIONS &&
+          (
+            isNil(missionList) ?
+              (
+                <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                  {
+                    new Array(6).fill({}).map((_item, idx) => {
+                      return <div key={idx} className="w-full bg-cetacean-dark-blue border border-white/10 rounded-2xl px-4 pt-4 pb-4 items-end justify-between mt-6">
+                        <div className='w-full flex justify-between gap-6 items-center'>
+                          <SkeletonLoading height='h-6 mt-6' width='w-32' noPadding />
+                          <div
+                            className={`px-8 pb-1 m-1 text-base font-medium text-white relative cursor-pointer rounded-md hover:text-red-500 duration-700 whitespace-nowrap text-center`}
+                          >
+                            <SkeletonLoading height='h-4 mt-6' width='w-24' noPadding />
+                            <div className="absolute bottom-0 h-[40px] border-2 rounded-md border-red-500 left-0 right-0" />
+                          </div>
+                        </div>
+                        <SkeletonLoading height='h-4 mt-6' width='w-full' noPadding />
+                        <SkeletonLoading height='h-4 mt-6' width='w-full' noPadding />
+                        <div className='mt-4'>
+                          <Text size="sm" weight="font-regular" textColor='text-gray-400' className='mb-1'>Points</Text>
+                          <Text size="xl" textColor='text-gradient' weight='font-medium'>
+                            <SkeletonLoading height='h-4 mt-2' width='w-24' noPadding />
+                          </Text>
+                        </div>
+                      </div>
+
+                    })
+                  }
+                </div>
+              )
+              :
+              (
+                <div className='grid grid-cols-1 md:grid-cols-2 gap-4 mt-10'>
+                  {Object.values(missionList)?.map((mission, idx) => {
+                    return <MissionCard key={idx} mission={mission} />
+                  })}
+                </div>
+              )
+          )
+        }
         <Checkbox className='mt-8' label={'Leaderboard'} checked={selectedTab === TABS.LEADERBOARD} onChange={() => { setSelectedTab(TABS.LEADERBOARD); }} />
         {selectedTab === TABS.LEADERBOARD &&
           (
@@ -316,49 +360,6 @@ const LeaderboardTab = () => {
                   </div>
                 }} />
             </>
-          )
-        }
-        <Checkbox className='mt-8' label={'Missions'} checked={selectedTab === TABS.MISSIONS} onChange={() => { setSelectedTab(TABS.MISSIONS); }} />
-        {
-          selectedTab === TABS.MISSIONS &&
-          (
-            isNil(missionList) ?
-              (
-                <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-                  {
-                    new Array(6).fill({}).map((_item, idx) => {
-                      return <div key={idx} className="w-full bg-cetacean-dark-blue border border-white/10 rounded-2xl px-4 pt-4 pb-4 items-end justify-between mt-6">
-                        <div className='w-full flex justify-between gap-6 items-center'>
-                          <SkeletonLoading height='h-6 mt-6' width='w-32' noPadding />
-                          <div
-                            className={`px-8 pb-1 m-1 text-base font-medium text-white relative cursor-pointer rounded-md hover:text-red-500 duration-700 whitespace-nowrap text-center`}
-                          >
-                            <SkeletonLoading height='h-4 mt-6' width='w-24' noPadding />
-                            <div className="absolute bottom-0 h-[40px] border-2 rounded-md border-red-500 left-0 right-0" />
-                          </div>
-                        </div>
-                        <SkeletonLoading height='h-4 mt-6' width='w-full' noPadding />
-                        <SkeletonLoading height='h-4 mt-6' width='w-full' noPadding />
-                        <div className='mt-4'>
-                          <Text size="sm" weight="font-regular" textColor='text-gray-400' className='mb-1'>Points</Text>
-                          <Text size="xl" textColor='text-gradient' weight='font-medium'>
-                            <SkeletonLoading height='h-4 mt-2' width='w-24' noPadding />
-                          </Text>
-                        </div>
-                      </div>
-
-                    })
-                  }
-                </div>
-              )
-              :
-              (
-                <div className='grid grid-cols-1 md:grid-cols-2 gap-4 mt-10'>
-                  {Object.values(missionList)?.map((mission, idx) => {
-                    return <MissionCard key={idx} mission={mission} />
-                  })}
-                </div>
-              )
           )
         }
       </div>
