@@ -214,8 +214,8 @@ export const getAppEthContract = (
                 contractAddress: oraclecontractAddress,
                 sender: senderAddress,
                 msg: {
-                    update_price_feeds: {
-                        data: [
+                    set_protocol_fee: {
+                        fee: [
                             vaa
                         ]
                     }
@@ -247,8 +247,8 @@ export const getAppEthContract = (
                 contractAddress: oraclecontractAddress,
                 sender: senderAddress,
                 msg: {
-                    update_price_feeds: {
-                        data: [
+                    set_protocol_fee: {
+                        fee: [
                             vaa
                         ]
                     }
@@ -275,8 +275,8 @@ export const getAppEthContract = (
                 contractAddress: oraclecontractAddress,
                 sender: senderAddress,
                 msg: {
-                    update_price_feeds: {
-                        data: [
+                    set_protocol_fee: {
+                        fee: [
                             vaa
                         ]
                     }
@@ -306,8 +306,8 @@ export const getAppEthContract = (
                 contractAddress: oraclecontractAddress,
                 sender: senderAddress,
                 msg: {
-                    update_price_feeds: {
-                        data: [
+                    set_protocol_fee: {
+                        fee: [
                             vaa
                         ]
                     }
@@ -341,8 +341,8 @@ export const getAppEthContract = (
                 contractAddress: oraclecontractAddress,
                 sender: senderAddress,
                 msg: {
-                    update_price_feeds: {
-                        data: [
+                    set_protocol_fee: {
+                        fee: [
                             vaa
                         ]
                     }
@@ -410,8 +410,8 @@ export const getAppEthContract = (
                 contractAddress: oraclecontractAddress,
                 sender: senderAddress,
                 msg: {
-                    update_price_feeds: {
-                        data: [
+                    set_protocol_fee: {
+                        fee: [
                             vaa
                         ]
                     }
@@ -438,8 +438,8 @@ export const getAppEthContract = (
                 contractAddress: oraclecontractAddress,
                 sender: senderAddress,
                 msg: {
-                    update_price_feeds: {
-                        data: [
+                    set_protocol_fee: {
+                        fee: [
                             vaa
                         ]
                     }
