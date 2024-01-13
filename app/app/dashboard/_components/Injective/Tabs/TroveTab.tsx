@@ -57,7 +57,8 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
 
   const withdrawDisabled = useMemo(() => collateralAmount <= 0 || collateralAmount > 999 || pageData.collateralAmount < collateralAmount, [collateralAmount])
   const depositDisabled = useMemo(() => collateralAmount <= 0 || collateralAmount > 999 || (!isNil(baseCoin) ? Number(convertAmount(balanceByDenom[baseCoin.denom]?.amount ?? 0, baseCoin.decimal)) : 0) < collateralAmount, [collateralAmount])
-  const repayBorrowDisabled = useMemo(() => borrowingAmount <= 0 || borrowingAmount > 999 || borrowingAmount > pageData.ausdBalance, [borrowingAmount])
+  const borrowDisabled = useMemo(() => borrowingAmount <= 0 || borrowingAmount > 999 || borrowingAmount > (((pageData.collateralAmount * basePrice * 100) / 115) - (pageData.debtAmount)), [borrowingAmount])
+  const repayDisabled = useMemo(() => borrowingAmount <= 0 || borrowingAmount > 999 || borrowingAmount > pageData.debtAmount || borrowingAmount > pageData.ausdBalance, [borrowingAmount])
 
   const changeOpenTroveAmount = (values: NumberFormatValues) => {
     setOpenTroveAmount(Number(values.value));
@@ -368,7 +369,7 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
                     </div>
                     <div className="flex items-center justify-end pr-4 gap-4 mt-6">
                       <OutlinedButton
-                        disabled={repayBorrowDisabled}
+                        disabled={repayDisabled}
                         disabledText={"Enter the AUSD amount. 999 AUSD is the upper limit for now."}
                         loading={processLoading}
                         onClick={queryRepay}
@@ -377,7 +378,7 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
                         <Text>Repay</Text>
                       </OutlinedButton>
                       <GradientButton
-                        disabled={repayBorrowDisabled}
+                        disabled={borrowDisabled}
                         disabledText={"Enter the AUSD amount. 999 AUSD is the upper limit for now."}
                         loading={processLoading}
                         onClick={queryBorrow}
