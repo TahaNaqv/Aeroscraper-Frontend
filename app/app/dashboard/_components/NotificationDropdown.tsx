@@ -65,7 +65,7 @@ const NotificationDropdown: FC = () => {
             }
         >
             {(clientType === ClientEnum.INJECTIVE || clientType === ClientEnum.ARCHWAY) ?
-                <BorderedContainer containerClassName='w-[446px] h-[226px] notification-dropdown-gradient p-[1.5px]' className='relative p-4 overflow-auto scrollbar-hidden'>
+                <BorderedContainer containerClassName='w-[342px] -translate-x-[144px] md:w-[446px] h-[226px] notification-dropdown-gradient p-[1.5px]' className='relative p-4 overflow-auto scrollbar-hidden'>
                     <div className='flex flex-col-reverse gap-2'>
                         {notifications.map((item, index) => {
                             return clientType && <NotificationItem clientType={clientType} key={index} text={item.message ?? ""} isRead={item.isRead} directLink={item.directLink} handleReadNotification={() => { handleReadNotification(index); }} />

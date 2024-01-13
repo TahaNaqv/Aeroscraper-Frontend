@@ -2,6 +2,7 @@ import InjectiveStatisticCard from '@/components/Cards/InjectiveStatisticCard';
 import { ChevronUpIcon } from '@/components/Icons/Icons';
 import { useWallet } from '@/contexts/WalletProvider';
 import usePageData from '@/contracts/app/usePageData';
+import useIsMobile from '@/hooks/useIsMobile';
 import { motion } from 'framer-motion';
 import { isNil } from 'lodash';
 import Link from 'next/link';
@@ -30,12 +31,12 @@ const content:
       title: "Rewards!",
       desc: "Collect the rewards you earned from liquid troves."
     },
-    {
-      title: "Don't miss our latest Galxe campaign",
-      desc: "Get a chance to win exclusive rewards by participating in our current Galxe campaign.",
-      linkStr: "participating",
-      linkUrl: "https://galxe.com/aeroscraper/campaign/GCfPktUfsC"
-    },
+    /*     {
+          title: "Don't miss our latest Galxe campaign",
+          desc: "Get a chance to win exclusive rewards by participating in our current Galxe campaign.",
+          linkStr: "participating",
+          linkUrl: "https://galxe.com/aeroscraper/campaign/GCfPktUfsC"
+        }, */
     {
       title: "Check out the Zealy missions!",
       desc: "Complete Zealy missions to raise your ranks in the leaderboard!",
@@ -53,12 +54,17 @@ const content:
 const InjectiveStatisticSide: FC<Props> = ({ basePrice }) => {
 
   const { baseCoin, walletType } = useWallet();
+  const isMobile = useIsMobile()
   const [showStatistic, setShowStatistic] = useState<boolean>(true);
 
   const { pageData } = usePageData({ basePrice });
 
   const [showContentIdx, setShowContentIdx] = useState(0);
   const [hovering, setHovering] = useState(false);
+
+  useEffect(() => {
+    isMobile && setShowStatistic(false);
+  }, [isMobile])
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -97,7 +103,7 @@ const InjectiveStatisticSide: FC<Props> = ({ basePrice }) => {
 
   return (
     <div
-      className="max-w-[400px] w-[379px] group"
+      className="md:max-w-[400px] w-full md:w-[379px] px-4 pt-6 md:p-0 group"
       onMouseEnter={() => handleHover(true)}
       onMouseLeave={() => handleHover(false)}
     >
@@ -107,17 +113,17 @@ const InjectiveStatisticSide: FC<Props> = ({ basePrice }) => {
         initial={{ opacity: 0, scale: 0.98 }}
         transition={{ ease: "easeInOut", duration: 1.2 }}
         layout
-        className="min-h-[266px]"
+        className="min-h-[172px] md:min-h-[266px]"
       >
-        <h1 className="text-white text-[39px] leading-[50px] font-semibold">{content[showContentIdx].title}</h1>
-        <h2 className="text-base text-ghost-white font-medium mt-4">
+        <h1 className="text-white text-2xl md:text-[39px] md:leading-[50px] font-semibold">{content[showContentIdx].title}</h1>
+        <h2 className="text-sm md:text-base text-ghost-white leading-6 font-medium mt-2 md:mt-4">
           {renderDescription()}
         </h2>
       </motion.div>
-      <div className='space-x-1 group-hover:opacity-100 opacity-0 transition-opacity my-2'>
+      <div className='space-x-2 md:space-x-1 group-hover:opacity-100 md:opacity-0 transition-opacity my-2'>
         {
           content.map((i, idx) => {
-            return <button key={idx} onClick={() => { setShowContentIdx(idx); }} className={`w-2 h-2 rounded-sm ${showContentIdx === idx ? "bg-[#E4462D]" : "bg-ghost-white"}`} />
+            return <button key={idx} onClick={() => { setShowContentIdx(idx); }} className={`md:w-2 md:h-2 w-6 h-1 rounded-sm ${showContentIdx === idx ? "bg-[#E4462D]" : "bg-ghost-white"}`} />
           })
         }
       </div>
@@ -131,31 +137,31 @@ const InjectiveStatisticSide: FC<Props> = ({ basePrice }) => {
           layout
           initial={{ opacity: 0, translateY: -10 }}
           animate={{ opacity: 1, translateY: 0 }}
-          className="grid grid-cols-2 justify-center gap-x-16 gap-y-4 mt-6">
+          className="grid grid-cols-2 justify-center overflow-hidden gap-x-16 gap-y-4 mt-6 z-[50]">
           <InjectiveStatisticCard
             title="Management Fee"
             description="0.5%"
             className="w-[191px] h-14"
             tooltip="This amount is deducted from the collateral amount as a management fee. There are no recurring fees for borrowing, which is thus interest-free."
-            tooltipPlacement="right-bottom"
+            tooltipPlacement="bottom"
           />
           <InjectiveStatisticCard
             title="Liquidation Threshold"
             description="115%"
             className="w-[191px] h-14"
             tooltip="Liquidation Threshold Ratio"
-            tooltipPlacement="top"
+            tooltipPlacement="bottom"
           />
           <InjectiveStatisticCard
             title="Total Value Locked"
             description={isNil(baseCoin) ? '-' : `${Number(pageData.totalCollateralAmount).toFixed(6)} ${baseCoin.name}`}
             className="w-[191px] h-14"
             tooltip="The Total Value Locked (TVL) is the total value of sei locked as collateral in the system."
-            tooltipPlacement="top"
+            tooltipPlacement="bottom"
           />
           <InjectiveStatisticCard
             title="AUSD in Stability Pool"
-            tooltipPlacement="top"
+            tooltipPlacement="left-bottom"
             description={Number(pageData.totalStakedAmount).toFixed(3).toString()}
             className="w-[191px] h-14"
             tooltip="The total AUSD currently held in the Stability Pool."
@@ -165,11 +171,11 @@ const InjectiveStatisticSide: FC<Props> = ({ basePrice }) => {
             description={`${isNil(walletType) ? "-" : pageData.totalTrovesAmount}`}
             className="w-[191px] h-14"
             tooltip="The total number of active Troves in the system."
-            tooltipPlacement="right-bottom"
+            tooltipPlacement="right-top"
           />
           <InjectiveStatisticCard
             title="Total Collateral Ratio"
-            tooltipPlacement="top"
+            tooltipPlacement="left-top"
             description={`${isFinite(Number(((pageData.totalCollateralAmount * basePrice) / pageData.totalDebtAmount) * 100)) ? Number(((pageData.totalCollateralAmount * basePrice) / pageData.totalDebtAmount) * 100).toFixed(3) : 0} %`}
             className="w-[191px] h-14"
             tooltip={`The ratio of the Dollar value of the entire system collateral at the current ${baseCoin?.name}:AUSD price, to the entire system debt.`}

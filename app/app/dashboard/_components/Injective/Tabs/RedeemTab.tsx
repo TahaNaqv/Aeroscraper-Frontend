@@ -41,6 +41,7 @@ const RedeemTab: FC<Props> = ({ pageData, getPageData, refreshBalance, basePrice
   const redeemDisabled = useMemo(() =>
     isNil(redeemAmount) ||
     redeemAmount <= 0 ||
+    redeemAmount > 999 ||
     redeemAmount > pageData.ausdBalance,
     [redeemAmount, pageData])
 
@@ -97,7 +98,7 @@ const RedeemTab: FC<Props> = ({ pageData, getPageData, refreshBalance, basePrice
     <section>
       <Text size='3xl'>Convert your AUSD directly to INJ</Text>
       <div className='mt-6'>
-        <div className="relative w-full bg-cetacean-dark-blue border backdrop-blur-[37px] border-white/10 rounded-2xl px-6 py-8 flex flex-col gap-4">
+        <div className="relative w-full bg-cetacean-dark-blue border backdrop-blur-[37px] border-white/10 rounded-xl md:rounded-2xl px-3 pt-4 pb-3 md:px-6 md:py-8 flex flex-col gap-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <img alt="ausd" className="w-6 h-6" src="/images/token-images/ausd-blue.svg" />
@@ -119,25 +120,25 @@ const RedeemTab: FC<Props> = ({ pageData, getPageData, refreshBalance, basePrice
             decimalScale={2}
             displayType="text"
             renderText={(value) =>
-              <Text size="base" className='mt-4 ml-auto'>
+              <Text size="base" className='md:mt-4 ml-auto'>
                 Available: <span className="font-regular ml-2">{value} AUSD</span>
               </Text>
             }
           />
           <div className='absolute left-1/2 top-1/2 -translate-x-1/2 translate-y-[60px]'>
-            <BorderedContainer containerClassName='w-12 h-12 mx-auto mt-2 p-[1.8px]'>
+            <BorderedContainer containerClassName='md:w-12 w-10 h-10 md:h-12 mx-auto -mt-4 md:mt-2 p-[1.8px]'>
               <div className='bg-cetacean-dark-blue h-full w-full rounded-lg flex items-center justify-center'>
                 <ArrowDownIcon className="w-4 h-4 text-white " />
               </div>
             </BorderedContainer>
           </div>
         </div>
-        <div className="w-full bg-cetacean-dark-blue border border-white/10 rounded-2xl px-6 py-9 flex items-center justify-between mt-6">
+        <div className="w-full bg-cetacean-dark-blue border border-white/10 rounded-xl md:rounded-2xl px-3 pt-6 pb-3 md:px-6 md:py-8 flex items-center justify-between mt-6">
           {
             !isNil(baseCoin) ?
               <div className="flex items-center gap-2">
                 <img alt="token" src={baseCoin.tokenImage} className="w-6 h-6" />
-                <Text size="base" weight="font-medium">{baseCoin.name}</Text>
+                <Text size="base"  weight="font-medium">{baseCoin.name}</Text>
               </div>
               :
               <Text size="2xl" weight="font-medium" className='flex-1 text-center'>-</Text>
@@ -158,12 +159,12 @@ const RedeemTab: FC<Props> = ({ pageData, getPageData, refreshBalance, basePrice
         </div>
         <TransactionButton
           loading={processLoading}
-          className="w-[375px] h-11 mt-7 ml-auto"
+          className="w-full md:w-[375px] h-11 mt-7 ml-auto"
           onClick={redeem}
           text='Redeem'
           disabled={redeemDisabled}
           tooltipPlacement="bottom-center"
-          disabledText={"Enter the AUSD amount."}
+          disabledText={"Enter the AUSD amount. 999 AUSD is the upper limit for now."}
         />
       </div>
     </section>

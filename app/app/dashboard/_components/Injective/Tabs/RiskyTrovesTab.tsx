@@ -119,18 +119,18 @@ const RiskyTrovesTab: FC<Props> = ({ getPageData, basePrice }) => {
       <div className='-ml-4'>
         <Table
           listData={riskyTroves}
-          header={<div className="grid-cols-6 grid gap-5 lg:gap-0 mt-4">
-            <TableHeaderCol col={3} text="Owner" />
+          header={<div className="grid-cols-6 grid gap-5 lg:gap-0 mt-4 mr-6">
+            <TableHeaderCol col={2} text="Owner" />
             <TableHeaderCol col={1} text="Collateral" textCenter />
-            <TableHeaderCol col={1} text="Debt" textCenter />
-            <TableHeaderCol col={1} text="Coll. Ratio" textEnd />
+            <TableHeaderCol col={1} text="Debt" textEnd />
+            <TableHeaderCol col={2} text="Coll. Ratio" textEnd />
           </div>}
-          bodyCss='space-y-1 max-h-[350px] overflow-auto'
+          bodyCss='space-y-1 max-h-[350px] overflow-auto overflow-x-hidden'
           loading={loading}
           renderItem={(item: RiskyTroves) => {
-            return <div className="grid grid-cols-6 border-b border-white/10">
-                <TableBodyCol col={3} text="XXXXXX" value={
-                  <Text size='sm' className='whitespace-nowrap text-start ml-4'>{getCroppedString(item.owner, 6, 8)}</Text>
+            return <div className="grid grid-cols-6 gap-4 border-b border-white/10">
+                <TableBodyCol col={2} text="XXXXXX" value={
+                  <Text size='xs' className='whitespace-nowrap text-start ml-4'>{getCroppedString(item.owner, 6, 8)}</Text>
                 } />
                 <TableBodyCol col={1} text="XXXXXX" value={
                   <NumericFormat
@@ -141,7 +141,7 @@ const RiskyTrovesTab: FC<Props> = ({ getPageData, basePrice }) => {
                     decimalScale={2}
                     displayType="text"
                     renderText={(value) =>
-                      <Text size='sm' responsive={false} className='whitespace-nowrap'>{value} {baseCoin?.name}</Text>
+                      <Text size='xs' responsive={true} className='whitespace-nowrap'>{value} {baseCoin?.name}</Text>
                     }
                   />} />
                 <TableBodyCol col={1} text="XXXXXX" value={
@@ -153,10 +153,10 @@ const RiskyTrovesTab: FC<Props> = ({ getPageData, basePrice }) => {
                     decimalScale={2}
                     displayType="text"
                     renderText={(value) =>
-                      <Text size='sm' responsive={false} className='whitespace-nowrap'>{value} AUSD</Text>
+                      <Text size='xs' responsive={true} className='whitespace-nowrap'>{value} AUSD</Text>
                     }
                   />} />
-                <TableBodyCol col={1} text="XXXXXX" value={
+                <TableBodyCol col={2} text="XXXXXX" value={
                   <NumericFormat
                     value={item.liquidityThreshold}
                     thousandsGroupStyle="thousand"
@@ -166,9 +166,9 @@ const RiskyTrovesTab: FC<Props> = ({ getPageData, basePrice }) => {
                     displayType="text"
                     renderText={(value) =>
                       clientType === ClientEnum.INJECTIVE ?
-                        <Text size='sm' responsive={false} className='whitespace-nowrap text-center pl-4' dynamicTextColor={getRatioColor(item.liquidityThreshold)}>{item.liquidityThreshold}%</Text>
+                        <Text size='xs' responsive={true} className='whitespace-nowrap text-end pr-10' dynamicTextColor={getRatioColor(item.liquidityThreshold)}>{item.liquidityThreshold}%</Text>
                         :
-                        <Text size='base' responsive={false} className='whitespace-nowrap' dynamicTextColor={getRatioColor(((item.liquidityThreshold ?? 0) * (basePrice ?? 0))) ?? 0}>{Number((item.liquidityThreshold ?? 0) * (basePrice ?? 0)).toFixed(3)}%</Text>
+                        <Text size='xs' responsive={true} className='whitespace-nowrap text-end pr-10' dynamicTextColor={getRatioColor(((item.liquidityThreshold ?? 0) * (basePrice ?? 0))) ?? 0}>{Number((item.liquidityThreshold ?? 0) * (basePrice ?? 0)).toFixed(3)}%</Text>
                     }
                   />}
                 />
@@ -183,7 +183,7 @@ const RiskyTrovesTab: FC<Props> = ({ getPageData, basePrice }) => {
       )}
       <GradientButton
         disabled={riskyTroves.length === 0}
-        className='w-[374px] h-11 ml-auto mt-6'
+        className='w-full md:w-[374px] h-11 ml-auto mt-6'
         onClick={liquidateTroves}
         rounded="rounded-lg"
         loading={processLoading}

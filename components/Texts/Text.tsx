@@ -13,7 +13,7 @@ type Props = {
 }
 
 const textResponsiveSizes: Record<TextSizes, string> = {
-    'xs': 'text-xs',
+    'xs': 'text-[10px] md:text-xs',
     'sm': 'lg:text-sm text-xs',
     'base': 'lg:text-base sm:text-sm text-xs',
     'lg': 'lg:text-lg md:text-base sm:text-sm text-xs',

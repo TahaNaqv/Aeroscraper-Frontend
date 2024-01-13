@@ -35,8 +35,8 @@ const StabilityPoolTab: FC<Props> = ({ pageData, getPageData }) => {
   const [stakeAmount, setStakeAmount] = useState<number>(0);
   const [unstakeAmount, setUnstakeAmount] = useState<number>(0);
 
-  const stakeDisabled = useMemo(() => stakeAmount <= 0, [stakeAmount]);
-  const unstakeDisabled = useMemo(() => unstakeAmount <= 0, [unstakeAmount]);
+  const stakeDisabled = useMemo(() => stakeAmount <= 0 || stakeAmount > 999 || stakeAmount > pageData.ausdBalance, [stakeAmount]);
+  const unstakeDisabled = useMemo(() => unstakeAmount <= 0 || unstakeAmount > 999 || unstakeAmount > pageData.ausdBalance, [unstakeAmount]);
 
   const stakePool = async () => {
     setProcessLoading(true);
@@ -94,9 +94,9 @@ const StabilityPoolTab: FC<Props> = ({ pageData, getPageData }) => {
   }
 
   return (
-    <div className="-ml-4">
+    <div className="md:-ml-4 overflow-hidden md:overflow-visible">
       <Text size='3xl'>Add to stability pool to earn rewards</Text>
-      <Text size='base' weight='font-regular' className='mt-1 mb-8'>Deposit or Withdraw AUSD from your wallet to the Aeroscaper protocol to earn rewards. </Text>
+      <Text size='base' weight='font-regular' className='mt-1 mb-8'>Deposit or Withdraw AUSD from your wallet to the Aeroscraper protocol to earn rewards. </Text>
       <div className='flex flex-col'>
         {pageData.stakedAmount > 0 && <Checkbox label={'Deposit'} checked={selectedTab === TABS.DEPOSIT} onChange={() => { setSelectedTab(TABS.DEPOSIT); }} />}
         {selectedTab === TABS.DEPOSIT && (
@@ -106,7 +106,7 @@ const StabilityPoolTab: FC<Props> = ({ pageData, getPageData }) => {
             exit={{ opacity: 0, x: -100 }}
             transition={{ duration: 0.3, ease: "easeIn" }}
           >
-            <div className="w-full bg-cetacean-dark-blue border backdrop-blur-[37px] border-white/10 rounded-2xl px-6 py-8 flex flex-col gap-4 mt-6">
+            <div className="w-full bg-cetacean-dark-blue border backdrop-blur-[37px] border-white/10 rounded-xl md:rounded-2xl px-3 pt-4 pb-3 md:px-6 md:py-8 flex flex-col gap-4 mt-6">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <img alt="ausd" className="w-6 h-6" src="/images/token-images/ausd-blue.svg" />
@@ -122,8 +122,8 @@ const StabilityPoolTab: FC<Props> = ({ pageData, getPageData }) => {
               </div>
               <div className='flex justify-between mt-6'>
                 <div className='flex'>
-                  <label className="font-regular text-base text-white">Pool Share:</label>
-                  <p className='text-[#00CF30] font-regular text-base ml-3'>{pageData.poolShare || "0"}%</p>
+                  <label className="font-regular text-xs md:text-base text-white">Pool Share:</label>
+                  <p className='text-[#00CF30] font-regular text-sm md:text-base ml-3'>{pageData.poolShare || "0"}%</p>
                 </div>
                 <NumericFormat
                   value={pageData.ausdBalance}
@@ -142,11 +142,11 @@ const StabilityPoolTab: FC<Props> = ({ pageData, getPageData }) => {
             </div>
             <GradientButton
               disabled={stakeDisabled}
-              disabledText={"Enter the AUSD amount."}
+              disabledText={"Enter the AUSD amount. 999 AUSD is the upper limit for now."}
               tooltipPlacement="bottom-center"
               loading={processLoading}
               onClick={stakePool}
-              className="w-[374px] h-11 mt-6 ml-auto"
+              className="w-[240px] md:w-[374px] h-11 mt-6 ml-auto"
               rounded="rounded-lg"
             >
               <Text>Deposit</Text>
@@ -160,7 +160,7 @@ const StabilityPoolTab: FC<Props> = ({ pageData, getPageData }) => {
             exit={{ opacity: 0, x: -100 }}
             transition={{ duration: 0.3, ease: "easeIn" }}
           >
-            <div className="w-full bg-cetacean-dark-blue border backdrop-blur-[37px] border-white/10 rounded-2xl px-6 py-8 flex flex-col gap-4 mt-6">
+            <div className="w-full bg-cetacean-dark-blue border backdrop-blur-[37px] border-white/10 rounded-xl md:rounded-2xl px-3 pt-4 pb-3 md:px-6 md:py-8 flex flex-col gap-4 mt-6">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <img alt="ausd" className="w-6 h-6" src="/images/token-images/ausd-blue.svg" />
@@ -176,8 +176,8 @@ const StabilityPoolTab: FC<Props> = ({ pageData, getPageData }) => {
               </div>
               <div className='flex justify-between mt-6'>
                 <div className='flex'>
-                  <label className="font-regular text-base text-white">Pool Share:</label>
-                  <p className='text-[#ED0E00] font-regular text-base ml-3'>{pageData.poolShare || "0"}%</p>
+                  <label className="font-regular text-xs md:text-base text-white">Pool Share:</label>
+                  <p className='text-[#ED0E00] font-regular text-sm md:text-base ml-3'>{pageData.poolShare || "0"}%</p>
                 </div>
                 <NumericFormat
                   value={pageData.stakedAmount}
@@ -197,10 +197,10 @@ const StabilityPoolTab: FC<Props> = ({ pageData, getPageData }) => {
             <GradientButton
               disabled={unstakeDisabled}
               tooltipPlacement="bottom-center"
-              disabledText={"Enter the AUSD amount."}
+              disabledText={"Enter the AUSD amount. 999 AUSD is the upper limit for now."}
               loading={processLoading}
               onClick={unStakePool}
-              className="min-w-[374px] h-11 mt-6 ml-auto"
+              className="min-w-[240px] md:w-[374px] h-11 mt-6 ml-auto"
               rounded="rounded-lg"
             >
               <Text>Withdraw</Text>

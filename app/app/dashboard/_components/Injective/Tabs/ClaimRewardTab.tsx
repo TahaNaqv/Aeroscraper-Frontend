@@ -50,7 +50,7 @@ const ClaimRewardTab: FC<Props> = ({ pageData, getPageData, refreshBalance, base
     <section>
       <Text size='3xl'>Claim your rewards in {baseCoin?.name ?? ""}</Text>
       <div className='mt-6'>
-        <div className="w-full bg-cetacean-dark-blue border border-white/10 rounded-2xl px-6 py-9 flex items-end justify-between mt-6">
+        <div className="w-full bg-cetacean-dark-blue border border-white/10 rounded-xl md:rounded-2xl px-3 pt-4 pb-3 md:px-6 md:py-8 flex items-end justify-between mt-6">
           <div>
             <Text size="sm" weight="mb-2">Reward</Text>
             {
@@ -82,7 +82,7 @@ const ClaimRewardTab: FC<Props> = ({ pageData, getPageData, refreshBalance, base
           disabled={pageData.rewardAmount == 0}
           tooltipPlacement="bottom-center"
           disabledText={"No rewards are available."}
-          className="w-[375px] h-11 mt-7 ml-auto"
+          className="w-full md:w-[375px] h-11 mt-7 ml-auto"
           onClick={() => { rewardClaim(); }}
           text='Claim Rewards'
         />

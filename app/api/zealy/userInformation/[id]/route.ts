@@ -14,6 +14,7 @@ export async function GET(req: NextRequest) {
   });
   
   const data = await result.json();
+console.log(data);
 
   if (result.status !== 200) {
     return NextResponse.json({

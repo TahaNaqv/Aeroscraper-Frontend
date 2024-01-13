@@ -217,14 +217,14 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
                 {wallet.walletLoading ? <Loading width={36} height={36} /> : <Text size='base'>Select Chain & Connect Wallet</Text>}
             </GradientButton>
             <Modal modalSize='lg' showModal={walletSelectionOpen}>
-                <div ref={ref} className='flex h-[644px]'>
-                    <div className='pt-10 pl-8 w-[300px] border-r border-white/10 relative'>
+                <div ref={ref} className='md:flex md:h-[644px]'>
+                    <div className='pt-10 pl-8 w-[300px] md:border-r border-white/10 relative'>
                         <h2 className='text-[#F7F7FF] text-2xl font-medium'>{!isNil(clientType) ? "Connect Wallet" : "Select Chain"}</h2>
                         {!isNil(clientType) &&
                             <div className={`gap-y-4 flex flex-col mt-10 ${isNil(clientType) ? "hidden" : ""}`}>
                                 {
                                     WalletByClient[clientType].filter(walletType => walletExtensions?.installed.map(x => x.name).includes(walletType)).map((walletType, idx) => {
-                                        return <div key={idx} className='inline-block mr-auto' >
+                                        return <div key={idx} className={`mr-auto ${walletType === WalletType.LEAP ? "" : "md:inline-block hidden"}`} >
                                             {idx === 0 && <Text size='base' className='mb-4'>Installed Wallets</Text>}
                                             <Button
                                                 onClick={() => { connectWallet(walletType); }}
@@ -237,7 +237,7 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
                                 }
                                 {
                                     WalletByClient[clientType].filter(walletType => walletExtensions?.otherWallets.map(x => x.name).includes(walletType)).map((walletType, idx) => (
-                                        <div key={idx} className='inline-block mr-auto'>
+                                        <div key={idx} className={`mr-auto ${walletType === WalletType.LEAP ? "" : "md:inline-block hidden"}`}>
                                             {idx === 0 && <Text size='base' className='mb-4'>Other Wallets</Text>}
                                             <Button
                                                 onClick={() => { setShowDownloadExtension({ name: walletType, downloadLink: walletExtensions?.otherWallets.find(i => i.name === walletType)?.downloadLink! }); }}
@@ -250,7 +250,7 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
                                 }
                             </div>}
                         {isNil(clientType) &&
-                            <div className={`gap-y-4 flex flex-col mt-10`}>
+                            <div className={`gap-y-4 flex-col mt-10 md:flex hidden`}>
                                 {
                                     Object.values(WalletType).filter(i => i != "not_selected").filter(walletType => walletExtensions?.installed.map(x => x.name).includes(walletType)).map((walletType, idx) => {
                                         const isWalletByClient = onHoverChain && WalletByClient[onHoverChain].includes(walletType);
@@ -300,19 +300,8 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
                                 }
                             </div>
                         }
-                        {clientType && (
-                            <div className='flex gap-4 items-center mt-auto absolute bottom-6'>
-                                <Text size='base'>Chain</Text>
-                                <Button
-                                    onClick={resetChain}
-                                    startIcon={<img alt={clientType} src={BaseCoinByClient[clientType].image} className='w-6 h-6' />}
-                                >
-                                    {capitalizeFirstLetter(clientType.toLocaleLowerCase())}
-                                </Button>
-                            </div>
-                        )}
                     </div>
-                    <div className={`flex-1 flex flex-col items-center justify-center text-center rounded-3xl`}>
+                    <div className={`flex-1 flex flex-col items-center justify-center text-center md:border-t-0 border-t border-white/20 mt-8 pt-8 md:pt-0`}>
                         {showDownloadExtension &&
                             <motion.div
                                 initial={{ opacity: 0.1 }}
@@ -334,22 +323,22 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
                                 (<motion.div
                                     initial={{ opacity: 0.1 }}
                                     animate={{ opacity: 1 }}
-                                    className="mx-[140px]"
+                                    className="mx-10 md:mx-[140px] md:block hidden"
                                 >
-                                    <Text size='4xl' textColor='text-white' className='mb-10'>How do I connect my wallet?</Text>
+                                    <Text size='4xl' textColor='text-white' className='mb-4 md:mb-10 mt-4'>How do I connect my wallet?</Text>
                                     <div className='flex justify-center items-center gap-16 mb-8'>
                                         {
                                             WalletByClient[clientType].map((walletType, idx) => {
-                                                return <img alt={WalletImagesByName[walletType].image} key={idx} className="w-6 h-6 object-contain" src={WalletImagesByName[walletType].thumbnail} />
+                                                return <img alt={WalletImagesByName[walletType].image} key={idx} className={`w-6 h-6 object-contain ${walletType === WalletType.LEAP ? "" : "md:inline-block hidden"}`} src={WalletImagesByName[walletType].thumbnail} />
                                             })
                                         }
                                     </div>
                                     <Text size='base' textColor='text-[#989396]'>If you want to connect an installed wallet, you can log in by selecting your wallet under &quot;Installed Wallets&quot; on the left side of the screen and using the browser extension.</Text>
-                                    <Text size='base' textColor='text-[#989396]' className='mt-10'>If you do not have an installed wallet, you can choose one of the wallet options on the left side of the screen and follow the instructions to set up your wallet.</Text>
+                                    <Text size='base' textColor='text-[#989396]' className='mt-2 md:mt-10'>If you do not have an installed wallet, you can choose one of the wallet options on the left side of the screen and follow the instructions to set up your wallet.</Text>
                                 </motion.div>
                                 )
                                 :
-                                (<>
+                                (<div className='p-10 mt-10 md:mt-0'>
                                     <p className='text-base font-medium text-[#989396]'>Before you start,</p>
                                     <h3 className='text-white text-3xl font-medium'>Please choose your chain</h3>
                                     <div className='space-y-6 mt-10'>
@@ -359,9 +348,14 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
                                                     return null;
                                                 }
 
+                                                if (clientType === ClientEnum.ARCHWAY) { // NEUTRON inj sunumu öncesi disabled yapıldı, tekrar açmak için bu yorum satırı silinebilir
+                                                    return null;
+                                                }
+
                                                 return <Button
                                                     key={idx}
                                                     onClick={() => { selectClient(clientType); }}
+                                                    className={`${clientType !== ClientEnum.INJECTIVE ? "md:flex hidden" : ""}`}
                                                     onMouseEnter={() => setOnHoverChain(clientType)}
                                                     onMouseLeave={() => setOnHoverChain(null)}
                                                     startIcon={<img alt={clientType} src={BaseCoinByClient[clientType].image} className='w-8 h-8' />}
@@ -371,10 +365,20 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
                                             })
                                         }
                                     </div>
-                                </>)
-                        )
-                        }
+                                </div>)
+                        )}
                     </div>
+                    {clientType && (
+                        <div className='flex gap-4 items-center mt-auto absolute bottom-8 left-8'>
+                            <Text size='base'>Chain</Text>
+                            <Button
+                                onClick={resetChain}
+                                startIcon={<img alt={clientType} src={BaseCoinByClient[clientType].image} className='w-6 h-6' />}
+                            >
+                                {capitalizeFirstLetter(clientType.toLocaleLowerCase())}
+                            </Button>
+                        </div>
+                    )}
                 </div>
             </Modal >
         </div >

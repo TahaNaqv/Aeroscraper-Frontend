@@ -53,7 +53,7 @@ const InjectiveNotification: FC = () => {
               duration: 0.5,
               ease: "backInOut"
             }}
-            className={`absolute z-[999] right-20 backdrop-blur-2xl top-[112px] border-[0.6px] rounded-lg px-6 py-4 ${VARIANTS[notification.status].borderColor} ${VARIANTS[notification.status].backgroundColor}`}>
+            className={`fixed z-[999] right-4 md:right-20 backdrop-blur-2xl top-[112px] border-[0.6px] rounded-lg px-6 py-4 ${VARIANTS[notification.status].borderColor} ${VARIANTS[notification.status].backgroundColor}`}>
             <div className=''>
               <div className="flex justify-center items-center gap-5 whitespace-nowrap">
                 <div className='w-5 h-5 text-white'>

@@ -4,8 +4,8 @@ import { useWallet } from '@/contexts/WalletProvider';
 import usePageData from '@/contracts/app/usePageData';
 import { PriceServiceConnection } from '@pythnetwork/price-service-client';
 import { motion } from 'framer-motion';
-import { debounce } from 'lodash';
-import React, { Dispatch, FC, useEffect, useState } from 'react'
+import { debounce, isNil } from 'lodash';
+import React, { Dispatch, FC, useEffect, useRef, useState } from 'react'
 import ClaimRewardTab from './Tabs/ClaimRewardTab';
 import LeaderboardTab from './Tabs/LeaderboardTab';
 import RedeemTab from './Tabs/RedeemTab';
@@ -17,18 +17,20 @@ interface Props {
   setTabPosition: Dispatch<InjectiveTabs>
 }
 
-export type InjectiveTabs = "trove" | "createTrove" | "stabilityPool" | "redeem" | "riskyTroves" | "rewards" | "leaderboard";
-
+export type InjectiveTabs = "trove" | "createTrove" | "stabilityPool" | "redeem" | "riskyTroves" | "rewards" | "Leaderboard & Missions"; 
 const InjectiveTabsSide: FC<Props> = ({ setTabPosition }) => {
+
+  const ref = useRef<HTMLDivElement>(null);
+
   const [basePrice, setBasePrice] = useState(0);
   const { pageData, getPageData, loading } = usePageData({ basePrice });
-  const { refreshBalance } = useWallet();
+  const { refreshBalance, walletType,} = useWallet();
 
-  const [isTroveOpened, setIsTroveOpened] = useState(true);
+  const [isTroveOpened, setIsTroveOpened] = useState(false);
 
-  let TabList: InjectiveTabs[] = [isTroveOpened ? "trove" : "createTrove", "stabilityPool", "redeem", "riskyTroves", "rewards", "leaderboard"];
+  let TabList: InjectiveTabs[] = [isTroveOpened ? "trove" : "createTrove", "stabilityPool", "redeem", "riskyTroves", "rewards", "Leaderboard & Missions"]; 
 
-  const [selectedTab, setSelectedTab] = useState<InjectiveTabs>("trove");
+  const [selectedTab, setSelectedTab] = useState<InjectiveTabs>(isTroveOpened ? "trove" : "createTrove");
 
   useEffect(() => {
     const getPrice = async () => {
@@ -53,15 +55,19 @@ const InjectiveTabsSide: FC<Props> = ({ setTabPosition }) => {
     getPrice()
   }, [])
 
-  useEffect(() => {
-    debounce(() => {
-      setIsTroveOpened(pageData.collateralAmount > 0);
-      setSelectedTab(pageData.collateralAmount > 0 ? "trove" : "createTrove");
-    }, 500)
+  useEffect(() => {    
+    setIsTroveOpened(pageData.collateralAmount > 0);
+    setSelectedTab(pageData.collateralAmount > 0 ? "trove" : "createTrove");
   }, [pageData]);
 
+  useEffect(() => {
+    if (typeof window !== "undefined" && window?.innerWidth <= 768) {
+      ref.current?.scrollIntoView({ behavior: 'smooth', block: "center" });
+    }
+  }, [selectedTab])
+
   return (
-    <div className='flex-1 max-w-[828px] mt-16 ml-auto'>
+    <div ref={ref} className='md:flex-1 md:max-w-[908px] px-3 md:px-0 md:mt-16 md:ml-auto'>
       <Tabs tabs={TabList} dots={pageData.rewardAmount > 0 ? ["rewards"] : undefined} selectedTab={selectedTab} onTabSelected={(e) => { setSelectedTab(e); setTabPosition(e); }} loading={loading} />
       {loading ? <>
         <div className='mt-16'>
@@ -85,13 +91,17 @@ const InjectiveTabsSide: FC<Props> = ({ setTabPosition }) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.7 }}
-          className='mt-14'>
+          className={`md:mt-14 ${(isNil(walletType) && selectedTab !== "Leaderboard & Missions") ? "blur-[2px]" : ""} relative`}>
+          {(isNil(walletType) && selectedTab !== "Leaderboard & Missions") &&
+            <div className='cursor-not-allowed h-full w-full absolute top-0 bottom-0 left-0 z-50'>
+            </div>
+          }
           {selectedTab === (isTroveOpened ? "trove" : "createTrove") && <TroveTab pageData={pageData} getPageData={getPageData} basePrice={basePrice} />}
           {selectedTab === "stabilityPool" && <StabilityPoolTab pageData={pageData} getPageData={getPageData} />}
           {selectedTab === "redeem" && <RedeemTab pageData={pageData} getPageData={getPageData} refreshBalance={refreshBalance} basePrice={basePrice} />}
           {selectedTab === "riskyTroves" && <RiskyTrovesTab pageData={pageData} getPageData={getPageData} basePrice={basePrice} />}
           {selectedTab === "rewards" && <ClaimRewardTab pageData={pageData} getPageData={getPageData} refreshBalance={refreshBalance} basePrice={basePrice} />}
-          {selectedTab === "leaderboard" && <LeaderboardTab />}
+          {selectedTab === "Leaderboard & Missions" && <LeaderboardTab />}
         </motion.main>
       }
 

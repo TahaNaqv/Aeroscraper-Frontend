@@ -30,7 +30,7 @@ const ArchwayTheme = () => {
   const compass = useCompass();
   const metamask = useMetamask();
   const ninji = useNinji();
-  
+
   const [accountModal, setAccountModal] = useState(false);
 
   useEffect(() => {
@@ -69,14 +69,43 @@ const ArchwayTheme = () => {
 
   return (
     <>
-      <div className='bg-[#5C5CFF] opacity-[0.09] h-[600px] w-[600px] absolute -top-60 -translate-x-1/3 left-1/3 rounded-full blur-3xl' />
-      <header className='mb-[88px] mx-[85px] mt-8 flex justify-between items-center'>
+      <div className='bg-[#5C5CFF] opacity-[0.09] h-[600px] w-full  md:w-[600px] absolute -top-60 -translate-x-1/3 left-1/3 rounded-full blur-3xl -z-10' />
+      <header className='md:mb-[88px] mx-6 md:mx-[85px] mt-8 flex justify-between items-center'>
         <div className='flex items-center gap-2'>
-          <LogoSecondary className='w-10 h-10' />
+          <LogoSecondary className='w-6 md:w-10 h-6 md:h-10' />
           <Text size='2xl'>Aeroscraper</Text>
         </div>
-        <div className='flex items-center'>
-          <div className="flex items-cent<wer gap-2 mr-8">
+        {wallet.initialized && !isNil(baseCoin) ?
+          <div className='md:hidden block -mr-4'>
+            <button onClick={() => { setAccountModal(true); }} className='flex ml-12 gap-2 items-center hover:blur-[1px] transition-all duration-300'>
+              <img
+                alt="user-profile-image"
+                src={wallet.profileDetail?.photoUrl ?? "/images/profile-images/profile-i-1.jpg"}
+                className='rounded-sm bg-raisin-black w-12 h-12'
+              />
+              <div className='flex flex-col'>
+                <div className='flex items-center ml-auto'>
+                  <img alt={wallet.walletType} className='w-4 h-4 object-contain rounded' src={WalletInfoMap[wallet.walletType ?? WalletType.NOT_SELECTED].thumbnailURL} />
+                  <Text size='lg' weight='font-regular' className='truncate ml-2'>{wallet.name}</Text>
+                </div>
+                <Text size='sm'>{wallet.address.slice(0, 6)}...{wallet.address.slice(-6)}</Text>
+                <div>
+                </div>
+              </div>
+              <button className='w-10 h-10 flex items-center justify-center' onClick={(e) => { e.stopPropagation(); disconnect(); }}>
+                <ExitIcon className='text-white' />
+              </button>
+            </button>
+          </div>
+          :
+          <WalletButton
+            key={"mobile"}
+            className="rounded-lg w-[196px] md:hidden block h-[36px]"
+            baseCoinBalance={!isNil(baseCoin) ? Number(convertAmount(balanceByDenom[baseCoin.denom]?.amount ?? 0, baseCoin.decimal)) : 0}
+          />
+        }
+        <div className='items-center md:flex hidden'>
+          <div className="flex items-center gap-2 mr-8">
             <Text size='base'>$1.00</Text>
             <img alt="ausd" className="w-5 h-5" src="/images/token-images/ausd-blue.svg" />
           </div>
@@ -113,6 +142,7 @@ const ArchwayTheme = () => {
             :
             <WalletButton
               ausdBalance={0}
+              key={"web"}
               className="rounded-lg w-[287px] h-[48px]"
               baseCoinBalance={!isNil(baseCoin) ? Number(convertAmount(balanceByDenom[baseCoin.denom]?.amount ?? 0, baseCoin.decimal)) : 0}
               basePrice={0}
@@ -128,6 +158,26 @@ const ArchwayTheme = () => {
           onClose={() => { setAccountModal(false); }}
         />
       </header>
+      {wallet.initialized && !isNil(baseCoin) &&
+        <div className='items-center md:hidden flex border h-[50px] border-white/20 mx-6 rounded-lg mt-8 pl-4 z-50'>
+          <div className="flex items-center gap-2 mr-8">
+            <Text size='base'>$1.00</Text>
+            <img alt="ausd" className="w-5 h-5" src="/images/token-images/ausd-blue.svg" />
+          </div>
+          {
+            !isNil(baseCoin) &&
+            <div className="flex items-center gap-2 mr-12">
+              <Text size='base'>$ {basePrice.toFixed(4)}</Text>
+              <img alt={baseCoin.name} className="w-5 h-5" src={baseCoin.tokenImage} />
+            </div>
+          }
+          {(wallet.initialized && !isNil(baseCoin)) &&
+            <div className='ml-auto'>
+              <NotificationDropdown />
+            </div>
+          }
+        </div>
+      }
     </>
   )
 }

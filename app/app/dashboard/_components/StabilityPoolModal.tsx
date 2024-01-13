@@ -37,8 +37,8 @@ const StabilityPoolModal: FC<Props> = ({ open, onClose, pageData, getPageData })
   const [stakeAmount, setStakeAmount] = useState<number>(0);
   const [unstakeAmount, setUnstakeAmount] = useState<number>(0);
 
-  const stakeDisabled = useMemo(() => stakeAmount <= 0, [stakeAmount]);
-  const unstakeDisabled = useMemo(() => unstakeAmount <= 0, [unstakeAmount]);
+  const stakeDisabled = useMemo(() => stakeAmount <= 0 || stakeAmount > 999, [stakeAmount]);
+  const unstakeDisabled = useMemo(() => unstakeAmount <= 0 || unstakeAmount > 999, [unstakeAmount]);
 
   const stakePool = async () => {
     setProcessLoading(true);
@@ -189,7 +189,7 @@ const StabilityPoolModal: FC<Props> = ({ open, onClose, pageData, getPageData })
             }
             <GradientButton
               disabled={stakeDisabled}
-              disabledText={"Enter the AUSD amount."}
+              disabledText={"Enter the AUSD amount. 999 AUSD is the upper limit for now."}
               loading={processLoading}
               onClick={stakePool}
               className="min-w-[221px] h-11 mt-6 ml-auto"
@@ -227,7 +227,7 @@ const StabilityPoolModal: FC<Props> = ({ open, onClose, pageData, getPageData })
             {pageData.poolShare > 0 && <InputLayout disabled label="Pool Share" hintTitle="%" value={pageData.poolShare} />}
             <GradientButton
               disabled={unstakeDisabled}
-              disabledText={"Enter the AUSD amount."}
+              disabledText={"Enter the AUSD amount. 999 AUSD is the upper limit for now."}
               loading={processLoading}
               onClick={unStakePool}
               className="min-w-[221px] h-11 mt-6 ml-auto"

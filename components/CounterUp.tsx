@@ -4,8 +4,8 @@ import React, { useEffect, useRef } from "react";
 interface CounterProps {
   from: string;
   to: string;
-  duration?: number,
-  fixed?: number
+  duration?: number;
+  fixed?: number;
 }
 
 export const CounterUp = ({ from, to, duration = 1, fixed = 2 }: CounterProps) => {
@@ -16,10 +16,10 @@ export const CounterUp = ({ from, to, duration = 1, fixed = 2 }: CounterProps) =
     if (nodeRef.current) {
       const node = nodeRef.current;
 
-      controls.current = animate(parseFloat(from), parseFloat(to), {
+      controls.current = animate(parseFloat(from.replace(",", ".")), parseFloat(to.replace(",", ".")), {
         duration: duration,
         onUpdate(value) {
-          node.textContent = fixed ? value.toFixed(fixed) : value.toString();
+          node.textContent = fixed ? value.toFixed(fixed).replace(".", ",") : value.toString();
         },
       });
     }
@@ -29,7 +29,7 @@ export const CounterUp = ({ from, to, duration = 1, fixed = 2 }: CounterProps) =
         controls.current.stop();
       }
     };
-  }, [from, to]);
+  }, [from, to, fixed, duration]);
 
   return <span ref={nodeRef} />;
-}
+};

@@ -42,6 +42,7 @@ const RedeemSide: FC<Props> = ({ pageData, getPageData, refreshBalance, basePric
   const redeemDisabled = useMemo(() =>
     isNil(redeemAmount) ||
     redeemAmount <= 0 ||
+    redeemAmount > 999 ||
     redeemAmount > pageData.ausdBalance,
     [redeemAmount, pageData])
 
@@ -168,7 +169,7 @@ const RedeemSide: FC<Props> = ({ pageData, getPageData, refreshBalance, basePric
         text='Redeem'
         disabled={redeemDisabled}
         tooltipPlacement={"top"}
-        disabledText={"Enter the AUSD amount."}
+        disabledText={"Enter the AUSD amount. 999 AUSD is the upper limit for now."}
       />
     </BorderedContainer>
   )

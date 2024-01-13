@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
 
-  const result = await fetch("https://db.aeroscraper.io/api/collections/leaderboard/records?page=1&perPage=500", {
+  const missionDatas = await fetch("https://api.zealy.io/communities/aeroscraper/quests", {
     headers: {
       "x-api-key": `${process.env.NEXT_PUBLIC_ZEALY_API_KEY}`
     },
@@ -10,14 +10,14 @@ export async function GET(req: NextRequest) {
     cache: "no-cache"
   });
 
-  const data = await result.json()
+  const missionsData = await missionDatas.json();
 
-  if (result.status !== 200) {
+  if (missionDatas.status !== 200) {
     return NextResponse.json({
-      status: result.status,
+      status: missionDatas.status,
       msg: "There was a problem",
     });
   } else {
-    return NextResponse.json(data);
+    return NextResponse.json(missionsData);
   }
 }

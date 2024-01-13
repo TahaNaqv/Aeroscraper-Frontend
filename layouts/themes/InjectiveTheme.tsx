@@ -69,27 +69,29 @@ const InjeciveTheme = () => {
 
   return (
     <>
-      <div className='bg-[#5C5CFF] opacity-[0.09] h-[600px] w-[600px] absolute -top-60 -translate-x-1/3 left-1/3 rounded-full blur-3xl' />
-      <header className='mb-[88px] mx-[85px] mt-8 flex justify-between items-center'>
-        <div className='flex items-center gap-2'>
-          <LogoSecondary className='w-10 h-10' />
+      <div className='bg-[#5C5CFF] opacity-[0.09] h-[600px] w-full  md:w-[600px] absolute -top-60 -translate-x-1/3 left-1/3 rounded-full blur-3xl -z-10' />
+      <header className='md:mb-[88px] mx-6 md:mx-[85px] mt-8 flex justify-between items-center'>
+        <div className='flex items-center gap-2 mr-2'>
+          <LogoSecondary className='w-6 md:w-10 h-6 md:h-10' />
           <Text size='2xl'>Aeroscraper</Text>
         </div>
         <div className='flex items-center'>
-          <div className="flex items-cent<wer gap-2 mr-8">
+          <div className="items-center gap-2 mr-8 md:flex hidden">
             <Text size='base'>$1.00</Text>
             <img alt="ausd" className="w-5 h-5" src="/images/token-images/ausd-blue.svg" />
           </div>
           {
             !isNil(baseCoin) &&
-            <div className="flex items-center gap-2 mr-12">
+            <div className="items-center gap-2 mr-12 md:flex hidden">
               <Text size='base'>$ {basePrice.toFixed(4)}</Text>
               <img alt={baseCoin.name} className="w-5 h-5" src={baseCoin.tokenImage} />
             </div>
           }
           {wallet.initialized && !isNil(baseCoin) ?
             <>
-              <NotificationDropdown />
+              <div className='md:flex hidden'>
+                <NotificationDropdown />
+              </div>
               <button onClick={() => { setAccountModal(true); }} className='flex ml-12 gap-2 items-center hover:blur-[1px] transition-all duration-300'>
                 <img
                   alt="user-profile-image"
@@ -113,7 +115,7 @@ const InjeciveTheme = () => {
             :
             <WalletButton
               ausdBalance={0}
-              className="rounded-lg w-[287px] h-[48px]"
+              className="rounded-lg w-[200px] md:w-[287px] ml-2 h-[36px] md:h-[48px]"
               baseCoinBalance={!isNil(baseCoin) ? Number(convertAmount(balanceByDenom[baseCoin.denom]?.amount ?? 0, baseCoin.decimal)) : 0}
               basePrice={0}
             />
@@ -128,6 +130,26 @@ const InjeciveTheme = () => {
           onClose={() => { setAccountModal(false); }}
         />
       </header>
+      {wallet.initialized && !isNil(baseCoin) &&
+        <div className='items-center md:hidden flex border h-[50px] border-white/20 mx-4 rounded-lg mt-8 pl-4 z-50'>
+          <div className="flex items-center gap-2 mr-8">
+            <Text size='base'>$1.00</Text>
+            <img alt="ausd" className="w-5 h-5" src="/images/token-images/ausd-blue.svg" />
+          </div>
+          {
+            !isNil(baseCoin) &&
+            <div className="flex items-center gap-2 mr-12">
+              <Text size='base'>$ {basePrice.toFixed(4)}</Text>
+              <img alt={baseCoin.name} className="w-5 h-5" src={baseCoin.tokenImage} />
+            </div>
+          }
+          {(wallet.initialized && !isNil(baseCoin)) &&
+            <div className='ml-auto'>
+              <NotificationDropdown />
+            </div>
+          }
+        </div>
+      }
     </>
   )
 }

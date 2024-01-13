@@ -1,6 +1,9 @@
+
 import { camelCaseToTitleCase } from '@/utils/stringUtils';
 import { motion } from 'framer-motion';
 import React, { FC } from 'react';
+import ReactDOM from 'react-dom';
+import { ShapeIcon } from './Icons/Icons';
 import SkeletonLoading from './Table/SkeletonLoading';
 
 interface TabsProps<T> {
@@ -21,7 +24,7 @@ const Tabs: FC<TabsProps<string>> = ({ tabs, selectedTab, onTabSelected, loading
             key={tab}
             className={`m-0.5 text-base font-medium text-white relative cursor-pointer rounded-md hover:text-red-500 duration-700 flex-1 whitespace-nowrap text-center`}
           >
-            <SkeletonLoading height={'h-12'} noPadding noMargin/>
+            <SkeletonLoading height={'h-12'} noPadding noMargin />
           </li>
         })}
       </ul>
@@ -30,7 +33,20 @@ const Tabs: FC<TabsProps<string>> = ({ tabs, selectedTab, onTabSelected, loading
 
   return (
     <nav>
-      <ul className='flex flex-auto gap-2 border border-white/10 rounded-lg'>
+      <ul className='grid grid-cols-6 gap-2 py-4 left-0 bottom-0 fixed shadow shadow-white/10 w-full bg-chinese-black md:hidden z-[999]'>
+        {tabs.map((tab) => (
+          <motion.li
+            key={tab}
+            onClick={() => onTabSelected && onTabSelected(tab)}
+            className={`m-1 text-[8px] font-medium text-white relative cursor-pointer rounded-md hover:text-red-500 duration-700 flex-1 whitespace-wrap items-center justify-center flex text-center`}
+          >
+            {camelCaseToTitleCase(tab)}
+            {dots?.includes(tab) && <div className='h-2 w-2 absolute bg-red-500 right-3 -top-2.5 md:top-2 animate-pulse rounded-full' />}
+            {tab === selectedTab && <ShapeIcon className='w-12 h-12 absolute -bottom-12' />}
+          </motion.li>
+        ))}
+      </ul>
+      <ul className='flex-auto gap-2 border border-white/10 rounded-lg md:flex hidden'>
         {tabs.map((tab) => (
           <motion.li
             key={tab}

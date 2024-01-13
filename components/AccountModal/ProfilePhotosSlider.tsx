@@ -43,7 +43,7 @@ const ProfilePhotoSlider: React.FC<Props> = (props) => {
         {Array.from(slider).map((photo, idx) => (
           <motion.div
             key={idx}
-            className="min-w-[80px] min-h-[80px] w-24h-24"
+            className="min-w-[80px] min-h-[80px]"
             initial="enter"
             animate="center"
             exit="exit"

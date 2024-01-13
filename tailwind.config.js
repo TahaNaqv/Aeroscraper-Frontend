@@ -10,6 +10,11 @@ module.exports = {
     './layouts/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
+    screens: {
+      'sm': '376px',
+      'md': '960px',
+      'lg': '1440px'
+    },
     colors: {
       ...colors,
       'ghost-white': '#F7F7FF',
@@ -25,7 +30,7 @@ module.exports = {
       'isabelline': '#F2EFED99',
       'cetacean-dark-blue': 'rgba(12, 17, 39, 0.40)',
       'cetacean-blue': '#15153c',
-      'absolute-zero':'#073DC8'
+      'absolute-zero': '#073DC8'
     }
   }
   ,
