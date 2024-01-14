@@ -66,7 +66,7 @@ const usePageData = ({ basePrice }: Props) => {
         contract.getAusdBalance(),
         contract.getStake(),
       ])
-
+      console.log(troveRes)
       const [
         totalStakeRes,
         totalCollateralRes,
@@ -77,7 +77,7 @@ const usePageData = ({ basePrice }: Props) => {
         contract.getTotalDebtAmount(),
       ]);
 
-      const collateralAmount = convertAmount(getSettledValue(troveRes)?.collateral_amount ?? 0, baseCoin?.decimal)
+      const collateralAmount = convertAmount(getSettledValue(troveRes)?.collateral_amounts ?? 0, baseCoin?.decimal)
       const debtAmount = convertAmount(getSettledValue(troveRes)?.debt_amount ?? 0, baseCoin?.ausdDecimal)
 
       setPageData({

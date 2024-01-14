@@ -1,5 +1,8 @@
 export type GetTroveResponse = {
-    collateral_amount: string;
+    collateral_amounts: {
+        amount: number,
+        denom: string,
+    }; //array olacak denom ve amount olacak
     debt_amount: string;
 }
 

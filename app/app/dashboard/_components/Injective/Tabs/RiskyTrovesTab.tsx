@@ -81,8 +81,8 @@ const RiskyTrovesTab: FC<Props> = ({ getPageData, basePrice }) => {
 
             return {
               owner: item.owner,
-              liquidityThreshold: item.liquidityThreshold || Number(isFinite(Number(((convertAmount(troveRes?.collateral_amount ?? 0, baseCoin?.decimal) * basePrice) / convertAmount(troveRes?.debt_amount ?? 0, baseCoin?.ausdDecimal)) * 100)) ? Number(((convertAmount(troveRes?.collateral_amount ?? 0, baseCoin?.decimal) * basePrice) / convertAmount(troveRes?.debt_amount ?? 0, baseCoin?.ausdDecimal)) * 100).toFixed(3) : 0),
-              collateralAmount: convertAmount(troveRes?.collateral_amount ?? 0, baseCoin?.decimal),
+              liquidityThreshold: item.liquidityThreshold || Number(isFinite(Number(((convertAmount(troveRes?.collateral_amounts ?? 0, baseCoin?.decimal) * basePrice) / convertAmount(troveRes?.debt_amount ?? 0, baseCoin?.ausdDecimal)) * 100)) ? Number(((convertAmount(troveRes?.collateral_amounts ?? 0, baseCoin?.decimal) * basePrice) / convertAmount(troveRes?.debt_amount ?? 0, baseCoin?.ausdDecimal)) * 100).toFixed(3) : 0),
+              collateralAmount: convertAmount(troveRes?.collateral_amounts ?? 0, baseCoin?.decimal),
               debtAmount: convertAmount(troveRes?.debt_amount ?? 0, baseCoin?.ausdDecimal),
             };
           } catch (err) {

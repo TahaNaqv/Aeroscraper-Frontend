@@ -64,12 +64,12 @@ export const getAppContract = (
 
     const getTotalCollateralAmounts = async (): Promise<TotalCollateralModel[] | undefined> => {
         if (clientType === ClientEnum.INJECTIVE) {
-            const res = await chainGrpcWasmApi.fetchSmartContractState(contractAddress, toBase64({ total_collateral_amount: {} }))
+            const res = await chainGrpcWasmApi.fetchSmartContractState(contractAddress, toBase64({ total_collateral_amounts: {} }))
             const data: any = fromBase64(res.data as any);
             return data;
         }
 
-        return await client.queryContractSmart(contractAddress, { total_collateral_amount: {} });
+        return await client.queryContractSmart(contractAddress, { total_collateral_amounts: {} });
     }
 
     const getTotalDebtAmount = async (): Promise<string> => {
@@ -163,8 +163,8 @@ export const getAppContract = (
                 contractAddress: oraclecontractAddress,
                 sender: senderAddress,
                 msg: {
-                    set_protocol_fee: {
-                        fee: [
+                    update_price_feeds: {
+                        data: [
                             vaa
                         ]
                     }
@@ -220,8 +220,8 @@ export const getAppContract = (
                 {
                     contractAddress: oraclecontractAddress,
                     msg: {
-                        set_protocol_fee: {
-                            fee: [
+                        update_price_feeds: {
+                            data: [
                                 vaa
                             ]
                         }
@@ -269,8 +269,8 @@ export const getAppContract = (
                 contractAddress: oraclecontractAddress,
                 sender: senderAddress,
                 msg: {
-                    set_protocol_fee: {
-                        fee: [
+                    update_price_feeds: {
+                        data: [
                             vaa
                         ]
                     }
@@ -298,7 +298,7 @@ export const getAppContract = (
                 {
                     contractAddress: oraclecontractAddress,
                     msg: {
-                        set_protocol_fee: {
+                        update_price_feeds: {
                             data: [
                                 vaa
                             ]
@@ -345,7 +345,7 @@ export const getAppContract = (
                 contractAddress: oraclecontractAddress,
                 sender: senderAddress,
                 msg: {
-                    set_protocol_fee: {
+                    update_price_feeds: {
                         data: [
                             vaa
                         ]
@@ -378,7 +378,7 @@ export const getAppContract = (
                 {
                     contractAddress: oraclecontractAddress,
                     msg: {
-                        set_protocol_fee: {
+                        update_price_feeds: {
                             data: [
                                 vaa
                             ]
@@ -424,7 +424,7 @@ export const getAppContract = (
                 contractAddress: oraclecontractAddress,
                 sender: senderAddress,
                 msg: {
-                    set_protocol_fee: {
+                    update_price_feeds: {
                         data: [
                             vaa
                         ]
@@ -452,7 +452,7 @@ export const getAppContract = (
                 {
                     contractAddress: oraclecontractAddress,
                     msg: {
-                        set_protocol_fee: {
+                        update_price_feeds: {
                             data: [
                                 vaa
                             ]
@@ -506,7 +506,7 @@ export const getAppContract = (
                 contractAddress: oraclecontractAddress,
                 sender: senderAddress,
                 msg: {
-                    set_protocol_fee: {
+                    update_price_feeds: {
                         data: [
                             vaa
                         ]
@@ -534,7 +534,7 @@ export const getAppContract = (
                 {
                     contractAddress: oraclecontractAddress,
                     msg: {
-                        set_protocol_fee: {
+                        update_price_feeds: {
                             data: [
                                 vaa
                             ]
@@ -644,7 +644,7 @@ export const getAppContract = (
                 contractAddress: oraclecontractAddress,
                 sender: senderAddress,
                 msg: {
-                    set_protocol_fee: {
+                    update_price_feeds: {
                         data: [
                             vaa
                         ]
@@ -672,7 +672,7 @@ export const getAppContract = (
                 {
                     contractAddress: oraclecontractAddress,
                     msg: {
-                        set_protocol_fee: {
+                        update_price_feeds: {
                             data: [
                                 vaa
                             ]
@@ -718,7 +718,7 @@ export const getAppContract = (
                 contractAddress: oraclecontractAddress,
                 sender: senderAddress,
                 msg: {
-                    set_protocol_fee: {
+                    update_price_feeds: {
                         data: [
                             vaa
                         ]
@@ -746,7 +746,7 @@ export const getAppContract = (
                 {
                     contractAddress: oraclecontractAddress,
                     msg: {
-                        set_protocol_fee: {
+                        update_price_feeds: {
                             data: [
                                 vaa
                             ]
