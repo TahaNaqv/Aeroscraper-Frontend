@@ -77,7 +77,7 @@ const usePageData = ({ basePrice }: Props) => {
         contract.getTotalDebtAmount(),
       ]);
 
-      const collateralAmount = convertAmount(getSettledValue(troveRes)?.collateral_amounts ?? 0, baseCoin?.decimal)
+      const collateralAmount = convertAmount(getSettledValue(totalCollateralRes)?.find(item => item.denom)?.amount ?? 0, baseCoin?.decimal)
       const debtAmount = convertAmount(getSettledValue(troveRes)?.debt_amount ?? 0, baseCoin?.ausdDecimal)
 
       setPageData({
