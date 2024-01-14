@@ -210,9 +210,9 @@ const AccountModal: FC<Props> = (props: Props) => {
                     decimalScale={2}
                     displayType="text"
                     renderText={(value) =>
-                      <Text size='lg' className='mt-2 flex gap-2 items-center'>
+                      <Text size='lg' className='mt-2 whitespace-nowrap flex gap-2 items-center'>
                         <img alt="ausd" className="w-5 h-5" src="/images/token-images/ausd-blue.svg" />
-                        <CounterUp from={"0"} to={value} duration={0.5} />
+                        {value}&nbsp; 
                         AUSD
                       </Text>
                     }
@@ -228,9 +228,9 @@ const AccountModal: FC<Props> = (props: Props) => {
                     decimalScale={2}
                     displayType="text"
                     renderText={(value) =>
-                      <Text size='lg' className='mt-2 flex gap-2 items-center ml-6'>
+                      <Text size='lg' className='mt-2 whitespace-nowrap flex gap-2 items-center ml-6'>
                         {baseCoin && <img alt={baseCoin.name} className="w-5 h-5" src={baseCoin.tokenImage} />}
-                        <CounterUp from={"0"} fixed={6} to={value} duration={0.5} />
+                        {value}&nbsp; 
                         {baseCoin?.name}
                       </Text>
                     }

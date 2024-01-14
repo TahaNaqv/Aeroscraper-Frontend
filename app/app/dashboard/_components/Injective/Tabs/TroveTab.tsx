@@ -13,6 +13,7 @@ import { PageData } from '../../../_types/types';
 import InjectiveStatisticCard from '@/components/Cards/InjectiveStatisticCard';
 import BorderedNumberInput from '@/components/Input/BorderedNumberInput';
 import Checkbox from '@/components/Checkbox';
+import { NumericFormat } from 'react-number-format';
 
 enum TABS {
   COLLATERAL = 0,
@@ -346,6 +347,20 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
                         <div className='flex'>
                           <label className="font-regular text-[10px] md:text-base text-gray-300">Borrowing Capacity:</label>
                           <p className='text-white font-regular text-xs md:text-base ml-1 md:ml-3'>{(((pageData.collateralAmount * basePrice * 100) / 115) - (pageData.debtAmount)).toFixed(6)} AUSD</p>
+                        </div>
+                        <div className='flex'>
+                          <label className="font-regular text-[10px] md:text-base text-gray-300">In Wallet AUSD:</label>
+                          <NumericFormat
+                            value={pageData.ausdBalance}
+                            thousandsGroupStyle="thousand"
+                            thousandSeparator=","
+                            fixedDecimalScale
+                            decimalScale={2}
+                            displayType="text"
+                            renderText={(value) =>
+                              <p className='text-white font-regular text-xs md:text-base ml-1 md:ml-3'>{value} AUSD</p>
+                            }
+                          />
                         </div>
                         <div className='flex'>
                           <label className="font-regular text-[10px] md:text-base text-gray-300">Debt:</label>

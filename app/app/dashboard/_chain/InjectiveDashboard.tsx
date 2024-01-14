@@ -103,7 +103,7 @@ export default function InjectiveDashboard() {
           <InjectiveBackgroundWave animate={processLoading} className="absolute -bottom-[200px] -left-20 -z-10 h-[584px] rotate-[180deg]" />
         </motion.div>
       )}
-      <div className="flex gap-4 flex-col md:flex-row md:gap-28 z-10 relative md:min-h-[720px]">
+      <div className="flex gap-4 flex-col md:flex-row md:gap-24 z-10 relative md:min-h-[720px]">
         <InjectiveStatisticSide basePrice={basePrice} />
         <InjectiveTabsSide setTabPosition={changeTabPosition} />
       </div>

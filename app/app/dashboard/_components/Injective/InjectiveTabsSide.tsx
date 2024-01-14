@@ -17,18 +17,18 @@ interface Props {
   setTabPosition: Dispatch<InjectiveTabs>
 }
 
-export type InjectiveTabs = "trove" | "createTrove" | "stabilityPool" | "redeem" | "riskyTroves" | "rewards" | "Leaderboard & Missions"; 
+export type InjectiveTabs = "trove" | "createTrove" | "stabilityPool" | "redeem" | "riskyTroves" | "rewards" | "Leaderboard & Missions";
 const InjectiveTabsSide: FC<Props> = ({ setTabPosition }) => {
 
   const ref = useRef<HTMLDivElement>(null);
 
   const [basePrice, setBasePrice] = useState(0);
   const { pageData, getPageData, loading } = usePageData({ basePrice });
-  const { refreshBalance, walletType,} = useWallet();
+  const { refreshBalance, walletType, } = useWallet();
 
   const [isTroveOpened, setIsTroveOpened] = useState(false);
 
-  let TabList: InjectiveTabs[] = [isTroveOpened ? "trove" : "createTrove", "stabilityPool", "redeem", "riskyTroves", "rewards", "Leaderboard & Missions"]; 
+  let TabList: InjectiveTabs[] = [isTroveOpened ? "trove" : "createTrove", "stabilityPool", "redeem", "riskyTroves", "rewards", "Leaderboard & Missions"];
 
   const [selectedTab, setSelectedTab] = useState<InjectiveTabs>(isTroveOpened ? "trove" : "createTrove");
 
@@ -55,9 +55,11 @@ const InjectiveTabsSide: FC<Props> = ({ setTabPosition }) => {
     getPrice()
   }, [])
 
-  useEffect(() => {    
-    setIsTroveOpened(pageData.collateralAmount > 0);
-    setSelectedTab(pageData.collateralAmount > 0 ? "trove" : "createTrove");
+  useEffect(() => {
+    if (selectedTab === "trove" || selectedTab === "createTrove") {
+      setIsTroveOpened(pageData.collateralAmount > 0);
+      setSelectedTab(pageData.collateralAmount > 0 ? "trove" : "createTrove");
+    }
   }, [pageData]);
 
   useEffect(() => {

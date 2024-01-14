@@ -74,7 +74,7 @@ const RiskyTrovesModal: FC<Props> = ({ open, onClose, pageData, getPageData, bas
                     return {
                         owner: item.owner,
                         liquidityThreshold: item.liquidityThreshold,
-                        collateralAmount: convertAmount(troveRes?.collateral_amounts ?? 0, baseCoin?.decimal),
+                        collateralAmount: convertAmount(troveRes?.collateral_amounts.find(item => item.denom)?.amount ?? 0, baseCoin?.decimal),
                         debtAmount: convertAmount(troveRes?.debt_amount ?? 0, baseCoin?.ausdDecimal)
                     }
                 }
