@@ -15,7 +15,6 @@ import { WalletType } from "@/enums/WalletType";
 import { TotalCollateralModel } from "@/app/app/dashboard/_types/types";
 import { ChainName } from "@/enums/Chain";
 import { getContractAddressesByChain } from "@/constants/chainConstants";
-import { WalletType } from "@/enums/WalletType";
 import { InjSdkWalletByCosmosWallet } from "@/constants/walletConstants";
 
 export const getAppContract = (

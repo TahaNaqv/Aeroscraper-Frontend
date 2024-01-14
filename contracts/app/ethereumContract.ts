@@ -12,7 +12,6 @@ import { MsgBroadcaster, WalletStrategy } from "@injectivelabs/wallet-ts";
 import { WalletType } from "@/enums/WalletType";
 import { TotalCollateralModel } from "@/app/app/dashboard/_types/types";
 import { ChainName } from "@/enums/Chain";
-import { WalletType } from "@/enums/WalletType";
 import { Chain } from '@chain-registry/types';
 import { BaseCoinByChainName, getContractAddressesByChain } from "@/constants/chainConstants";
 
