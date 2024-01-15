@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import useChainAdapter from "./useChainAdapter"
-import { Dictionary, keyBy } from "lodash";
+import { Dictionary } from "lodash";
 import { Coin } from "@cosmjs/proto-signing";
+import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 
 const useBalances = () => {
     const { chain, address, baseCoin, getSigningCosmWasmClient } = useChainAdapter();
@@ -11,14 +12,14 @@ const useBalances = () => {
         try {
             if (!address || !baseCoin) return;
 
-            const client = await getSigningCosmWasmClient();
+            const client = await SigningCosmWasmClient.connect(chain.apis?.rpc?.[0].address ?? '')
             const balance = await client.getBalance(address, baseCoin.denom);
             setBalancesByDenom({ [balance.denom]: balance });
         }
         catch (err) {
             console.log(err)
         }
-    }, [address, baseCoin])
+    }, [chain, address, baseCoin])
 
     const value = useMemo(() => ({
         balanceByDenom,

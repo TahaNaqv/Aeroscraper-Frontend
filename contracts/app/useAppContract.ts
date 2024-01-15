@@ -11,7 +11,7 @@ const useAppContract = () => {
     const {
         isWalletConnected,
         baseCoin,
-        wallet,
+        walletInfo,
         selectedChainName,
         address,
         chain,
@@ -19,12 +19,16 @@ const useAppContract = () => {
     } = useChainAdapter();
     const [client, setClient] = useState<SigningArchwayClient | SigningCosmWasmClient>();
 
-    const contract = useMemo(() => (isWalletConnected && !isNil(baseCoin) && !isNil(client) && !isNil(wallet) && !isNil(chain)) ?
-        wallet.name === WalletType.METAMASK ?
-            getAppEthContract(chain, baseCoin, selectedChainName, wallet.name as WalletType)
-            : getAppContract(client, baseCoin, selectedChainName, wallet.name as WalletType)
+    const contract = useMemo(() => (isWalletConnected && !isNil(baseCoin) && !isNil(walletInfo) && !isNil(chain)) ?
+        walletInfo.name === WalletType.METAMASK ?
+            getAppEthContract(chain, baseCoin, selectedChainName, walletInfo.name as WalletType)
+            :
+            !isNil(client) ?
+                getAppContract(client, baseCoin, selectedChainName, walletInfo.name as WalletType)
+                :
+                undefined
         : undefined,
-        [isWalletConnected, baseCoin, wallet, selectedChainName, chain, client]);
+        [isWalletConnected, baseCoin, walletInfo, selectedChainName, chain, client]);
 
     const getTotalCollateralAmounts = useCallback(async () => {
         if (isNil(contract)) return;

@@ -25,7 +25,7 @@ import useBalances from "@/hooks/useBalances";
 
 export default function SeiDashboard() {
   const { balanceByDenom, refreshBalance } = useBalances();
-  const { baseCoin, wallet } = useChainAdapter();
+  const { baseCoin, walletInfo } = useChainAdapter();
   const [troveModal, setTroveModal] = useState(false);
   const [stabilityModal, setStabilityModal] = useState(false);
   const [riskyModal, setRiskyModal] = useState(false);
@@ -110,7 +110,7 @@ export default function SeiDashboard() {
               />
               <StatisticCard
                 title="Troves"
-                description={`${isNil(wallet) ? "-" : pageData.totalTrovesAmount}`}
+                description={`${isNil(walletInfo) ? "-" : pageData.totalTrovesAmount}`}
                 className="w-[191px] h-14"
                 tooltip="The total number of active Troves in the system."
                 tooltipPlacement="top"
@@ -182,7 +182,7 @@ export default function SeiDashboard() {
               className="w-full max-w-[192px] 2xl:max-w-[221px] h-11 mt-6 2xl:mt-10 ml-auto 2xl:mx-auto"
               rounded="rounded-lg"
               disabledText="please choose chain and wallet first"
-              disabled={isNil(baseCoin) || isNil(wallet)}
+              disabled={isNil(baseCoin) || isNil(walletInfo)}
             >
               <Text>
                 {
@@ -222,14 +222,14 @@ export default function SeiDashboard() {
               className="w-full max-w-[192px] 2xl:max-w-[221px] h-11 mt-6 2xl:mt-10 ml-auto"
               rounded="rounded-lg"
               disabledText="please choose chain and wallet first"
-              disabled={isNil(baseCoin) || isNil(wallet)}
+              disabled={isNil(baseCoin) || isNil(walletInfo)}
             >
               <Text>Enter</Text>
             </GradientButton>
           </div>
         </ShapeContainer>
         <ShapeContainer layoutId="risky-troves" className="flex-1 cursor-pointer" width="" height="">
-          <div onClick={() => { !isNil(wallet) && setRiskyModal(true); }} className="w-full h-full flex flex-wrap justify-center items-center">
+          <div onClick={() => { !isNil(walletInfo) && setRiskyModal(true); }} className="w-full h-full flex flex-wrap justify-center items-center">
             <Text size="base" className="whitespace-nowrap">Risky Troves</Text>
             <RightArrow width="24" height="24" />
           </div>

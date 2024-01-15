@@ -34,7 +34,7 @@ const AccountModal: FC<Props> = (props: Props) => {
   const avatarSelectRef = useRef<HTMLDivElement>(null);
   const qrCodeViewRef = useRef<HTMLDivElement>(null);
 
-  const { username, address, baseCoin, wallet, chain, disconnect } = useChainAdapter();
+  const { username, address, baseCoin, walletInfo, chain, disconnect, disconnectMetamask } = useChainAdapter();
   const { profileDetail, setProfileDetail } = useProfile();
 
   const [selectedTab, setSelectedTab] = useState<Tabs | null>(null);
@@ -71,10 +71,16 @@ const AccountModal: FC<Props> = (props: Props) => {
   }
 
   const logout = () => {
-    disconnect();
+    if (walletInfo?.name === WalletType.METAMASK) {
+      disconnectMetamask();
+    }
+    else {
+      disconnect();
+    }
     setProfileDetail(undefined);
     localStorage.removeItem("profile-detail");
     localStorage.removeItem("selectedChainName");
+    localStorage.removeItem("selectedWallet");
     closeModal();
   }
 
@@ -198,7 +204,7 @@ const AccountModal: FC<Props> = (props: Props) => {
                     renderText={(value) =>
                       <Text size='lg' className='mt-2 whitespace-nowrap flex gap-2 items-center'>
                         <img alt="ausd" className="w-5 h-5" src="/images/token-images/ausd-blue.svg" />
-                        {value}&nbsp; 
+                        {value}&nbsp;
                         AUSD
                       </Text>
                     }
@@ -216,7 +222,7 @@ const AccountModal: FC<Props> = (props: Props) => {
                     renderText={(value) =>
                       <Text size='lg' className='mt-2 whitespace-nowrap flex gap-2 items-center ml-6'>
                         {baseCoin && <img alt={baseCoin.name} className="w-5 h-5" src={baseCoin.tokenImage} />}
-                        {value}&nbsp; 
+                        {value}&nbsp;
                         {baseCoin?.name}
                       </Text>
                     }
@@ -284,9 +290,9 @@ const AccountModal: FC<Props> = (props: Props) => {
                 <div className="md:ml-14">
                   <Text size='sm' className="text-center mb-3" textColor='text-dark-silver'>Selected wallet</Text>
                   <Button
-                    startIcon={!isNil(wallet) && <img alt={wallet.name} src={wallet.logo as string} className='w-6 h-6' />}
+                    startIcon={!isNil(walletInfo) && <img alt={walletInfo.name} src={walletInfo.logo as string} className='w-6 h-6' />}
                   >
-                    {capitalizeFirstLetter(wallet?.prettyName?.toLocaleLowerCase() ?? "")}
+                    {capitalizeFirstLetter(walletInfo?.prettyName?.toLocaleLowerCase() ?? "")}
                   </Button>
                 </div>
                 <a href={`${scanDomain}${address}`} target='_blank' rel="noreferrer" className='ml-auto underline text-white hidden md:flex'>

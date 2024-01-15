@@ -1,3 +1,5 @@
+import { WalletType } from "@/enums/WalletType";
+
 export type RiskyTrovesResponse = {
     troves: {
         nodes: {
@@ -27,4 +29,10 @@ export type BaseCoin = {
     tokenImage: string,
     decimal: number,
     ausdDecimal: number
+}
+
+export type WalletInfo = {
+    name: WalletType;
+    prettyName: string;
+    logo: string;
 }

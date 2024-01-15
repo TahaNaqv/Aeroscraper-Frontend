@@ -11,9 +11,10 @@ import InjectiveNotification from '@/components/Modal/InjectiveNotification';
 import WalletButton from '@/components/Buttons/WalletButton';
 import useChainAdapter from '@/hooks/useChainAdapter';
 import useBalances from '@/hooks/useBalances';
+import { WalletType } from '@/enums/WalletType';
 
 const InjeciveTheme = () => {
-  const { isWalletConnected, baseCoin, wallet, address, username, disconnect } = useChainAdapter();
+  const { isWalletConnected, baseCoin, walletInfo, address, username, disconnect, disconnectMetamask } = useChainAdapter();
   const { balanceByDenom } = useBalances();
   const [basePrice, setBasePrice] = useState(0);
   const { pageData, getPageData } = usePageData({ basePrice });
@@ -44,8 +45,14 @@ const InjeciveTheme = () => {
   }, []);
 
   const disconnectWallet = () => {
-    disconnect();
+    if (walletInfo?.name === WalletType.METAMASK) {
+      disconnectMetamask();
+    }
+    else {
+      disconnect();
+    }
     localStorage.removeItem("selectedChainName");
+    localStorage.removeItem("selectedWallet");
     localStorage.removeItem("profile-detail");
   }
 
@@ -82,7 +89,7 @@ const InjeciveTheme = () => {
                 />
                 <div className='flex flex-col'>
                   <div className='flex items-center ml-auto'>
-                    <img alt={wallet?.name} className='w-4 h-4 object-contain rounded' src={wallet?.logo as string} />
+                    <img alt={walletInfo?.name} className='w-4 h-4 object-contain rounded' src={walletInfo?.logo as string} />
                     <Text size='lg' weight='font-regular' className='truncate ml-2'>{username}</Text>
                   </div>
                   <Text size='sm'>{address?.slice(0, 6)}...{address?.slice(-6)}</Text>

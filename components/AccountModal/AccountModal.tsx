@@ -29,7 +29,7 @@ const AccountModal: FC<Props> = (props: Props) => {
     const avatarSelectRef = useRef<HTMLDivElement>(null);
     const qrCodeViewRef = useRef<HTMLDivElement>(null);
 
-    const { wallet, username, address, baseCoin, selectedChainName, disconnect } = useChainAdapter();
+    const { walletInfo, username, address, baseCoin, selectedChainName, selectWallet, disconnect, disconnectMetamask } = useChainAdapter();
     const { profileDetail, setProfileDetail } = useProfile();
 
     const [avatarSelectionOpen, setAvatarSelectionOpen] = useState(false);
@@ -66,10 +66,17 @@ const AccountModal: FC<Props> = (props: Props) => {
     }
 
     const logout = () => {
-        disconnect();
+        if (walletInfo?.name === WalletType.METAMASK) {
+            disconnectMetamask();
+        }
+        else {
+            disconnect();
+        }
+        selectWallet(undefined);
         setProfileDetail(undefined);
         localStorage.removeItem("profile-detail");
         localStorage.removeItem("selectedChainName");
+        localStorage.removeItem("selectedWallet")
         closeModal();
     }
 
@@ -205,7 +212,7 @@ const AccountModal: FC<Props> = (props: Props) => {
                             </div>
                         </div>
                         <div className='flex flex-col lg:flex-row items-start lg:items-center gap-5 mt-6'>
-                            {wallet && <img alt={`walletType-${wallet.prettyName}`} className='w-16 h-16 object-contain' src={wallet.logo as string} />}
+                            {walletInfo && <img alt={`walletType-${walletInfo.prettyName}`} className='w-16 h-16 object-contain' src={walletInfo.logo as string} />}
                             <div className='w-full flex flex-col justify-between'>
                                 <Text size='2xl'>{baseCoin?.name}</Text>
                                 <div className='w-full flex items-center gap-2'>

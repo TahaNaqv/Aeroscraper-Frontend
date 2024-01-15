@@ -26,7 +26,7 @@ const InjectiveTabsSide: FC<Props> = ({ setTabPosition }) => {
   const [basePrice, setBasePrice] = useState(0);
   const { pageData, getPageData, loading } = usePageData({ basePrice });
   const { refreshBalance } = useBalances();
-  const { wallet } = useChainAdapter();
+  const { walletInfo } = useChainAdapter();
 
   const [isTroveOpened, setIsTroveOpened] = useState(false);
 
@@ -95,8 +95,8 @@ const InjectiveTabsSide: FC<Props> = ({ setTabPosition }) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.7 }}
-          className={`md:mt-14 ${(isNil(wallet) && selectedTab !== "Leaderboard & Missions") ? "blur-[2px]" : ""} relative`}>
-          {(isNil(wallet) && selectedTab !== "Leaderboard & Missions") &&
+          className={`md:mt-14 ${(isNil(walletInfo) && selectedTab !== "Leaderboard & Missions") ? "blur-[2px]" : ""} relative`}>
+          {(isNil(walletInfo) && selectedTab !== "Leaderboard & Missions") &&
             <div className='cursor-not-allowed h-full w-full absolute top-0 bottom-0 left-0 z-50'>
             </div>
           }

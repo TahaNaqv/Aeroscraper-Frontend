@@ -1,5 +1,6 @@
 import { ChainName } from "@/enums/Chain";
 import { WalletType } from "@/enums/WalletType";
+import { WalletInfo } from "@/types/types";
 import { Wallet } from "@injectivelabs/wallet-ts";
 
 export const WalletsByChainName: Record<ChainName, WalletType[]> = {
@@ -40,11 +41,17 @@ export const WalletImagesByName: Record<WalletType, { image: string, thumbnail: 
         thumbnail: "/images/wallet-images/leap-icon.png"
     },
     [WalletType.METAMASK]: {
-        image: "/images/wallet-images/metamask.png",
+        image: "/images/wallet-images/metamask-icon.png",
         thumbnail: "/images/wallet-images/metamask-icon.png"
     },
     [WalletType.NINJI]: {
         image: "/images/wallet-images/ninji.png",
         thumbnail: "/images/wallet-images/ninji-icon.png"
     }
+}
+
+export const metamaskWalletInfo: WalletInfo = {
+    name: WalletType.METAMASK,
+    prettyName: 'Metamask',
+    logo: '/images/wallet-images/metamask-icon.png'
 }

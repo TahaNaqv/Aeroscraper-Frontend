@@ -3,17 +3,18 @@ import { coin } from "@cosmjs/proto-signing";
 import { CW20BalanceResponse, CW20TokenInfoResponse, GetStakeResponse, GetTroveResponse } from "./types";
 import { PriceServiceConnection } from '@pythnetwork/price-service-client'
 import { BaseCoin } from "@/types/types";
-import { MsgExecuteContract, ChainRestAuthApi, BaseAccount, ChainRestTendermintApi, getEip712TypedData, getEthereumAddress, MsgExecuteContractCompat, ChainGrpcWasmApi, toBase64, fromBase64 } from "@injectivelabs/sdk-ts";
+import { MsgExecuteContract, ChainRestAuthApi, BaseAccount, ChainRestTendermintApi, getEip712TypedData, getEthereumAddress, MsgExecuteContractCompat, ChainGrpcWasmApi, toBase64, fromBase64, getInjectiveAddress } from "@injectivelabs/sdk-ts";
 import { Network, getNetworkEndpoints } from "@injectivelabs/networks";
 import { EthereumChainId, ChainId } from '@injectivelabs/ts-types';
 import { isNil } from "lodash";
 import { DEFAULT_BLOCK_TIMEOUT_HEIGHT, BigNumberInBase } from '@injectivelabs/utils'
-import { MsgBroadcaster, WalletStrategy } from "@injectivelabs/wallet-ts";
+import { MsgBroadcaster, Wallet, WalletStrategy } from "@injectivelabs/wallet-ts";
 import { WalletType } from "@/enums/WalletType";
 import { TotalCollateralModel } from "@/app/app/dashboard/_types/types";
 import { ChainName } from "@/enums/Chain";
 import { Chain } from '@chain-registry/types';
 import { BaseCoinByChainName, getContractAddressesByChain } from "@/constants/chainConstants";
+import { InjSdkWalletByCosmosWallet } from "@/constants/walletConstants";
 
 export const getAppEthContract = (
     chain: Chain,
@@ -25,13 +26,14 @@ export const getAppEthContract = (
     const ENDPOINTS = getNetworkEndpoints(Network.TestnetSentry);
     const rpcUrl = chain.apis?.rpc?.[0].address ?? '';
     const httpUrl = chain.apis?.rest?.[0].address ?? '';
+    const injSdkWallet = walletType ? InjSdkWalletByCosmosWallet[walletType as WalletType] : Wallet.Keplr;
     const walletStrategy = new WalletStrategy({
         chainId: chain.chain_id as ChainId,
         ethereumOptions: {
             ethereumChainId: EthereumChainId.Goerli,
             rpcUrl: rpcUrl,
         },
-        wallet: walletType as any
+        wallet: injSdkWallet
     });
     const chainGrpcWasmApi = new ChainGrpcWasmApi(ENDPOINTS.grpc);
 
@@ -72,7 +74,7 @@ export const getAppEthContract = (
             const response = await msgBroadcastClient.broadcast({
                 msgs: msg,
                 injectiveAddress: senderAddress,
-                gas: { gas: 30000000, gasPrice: String(0.025) }
+                gas: { gas: 40000000 }
             })
 
             return response
@@ -216,8 +218,8 @@ export const getAppEthContract = (
                 contractAddress: oraclecontractAddress,
                 sender: senderAddress,
                 msg: {
-                    set_protocol_fee: {
-                        fee: [
+                    update_price_feeds: {
+                        data: [
                             vaa
                         ]
                     }
@@ -249,8 +251,8 @@ export const getAppEthContract = (
                 contractAddress: oraclecontractAddress,
                 sender: senderAddress,
                 msg: {
-                    set_protocol_fee: {
-                        fee: [
+                    update_price_feeds: {
+                        data: [
                             vaa
                         ]
                     }
@@ -277,8 +279,8 @@ export const getAppEthContract = (
                 contractAddress: oraclecontractAddress,
                 sender: senderAddress,
                 msg: {
-                    set_protocol_fee: {
-                        fee: [
+                    update_price_feeds: {
+                        data: [
                             vaa
                         ]
                     }
@@ -310,8 +312,8 @@ export const getAppEthContract = (
                 contractAddress: oraclecontractAddress,
                 sender: senderAddress,
                 msg: {
-                    set_protocol_fee: {
-                        fee: [
+                    update_price_feeds: {
+                        data: [
                             vaa
                         ]
                     }
@@ -345,8 +347,8 @@ export const getAppEthContract = (
                 contractAddress: oraclecontractAddress,
                 sender: senderAddress,
                 msg: {
-                    set_protocol_fee: {
-                        fee: [
+                    update_price_feeds: {
+                        data: [
                             vaa
                         ]
                     }
@@ -414,8 +416,8 @@ export const getAppEthContract = (
                 contractAddress: oraclecontractAddress,
                 sender: senderAddress,
                 msg: {
-                    set_protocol_fee: {
-                        fee: [
+                    update_price_feeds: {
+                        data: [
                             vaa
                         ]
                     }
@@ -442,8 +444,8 @@ export const getAppEthContract = (
                 contractAddress: oraclecontractAddress,
                 sender: senderAddress,
                 msg: {
-                    set_protocol_fee: {
-                        fee: [
+                    update_price_feeds: {
+                        data: [
                             vaa
                         ]
                     }

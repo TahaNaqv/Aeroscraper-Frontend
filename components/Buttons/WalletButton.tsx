@@ -8,7 +8,7 @@ import useOutsideHandler from '@/hooks/useOutsideHandler'
 import Loading from '../Loading/Loading'
 import AccountModal from '../AccountModal/AccountModal'
 import { NumericFormat } from 'react-number-format'
-import { WalletsByChainName } from '@/constants/walletConstants'
+import { WalletsByChainName, metamaskWalletInfo } from '@/constants/walletConstants'
 import { isNil } from 'lodash'
 import { Modal } from '../Modal/Modal'
 import Button from './Button'
@@ -37,14 +37,15 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
         walletRepo,
         isWalletConnected,
         isWalletConnecting,
-        wallet,
-        address
+        walletInfo,
+        address,
+        selectWallet
     } = useChainAdapter();
 
     const [accountModal, setAccountModal] = useState(false);
 
     const [walletExtensions, setWalletExtensions] = useState<{ installed: { name: WalletType }[], otherWallets: { name: WalletType, downloadLink: string }[] } | undefined>();
-    const [showDownloadExtension, setShowDownloadExtension] = useState<{ name: WalletType, downloadLink: string } | undefined>();
+    const [showDownloadExtension, setShowDownloadExtension] = useState<{ name: string, downloadLink: string } | undefined>();
 
     const [onHoverChain, setOnHoverChain] = useState<ChainName | null>();
 
@@ -134,9 +135,9 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
                     </div>
                     <div className='max-w-[300px]'>
                         <div className='flex gap-4  items-center'>
-                            <img alt={wallet?.name} className='w-8 h-8 object-contain' src={wallet?.logo as string} />
+                            <img alt={walletInfo?.name} className='w-8 h-8 object-contain' src={walletInfo?.logo as string} />
                             <div className='w-[75%] flex flex-col'>
-                                <Text size='base' weight='font-semibold' className='truncate'>{wallet?.prettyName}</Text>
+                                <Text size='base' weight='font-semibold' className='truncate'>{walletInfo?.prettyName}</Text>
                                 <Text size='sm' className='truncate'>{address}</Text>
                             </div>
                         </div>
@@ -198,13 +199,37 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
                                         return <div key={idx} className={`mr-auto ${wallet.walletInfo.name === WalletType.LEAP ? "" : "md:inline-block hidden"}`} >
                                             {idx === 0 && <Text size='base' className='mb-4'>Installed Wallets</Text>}
                                             <Button
-                                                onClick={() => wallet.connect()}
+                                                onClick={() => {
+                                                    wallet.connect()
+                                                    selectWallet(wallet.walletInfo.name as WalletType)
+                                                }}
                                                 startIcon={<img className='w-6 h-6 object-contain' alt={wallet.walletInfo.name} src={wallet.walletInfo.logo as string} />}
                                             >
                                                 <span className='text-[18px] font-medium text-ghost-white'>{capitalizeFirstLetter(wallet.walletPrettyName)}</span>
                                             </Button>
                                         </div>
                                     })
+                                }
+                                {
+                                    selectedChainName === ChainName.INJECTIVE &&
+                                    <div className='mr-auto md:inline-block hidden' >
+                                        {
+                                            walletExtensions?.installed.some(item => item.name === WalletType.METAMASK) ?
+                                                <Button
+                                                    onClick={() => selectWallet(WalletType.METAMASK)}
+                                                    startIcon={<img className='w-6 h-6 object-contain' alt={metamaskWalletInfo.name} src={metamaskWalletInfo.logo} />}
+                                                >
+                                                    <span className='text-[18px] font-medium text-ghost-white'>{capitalizeFirstLetter(metamaskWalletInfo.prettyName)}</span>
+                                                </Button>
+                                                :
+                                                <Button
+                                                    onClick={() => { setShowDownloadExtension({ name: metamaskWalletInfo.prettyName, downloadLink: walletExtensions?.otherWallets.find(i => i.name === WalletType.METAMASK)?.downloadLink! }); }}
+                                                    startIcon={<img className='w-6 h-6 object-contain' alt={metamaskWalletInfo.name} src={metamaskWalletInfo.logo} />}
+                                                >
+                                                    <span className='text-[18px] font-medium text-ghost-white'>{capitalizeFirstLetter(metamaskWalletInfo.prettyName)}</span>
+                                                </Button>
+                                        }
+                                    </div>
                                 }
                                 {
                                     otherWallets.map((wallet, idx) => (
@@ -235,7 +260,10 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
                                                 {idx === 0 && <Text size='base' className='mb-4'>Installed Wallets</Text>}
                                                 <Button
                                                     disabled
-                                                    onClick={() => { wallet.connect() }}
+                                                    onClick={() => {
+                                                        wallet.connect()
+                                                        selectWallet(wallet.walletInfo.name as WalletType)
+                                                    }}
                                                     startIcon={<img className='w-6 h-6 object-contain' alt={wallet.walletInfo.name} src={wallet.walletInfo.logo as string} />}
                                                 >
                                                     <span className='text-[18px] font-medium text-ghost-white'>{capitalizeFirstLetter(wallet.walletPrettyName)}</span>
@@ -243,6 +271,33 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
                                             </motion.div>
                                         )
                                     })
+                                }
+                                {
+                                    onHoverChain === ChainName.INJECTIVE &&
+                                    <motion.div
+                                        key={WalletType.METAMASK}
+                                        className={`inline-block mr-auto duration-300 transition-all`}
+                                        initial={{ opacity: 0.0 }}
+                                        animate={{ opacity: 1 }}
+                                        transition={{ duration: 1 }}
+                                    >
+                                        {
+                                            walletExtensions?.installed.some(item => item.name === WalletType.METAMASK) ?
+                                                <Button
+                                                    onClick={() => selectWallet(WalletType.METAMASK)}
+                                                    startIcon={<img className='w-6 h-6 object-contain' alt={metamaskWalletInfo.name} src={metamaskWalletInfo.logo} />}
+                                                >
+                                                    <span className='text-[18px] font-medium text-ghost-white'>{capitalizeFirstLetter(metamaskWalletInfo.prettyName)}</span>
+                                                </Button>
+                                                :
+                                                <Button
+                                                    onClick={() => { setShowDownloadExtension({ name: metamaskWalletInfo.prettyName, downloadLink: walletExtensions?.otherWallets.find(i => i.name === WalletType.METAMASK)?.downloadLink! }); }}
+                                                    startIcon={<img className='w-6 h-6 object-contain' alt={metamaskWalletInfo.name} src={metamaskWalletInfo.logo} />}
+                                                >
+                                                    <span className='text-[18px] font-medium text-ghost-white'>{capitalizeFirstLetter(metamaskWalletInfo.prettyName)}</span>
+                                                </Button>
+                                        }
+                                    </motion.div>
                                 }
                                 {
                                     otherHoveredWallets.map((wallet, idx) => {
@@ -299,6 +354,10 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
                                             filteredWallets.map((wallet, idx) => {
                                                 return <img alt={wallet.walletInfo.name} key={idx} className={`w-6 h-6 object-contain ${wallet.walletInfo.name === WalletType.LEAP ? "" : "md:inline-block hidden"}`} src={wallet.walletInfo.logo as string} />
                                             })
+                                        }
+                                        {
+                                            selectedChainName === ChainName.INJECTIVE &&
+                                            <img alt={metamaskWalletInfo.name} className='w-6 h-6 object-contain md:inline-block hidden' src={metamaskWalletInfo.logo} />
                                         }
                                     </div>
                                     <Text size='base' textColor='text-[#989396]'>If you want to connect an installed wallet, you can log in by selecting your wallet under &quot;Installed Wallets&quot; on the left side of the screen and using the browser extension.</Text>
