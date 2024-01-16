@@ -325,13 +325,6 @@ const AccountModal: FC<Props> = (props: Props) => {
 
 export default AccountModal;
 
-export const WalletIconMap: Record<WalletType, string> = {
-    [WalletType.KEPLR]: '/images/wallet-images/keplr-icon.svg',
-    [WalletType.LEAP]: '/images/wallet-images/leap-icon.png',
-    [WalletType.METAMASK]: 'images/wallet-images/metamask-icon.png',
-    [WalletType.NINJI]: 'images/wallet-images/ninji-icon.png',
-}
-
 const profilePhotos = [
     "/images/profile-images/profile-i-1.jpg",
     "/images/profile-images/profile-i-2.jpg",

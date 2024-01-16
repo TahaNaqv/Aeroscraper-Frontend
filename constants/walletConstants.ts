@@ -6,7 +6,8 @@ import { Wallet } from "@injectivelabs/wallet-ts";
 export const WalletsByChainName: Record<ChainName, WalletType[]> = {
     [ChainName.SEI]: [
         WalletType.LEAP,
-        WalletType.KEPLR
+        WalletType.KEPLR,
+        WalletType.LEDGER
     ],
     [ChainName.ARCHWAY]: [
         WalletType.LEAP,
@@ -20,7 +21,8 @@ export const WalletsByChainName: Record<ChainName, WalletType[]> = {
         WalletType.METAMASK,
         WalletType.LEAP,
         WalletType.KEPLR,
-        WalletType.NINJI
+        WalletType.NINJI,
+        WalletType.LEDGER
     ]
 }
 
@@ -28,26 +30,8 @@ export const InjSdkWalletByCosmosWallet: Record<WalletType, Wallet> = {
     [WalletType.KEPLR]: Wallet.Keplr,
     [WalletType.LEAP]: Wallet.Leap,
     [WalletType.METAMASK]: Wallet.Metamask,
-    [WalletType.NINJI]: Wallet.Ninji
-}
-
-export const WalletImagesByName: Record<WalletType, { image: string, thumbnail: string }> = {
-    [WalletType.KEPLR]: {
-        image: "/images/wallet-images/keplr-dark.svg",
-        thumbnail: "/images/wallet-images/keplr-icon.svg"
-    },
-    [WalletType.LEAP]: {
-        image: "/images/wallet-images/leap-dark.svg",
-        thumbnail: "/images/wallet-images/leap-icon.png"
-    },
-    [WalletType.METAMASK]: {
-        image: "/images/wallet-images/metamask-icon.png",
-        thumbnail: "/images/wallet-images/metamask-icon.png"
-    },
-    [WalletType.NINJI]: {
-        image: "/images/wallet-images/ninji.png",
-        thumbnail: "/images/wallet-images/ninji-icon.png"
-    }
+    [WalletType.NINJI]: Wallet.Ninji,
+    [WalletType.LEDGER]: Wallet.Ledger
 }
 
 export const metamaskWalletInfo: WalletInfo = {

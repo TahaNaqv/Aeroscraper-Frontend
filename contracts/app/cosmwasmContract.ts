@@ -3,7 +3,6 @@ import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate"
 import { coin } from "@cosmjs/proto-signing";
 import { CW20BalanceResponse, CW20TokenInfoResponse, GetStakeResponse, GetTroveResponse } from "./types";
 import { PriceServiceConnection } from '@pythnetwork/price-service-client'
-import { SigningArchwayClient } from "@archwayhq/arch3.js/build";
 import { BaseCoin } from "@/types/types";
 import { BaseCoinByChainName } from "@/constants/chainConstants";
 import { ChainGrpcWasmApi, fromBase64, toBase64, MsgExecuteContract } from "@injectivelabs/sdk-ts";
@@ -18,7 +17,7 @@ import { getContractAddressesByChain } from "@/constants/chainConstants";
 import { InjSdkWalletByCosmosWallet } from "@/constants/walletConstants";
 
 export const getAppContract = (
-    client: SigningArchwayClient | SigningCosmWasmClient,
+    client: SigningCosmWasmClient,
     baseCoin: BaseCoin,
     chainName?: ChainName,
     walletType?: WalletType

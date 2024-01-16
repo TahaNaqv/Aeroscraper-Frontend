@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { getAppContract } from "./cosmwasmContract";
 import { isNil } from "lodash";
-import { SigningArchwayClient } from "@archwayhq/arch3.js/build";
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 import { getAppEthContract } from "./ethereumContract";
 import useChainAdapter from "@/hooks/useChainAdapter";
@@ -17,7 +16,7 @@ const useAppContract = () => {
         chain,
         getSigningCosmWasmClient
     } = useChainAdapter();
-    const [client, setClient] = useState<SigningArchwayClient | SigningCosmWasmClient>();
+    const [client, setClient] = useState<SigningCosmWasmClient>();
 
     const contract = useMemo(() => (isWalletConnected && !isNil(baseCoin) && !isNil(walletInfo) && !isNil(chain)) ?
         walletInfo.name === WalletType.METAMASK ?

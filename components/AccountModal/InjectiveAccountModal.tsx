@@ -270,7 +270,7 @@ const AccountModal: FC<Props> = (props: Props) => {
                   </motion.div>
                 }
               </div>
-              <button className='flex md:hidden my-6' onClick={disconnect}>
+              <button className='flex md:hidden my-6' onClick={logout}>
                 <span className="text-[#ED0E00] text-sm md:text-base font-medium mr-2">Log out</span>
                 <ExitIcon className="text-[#ED0E00]" />
               </button>
@@ -318,7 +318,7 @@ const AccountModal: FC<Props> = (props: Props) => {
                   </button>
                 }
               </div>
-              <button className='flex md:hidden m-6' onClick={disconnect}>
+              <button className='flex md:hidden m-6' onClick={logout}>
                 <span className="text-[#ED0E00] text-sm md:text-base font-medium mr-2">Log out</span>
                 <ExitIcon className="text-[#ED0E00]" />
               </button>
@@ -331,13 +331,6 @@ const AccountModal: FC<Props> = (props: Props) => {
 }
 
 export default AccountModal;
-
-export const WalletIconMap: Record<WalletType, string> = {
-  [WalletType.KEPLR]: '/images/wallet-images/keplr-icon.svg',
-  [WalletType.LEAP]: '/images/wallet-images/leap-icon.png',
-  [WalletType.METAMASK]: '/images/wallet-images/metamask-icon.png',
-  [WalletType.NINJI]: '/images/wallet-images/ninji-icon.png',
-}
 
 const profilePhotos = [
   "/images/profile-images/profile-i-1.jpg",
