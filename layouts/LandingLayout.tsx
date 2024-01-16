@@ -1,7 +1,7 @@
 'use client';
 
 import GradientButton from "@/components/Buttons/GradientButton"
-import { Logo, RightArrow, TwitterLogo, DiscordLogo, NovaRatioIcon } from "@/components/Icons/Icons"
+import { Logo, RightArrow, TwitterLogo, DiscordLogo, NovaRatioIcon, MedalIcon } from "@/components/Icons/Icons"
 import PYTH from "../public/images/pyth.svg"
 import { WaveModal } from "@/components/Modal/WaveModal"
 import Text from "@/components/Texts/Text"

@@ -2,7 +2,7 @@
 
 import GradientButton from '@/components/Buttons/GradientButton'
 import ShapeContainer from '@/components/Containers/ShapeContainer'
-import { InjectiveBackgroundWave, LogoSecondary, RightArrow } from '@/components/Icons/Icons'
+import { InjectiveBackgroundWave, LogoSecondary, MedalIcon, RightArrow } from '@/components/Icons/Icons'
 import Text from '@/components/Texts/Text'
 import LandingLayout from '@/layouts/LandingLayout'
 import Link from 'next/link'
@@ -32,6 +32,43 @@ export default function Home() {
             </GradientButton>
           </Link>
         </div>
+        <div className="absolute top-40 right-12 z-[50 md:block hidden">
+          <div className="border border-[#073DC8]/60 bg-[#0c0c2766] px-10 py-8 rounded-lg flex gap-6 backdrop-blur-2xl">
+            <div className='flex gap-4 items-center'>
+              <MedalIcon className="text-[#F8B810]" />
+              <Text size='3xl'>1st</Text>
+            </div>
+            <div>
+              <div className='flex gap-4'>
+                <div className="flex items-center gap-2">
+                  <img alt="token" src="/images/token-images/inj.svg" className="w-6 h-6" />
+                  <Text size="base" weight="font-medium">Injective</Text>
+                </div>
+                <div className="flex items-center gap-2">
+                  <img alt="token" src="/images/google_cloud.png" className="w-6 h-6" />
+                  <Text size="base" weight="font-medium">Google Cloud</Text>
+                </div>
+              </div>
+              <Text size='xl' className='mt-4'>Injective Illuminate Hackathon</Text>
+            </div>
+          </div>
+          <div className="border border-[#073DC8]/60 bg-[#0c0c2766] p-6 rounded-lg w-2/3 flex gap-6 backdrop-blur-2xl mt-10 ml-auto">
+            <div className='flex gap-4 items-center'>
+              <MedalIcon className="text-[#E4462D]" />
+              <Text size='xl'>2nd</Text>
+            </div>
+            <div>
+              <div className='flex gap-4'>
+                <div className="flex items-center gap-2">
+                  <img alt="token" src="/images/token-images/sei.png" className="w-6 h-6" />
+                  <Text size="base" weight="font-medium">SEI</Text>
+                </div>
+              </div>
+              <Text size='base' className='mt-4'>Cod Sei Hackathon</Text>
+            </div>
+          </div>
+        </div>
+
         <InjectiveBackgroundWave animate className="absolute top-40 md:-top-3 right-0 -z-10 md:w-[1200px] w-[300px]" />
       </main>
       <footer className='flex flex-col gap-x-48 gap-y-16 items-top flex-wrap px-6 md:px-20 pr-16 mt-40 pb-24 relative'>
@@ -39,7 +76,7 @@ export default function Home() {
           <LogoSecondary />
           <Text size="2xl" textColor='text-white'>Aeroscraper</Text>
         </div>
-        <div className='grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-40'>
+        <div className='grid grid-cols-1 md:grid-cols-4 gap-10 md:gap-40'>
           <div className='flex flex-col content-start justify-start gap-4'>
             <Text size="sm" textColor='text-white' weight="font-semibold">Product</Text>
             <Text size="sm" textColor='text-white' className="cursor-pointer">Whitepaper</Text>
@@ -64,6 +101,17 @@ export default function Home() {
               </Link>
               <Link href={'https://aeroscraper.gitbook.io/aeroscraper/'} className='hover:scale-105 transition-all flex gap-2'>
                 <Text size="sm" textColor='text-white'>Definition of concept</Text>
+              </Link>
+            </div>
+          </div>
+          <div className='flex flex-col content-start justify-start gap-6'>
+            <Text size="sm" weight="font-semibold">Hackathon</Text>
+            <div className='flex flex-col content-start gap-3'>
+              <Link href={{}} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
+                <Text size="sm" textColor='text-white'>Injective Illuminate Hackathon</Text>
+              </Link>
+              <Link href={{}} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
+                <Text size="sm" textColor='text-white'>Cod Sei Hackathon</Text>
               </Link>
             </div>
           </div>

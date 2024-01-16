@@ -112,7 +112,7 @@ export default function InjectiveDashboard() {
           <LogoSecondary />
           <Text size="2xl" textColor='text-white'>Aeroscraper</Text>
         </div>
-        <div className='grid md:grid-cols-3 gap-10 md:gap-40 md:mt-0 mt-10'>
+        <div className='grid md:grid-cols-4 gap-10 md:gap-40 md:mt-0 mt-10'>
           <div className='flex flex-col content-start justify-start gap-4'>
             <Text size="sm" textColor='text-white' weight="font-semibold">Product</Text>
             <Link href={'https://novaratio.gitbook.io/aeroscraper/aeroscraper/whitepaper'} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
@@ -142,6 +142,17 @@ export default function InjectiveDashboard() {
               </Link>
               <Link href={'https://aeroscraper.gitbook.io/aeroscraper/'} className='hover:scale-105 transition-all flex gap-2'>
                 <Text size="sm" textColor='text-white'>Definition of concept</Text>
+              </Link>
+            </div>
+          </div>
+          <div className='flex flex-col content-start justify-start gap-6'>
+            <Text size="sm" weight="font-semibold">Hackathon</Text>
+            <div className='flex flex-col content-start gap-3'>
+              <Link href={{}} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
+                <Text size="sm" textColor='text-white'>Injective Illuminate Hackathon</Text>
+              </Link>
+              <Link href={{}} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
+                <Text size="sm" textColor='text-white'>Cod Sei Hackathon</Text>
               </Link>
             </div>
           </div>
