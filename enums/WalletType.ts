@@ -4,4 +4,5 @@ export enum WalletType {
     NINJI = "ninji-extension",
     LEDGER = "ledger-web-usb-hid",
     METAMASK = "metamask",
+    COSMOSTATION = "cosmostation-extension"
 }

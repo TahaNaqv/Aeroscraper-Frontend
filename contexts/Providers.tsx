@@ -9,10 +9,9 @@ import { wallets as keplrWallets } from '@cosmos-kit/keplr';
 import { wallets as leapWallets } from '@cosmos-kit/leap';
 import { wallets as ninjiWallets } from '@cosmos-kit/ninji';
 import { wallets as ledgerWallets } from '@cosmos-kit/ledger';
+import { wallets as cosmostationWallets } from "@cosmos-kit/cosmostation";
 import { ChainName } from '@/enums/Chain';
 import { GasPrice } from '@cosmjs/stargate';
-
-console.log(ledgerWallets)
 
 const Providers: FC<PropsWithChildren> = ({ children }) => {
     return (
@@ -23,6 +22,7 @@ const Providers: FC<PropsWithChildren> = ({ children }) => {
                 keplrWallets[0],
                 leapWallets[0],
                 ninjiWallets[0],
+                cosmostationWallets[0],
                 ledgerWallets[0]
             ]}
             signerOptions={{

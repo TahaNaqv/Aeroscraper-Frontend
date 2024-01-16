@@ -7,7 +7,8 @@ export const WalletsByChainName: Record<ChainName, WalletType[]> = {
     [ChainName.SEI]: [
         WalletType.LEAP,
         WalletType.KEPLR,
-        WalletType.LEDGER
+        WalletType.LEDGER,
+        WalletType.COSMOSTATION
     ],
     [ChainName.ARCHWAY]: [
         WalletType.LEAP,
@@ -22,7 +23,8 @@ export const WalletsByChainName: Record<ChainName, WalletType[]> = {
         WalletType.LEAP,
         WalletType.KEPLR,
         WalletType.NINJI,
-        WalletType.LEDGER
+        WalletType.LEDGER,
+        WalletType.COSMOSTATION
     ]
 }
 
@@ -31,7 +33,8 @@ export const InjSdkWalletByCosmosWallet: Record<WalletType, Wallet> = {
     [WalletType.LEAP]: Wallet.Leap,
     [WalletType.METAMASK]: Wallet.Metamask,
     [WalletType.NINJI]: Wallet.Ninji,
-    [WalletType.LEDGER]: Wallet.Ledger
+    [WalletType.LEDGER]: Wallet.Ledger,
+    [WalletType.COSMOSTATION]: Wallet.Cosmostation
 }
 
 export const metamaskWalletInfo: WalletInfo = {
