@@ -116,6 +116,13 @@ export default function InjectiveDashboard() {
           <div className='flex flex-col content-start justify-start gap-4'>
             <Text size="sm" textColor='text-white' weight="font-semibold">Product</Text>
             <Link href={'https://novaratio.gitbook.io/aeroscraper/aeroscraper/whitepaper'} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
+              <Text size="sm" textColor='text-white' className="cursor-pointer">Audit</Text>
+              <img alt='external-link' src='/images/external-link.svg' className='w-4 h-4' />
+            </Link>
+            <Link href={'https://novaratio.gitbook.io/aeroscraper/aeroscraper/whitepaper'} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
+              <Text size="sm" textColor='text-white' className="cursor-pointer">FAQ</Text>
+            </Link>
+            <Link href={'https://novaratio.gitbook.io/aeroscraper/aeroscraper/whitepaper'} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
               <Text size="sm" textColor='text-white' className="cursor-pointer">Whitepaper</Text>
             </Link>
             <Link href={'https://aeroscraper.gitbook.io/aeroscraper/brand-identity/brand-kit'} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
@@ -148,11 +155,11 @@ export default function InjectiveDashboard() {
           <div className='flex flex-col content-start justify-start gap-6'>
             <Text size="sm" weight="font-semibold">Hackathon</Text>
             <div className='flex flex-col content-start gap-3'>
-              <Link href={{}} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
+              <Link href={'https://twitter.com/Injective_/status/1745933949132488934?s=20'} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
                 <Text size="sm" textColor='text-white'>Injective Illuminate Hackathon</Text>
               </Link>
-              <Link href={{}} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
-                <Text size="sm" textColor='text-white'>Cod Sei Hackathon</Text>
+              <Link href={'https://x.com/SeiNetwork/status/1705128171534717322?s=20'} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
+                <Text size="sm" textColor='text-white'>Code Sei Hackathon</Text>
               </Link>
             </div>
           </div>

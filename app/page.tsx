@@ -32,7 +32,7 @@ export default function Home() {
             </GradientButton>
           </Link>
         </div>
-        <div className="absolute top-40 right-12 z-[50 md:block hidden">
+        <div className="absolute top-40 right-12 z-[50 md:block hidden]">
           <div className="border border-[#073DC8]/60 bg-[#0c0c2766] px-10 py-8 rounded-lg flex gap-6 backdrop-blur-2xl">
             <div className='flex gap-4 items-center'>
               <MedalIcon className="text-[#F8B810]" />
@@ -64,7 +64,7 @@ export default function Home() {
                   <Text size="base" weight="font-medium">SEI</Text>
                 </div>
               </div>
-              <Text size='base' className='mt-4'>Cod Sei Hackathon</Text>
+              <Text size='base' className='mt-4'>Code Sei Hackathon</Text>
             </div>
           </div>
         </div>
@@ -79,7 +79,16 @@ export default function Home() {
         <div className='grid grid-cols-1 md:grid-cols-4 gap-10 md:gap-40'>
           <div className='flex flex-col content-start justify-start gap-4'>
             <Text size="sm" textColor='text-white' weight="font-semibold">Product</Text>
-            <Text size="sm" textColor='text-white' className="cursor-pointer">Whitepaper</Text>
+            <Link href={'#'} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
+              <Text size="sm" textColor='text-white' className="cursor-pointer">Audit</Text>
+              <img alt='external-link' src='/images/external-link.svg' className='w-4 h-4' />
+            </Link>
+            <Link href={'#'} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
+              <Text size="sm" textColor='text-white' className="cursor-pointer">FAQ</Text>
+            </Link>
+            <Link href={'https://novaratio.gitbook.io/aeroscraper/aeroscraper/whitepaper'} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
+              <Text size="sm" textColor='text-white' className="cursor-pointer">Whitepaper</Text>
+            </Link>
             <Link href={'https://aeroscraper.gitbook.io/aeroscraper/brand-identity/brand-kit'} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
               <Text size="sm" textColor='text-white'>Brand Identity</Text>
             </Link>
@@ -107,11 +116,11 @@ export default function Home() {
           <div className='flex flex-col content-start justify-start gap-6'>
             <Text size="sm" weight="font-semibold">Hackathon</Text>
             <div className='flex flex-col content-start gap-3'>
-              <Link href={{}} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
+              <Link href={'https://twitter.com/Injective_/status/1745933949132488934?s=20'} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
                 <Text size="sm" textColor='text-white'>Injective Illuminate Hackathon</Text>
               </Link>
-              <Link href={{}} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
-                <Text size="sm" textColor='text-white'>Cod Sei Hackathon</Text>
+              <Link href={'https://x.com/SeiNetwork/status/1705128171534717322?s=20'} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
+                <Text size="sm" textColor='text-white'>Code Sei Hackathon</Text>
               </Link>
             </div>
           </div>
