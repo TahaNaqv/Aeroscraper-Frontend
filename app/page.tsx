@@ -1,71 +1,86 @@
 'use client'
 
 import GradientButton from '@/components/Buttons/GradientButton'
-import ShapeContainer from '@/components/Containers/ShapeContainer'
-import { InjectiveBackgroundWave, LogoSecondary, MedalIcon, RightArrow } from '@/components/Icons/Icons'
+import Faq from '@/components/FAQ/Faq'
+import { InjectiveBackgroundWave, LogoSecondary, MedalIcon } from '@/components/Icons/Icons'
 import Text from '@/components/Texts/Text'
-import LandingLayout from '@/layouts/LandingLayout'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 
-export default function Home() {
+export default function Home({...props}:any) {
 
+  useEffect(() => {
+    const scrollParam = props.searchParams.scroll;
+
+    if (scrollParam && scrollParam === 'FAQ') {
+      const faqElement = document.getElementById('faq-section');
+
+      if (faqElement) {
+        faqElement.scrollIntoView({ behavior: 'smooth',inline:"center" });
+      }
+    }
+  }, [props.searchParams.scroll]);
+  
   return (
     <div>
       <main>
-        <div className='max-w-[626px] md:ml-[200px] p-6 md:p-0'>
-          <div className='flex items-center gap-6 lg:mt-20'>
-            <LogoSecondary />
-            <Text size="2xl" textColor='text-white'>Aeroscraper</Text>
+        <div className='flex md:flex-row flex-col'>
+          <div className='max-w-[626px] md:ml-[200px] p-6 md:p-0'>
+            <div className='flex items-center gap-6 lg:mt-20'>
+              <LogoSecondary />
+              <Text size="2xl" textColor='text-white'>Aeroscraper</Text>
+            </div>
+            <h1 className="text-white text-[36px] md:text-[64px] leading-[46px] md:leading-[72px] font-semibold mt-32 md:mt-10">Your decentralized lending-borrowing protocol</h1>
+            <h2 className="text-base text-ghost-white font-medium mt-10">
+              Empowering you with autonomy and direct transactions. Interest-free, over-collateralized stablecoin and DeFi loans. Fully automated and governance-free, which enables unauthorized lending and borrowing.
+              <br /><br />
+              The protocol only charges a one-time fee. Deposit collateral and access loans in stablecoins pegged to the US dollar.
+            </h2>
+            <Link href={"/app/dashboard"}>
+              <GradientButton
+                className='w-full lg:w-[227px] h-[37px] rounded-lg self-end px-8 group mt-10'
+              >
+                <Text size='base'>Launch App</Text>
+              </GradientButton>
+            </Link>
+            <Faq/>
           </div>
-          <h1 className="text-white text-[36px] md:text-[64px] leading-[46px] md:leading-[72px] font-semibold mt-32 md:mt-10">Your decentralized lending-borrowing protocol</h1>
-          <h2 className="text-base text-ghost-white font-medium mt-10">
-            Empowering you with autonomy and direct transactions. Interest-free, over-collateralized stablecoin and DeFi loans. Fully automated and governance-free, which enables unauthorized lending and borrowing.
-            <br /><br />
-            The protocol only charges a one-time fee. Deposit collateral and access loans in stablecoins pegged to the US dollar.
-          </h2>
-          <Link href={"/app/dashboard"}>
-            <GradientButton
-              className='w-full lg:w-[227px] h-[37px] rounded-lg self-end px-8 group mt-10'
-            >
-              <Text size='base'>Launch App</Text>
-            </GradientButton>
-          </Link>
-        </div>
-        <div className="absolute top-40 right-12 z-[50 md:block hidden]">
-          <div className="border border-[#073DC8]/60 bg-[#0c0c2766] px-10 py-8 rounded-lg flex gap-6 backdrop-blur-2xl">
-            <div className='flex gap-4 items-center'>
-              <MedalIcon className="text-[#F8B810]" />
-              <Text size='3xl'>1st</Text>
-            </div>
-            <div>
-              <div className='flex gap-4'>
-                <div className="flex items-center gap-2">
-                  <img alt="token" src="/images/token-images/inj.svg" className="w-6 h-6" />
-                  <Text size="base" weight="font-medium">Injective</Text>
-                </div>
-                <div className="flex items-center gap-2">
-                  <img alt="token" src="/images/google_cloud.png" className="w-6 h-6" />
-                  <Text size="base" weight="font-medium">Google Cloud</Text>
-                </div>
+          <div className="md:mt-32 md:ml-20 p-4">
+            <Link target={"_blank"} className="border border-[#073DC8]/60 bg-[#0c0c2766] px-4 md:px-10 py-8 rounded-lg flex gap-6 backdrop-blur-2xl" href={'https://twitter.com/Injective_/status/1745933949132488934?s=20'}>
+              <div className='flex gap-4 items-center'>
+                <MedalIcon className="text-[#F8B810]" />
+                <Text size='3xl'>1st</Text>
               </div>
-              <Text size='xl' className='mt-4'>Injective Illuminate Hackathon</Text>
-            </div>
-          </div>
-          <div className="border border-[#073DC8]/60 bg-[#0c0c2766] p-6 rounded-lg w-2/3 flex gap-6 backdrop-blur-2xl mt-10 ml-auto">
-            <div className='flex gap-4 items-center'>
-              <MedalIcon className="text-[#E4462D]" />
-              <Text size='xl'>2nd</Text>
-            </div>
-            <div>
-              <div className='flex gap-4'>
-                <div className="flex items-center gap-2">
-                  <img alt="token" src="/images/token-images/sei.png" className="w-6 h-6" />
-                  <Text size="base" weight="font-medium">SEI</Text>
+              <div>
+                <div className='flex gap-4'>
+                  <div className="flex items-center gap-2">
+                    <img alt="token" src="/images/token-images/inj.svg" className="w-6 h-6" />
+                    <Text size="base" weight="font-medium">Injective</Text>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <img alt="token" src="/images/google_cloud.png" className="w-6 h-6" />
+                    <Text size="base" weight="font-medium">Google Cloud</Text>
+                  </div>
                 </div>
+                <Text size='xl' className='mt-4'>Injective Illuminate Hackathon</Text>
               </div>
-              <Text size='base' className='mt-4'>Code Sei Hackathon</Text>
-            </div>
+            </Link>
+            <Link target={"_blank"} className="border border-[#073DC8]/60 bg-[#0c0c2766] p-4 md:p-6 rounded-lg w-2/3 flex gap-6 backdrop-blur-2xl mt-10 mr-auto" href={'https://x.com/SeiNetwork/status/1705128171534717322?s=20'}>
+              <div className='flex gap-4 items-center'>
+                <MedalIcon className="text-[#E4462D]" />
+                <Text size='xl'>2nd</Text>
+              </div>
+              <div>
+                <div className='flex gap-4'>
+                  <div className="flex items-center gap-2">
+                    <img alt="token" src="/images/token-images/sei.png" className="w-6 h-6" />
+                    <Text size="base" weight="font-medium">SEI</Text>
+                  </div>
+                </div>
+                <Text size='base' className='mt-4'>Code Sei Hackathon</Text>
+              </div>
+            </Link>
           </div>
         </div>
 
@@ -91,6 +106,9 @@ export default function Home() {
             </Link>
             <Link href={'https://aeroscraper.gitbook.io/aeroscraper/brand-identity/brand-kit'} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
               <Text size="sm" textColor='text-white'>Brand Identity</Text>
+            </Link>
+            <Link href={'/?scroll=FAQ'} target="_parent" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
+              <Text size="sm" textColor='text-white'>FAQ</Text>
             </Link>
           </div>
           <div className='flex flex-col content-start justify-start gap-6'>
