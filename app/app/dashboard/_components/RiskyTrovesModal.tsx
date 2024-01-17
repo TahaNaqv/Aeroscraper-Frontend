@@ -9,12 +9,12 @@ import { NumericFormat } from 'react-number-format';
 import { PageData } from '../_types/types';
 import useAppContract from '@/contracts/app/useAppContract';
 import { useNotification } from '@/contexts/NotificationProvider';
-import Deneme from '@/services/graphql';
-import { ClientEnum, RiskyTroves } from '@/types/types';
+import graphql from '@/services/graphql';
+import { RiskyTroves } from '@/types/types';
 import { convertAmount, getIsInjectiveResponse, getRatioColor } from '@/utils/contractUtils';
 import { getCroppedString } from '@/utils/stringUtils';
 import SkeletonLoading from '@/components/Table/SkeletonLoading';
-import { useWallet } from '@/contexts/WalletProvider';
+import useChainAdapter from '@/hooks/useChainAdapter';
 
 type Props = {
     open: boolean;
@@ -25,7 +25,7 @@ type Props = {
 }
 
 const RiskyTrovesModal: FC<Props> = ({ open, onClose, pageData, getPageData, basePrice }) => {
-    const { baseCoin } = useWallet();
+    const { baseCoin, selectedChainName } = useChainAdapter();
     const contract = useAppContract();
     const [loading, setLoading] = useState(false);
     const [processLoading, setProcessLoading] = useState<boolean>(false);
@@ -56,14 +56,9 @@ const RiskyTrovesModal: FC<Props> = ({ open, onClose, pageData, getPageData, bas
             setProcessLoading(false);
         }
     }
-    const [clientType, setClientType] = useState<ClientEnum>("INJECTIVE" as ClientEnum);
-    useEffect(() => {
-        if (typeof window !== "undefined") {
-            setClientType(localStorage.getItem("selectedClientType") as ClientEnum);
-        }
-    }, [])
-    const {requestTotalTroves ,requestRiskyTroves } = Deneme({clientType});
-    
+
+    const { requestTotalTroves, requestRiskyTroves } = graphql({ selectedChainName });
+
     const getRiskyTroves = useCallback(async () => {
         try {
             setLoading(true);
@@ -74,7 +69,7 @@ const RiskyTrovesModal: FC<Props> = ({ open, onClose, pageData, getPageData, bas
                     return {
                         owner: item.owner,
                         liquidityThreshold: item.liquidityThreshold,
-                        collateralAmount: convertAmount(troveRes?.collateral_amount ?? 0, baseCoin?.decimal),
+                        collateralAmount: convertAmount(troveRes?.collateral_amounts.find(item => item.denom)?.amount ?? 0, baseCoin?.decimal),
                         debtAmount: convertAmount(troveRes?.debt_amount ?? 0, baseCoin?.ausdDecimal)
                     }
                 }

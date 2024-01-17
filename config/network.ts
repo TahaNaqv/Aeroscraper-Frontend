@@ -1,5 +1,5 @@
-import { ClientEnum } from "@/types/types"
 import { AppConfig } from "./app"
+import { ChainName } from "@/enums/Chain"
 
 export const mainnetArchwayConfig: AppConfig = {
     chainId: 'archway-1',
@@ -111,16 +111,16 @@ export const uniTestnetConfig: AppConfig = {
 }
 
 
-export const getConfig = (network: string, clientType?: ClientEnum): AppConfig => {
+export const getConfig = (network: string, selectedChainName?: ChainName): AppConfig => {
     /* if (network === 'mainnet') return mainnetConfig
     return mainnetConfig */
-    if (clientType === ClientEnum.ARCHWAY) {
+    if (selectedChainName === ChainName.ARCHWAY) {
         return mainnetArchwayConfig
     }
-    if (clientType === ClientEnum.NEUTRON) {
+    if (selectedChainName === ChainName.NEUTRON) {
         return mainnetNeutronConfig
     }
-    if (clientType === ClientEnum.INJECTIVE) {
+    if (selectedChainName === ChainName.INJECTIVE) {
         return testnetInjectiveConfig
     }
 

@@ -12,9 +12,10 @@ import { PageData } from '../_types/types';
 import OutlinedButton from '@/components/Buttons/OutlinedButton';
 import BorderedContainer from '@/components/Containers/BorderedContainer';
 import { useNotification } from '@/contexts/NotificationProvider';
-import { useWallet } from '@/contexts/WalletProvider';
 import { convertAmount, getIsInjectiveResponse, getRatioColor, getRatioText } from '@/utils/contractUtils';
 import { isNil } from 'lodash';
+import useChainAdapter from '@/hooks/useChainAdapter';
+import useBalances from '@/hooks/useBalances';
 
 enum TABS {
     COLLATERAL = 0,
@@ -31,7 +32,8 @@ type Props = {
 
 const TroveModal: FC<Props> = ({ open, pageData, onClose, getPageData, basePrice }) => {
     const contract = useAppContract();
-    const { balanceByDenom, baseCoin, refreshBalance, clientType } = useWallet();
+    const { balanceByDenom, refreshBalance } = useBalances();
+    const { baseCoin } = useChainAdapter();
     const [openTroveAmount, setOpenTroveAmount] = useState<number>(0);
     const [borrowAmount, setBorrowAmount] = useState<number>(0);
     const [collateralAmount, setCollateralAmount] = useState<number>(0);

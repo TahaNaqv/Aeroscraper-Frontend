@@ -1,13 +1,13 @@
 import React, { FC } from 'react'
 import Text from "@/components/Texts/Text"
 import { useNotification } from '@/contexts/NotificationProvider';
-import { useWallet } from '@/contexts/WalletProvider';
 import useAppContract from '@/contracts/app/useAppContract';
 import { isNil } from 'lodash';
 import { NumericFormat } from 'react-number-format';
 import { PageData } from '../../../_types/types';
 import TransactionButton from '@/components/Buttons/TransactionButton';
 import { getIsInjectiveResponse } from '@/utils/contractUtils';
+import useChainAdapter from '@/hooks/useChainAdapter';
 
 interface Props {
   pageData: PageData,
@@ -18,7 +18,7 @@ interface Props {
 
 const ClaimRewardTab: FC<Props> = ({ pageData, getPageData, refreshBalance, basePrice }) => {
 
-  const { baseCoin } = useWallet();
+  const { baseCoin } = useChainAdapter();
 
   const contract = useAppContract();
   const { addNotification, processLoading, setProcessLoading } = useNotification();
@@ -31,7 +31,7 @@ const ClaimRewardTab: FC<Props> = ({ pageData, getPageData, refreshBalance, base
       addNotification({
         status: 'success',
         directLink: getIsInjectiveResponse(res) ? res?.txHash : res?.transactionHash,
-        message:`${pageData.rewardAmount} ${baseCoin?.name} Reward Received`
+        message: `${pageData.rewardAmount} ${baseCoin?.name} Reward Received`
       })
       getPageData();
       refreshBalance();

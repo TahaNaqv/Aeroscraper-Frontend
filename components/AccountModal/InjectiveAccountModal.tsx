@@ -1,13 +1,7 @@
-import { useWallet } from "@/contexts/WalletProvider";
 import useOutsideHandler from "@/hooks/useOutsideHandler";
-import { useCompass } from "@/services/compass";
-import { useFin } from "@/services/fin";
-import { useKeplr } from "@/services/keplr";
-import { useLeap } from "@/services/leap";
 import { motion } from "framer-motion";
 import { FC, useMemo, useRef, useState } from "react";
 import QRCode from 'react-qr-code';
-import { WalletType } from "@/enums/WalletType";
 import { NumericFormat } from "react-number-format";
 import { CounterUp } from "../CounterUp";
 import Text from '../Texts/Text';
@@ -16,14 +10,16 @@ import Loading from "../Loading/Loading";
 import GradientButton from "../Buttons/GradientButton";
 import ProfilePhotoSlider from "./ProfilePhotosSlider";
 import { AUSD_PRICE } from "@/utils/contractUtils";
-import { BaseCoinByClient, ClientTransactionUrlByName, WalletImagesByName } from "@/constants/walletConstants";
 import { Modal } from "../Modal/Modal";
 import Button from "../Buttons/Button";
 import { ArrowLeftIcon, ExitIcon } from "../Icons/Icons";
 import { capitalizeFirstLetter } from "@/utils/stringUtils";
 import { isNil } from "lodash";
-import { useNinji } from "@/services/ninji";
-import useMetamask from "@/services/metamask";
+import useChainAdapter from "@/hooks/useChainAdapter";
+import { TransactionDomainByChainName } from "@/constants/chainConstants";
+import { ChainName } from "@/enums/Chain";
+import { useProfile } from "@/contexts/ProfileProvider";
+import { WalletType } from "@/enums/WalletType";
 
 interface Props {
   showModal: boolean,
@@ -38,14 +34,8 @@ const AccountModal: FC<Props> = (props: Props) => {
   const avatarSelectRef = useRef<HTMLDivElement>(null);
   const qrCodeViewRef = useRef<HTMLDivElement>(null);
 
-  const keplr = useKeplr();
-  const leap = useLeap();
-  const fin = useFin();
-  const compass = useCompass();
-  const ninji = useNinji();
-  const metamask = useMetamask();
-
-  const { walletType, name, address, profileDetail, baseCoin, setProfileDetail, clientType } = useWallet();
+  const { username, address, baseCoin, walletInfo, chain, disconnect, disconnectMetamask } = useChainAdapter();
+  const { profileDetail, setProfileDetail } = useProfile();
 
   const [selectedTab, setSelectedTab] = useState<Tabs | null>(null);
 
@@ -80,15 +70,17 @@ const AccountModal: FC<Props> = (props: Props) => {
     props.onClose();
   }
 
-  const disconnect = () => {
-    keplr.disconnect();
-    leap.disconnect();
-    fin.disconnect();
-    compass.disconnect();
-    ninji.disconnect();
-    metamask.disconnect();
+  const logout = () => {
+    if (walletInfo?.name === WalletType.METAMASK) {
+      disconnectMetamask();
+    }
+    else {
+      disconnect();
+    }
     setProfileDetail(undefined);
     localStorage.removeItem("profile-detail");
+    localStorage.removeItem("selectedChainName");
+    localStorage.removeItem("selectedWallet");
     closeModal();
   }
 
@@ -148,12 +140,12 @@ const AccountModal: FC<Props> = (props: Props) => {
   useOutsideHandler(avatarSelectRef, closeAvatarSelection);
   useOutsideHandler(qrCodeViewRef, closeQrCodeview);
 
-  let scanDomain = ClientTransactionUrlByName[clientType!]?.accountUrl
+  let scanDomain = TransactionDomainByChainName[chain.chain_name as ChainName]?.accountUrl
 
   return (
     <Modal title="Profile" modalSize='lg' showModal={props.showModal} onClose={closeModal}>
       <div className='flex md:flex-row flex-col md:h-[644px]'>
-        <button className='md:flex hidden items-center justify-center absolute bottom-10 left-12 z-[10]' onClick={disconnect}>
+        <button className='md:flex hidden items-center justify-center absolute bottom-10 left-12 z-[10]' onClick={logout}>
           <span className="text-[#ED0E00] text-sm md:text-base font-medium mr-2">Log out</span>
           <ExitIcon className="text-[#ED0E00]" />
         </button>
@@ -180,14 +172,14 @@ const AccountModal: FC<Props> = (props: Props) => {
                     className='w-full h-full rounded-md bg-raisin-black'
                   />
                 </div>
-                <Text size='3xl' textColor='text-white'>{name}</Text>
+                <Text size='3xl' textColor='text-white'>{username}</Text>
               </div>
               <div className='flex justify-center gap-4 mt-6'>
-                <Text size='xl'>{address.slice(0, 24)}...{address.slice(-6)}</Text>
+                <Text size='xl'>{address?.slice(0, 24)}...{address?.slice(-6)}</Text>
                 {isClipped === "WALLET" ?
                   <Text size='xs' textColor="text-[#37D489]">Copied!</Text>
                   :
-                  <button className='w-6 h-6 active:scale-90' onClick={() => { setIsClipped("WALLET"); navigator.clipboard.writeText(address); }}>
+                  <button className='w-6 h-6 active:scale-90' onClick={() => { setIsClipped("WALLET"); navigator.clipboard.writeText(address ?? ''); }}>
                     <img
                       alt="copy-to-clipboard"
                       src='/images/copy-to-clipboard.svg'
@@ -210,9 +202,9 @@ const AccountModal: FC<Props> = (props: Props) => {
                     decimalScale={2}
                     displayType="text"
                     renderText={(value) =>
-                      <Text size='lg' className='mt-2 flex gap-2 items-center'>
+                      <Text size='lg' className='mt-2 whitespace-nowrap flex gap-2 items-center'>
                         <img alt="ausd" className="w-5 h-5" src="/images/token-images/ausd-blue.svg" />
-                        <CounterUp from={"0"} to={value} duration={0.5} />
+                        {value}&nbsp;
                         AUSD
                       </Text>
                     }
@@ -228,17 +220,16 @@ const AccountModal: FC<Props> = (props: Props) => {
                     decimalScale={2}
                     displayType="text"
                     renderText={(value) =>
-                      <Text size='lg' className='mt-2 flex gap-2 items-center ml-6'>
+                      <Text size='lg' className='mt-2 whitespace-nowrap flex gap-2 items-center ml-6'>
                         {baseCoin && <img alt={baseCoin.name} className="w-5 h-5" src={baseCoin.tokenImage} />}
-                        <CounterUp from={"0"} fixed={6} to={value} duration={0.5} />
-                        {value}
+                        {value}&nbsp;
                         {baseCoin?.name}
                       </Text>
                     }
                   />
                 </div>
               </div>
-              <button className='flex md:hidden mt-10 mb-6' onClick={disconnect}>
+              <button className='flex md:hidden mt-10 mb-6' onClick={logout}>
                 <span className="text-[#ED0E00] text-sm md:text-base font-medium mr-2">Log out</span>
                 <ExitIcon className="text-[#ED0E00]" />
               </button>
@@ -279,7 +270,7 @@ const AccountModal: FC<Props> = (props: Props) => {
                   </motion.div>
                 }
               </div>
-              <button className='flex md:hidden my-6' onClick={disconnect}>
+              <button className='flex md:hidden my-6' onClick={logout}>
                 <span className="text-[#ED0E00] text-sm md:text-base font-medium mr-2">Log out</span>
                 <ExitIcon className="text-[#ED0E00]" />
               </button>
@@ -288,20 +279,20 @@ const AccountModal: FC<Props> = (props: Props) => {
           {selectedTab === "wallet-details" && (
             <div className='md:px-8 w-full'>
               <div className="flex items-center ml-[10%] gap-4 md:gap-0 md:mb-16 md:mt-12">
-                {clientType && <div>
+                {chain && <div>
                   <Text size='sm' className="text-center mb-3" textColor='text-dark-silver'>Selected chain</Text>
                   <Button
-                    startIcon={<img alt={clientType} src={BaseCoinByClient[clientType].image} className='w-6 h-6' />}
+                    startIcon={<img alt={chain.chain_name} src={baseCoin?.image} className='w-6 h-6' />}
                   >
-                    {capitalizeFirstLetter(clientType.toLocaleLowerCase())}
+                    {capitalizeFirstLetter(chain.pretty_name.toLocaleLowerCase())}
                   </Button>
                 </div>}
                 <div className="md:ml-14">
                   <Text size='sm' className="text-center mb-3" textColor='text-dark-silver'>Selected wallet</Text>
                   <Button
-                    startIcon={!isNil(walletType) && <img alt={walletType} src={WalletImagesByName[walletType].thumbnail} className='w-6 h-6' />}
+                    startIcon={!isNil(walletInfo) && <img alt={walletInfo.name} src={walletInfo.logo as string} className='w-6 h-6' />}
                   >
-                    {capitalizeFirstLetter(walletType?.toLocaleLowerCase() ?? "")}
+                    {capitalizeFirstLetter(walletInfo?.prettyName?.toLocaleLowerCase() ?? "")}
                   </Button>
                 </div>
                 <a href={`${scanDomain}${address}`} target='_blank' rel="noreferrer" className='ml-auto underline text-white hidden md:flex'>
@@ -309,16 +300,16 @@ const AccountModal: FC<Props> = (props: Props) => {
                   <img alt='link' src="/images/external-link.svg" className='w-full h-full object-contain ml-1.5' />
                 </a>
               </div>
-              <Text size='lg' textColor='text-white' className="mb-3 md:mt-0 mt-4">{name}</Text>
+              <Text size='lg' textColor='text-white' className="mb-3 md:mt-0 mt-4">{username}</Text>
               <div className='md:w-[309px] w-[220px] h-[220px] md:h-[309px] bg-white rounded-lg p-3 mx-auto'>
-                <QRCode className='w-full h-full' value={address} />
+                <QRCode className='w-full h-full' value={address ?? ''} />
               </div>
               <div className='flex gap-4 mt-6 justify-center'>
-                <Text size='xl'>{address.slice(0, 24)}...{address.slice(-6)}</Text>
+                <Text size='xl'>{address?.slice(0, 24)}...{address?.slice(-6)}</Text>
                 {isClipped === "WALLET" ?
                   <Text size='xs' textColor="text-[#37D489]">Copied!</Text>
                   :
-                  <button className='w-6 h-6 active:scale-90' onClick={() => { setIsClipped("WALLET"); navigator.clipboard.writeText(address); }}>
+                  <button className='w-6 h-6 active:scale-90' onClick={() => { setIsClipped("WALLET"); navigator.clipboard.writeText(address ?? ''); }}>
                     <img
                       alt="copy-to-clipboard"
                       src='/images/copy-to-clipboard.svg'
@@ -327,7 +318,7 @@ const AccountModal: FC<Props> = (props: Props) => {
                   </button>
                 }
               </div>
-              <button className='flex md:hidden m-6' onClick={disconnect}>
+              <button className='flex md:hidden m-6' onClick={logout}>
                 <span className="text-[#ED0E00] text-sm md:text-base font-medium mr-2">Log out</span>
                 <ExitIcon className="text-[#ED0E00]" />
               </button>
@@ -340,16 +331,6 @@ const AccountModal: FC<Props> = (props: Props) => {
 }
 
 export default AccountModal;
-
-export const WalletIconMap: Record<WalletType, string> = {
-  [WalletType.KEPLR]: '/images/wallet-images/keplr-icon.svg',
-  [WalletType.LEAP]: '/images/wallet-images/leap-icon.png',
-  [WalletType.FIN]: '/images/wallet-images/fin-icon.png',
-  [WalletType.COMPASS]: '/images/wallet-images/compass-icon.png',
-  [WalletType.METAMASK]: '/images/wallet-images/metamask-icon.png',
-  [WalletType.NINJI]: '/images/wallet-images/ninji-icon.png',
-  [WalletType.NOT_SELECTED]: ''
-}
 
 const profilePhotos = [
   "/images/profile-images/profile-i-1.jpg",

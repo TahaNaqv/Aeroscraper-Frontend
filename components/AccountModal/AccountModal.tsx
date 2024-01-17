@@ -1,15 +1,9 @@
-import { useWallet } from "@/contexts/WalletProvider";
 import useOutsideHandler from "@/hooks/useOutsideHandler";
-import { useCompass } from "@/services/compass";
-import { useFin } from "@/services/fin";
-import { useKeplr } from "@/services/keplr";
-import { useLeap } from "@/services/leap";
 import { AnimatePresence, motion } from "framer-motion";
-import { FC, useEffect, useMemo, useRef, useState } from "react";
+import { FC, useMemo, useRef, useState } from "react";
 import { WaveModal } from "../Modal/WaveModal";
 import TooltipWrapper from "./TooltipWrapper";
 import QRCode from 'react-qr-code';
-import { WalletType } from "@/enums/WalletType";
 import { NumericFormat } from "react-number-format";
 import { CounterUp } from "../CounterUp";
 import Text from '../Texts/Text';
@@ -18,8 +12,11 @@ import Loading from "../Loading/Loading";
 import GradientButton from "../Buttons/GradientButton";
 import ProfilePhotoSlider from "./ProfilePhotosSlider";
 import { AUSD_PRICE } from "@/utils/contractUtils";
-import { ClientEnum } from "@/types/types";
-import { ClientTransactionUrlByName } from "@/constants/walletConstants";
+import useChainAdapter from "@/hooks/useChainAdapter";
+import { useProfile } from "@/contexts/ProfileProvider";
+import { TransactionDomainByChainName } from "@/constants/chainConstants";
+import { ChainName } from "@/enums/Chain";
+import { WalletType } from "@/enums/WalletType";
 
 interface Props {
     showModal: boolean,
@@ -32,12 +29,8 @@ const AccountModal: FC<Props> = (props: Props) => {
     const avatarSelectRef = useRef<HTMLDivElement>(null);
     const qrCodeViewRef = useRef<HTMLDivElement>(null);
 
-    const keplr = useKeplr();
-    const leap = useLeap();
-    const fin = useFin();
-    const compass = useCompass();
-
-    const { walletType, name, address, profileDetail, baseCoin, setProfileDetail } = useWallet();
+    const { walletInfo, username, address, baseCoin, selectedChainName, selectWallet, disconnect, disconnectMetamask } = useChainAdapter();
+    const { profileDetail, setProfileDetail } = useProfile();
 
     const [avatarSelectionOpen, setAvatarSelectionOpen] = useState(false);
     const [qrCodeViewOpen, setQrCodeViewOpen] = useState(false);
@@ -72,13 +65,18 @@ const AccountModal: FC<Props> = (props: Props) => {
         props.onClose();
     }
 
-    const disconnect = () => {
-        keplr.disconnect();
-        leap.disconnect();
-        fin.disconnect();
-        compass.disconnect();
+    const logout = () => {
+        if (walletInfo?.name === WalletType.METAMASK) {
+            disconnectMetamask();
+        }
+        else {
+            disconnect();
+        }
+        selectWallet(undefined);
         setProfileDetail(undefined);
         localStorage.removeItem("profile-detail");
+        localStorage.removeItem("selectedChainName");
+        localStorage.removeItem("selectedWallet")
         closeModal();
     }
 
@@ -138,14 +136,7 @@ const AccountModal: FC<Props> = (props: Props) => {
     useOutsideHandler(avatarSelectRef, closeAvatarSelection);
     useOutsideHandler(qrCodeViewRef, closeQrCodeview);
 
-    let clientType = "INJECTIVE" 
-    useEffect(() => {
-        if (typeof window !== "undefined") {
-            clientType = localStorage.getItem("selectedClientType") as ClientEnum;
-          }
-    }, [])
-    //@ts-ignore
-    let scanDomain = ClientTransactionUrlByName[clientType]?.accountUrl
+    let scanDomain = TransactionDomainByChainName[selectedChainName ?? ChainName.INJECTIVE]?.accountUrl
 
     return (
         <WaveModal layoutId="profile" title="Profile" showModal={props.showModal} onClose={closeModal}>
@@ -158,7 +149,7 @@ const AccountModal: FC<Props> = (props: Props) => {
                             className='w-full h-full rounded-md bg-raisin-black'
                         />
                     </div>
-                    <Text size='3xl' textColor='text-white'>{name}</Text>
+                    <Text size='3xl' textColor='text-white'>{username}</Text>
                 </div>
                 <div className='col-span-6 lg:col-span-4 row-span-s flex flex-col gap-3 w-full '>
                     <div className="bg-raisin-black px-6 py-4 rounded-lg flex gap-16">
@@ -203,7 +194,7 @@ const AccountModal: FC<Props> = (props: Props) => {
                         <div className='flex items-center justify-between'>
                             <Text size='2xl' textColor='text-dark-silver'>Wallet</Text>
                             <div className='flex items-center gap-6'>
-                                <TooltipWrapper title={ClientEnum.ARCHWAY === clientType ? "MintScan" : "SeiScan"}>
+                                <TooltipWrapper title={ChainName.ARCHWAY === selectedChainName ? "MintScan" : "SeiScan"}>
                                     <a href={`${scanDomain}${address}`} target='_blank' rel="noreferrer" className='w-6 h-6'>
                                         <img alt='link' src="/images/external-link.svg" className='w-full h-full object-contain' />
                                     </a>
@@ -214,14 +205,14 @@ const AccountModal: FC<Props> = (props: Props) => {
                                     </button>
                                 </TooltipWrapper>
                                 <TooltipWrapper title='Log Out'>
-                                    <button className='w-6 h-6' onClick={disconnect}>
+                                    <button className='w-6 h-6' onClick={logout}>
                                         <img alt='exit' src="/images/exit.svg" className='w-full h-full object-contain' />
                                     </button>
                                 </TooltipWrapper>
                             </div>
                         </div>
                         <div className='flex flex-col lg:flex-row items-start lg:items-center gap-5 mt-6'>
-                            {walletType && <img alt={`walletType-${walletType}`} className='w-16 h-16 object-contain' src={WalletIconMap[walletType]} />}
+                            {walletInfo && <img alt={`walletType-${walletInfo.prettyName}`} className='w-16 h-16 object-contain' src={walletInfo.logo as string} />}
                             <div className='w-full flex flex-col justify-between'>
                                 <Text size='2xl'>{baseCoin?.name}</Text>
                                 <div className='w-full flex items-center gap-2'>
@@ -229,7 +220,7 @@ const AccountModal: FC<Props> = (props: Props) => {
                                     {isClipped === "WALLET" ?
                                         <Text size='base' textColor="text-[#37D489]">Copied!</Text>
                                         :
-                                        <button className='w-6 h-6' onClick={() => { setIsClipped("WALLET"); navigator.clipboard.writeText(address); }}>
+                                        <button className='w-6 h-6' onClick={() => { setIsClipped("WALLET"); navigator.clipboard.writeText(address ?? ''); }}>
                                             <img
                                                 alt="copy-to-clipboard"
                                                 src='/images/copy-to-clipboard.svg'
@@ -256,14 +247,14 @@ const AccountModal: FC<Props> = (props: Props) => {
                         >
                             <div className='relative w-full h-full flex flex-col gap-6 items-center bg-english-violet rounded-lg p-6'>
                                 <div className='w-[182px] h-[182px] lg:w-[132px] lg:h-[132px] bg-white rounded-lg p-3'>
-                                    <QRCode className='w-full h-full' value={address} />
+                                    <QRCode className='w-full h-full' value={address ?? ''} />
                                 </div>
                                 <div className='w-full max-w-[305px] flex justify-between items-center gap-2 rounded-lg px-2 py-1 bg-[#74517A]'>
                                     <Text textColor='text-white' size="lg" className='w-[228px] truncate'>{address}</Text>
                                     {isClipped === "QR" ?
                                         <Text size='base' textColor="text-[#37D489]">Copied!</Text>
                                         :
-                                        <button className='w-6 h-6' onClick={() => { setIsClipped("QR"); navigator.clipboard.writeText(address); }}>
+                                        <button className='w-6 h-6' onClick={() => { setIsClipped("QR"); navigator.clipboard.writeText(address ?? ''); }}>
                                             <img
                                                 alt="copy-to-clipboard"
                                                 src='/images/copy-to-clipboard.svg'
@@ -333,16 +324,6 @@ const AccountModal: FC<Props> = (props: Props) => {
 }
 
 export default AccountModal;
-
-export const WalletIconMap: Record<WalletType, string> = {
-    [WalletType.KEPLR]: '/images/wallet-images/keplr-icon.svg',
-    [WalletType.LEAP]: '/images/wallet-images/leap-icon.png',
-    [WalletType.FIN]: '/images/wallet-images/fin-icon.png',
-    [WalletType.COMPASS]: '/images/wallet-images/compass-icon.png',
-    [WalletType.METAMASK]: 'images/wallet-images/metamask-icon.png',
-    [WalletType.NINJI]: 'images/wallet-images/ninji-icon.png',
-    [WalletType.NOT_SELECTED]: ''
-}
 
 const profilePhotos = [
     "/images/profile-images/profile-i-1.jpg",

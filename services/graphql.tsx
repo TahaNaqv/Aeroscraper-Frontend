@@ -1,23 +1,23 @@
 "use client";
+import { ChainName } from "@/enums/Chain";
 import {
-  ClientEnum,
   RiskyTrovesResponse,
   TotalTrovesResponse,
 } from "@/types/types";
 import { request, gql } from "graphql-request";
 
-export default function graphql({clientType} : {clientType: string}) {
+export default function graphql({ selectedChainName = ChainName.INJECTIVE }: { selectedChainName?: ChainName }) {
 
-  
+
   const URL = (): string => {
-    switch (clientType) {
-      case ClientEnum.ARCHWAY:
+    switch (selectedChainName) {
+      case ChainName.ARCHWAY:
         return process.env.NEXT_PUBLIC_INDEXER_ARCH as string;
-      case ClientEnum.SEI:
+      case ChainName.SEI:
         return process.env.NEXT_PUBLIC_INDEXER_DOMAIN as string;
-      case ClientEnum.NEUTRON:
+      case ChainName.NEUTRON:
         return process.env.NEXT_PUBLIC_INDEXER_NEUTRON as string;
-      case ClientEnum.INJECTIVE:
+      case ChainName.INJECTIVE:
         return process.env.NEXT_PUBLIC_INDEXER_INJ as string;
       default:
         return process.env.NEXT_PUBLIC_INDEXER_DOMAIN as string;
@@ -25,7 +25,7 @@ export default function graphql({clientType} : {clientType: string}) {
   };
 
   const getRiskyTrovesQuery =
-    clientType === ClientEnum.INJECTIVE
+    selectedChainName === ChainName.INJECTIVE
       ? gql`
           query {
             troves {

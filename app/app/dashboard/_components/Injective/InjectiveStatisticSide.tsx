@@ -1,8 +1,8 @@
 import InjectiveStatisticCard from '@/components/Cards/InjectiveStatisticCard';
 import { ChevronUpIcon } from '@/components/Icons/Icons';
-import { useWallet } from '@/contexts/WalletProvider';
 import usePageData from '@/contracts/app/usePageData';
 import useIsMobile from '@/hooks/useIsMobile';
+import useChainAdapter from '@/hooks/useChainAdapter';
 import { motion } from 'framer-motion';
 import { isNil } from 'lodash';
 import Link from 'next/link';
@@ -52,9 +52,8 @@ const content:
   ]
 
 const InjectiveStatisticSide: FC<Props> = ({ basePrice }) => {
-
-  const { baseCoin, walletType } = useWallet();
   const isMobile = useIsMobile()
+  const { baseCoin, walletInfo } = useChainAdapter();
   const [showStatistic, setShowStatistic] = useState<boolean>(true);
 
   const { pageData } = usePageData({ basePrice });
@@ -150,7 +149,7 @@ const InjectiveStatisticSide: FC<Props> = ({ basePrice }) => {
             description="115%"
             className="w-[191px] h-14"
             tooltip="Liquidation Threshold Ratio"
-            tooltipPlacement="bottom"
+            tooltipPlacement="left-bottom"
           />
           <InjectiveStatisticCard
             title="Total Value Locked"
@@ -168,7 +167,7 @@ const InjectiveStatisticSide: FC<Props> = ({ basePrice }) => {
           />
           <InjectiveStatisticCard
             title="Troves"
-            description={`${isNil(walletType) ? "-" : pageData.totalTrovesAmount}`}
+            description={`${isNil(walletInfo) ? "-" : pageData.totalTrovesAmount}`}
             className="w-[191px] h-14"
             tooltip="The total number of active Troves in the system."
             tooltipPlacement="right-top"

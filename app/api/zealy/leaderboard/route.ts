@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
 
-  const result = await fetch("https://db.aeroscraper.io/api/collections/leaderboard/records?page=1&perPage=500", {
+  const result = await fetch("https://db.aeroscraper.io/api/collections/leaderboard/records?page=1&perPage=500&sort=-xp", {
     headers: {
       "x-api-key": `${process.env.NEXT_PUBLIC_ZEALY_API_KEY}`
     },

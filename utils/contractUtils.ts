@@ -1,4 +1,3 @@
-import { ClientEnum } from "@/types/types";
 import { ExecuteResult } from "@cosmjs/cosmwasm-stargate";
 import { toBase64, toUtf8 } from "@cosmjs/encoding";
 import { Coin, EncodeObject } from "@cosmjs/proto-signing";

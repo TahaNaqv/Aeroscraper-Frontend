@@ -1,7 +1,7 @@
 import React, { useState, useRef, useLayoutEffect } from "react";
 import { motion } from "framer-motion";
 import Loading from "../Loading/Loading";
-import { useWallet } from "@/contexts/WalletProvider";
+import { useProfile } from "@/contexts/ProfileProvider";
 
 interface Props {
   slider: string[],
@@ -13,7 +13,7 @@ const ProfilePhotoSlider: React.FC<Props> = (props) => {
   const sliderRef = useRef<HTMLDivElement>(null);
 
   const [width, setWidth] = useState(0);
-  const { profileDetail } = useWallet();
+  const { profileDetail } = useProfile();
 
   const previousPhotosJson = localStorage.getItem("previous-photos");
   const previousPhotos: string[] = previousPhotosJson

@@ -10,8 +10,9 @@ import { motion } from 'framer-motion';
 import useAppContract from '@/contracts/app/useAppContract';
 import { useNotification } from '@/contexts/NotificationProvider';
 import { PageData } from '../_types/types';
-import { useWallet } from '@/contexts/WalletProvider';
 import { getIsInjectiveResponse } from '@/utils/contractUtils';
+import useChainAdapter from '@/hooks/useChainAdapter';
+import useBalances from '@/hooks/useBalances';
 
 enum TABS {
   DEPOSIT = 0,
@@ -26,7 +27,8 @@ type Props = {
 }
 
 const StabilityPoolModal: FC<Props> = ({ open, onClose, pageData, getPageData }) => {
-  const { baseCoin, refreshBalance } = useWallet();
+  const { refreshBalance } = useBalances();
+  const { baseCoin } = useChainAdapter();
   const contract = useAppContract();
   const { addNotification } = useNotification();
 
@@ -49,7 +51,7 @@ const StabilityPoolModal: FC<Props> = ({ open, onClose, pageData, getPageData })
       addNotification({
         status: 'success',
         directLink: getIsInjectiveResponse(res) ? res?.txHash : res?.transactionHash,
-        message:`${stakeAmount} AUSD Staked to Stability Pool`
+        message: `${stakeAmount} AUSD Staked to Stability Pool`
       })
       getPageData();
       refreshBalance();
@@ -73,7 +75,7 @@ const StabilityPoolModal: FC<Props> = ({ open, onClose, pageData, getPageData })
       addNotification({
         status: 'success',
         directLink: getIsInjectiveResponse(res) ? res?.txHash : res?.transactionHash,
-        message:`${stakeAmount} AUSD Reward Received`
+        message: `${stakeAmount} AUSD Reward Received`
       })
       getPageData();
       refreshBalance();
@@ -99,7 +101,7 @@ const StabilityPoolModal: FC<Props> = ({ open, onClose, pageData, getPageData })
       addNotification({
         status: 'success',
         directLink: getIsInjectiveResponse(res) ? res?.txHash : res?.transactionHash,
-        message:`${stakeAmount} AUSD Unstaked from Stability Pool`
+        message: `${stakeAmount} AUSD Unstaked from Stability Pool`
       })
       getPageData();
       refreshBalance();

@@ -6,10 +6,10 @@ import { TableHeaderCol } from '@/components/Table/TableHeaderCol';
 import { getCroppedString } from '@/utils/stringUtils';
 import { NumericFormat } from 'react-number-format';
 import SkeletonLoading from '@/components/Table/SkeletonLoading';
-import { useWallet } from '@/contexts/WalletProvider';
 import Checkbox from '@/components/Checkbox';
 import MissionCard, { ZealyMission } from '@/components/MissionCard';
 import { isNil } from 'lodash';
+import useChainAdapter from '@/hooks/useChainAdapter';
 
 interface ZealyResponseModel {
   items: ZealyUser[],
@@ -76,7 +76,7 @@ enum TABS {
 
 const LeaderboardTab = () => {
 
-  const { address } = useWallet();
+  const { address } = useChainAdapter();
 
   const [leaderboard, setLeaderboard] = useState<ZealyUser[]>([]);
   const [userInformation, setUserInformation] = useState<ZealyUserInformation | null>(null);

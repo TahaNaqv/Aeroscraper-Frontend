@@ -103,7 +103,7 @@ export default function InjectiveDashboard() {
           <InjectiveBackgroundWave animate={processLoading} className="absolute -bottom-[200px] -left-20 -z-10 h-[584px] rotate-[180deg]" />
         </motion.div>
       )}
-      <div className="flex gap-4 flex-col md:flex-row md:gap-32 z-10 relative md:min-h-[720px]">
+      <div className="flex gap-4 flex-col md:flex-row md:gap-24 z-10 relative md:min-h-[720px]">
         <InjectiveStatisticSide basePrice={basePrice} />
         <InjectiveTabsSide setTabPosition={changeTabPosition} />
       </div>
@@ -112,9 +112,16 @@ export default function InjectiveDashboard() {
           <LogoSecondary />
           <Text size="2xl" textColor='text-white'>Aeroscraper</Text>
         </div>
-        <div className='grid md:grid-cols-3 gap-10 md:gap-40 md:mt-0 mt-10'>
+        <div className='grid md:grid-cols-4 gap-10 md:gap-40 md:mt-0 mt-10'>
           <div className='flex flex-col content-start justify-start gap-4'>
             <Text size="sm" textColor='text-white' weight="font-semibold">Product</Text>
+            <Link href={'https://novaratio.gitbook.io/aeroscraper/aeroscraper/whitepaper'} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
+              <Text size="sm" textColor='text-white' className="cursor-pointer">Audit</Text>
+              <img alt='external-link' src='/images/external-link.svg' className='w-4 h-4' />
+            </Link>
+            <Link href={'https://novaratio.gitbook.io/aeroscraper/aeroscraper/whitepaper'} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
+              <Text size="sm" textColor='text-white' className="cursor-pointer">FAQ</Text>
+            </Link>
             <Link href={'https://novaratio.gitbook.io/aeroscraper/aeroscraper/whitepaper'} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
               <Text size="sm" textColor='text-white' className="cursor-pointer">Whitepaper</Text>
             </Link>
@@ -146,14 +153,21 @@ export default function InjectiveDashboard() {
             </div>
           </div>
           <div className='flex flex-col content-start justify-start gap-6'>
+            <Text size="sm" weight="font-semibold">Hackathon</Text>
+            <div className='flex flex-col content-start gap-3'>
+              <Link href={'https://twitter.com/Injective_/status/1745933949132488934?s=20'} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
+                <Text size="sm" textColor='text-white'>Injective Illuminate Hackathon</Text>
+              </Link>
+              <Link href={'https://x.com/SeiNetwork/status/1705128171534717322?s=20'} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
+                <Text size="sm" textColor='text-white'>Code Sei Hackathon</Text>
+              </Link>
+            </div>
+          </div>
+          <div className='flex flex-col content-start justify-start gap-6'>
             <Text size="sm" weight="font-semibold">Social</Text>
             <div className='flex flex-col content-start gap-4'>
               <Link href={'https://twitter.com/aeroscraper'} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
                 <Text size="sm" textColor='text-white'>X</Text>
-                <img alt='external-link' src='/images/external-link.svg' className='w-4 h-4' />
-              </Link>
-              <Link href={'https://medium.com/@aeroscraper'} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
-                <Text size="sm" textColor='text-white'>Medium</Text>
                 <img alt='external-link' src='/images/external-link.svg' className='w-4 h-4' />
               </Link>
               <Link href={'https://discord.gg/3R6yTqB8hC'} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>

@@ -1,6 +1,5 @@
 import SkeletonLoading from '@/components/Table/SkeletonLoading';
 import Tabs from '@/components/Tabs';
-import { useWallet } from '@/contexts/WalletProvider';
 import usePageData from '@/contracts/app/usePageData';
 import { PriceServiceConnection } from '@pythnetwork/price-service-client';
 import { motion } from 'framer-motion';
@@ -12,23 +11,26 @@ import RedeemTab from './Tabs/RedeemTab';
 import RiskyTrovesTab from './Tabs/RiskyTrovesTab';
 import StabilityPoolTab from './Tabs/StabilityPoolTab';
 import TroveTab from './Tabs/TroveTab';
+import useChainAdapter from '@/hooks/useChainAdapter';
+import useBalances from '@/hooks/useBalances';
 
 interface Props {
   setTabPosition: Dispatch<InjectiveTabs>
 }
 
-export type InjectiveTabs = "trove" | "createTrove" | "stabilityPool" | "redeem" | "riskyTroves" | "rewards" | "Leaderboard & Missions"; 
+export type InjectiveTabs = "trove" | "createTrove" | "stabilityPool" | "redeem" | "riskyTroves" | "rewards" | "Leaderboard & Missions";
 const InjectiveTabsSide: FC<Props> = ({ setTabPosition }) => {
 
   const ref = useRef<HTMLDivElement>(null);
 
   const [basePrice, setBasePrice] = useState(0);
   const { pageData, getPageData, loading } = usePageData({ basePrice });
-  const { refreshBalance, walletType,} = useWallet();
+  const { refreshBalance } = useBalances();
+  const { walletInfo } = useChainAdapter();
 
   const [isTroveOpened, setIsTroveOpened] = useState(false);
 
-  let TabList: InjectiveTabs[] = [isTroveOpened ? "trove" : "createTrove", "stabilityPool", "redeem", "riskyTroves", "rewards", "Leaderboard & Missions"]; 
+  let TabList: InjectiveTabs[] = [isTroveOpened ? "trove" : "createTrove", "stabilityPool", "redeem", "riskyTroves", "rewards", "Leaderboard & Missions"];
 
   const [selectedTab, setSelectedTab] = useState<InjectiveTabs>(isTroveOpened ? "trove" : "createTrove");
 
@@ -55,9 +57,11 @@ const InjectiveTabsSide: FC<Props> = ({ setTabPosition }) => {
     getPrice()
   }, [])
 
-  useEffect(() => {    
-    setIsTroveOpened(pageData.collateralAmount > 0);
-    setSelectedTab(pageData.collateralAmount > 0 ? "trove" : "createTrove");
+  useEffect(() => {
+    if (selectedTab === "trove" || selectedTab === "createTrove") {
+      setIsTroveOpened(pageData.collateralAmount > 0);
+      setSelectedTab(pageData.collateralAmount > 0 ? "trove" : "createTrove");
+    }
   }, [pageData]);
 
   useEffect(() => {
@@ -67,7 +71,7 @@ const InjectiveTabsSide: FC<Props> = ({ setTabPosition }) => {
   }, [selectedTab])
 
   return (
-    <div ref={ref} className='md:flex-1 md:max-w-[908px] px-3 md:px-0 md:mt-16 md:ml-auto'>
+    <div ref={ref} className='md:flex-1 md:max-w-[954px] px-3 md:px-0 md:mt-16 md:ml-auto'>
       <Tabs tabs={TabList} dots={pageData.rewardAmount > 0 ? ["rewards"] : undefined} selectedTab={selectedTab} onTabSelected={(e) => { setSelectedTab(e); setTabPosition(e); }} loading={loading} />
       {loading ? <>
         <div className='mt-16'>
@@ -91,8 +95,8 @@ const InjectiveTabsSide: FC<Props> = ({ setTabPosition }) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.7 }}
-          className={`md:mt-14 ${(isNil(walletType) && selectedTab !== "Leaderboard & Missions") ? "blur-[2px]" : ""} relative`}>
-          {(isNil(walletType) && selectedTab !== "Leaderboard & Missions") &&
+          className={`md:mt-14 ${(isNil(walletInfo) && selectedTab !== "Leaderboard & Missions") ? "blur-[2px]" : ""} relative`}>
+          {(isNil(walletInfo) && selectedTab !== "Leaderboard & Missions") &&
             <div className='cursor-not-allowed h-full w-full absolute top-0 bottom-0 left-0 z-50'>
             </div>
           }
