@@ -44,6 +44,13 @@ const LandingLayout = ({ children }: { children: React.ReactNode }) => {
                     <div className='flex flex-col items-center lg:justify-normal justify-center gap-4'>
                         <Text size="2xl" textColor='text-white'>Product</Text>
                         <Link href={'https://novaratio.gitbook.io/aeroscraper/aeroscraper/whitepaper'} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
+                            <Text size="sm" textColor='text-white' className="cursor-pointer">Audit</Text>
+                            <img alt='external-link' src='/images/external-link.svg' className='w-4 h-4' />
+                        </Link>
+                        <Link href={'https://novaratio.gitbook.io/aeroscraper/aeroscraper/whitepaper'} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
+                            <Text size="sm" textColor='text-white' className="cursor-pointer">FAQ</Text>
+                        </Link>
+                        <Link href={'https://novaratio.gitbook.io/aeroscraper/aeroscraper/whitepaper'} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
                             <Text size="sm" textColor='text-white' className="cursor-pointer">Whitepaper</Text>
                         </Link>
                         <Link href={'https://aeroscraper.gitbook.io/aeroscraper/brand-identity/brand-kit'} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
