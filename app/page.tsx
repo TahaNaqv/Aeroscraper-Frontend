@@ -5,23 +5,7 @@ import Faq from '@/components/FAQ/Faq'
 import { InjectiveBackgroundWave, LogoSecondary, MedalIcon } from '@/components/Icons/Icons'
 import Text from '@/components/Texts/Text'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
-import { useEffect } from 'react'
-
-export default function Home({...props}:any) {
-
-  useEffect(() => {
-    const scrollParam = props.searchParams.scroll;
-
-    if (scrollParam && scrollParam === 'FAQ') {
-      const faqElement = document.getElementById('faq-section');
-
-      if (faqElement) {
-        faqElement.scrollIntoView({ behavior: 'smooth',inline:"center" });
-      }
-    }
-  }, [props.searchParams.scroll]);
-  
+export default function Home() {
   return (
     <div>
       <main>
@@ -44,7 +28,7 @@ export default function Home({...props}:any) {
                 <Text size='base'>Launch App</Text>
               </GradientButton>
             </Link>
-            <Faq/>
+            <Faq />
           </div>
           <div className="md:mt-32 md:ml-20 p-4">
             <Link target={"_blank"} className="border border-[#073DC8]/60 bg-[#0c0c2766] px-4 md:px-10 py-8 rounded-lg flex gap-6 backdrop-blur-2xl" href={'https://twitter.com/Injective_/status/1745933949132488934?s=20'}>

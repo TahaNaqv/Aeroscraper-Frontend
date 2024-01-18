@@ -1,5 +1,7 @@
 'use client';
 
+import { useSearchParams } from 'next/navigation'
+import { useEffect } from "react";
 import FaqItem from "./FaqItem";
 
 const Faq = () => {
@@ -41,6 +43,20 @@ const Faq = () => {
       answer: `No. The protocol has no admin key, and nobody can alter the rules of the system in any way. The smart contract code is completely immutable once deployed.`,
     },
   ];
+
+  const searchParams = useSearchParams()
+
+  const scroll = searchParams.get('scroll')
+
+  useEffect(() => {
+    if (scroll && scroll === 'FAQ') {
+      const faqElement = document.getElementById('faq-section');
+
+      if (faqElement) {
+        faqElement.scrollIntoView({ behavior: 'smooth', inline: "center" });
+      }
+    }
+  }, [scroll]);
 
   return (
     <div id="faq-section" className="w-full mt-12">

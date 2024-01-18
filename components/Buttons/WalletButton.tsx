@@ -377,11 +377,11 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
                                     <h3 className='text-white text-3xl font-medium'>Please choose your chain</h3>
                                     <div className='space-y-6 mt-10'>
                                         {
-                                            isNil(selectedChainName) && availableChains.map((chain, idx) => {
+                                            isNil(selectedChainName) && availableChains.map((chain, idx) => {                                                
                                                 return <Button
                                                     key={idx}
                                                     onClick={() => { selectChainName(chain.chain_name as ChainName) }}
-                                                    className={`${selectedChainName !== ChainName.INJECTIVE ? "md:flex hidden" : ""}`}
+                                                    className={`${chain.bech32_prefix !== "inj" ? "md:flex hidden" : ""}`}
                                                     onMouseEnter={() => setOnHoverChain(chain.chain_name as ChainName)}
                                                     onMouseLeave={() => setOnHoverChain(null)}
                                                     startIcon={<img alt={chain.chain_name} src={ChainImagesByName[chain.chain_name as ChainName]} className='w-8 h-8' />}
