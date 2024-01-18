@@ -69,9 +69,10 @@ const usePageData = ({ basePrice }: Props) => {
       setTroveLoading(true);
       const troveRes = await contract.getTrove();
 
-      const collateralAmount = convertAmount(troveRes?.collateral_amounts.find(item => item.denom)?.amount ?? 0, baseCoin?.decimal)
-      const debtAmount = convertAmount(troveRes?.debt_amount ?? 0, baseCoin?.ausdDecimal);
 
+      const collateralAmount = convertAmount(troveRes?.collateral_amount ?? 0, baseCoin?.decimal)
+      const debtAmount = convertAmount(troveRes?.debt_amount ?? 0, baseCoin?.ausdDecimal);
+      console.log("x",troveRes,"y",collateralAmount);
       setPageData(prev => ({
         ...prev,
         collateralAmount,
