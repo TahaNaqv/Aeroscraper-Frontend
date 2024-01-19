@@ -254,7 +254,7 @@ const LeaderboardTab = () => {
 
   return (
     <div>
-      <Text size='3xl'>See your ranking among users</Text>
+      <Text size='3xl'>See your ranking among Zealy users</Text>
       <Text size='base' weight='font-regular' className='mt-1'>Earn points and increase your ranking</Text>
       <div className='flex flex-col'>
         <Checkbox className='mt-8' label={'Missions'} checked={selectedTab === TABS.MISSIONS} onChange={() => { setSelectedTab(TABS.MISSIONS); }} />

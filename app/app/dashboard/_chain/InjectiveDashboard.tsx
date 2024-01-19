@@ -117,7 +117,7 @@ export default function InjectiveDashboard() {
           <div className='flex flex-col content-start justify-start gap-4'>
             <Text size="sm" textColor='text-white' weight="font-semibold">Product</Text>
             <Tooltip title={<Text size='base'>The Audit Report will be Shared Publicly in a Short Time.</Text>} width='w-[191px]'>
-              <Link href={'#'} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
+              <Link href={{}} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
                 <Text size="sm" textColor='text-white' className="cursor-pointer">Audit</Text>
                 <img alt='external-link' src='/images/external-link.svg' className='w-4 h-4' />
               </Link>
