@@ -282,7 +282,9 @@ const LeaderboardTab = () => {
 
   return (
     <div>
-      <Text size="3xl">See your ranking among users</Text>
+      <Text size="3xl">
+        See your ranking among <b>Zealy</b> users
+      </Text>
       <Text size="base" weight="font-regular" className="mt-1">
         Earn points and increase your ranking
       </Text>
@@ -319,7 +321,6 @@ const LeaderboardTab = () => {
                           noPadding
                         />
                         <div className="absolute bottom-0 h-[40px] border-2 rounded-md border-red-500 left-0 right-0" />
-
                       </div>
                     </div>
                     <SkeletonLoading
