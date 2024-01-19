@@ -49,28 +49,28 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
 
     const [onHoverChain, setOnHoverChain] = useState<ChainName | null>();
 
-    const filteredWallets = useMemo(() => walletRepo.wallets
-        .filter(wallet => selectedChainName && WalletsByChainName[selectedChainName].includes(wallet.walletInfo.name as WalletType)),
+    const filteredWallets = useMemo(() => walletRepo.wallets //@ts-ignore
+        .filter((wallet:any) => selectedChainName && WalletsByChainName[selectedChainName].includes(wallet.walletInfo.name as WalletType)),
         [walletRepo, selectedChainName])
 
     const hoveredChainWallets = useMemo(() => walletRepo.wallets
-        .filter(wallet => onHoverChain && WalletsByChainName[onHoverChain].includes(wallet.walletInfo.name as WalletType))
+        .filter((wallet:any) => onHoverChain && WalletsByChainName[onHoverChain].includes(wallet.walletInfo.name as WalletType))
         , [onHoverChain, walletRepo])
 
     const {
         installedWallets,
         otherWallets
     } = useMemo(() => ({
-        installedWallets: filteredWallets.filter(item => walletExtensions?.installed.some(extension => extension.name === item.walletInfo.name)),
-        otherWallets: filteredWallets.filter(item => walletExtensions?.otherWallets.some(extension => extension.name === item.walletInfo.name))
+        installedWallets: filteredWallets.filter((item:any) => walletExtensions?.installed.some(extension => extension.name === item.walletInfo.name)),
+        otherWallets: filteredWallets.filter((item:any) => walletExtensions?.otherWallets.some(extension => extension.name === item.walletInfo.name))
     }), [filteredWallets, walletExtensions])
 
     const {
         installedHoveredWallets,
         otherHoveredWallets
     } = useMemo(() => ({
-        installedHoveredWallets: hoveredChainWallets.filter(item => walletExtensions?.installed.some(extension => extension.name === item.walletInfo.name)),
-        otherHoveredWallets: hoveredChainWallets.filter(item => walletExtensions?.otherWallets.some(extension => extension.name === item.walletInfo.name))
+        installedHoveredWallets: hoveredChainWallets.filter((item:any) => walletExtensions?.installed.some(extension => extension.name === item.walletInfo.name)),
+        otherHoveredWallets: hoveredChainWallets.filter((item:any) => walletExtensions?.otherWallets.some(extension => extension.name === item.walletInfo.name))
     }), [hoveredChainWallets, walletExtensions])
 
     useEffect(() => {
@@ -202,7 +202,7 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
                         {!isNil(selectedChainName) &&
                             <div className={`gap-y-4 flex flex-col mt-10 ${isNil(selectedChainName) ? "hidden" : ""}`}>
                                 {
-                                    installedWallets.map((wallet, idx) => {
+                                    installedWallets.map((wallet:any, idx:any) => {
                                         return <div key={idx} className={`mr-auto ${wallet.walletInfo.name === WalletType.LEAP ? "" : "md:inline-block hidden"}`} >
                                             {idx === 0 && <Text size='base' className='mb-4'>Installed Wallets</Text>}
                                             <Button
@@ -221,7 +221,7 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
                                     selectedChainName === ChainName.INJECTIVE &&
                                     <div className='mr-auto md:inline-block hidden' >
                                         {
-                                            walletExtensions?.installed.some(item => item.name === WalletType.METAMASK) ?
+                                            walletExtensions?.installed.some((item:any) => item.name === WalletType.METAMASK) ?
                                                 <Button
                                                     onClick={() => selectWallet(WalletType.METAMASK)}
                                                     startIcon={<img className='w-6 h-6 object-contain' alt={metamaskWalletInfo.name} src={metamaskWalletInfo.logo} />}
@@ -239,7 +239,7 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
                                     </div>
                                 } */}
                                 {
-                                    otherWallets.map((wallet, idx) => (
+                                    otherWallets.map((wallet:any, idx:any) => (
                                         <div key={idx} className={`mr-auto ${wallet.walletInfo.name === WalletType.LEAP ? "" : "md:inline-block hidden"}`}>
                                             {idx === 0 && <Text size='base' className='mb-4'>Other Wallets</Text>}
                                             <Button
@@ -255,7 +255,7 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
                         {isNil(selectedChainName) &&
                             <div className={`gap-y-4 flex-col mt-10 md:flex hidden`}>
                                 {
-                                    installedHoveredWallets.map((wallet, idx) => {
+                                    installedHoveredWallets.map((wallet:any, idx:any) => {
 
                                         return (
                                             <motion.div
@@ -290,7 +290,7 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
                                         transition={{ duration: 1 }}
                                     >
                                         {
-                                            walletExtensions?.installed.some(item => item.name === WalletType.METAMASK) ?
+                                            walletExtensions?.installed.some((item:any) => item.name === WalletType.METAMASK) ?
                                                 <Button
                                                     onClick={() => selectWallet(WalletType.METAMASK)}
                                                     startIcon={<img className='w-6 h-6 object-contain' alt={metamaskWalletInfo.name} src={metamaskWalletInfo.logo} />}
@@ -308,7 +308,7 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
                                     </motion.div>
                                 } */}
                                 {
-                                    otherHoveredWallets.map((wallet, idx) => {
+                                    otherHoveredWallets.map((wallet:any, idx:any) => {
                                         return (
                                             <motion.div
                                                 key={idx}
@@ -359,7 +359,7 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
                                     <Text size='4xl' textColor='text-white' className='mb-4 md:mb-10 mt-4'>How do I connect my wallet?</Text>
                                     <div className='flex justify-center items-center gap-16 mb-8'>
                                         {
-                                            filteredWallets.map((wallet, idx) => {
+                                            filteredWallets.map((wallet:any, idx:any) => {
                                                 return <img alt={wallet.walletInfo.name} key={idx} className={`w-6 h-6 object-contain ${wallet.walletInfo.name === WalletType.LEAP ? "" : "md:inline-block hidden"}`} src={wallet.walletInfo.logo as string} />
                                             })
                                         }

@@ -38,8 +38,8 @@ export const Logo: React.FC<IconProps> = ({ className, width = "96", height = "9
                 <path opacity="0.27" d="M64.563 21.1467C65.495 21.0598 68.3672 22.2392 68.5343 22.7322C68.59 22.8966 67.9169 22.6667 67.037 22.232C65.5111 21.5124 64.5101 21.531 62.6907 22.3768C59.216 24.0126 59.0788 29.2811 62.4691 32.5294C65.5976 35.5458 72.7722 36.0457 79.5893 33.735C84.2299 32.1621 86.7975 30.1466 94.1062 22.1267C97.2695 18.6267 100.981 14.9869 102.388 14.006C106.801 10.8154 111.499 9.81841 117.647 10.6662C120.872 11.1306 122.303 11.9741 122.076 13.3333C121.784 15.0358 120.879 15.2049 116.419 14.4722C112.631 13.8323 111.63 13.851 109.028 14.5496C105.002 15.6394 102.83 17.2002 96.5955 23.5275C87.1696 33.1354 82.9732 35.7487 75.6818 36.5253C67.171 37.4861 61.2338 34.9636 59.4373 29.6634C58.8935 27.9239 59.3017 24.6706 60.2141 23.4452C61.0723 22.3299 63.1785 21.2495 64.563 21.1467Z" fill="url(#paint4_linear_321_104)" />
             </g>
             <defs>
-                <filter id="filter0_i_321_104" x="0" y="-1.10613" width="96.784" height="80.4395" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-                    <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                <filter id="filter0_i_321_104" x="0" y="-1.10613" width="96.784" height="80.4395" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+                    <feFlood floodOpacity="0" result="BackgroundImageFix" />
                     <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
                     <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
                     <feOffset dy="-1.10613" />
@@ -48,8 +48,8 @@ export const Logo: React.FC<IconProps> = ({ className, width = "96", height = "9
                     <feColorMatrix type="matrix" values="0 0 0 0 0.420833 0 0 0 0 0.415573 0 0 0 0 0.415573 0 0 0 0.25 0" />
                     <feBlend mode="normal" in2="shape" result="effect1_innerShadow_321_104" />
                 </filter>
-                <filter id="filter1_d_321_104" x="-7.35401" y="-7.3338" width="100.046" height="70.7112" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-                    <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                <filter id="filter1_d_321_104" x="-7.35401" y="-7.3338" width="100.046" height="70.7112" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+                    <feFlood floodOpacity="0" result="BackgroundImageFix" />
                     <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
                     <feOffset dy="1.35194" />
                     <feGaussianBlur stdDeviation="3.01114" />
@@ -58,8 +58,8 @@ export const Logo: React.FC<IconProps> = ({ className, width = "96", height = "9
                     <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_321_104" />
                     <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_321_104" result="shape" />
                 </filter>
-                <filter id="filter2_i_321_104" x="-72" y="24.5385" width="181.619" height="70.4549" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-                    <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                <filter id="filter2_i_321_104" x="-72" y="24.5385" width="181.619" height="70.4549" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+                    <feFlood floodOpacity="0" result="BackgroundImageFix" />
                     <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
                     <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
                     <feOffset dy="1.34154" />
@@ -69,30 +69,30 @@ export const Logo: React.FC<IconProps> = ({ className, width = "96", height = "9
                     <feBlend mode="normal" in2="shape" result="effect1_innerShadow_321_104" />
                 </filter>
                 <radialGradient id="paint0_radial_321_104" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(56.354 -7.5554) rotate(155.386) scale(53.2638 143.76)">
-                    <stop stop-color="#F8B810" />
-                    <stop offset="0.515625" stop-color="#E4462D" />
-                    <stop offset="1" stop-color="#56235C" />
+                    <stop stopColor="#F8B810" />
+                    <stop offset="0.515625" stopColor="#E4462D" />
+                    <stop offset="1" stopColor="#56235C" />
                 </radialGradient>
                 <radialGradient id="paint1_radial_321_104" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(11.4116 119.041) rotate(-36.6656) scale(107.713 477.691)">
-                    <stop stop-color="#56235C" />
-                    <stop offset="0.368888" stop-color="#F8B810" />
-                    <stop offset="0.649805" stop-color="#E4462D" />
-                    <stop offset="1" stop-color="#29499C" />
+                    <stop stopColor="#56235C" />
+                    <stop offset="0.368888" stopColor="#F8B810" />
+                    <stop offset="0.649805" stopColor="#E4462D" />
+                    <stop offset="1" stopColor="#29499C" />
                 </radialGradient>
                 <linearGradient id="paint2_linear_321_104" x1="3.45773" y1="58.8888" x2="46.9911" y2="45.1387" gradientUnits="userSpaceOnUse">
-                    <stop stop-color="#2C3384" />
-                    <stop offset="0.432292" stop-color="#29499C" />
-                    <stop offset="0.959227" stop-color="#F8B810" />
+                    <stop stopColor="#2C3384" />
+                    <stop offset="0.432292" stopColor="#29499C" />
+                    <stop offset="0.959227" stopColor="#F8B810" />
                 </linearGradient>
                 <linearGradient id="paint3_linear_321_104" x1="66.1749" y1="56.5162" x2="40.9372" y2="71.6666" gradientUnits="userSpaceOnUse">
-                    <stop stop-color="#2C3384" />
-                    <stop offset="0.432292" stop-color="#29499C" />
-                    <stop offset="0.959227" stop-color="#F8B810" />
+                    <stop stopColor="#2C3384" />
+                    <stop offset="0.432292" stopColor="#29499C" />
+                    <stop offset="0.959227" stopColor="#F8B810" />
                 </linearGradient>
                 <linearGradient id="paint4_linear_321_104" x1="102.339" y1="15.8278" x2="57.0499" y2="16.801" gradientUnits="userSpaceOnUse">
-                    <stop stop-color="#2C3384" />
-                    <stop offset="0.432292" stop-color="#29499C" />
-                    <stop offset="0.959227" stop-color="#F8B810" />
+                    <stop stopColor="#2C3384" />
+                    <stop offset="0.432292" stopColor="#29499C" />
+                    <stop offset="0.959227" stopColor="#F8B810" />
                 </linearGradient>
                 <clipPath id="clip0_321_104">
                     <rect width="96" height="96" rx="48" fill="white" />
@@ -116,9 +116,9 @@ export const LogoSecondary: React.FC<IconProps> = ({ className, width = "40", he
             <path d="M17.7533 11.8902C18.082 11.8902 18.3488 11.6235 18.3488 11.2952C18.3488 11.045 18.9753 10.5865 19.9983 10.5865C21.0218 10.5865 21.6483 11.045 21.6483 11.2952C21.6483 11.6235 21.9151 11.8902 22.2439 11.8902C22.5721 11.8902 22.8389 11.6235 22.8389 11.2952C22.8389 10.3673 21.8918 9.61417 20.5938 9.43587V5.44514C20.5938 5.11684 20.3271 4.77148 19.9983 4.77148C19.67 4.77148 19.4033 5.11684 19.4033 5.44514V9.43632C18.1054 9.61417 17.1582 10.3673 17.1582 11.2956C17.1578 11.6239 17.4245 11.8902 17.7533 11.8902Z" fill="#F7F7FF" />
             <defs>
                 <radialGradient id="paint0_radial_102_3890" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(29.6875 -5) rotate(129.075) scale(47.0974 156.699)">
-                    <stop stop-color="#F8B810" />
-                    <stop offset="0.515625" stop-color="#E4462D" />
-                    <stop offset="1" stop-color="#56235C" />
+                    <stop stopColor="#F8B810" />
+                    <stop offset="0.515625" stopColor="#E4462D" />
+                    <stop offset="1" stopColor="#56235C" />
                 </radialGradient>
             </defs>
         </svg>
@@ -133,8 +133,8 @@ export const AeroscraperBlueIcon: React.FC<IconProps> = ({ className, width = "4
             <path d="M5.88931 9.00797C6.19826 9.00797 6.44896 8.75727 6.44896 8.44874C6.44896 8.21365 7.03774 7.78272 7.9992 7.78272C8.96108 7.78272 9.54985 8.21365 9.54985 8.44874C9.54985 8.75727 9.80056 9.00797 10.1095 9.00797C10.418 9.00797 10.6687 8.75727 10.6687 8.44874C10.6687 7.57676 9.77861 6.86896 8.55885 6.7014V2.95096C8.55885 2.64244 8.30815 2.31787 7.9992 2.31787C7.69067 2.31787 7.43997 2.64244 7.43997 2.95096V6.70183C6.22021 6.86896 5.33008 7.57676 5.33008 8.44916C5.32966 8.75769 5.58036 9.00797 5.88931 9.00797Z" fill="#F7F7FF" />
             <defs>
                 <linearGradient id="paint0_linear_92_6441" x1="1.19209e-07" y1="8" x2="24.0233" y2="8" gradientUnits="userSpaceOnUse">
-                    <stop stop-color="#0087FA" />
-                    <stop offset="1" stop-color="#00EEFE" />
+                    <stop stopColor="#0087FA" />
+                    <stop offset="1" stopColor="#00EEFE" />
                 </linearGradient>
             </defs>
         </svg>
@@ -144,7 +144,7 @@ export const AeroscraperBlueIcon: React.FC<IconProps> = ({ className, width = "4
 export const RightArrow: React.FC<IconProps> = ({ className, width = "32", height = "32" }) => {
     return (
         <svg className={className} width={width} height={height} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M17.7239 5.7239C18.2446 5.2032 19.0888 5.2032 19.6095 5.7239L28.9428 15.0572C29.4635 15.5779 29.4635 16.4222 28.9428 16.9428L19.6095 26.2762C19.0888 26.7969 18.2446 26.7969 17.7239 26.2762C17.2032 25.7555 17.2032 24.9113 17.7239 24.3906L24.7811 17.3334H4.00001C3.26363 17.3334 2.66667 16.7364 2.66667 16C2.66667 15.2637 3.26363 14.6667 4.00001 14.6667H24.7811L17.7239 7.60952C17.2032 7.08882 17.2032 6.2446 17.7239 5.7239Z" fill="#F7F7FF" />
+            <path fillRule="evenodd" clipRule="evenodd" d="M17.7239 5.7239C18.2446 5.2032 19.0888 5.2032 19.6095 5.7239L28.9428 15.0572C29.4635 15.5779 29.4635 16.4222 28.9428 16.9428L19.6095 26.2762C19.0888 26.7969 18.2446 26.7969 17.7239 26.2762C17.2032 25.7555 17.2032 24.9113 17.7239 24.3906L24.7811 17.3334H4.00001C3.26363 17.3334 2.66667 16.7364 2.66667 16C2.66667 15.2637 3.26363 14.6667 4.00001 14.6667H24.7811L17.7239 7.60952C17.2032 7.08882 17.2032 6.2446 17.7239 5.7239Z" fill="#F7F7FF" />
         </svg>
 
     )
@@ -185,32 +185,32 @@ export const ShapeIcon: React.FC<IconProps> = ({ className, animate }) => {
         <>
             <svg className={className} viewBox="0 0 298 291" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <g filter="url(#filter0_f_321_72)">
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M58.2798 117.842C64.6131 94.2298 49.3261 64.9341 65.1718 46.3174C80.802 27.954 109.979 25.9629 133.902 28.9964C155.5 31.7352 168.965 52.8675 188.735 61.9854C208.75 71.2165 237.363 64.6564 250.15 82.6096C262.851 100.441 248.392 125.075 249.251 146.95C250.174 170.438 264.51 194.106 255.381 215.766C245.911 238.234 224.812 258.382 200.716 262.108C176.86 265.796 157.579 243.923 135.436 234.311C119.572 227.425 104.36 221.578 89.0074 213.615C68.2667 202.857 36.6258 201.605 29.4879 179.358C22.4284 157.354 52.2934 140.161 58.2798 117.842Z" fill="url(#paint0_linear_321_72)" />
+                    <path fillRule="evenodd" clipRule="evenodd" d="M58.2798 117.842C64.6131 94.2298 49.3261 64.9341 65.1718 46.3174C80.802 27.954 109.979 25.9629 133.902 28.9964C155.5 31.7352 168.965 52.8675 188.735 61.9854C208.75 71.2165 237.363 64.6564 250.15 82.6096C262.851 100.441 248.392 125.075 249.251 146.95C250.174 170.438 264.51 194.106 255.381 215.766C245.911 238.234 224.812 258.382 200.716 262.108C176.86 265.796 157.579 243.923 135.436 234.311C119.572 227.425 104.36 221.578 89.0074 213.615C68.2667 202.857 36.6258 201.605 29.4879 179.358C22.4284 157.354 52.2934 140.161 58.2798 117.842Z" fill="url(#paint0_linear_321_72)" />
                 </g>
-                <path fill-rule="evenodd" clip-rule="evenodd" d="M58.2798 117.842C64.6131 94.2298 49.3261 64.9341 65.1718 46.3174C80.802 27.954 109.979 25.9629 133.902 28.9964C155.5 31.7352 168.965 52.8675 188.735 61.9854C208.75 71.2165 237.363 64.6564 250.15 82.6096C262.851 100.441 248.392 125.075 249.251 146.95C250.174 170.438 264.51 194.106 255.381 215.766C245.911 238.234 224.812 258.382 200.716 262.108C176.86 265.796 157.579 243.923 135.436 234.311C119.572 227.425 104.36 221.578 89.0074 213.615C68.2667 202.857 36.6258 201.605 29.4879 179.358C22.4284 157.354 52.2934 140.161 58.2798 117.842Z" fill="url(#paint1_linear_321_72)" />
-                <path fill-rule="evenodd" clip-rule="evenodd" d="M69.5542 126.286C75.2851 104.92 61.4523 78.4111 75.7906 61.5655C89.9339 44.949 116.335 43.1473 137.982 45.8922C157.526 48.3704 169.709 67.4924 187.599 75.743C205.71 84.0959 231.601 78.1598 243.172 94.4051C254.664 110.54 241.581 132.831 242.358 152.625C243.193 173.878 256.165 195.295 247.905 214.894C239.336 235.225 220.244 253.456 198.441 256.828C176.854 260.165 159.407 240.373 139.37 231.675C125.015 225.444 111.25 220.153 97.3587 212.948C78.5911 203.214 49.9602 202.081 43.5013 181.949C37.1134 162.039 64.1373 146.482 69.5542 126.286Z" fill="#1A0B1C" />
+                <path fillRule="evenodd" clipRule="evenodd" d="M58.2798 117.842C64.6131 94.2298 49.3261 64.9341 65.1718 46.3174C80.802 27.954 109.979 25.9629 133.902 28.9964C155.5 31.7352 168.965 52.8675 188.735 61.9854C208.75 71.2165 237.363 64.6564 250.15 82.6096C262.851 100.441 248.392 125.075 249.251 146.95C250.174 170.438 264.51 194.106 255.381 215.766C245.911 238.234 224.812 258.382 200.716 262.108C176.86 265.796 157.579 243.923 135.436 234.311C119.572 227.425 104.36 221.578 89.0074 213.615C68.2667 202.857 36.6258 201.605 29.4879 179.358C22.4284 157.354 52.2934 140.161 58.2798 117.842Z" fill="url(#paint1_linear_321_72)" />
+                <path fillRule="evenodd" clipRule="evenodd" d="M69.5542 126.286C75.2851 104.92 61.4523 78.4111 75.7906 61.5655C89.9339 44.949 116.335 43.1473 137.982 45.8922C157.526 48.3704 169.709 67.4924 187.599 75.743C205.71 84.0959 231.601 78.1598 243.172 94.4051C254.664 110.54 241.581 132.831 242.358 152.625C243.193 173.878 256.165 195.295 247.905 214.894C239.336 235.225 220.244 253.456 198.441 256.828C176.854 260.165 159.407 240.373 139.37 231.675C125.015 225.444 111.25 220.153 97.3587 212.948C78.5911 203.214 49.9602 202.081 43.5013 181.949C37.1134 162.039 64.1373 146.482 69.5542 126.286Z" fill="#1A0B1C" />
                 <defs>
-                    <filter id="filter0_f_321_72" x="0.887627" y="0.309898" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-                        <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                    <filter id="filter0_f_321_72" x="0.887627" y="0.309898" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+                        <feFlood floodOpacity="0" result="BackgroundImageFix" />
                         <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
                         <feGaussianBlur stdDeviation="13.7637" result="effect1_foregroundBlur_321_72" />
                     </filter>
 
                     <linearGradient className={animate ? "shape-animation" : ""} id="paint0_linear_321_72" x1="60.7876" y1="59.3647" x2="347.829" y2="305.873" gradientUnits="userSpaceOnUse">
-                        <stop stop-color="#56235C" />
-                        <stop offset="0.294825" stop-color="#D43752" />
-                        <stop offset="0.402713" stop-color="#E4462D" />
-                        <stop offset="0.638994" stop-color="#F8B810" />
-                        <stop offset="0.827343" stop-color="#29499C" />
-                        <stop offset="1" stop-color="#2C3384" />
+                        <stop stopColor="#56235C" />
+                        <stop offset="0.294825" stopColor="#D43752" />
+                        <stop offset="0.402713" stopColor="#E4462D" />
+                        <stop offset="0.638994" stopColor="#F8B810" />
+                        <stop offset="0.827343" stopColor="#29499C" />
+                        <stop offset="1" stopColor="#2C3384" />
                     </linearGradient>
                     <linearGradient id="paint1_linear_321_72" x1="60.7876" className={animate ? "shape-animation" : ""} y1="59.3647" x2="347.829" y2="305.873" gradientUnits="userSpaceOnUse">
-                        <stop stop-color="#56235C" />
-                        <stop offset="0.294825" stop-color="#D43752" />
-                        <stop offset="0.402713" stop-color="#E4462D" />
-                        <stop offset="0.638994" stop-color="#F8B810" />
-                        <stop offset="0.827343" stop-color="#29499C" />
-                        <stop offset="1" stop-color="#2C3384" />
+                        <stop stopColor="#56235C" />
+                        <stop offset="0.294825" stopColor="#D43752" />
+                        <stop offset="0.402713" stopColor="#E4462D" />
+                        <stop offset="0.638994" stopColor="#F8B810" />
+                        <stop offset="0.827343" stopColor="#29499C" />
+                        <stop offset="1" stopColor="#2C3384" />
                     </linearGradient>
                 </defs>
             </svg>
@@ -223,9 +223,9 @@ export const ShapeIcon: React.FC<IconProps> = ({ className, animate }) => {
 export const InfoIcon: React.FC<IconProps> = ({ className, width = "12", height = "12" }) => {
     return (
         <svg className={className} width={width} height={height} viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M6.1333 2C3.92416 2 2.1333 3.79086 2.1333 6C2.1333 8.20914 3.92416 10 6.1333 10C8.34244 10 10.1333 8.20914 10.1333 6C10.1333 3.79086 8.34244 2 6.1333 2ZM1.1333 6C1.1333 3.23858 3.37188 1 6.1333 1C8.89472 1 11.1333 3.23858 11.1333 6C11.1333 8.76142 8.89472 11 6.1333 11C3.37188 11 1.1333 8.76142 1.1333 6Z" fill="currentColor" />
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M6.1333 5.5C6.40944 5.5 6.6333 5.72386 6.6333 6V8C6.6333 8.27614 6.40944 8.5 6.1333 8.5C5.85716 8.5 5.6333 8.27614 5.6333 8V6C5.6333 5.72386 5.85716 5.5 6.1333 5.5Z" fill="currentColor" />
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M5.6333 4C5.6333 3.72386 5.85716 3.5 6.1333 3.5H6.1383C6.41444 3.5 6.6383 3.72386 6.6383 4C6.6383 4.27614 6.41444 4.5 6.1383 4.5H6.1333C5.85716 4.5 5.6333 4.27614 5.6333 4Z" fill="currentColor" />
+            <path fillRule="evenodd" clipRule="evenodd" d="M6.1333 2C3.92416 2 2.1333 3.79086 2.1333 6C2.1333 8.20914 3.92416 10 6.1333 10C8.34244 10 10.1333 8.20914 10.1333 6C10.1333 3.79086 8.34244 2 6.1333 2ZM1.1333 6C1.1333 3.23858 3.37188 1 6.1333 1C8.89472 1 11.1333 3.23858 11.1333 6C11.1333 8.76142 8.89472 11 6.1333 11C3.37188 11 1.1333 8.76142 1.1333 6Z" fill="currentColor" />
+            <path fillRule="evenodd" clipRule="evenodd" d="M6.1333 5.5C6.40944 5.5 6.6333 5.72386 6.6333 6V8C6.6333 8.27614 6.40944 8.5 6.1333 8.5C5.85716 8.5 5.6333 8.27614 5.6333 8V6C5.6333 5.72386 5.85716 5.5 6.1333 5.5Z" fill="currentColor" />
+            <path fillRule="evenodd" clipRule="evenodd" d="M5.6333 4C5.6333 3.72386 5.85716 3.5 6.1333 3.5H6.1383C6.41444 3.5 6.6383 3.72386 6.6383 4C6.6383 4.27614 6.41444 4.5 6.1383 4.5H6.1333C5.85716 4.5 5.6333 4.27614 5.6333 4Z" fill="currentColor" />
         </svg>
     )
 }
@@ -233,8 +233,8 @@ export const InfoIcon: React.FC<IconProps> = ({ className, width = "12", height 
 export const CloseIcon: React.FC<IconProps> = ({ className, width = "12", height = "12" }) => {
     return (
         <svg className={className} width={width} height={height} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M5.29289 5.29289C5.68342 4.90237 6.31658 4.90237 6.70711 5.29289L18.7071 17.2929C19.0976 17.6834 19.0976 18.3166 18.7071 18.7071C18.3166 19.0976 17.6834 19.0976 17.2929 18.7071L5.29289 6.70711C4.90237 6.31658 4.90237 5.68342 5.29289 5.29289Z" fill="#F7F7FF" />
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M18.7071 5.29289C18.3166 4.90237 17.6834 4.90237 17.2929 5.29289L5.29289 17.2929C4.90237 17.6834 4.90237 18.3166 5.29289 18.7071C5.68342 19.0976 6.31658 19.0976 6.70711 18.7071L18.7071 6.70711C19.0976 6.31658 19.0976 5.68342 18.7071 5.29289Z" fill="#F7F7FF" />
+            <path fillRule="evenodd" clipRule="evenodd" d="M5.29289 5.29289C5.68342 4.90237 6.31658 4.90237 6.70711 5.29289L18.7071 17.2929C19.0976 17.6834 19.0976 18.3166 18.7071 18.7071C18.3166 19.0976 17.6834 19.0976 17.2929 18.7071L5.29289 6.70711C4.90237 6.31658 4.90237 5.68342 5.29289 5.29289Z" fill="#F7F7FF" />
+            <path fillRule="evenodd" clipRule="evenodd" d="M18.7071 5.29289C18.3166 4.90237 17.6834 4.90237 17.2929 5.29289L5.29289 17.2929C4.90237 17.6834 4.90237 18.3166 5.29289 18.7071C5.68342 19.0976 6.31658 19.0976 6.70711 18.7071L18.7071 6.70711C19.0976 6.31658 19.0976 5.68342 18.7071 5.29289Z" fill="#F7F7FF" />
         </svg>
     )
 }
@@ -250,9 +250,9 @@ export const NovaRatioIcon: React.FC<IconProps> = () => {
 export const UploadIcon: React.FC<IconProps> = () => {
     return (
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M7.52843 1.52925C7.78878 1.2689 8.21089 1.2689 8.47124 1.52925L11.1379 4.19591C11.3983 4.45626 11.3983 4.87837 11.1379 5.13872C10.8776 5.39907 10.4554 5.39907 10.1951 5.13872L7.99984 2.94346L5.80458 5.13872C5.54423 5.39907 5.12212 5.39907 4.86177 5.13872C4.60142 4.87837 4.60142 4.45626 4.86177 4.19591L7.52843 1.52925Z" fill="#F7F7FF" />
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M8.00016 1.33398C8.36835 1.33398 8.66683 1.63246 8.66683 2.00065V10.0007C8.66683 10.3688 8.36835 10.6673 8.00016 10.6673C7.63197 10.6673 7.3335 10.3688 7.3335 10.0007V2.00065C7.3335 1.63246 7.63197 1.33398 8.00016 1.33398Z" fill="#F7F7FF" />
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M3.33317 8.00049C3.70136 8.00049 3.99984 8.29897 3.99984 8.66715V12.0005C3.99984 12.7369 4.59679 13.3338 5.33317 13.3338H10.6665C11.4029 13.3338 11.9998 12.7369 11.9998 12.0005V8.66715C11.9998 8.29897 12.2983 8.00049 12.6665 8.00049C13.0347 8.00049 13.3332 8.29897 13.3332 8.66715V12.0005C13.3332 13.4732 12.1393 14.6672 10.6665 14.6672H5.33317C3.86041 14.6672 2.6665 13.4732 2.6665 12.0005V8.66715C2.6665 8.29897 2.96498 8.00049 3.33317 8.00049Z" fill="#F7F7FF" />
+            <path fillRule="evenodd" clipRule="evenodd" d="M7.52843 1.52925C7.78878 1.2689 8.21089 1.2689 8.47124 1.52925L11.1379 4.19591C11.3983 4.45626 11.3983 4.87837 11.1379 5.13872C10.8776 5.39907 10.4554 5.39907 10.1951 5.13872L7.99984 2.94346L5.80458 5.13872C5.54423 5.39907 5.12212 5.39907 4.86177 5.13872C4.60142 4.87837 4.60142 4.45626 4.86177 4.19591L7.52843 1.52925Z" fill="#F7F7FF" />
+            <path fillRule="evenodd" clipRule="evenodd" d="M8.00016 1.33398C8.36835 1.33398 8.66683 1.63246 8.66683 2.00065V10.0007C8.66683 10.3688 8.36835 10.6673 8.00016 10.6673C7.63197 10.6673 7.3335 10.3688 7.3335 10.0007V2.00065C7.3335 1.63246 7.63197 1.33398 8.00016 1.33398Z" fill="#F7F7FF" />
+            <path fillRule="evenodd" clipRule="evenodd" d="M3.33317 8.00049C3.70136 8.00049 3.99984 8.29897 3.99984 8.66715V12.0005C3.99984 12.7369 4.59679 13.3338 5.33317 13.3338H10.6665C11.4029 13.3338 11.9998 12.7369 11.9998 12.0005V8.66715C11.9998 8.29897 12.2983 8.00049 12.6665 8.00049C13.0347 8.00049 13.3332 8.29897 13.3332 8.66715V12.0005C13.3332 13.4732 12.1393 14.6672 10.6665 14.6672H5.33317C3.86041 14.6672 2.6665 13.4732 2.6665 12.0005V8.66715C2.6665 8.29897 2.96498 8.00049 3.33317 8.00049Z" fill="#F7F7FF" />
         </svg>
     )
 }
@@ -260,15 +260,15 @@ export const UploadIcon: React.FC<IconProps> = () => {
 export const ShapeNotification: React.FC<IconProps> = () => {
     return (
         <svg width="297" height="156" viewBox="0 0 297 156" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M0.500968 78.4269C-2.1734 54.1456 27.5064 35.5734 52.4218 20.336C73.8649 7.22217 99.9872 0.670903 127.465 0.77978C154.346 0.886281 191.227 -0.361951 212.797 11.881C228 15.881 258 22.8808 278.5 56.3808C288.5 67.3807 300.499 88.8813 294.999 141.381C272.009 155.341 159.473 156.437 130.247 154.148C104.563 152.136 84.7618 139.723 64.2528 127.753C39.2635 113.169 3.13601 102.351 0.500968 78.4269Z" fill="url(#paint0_linear_745_2827)" />
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M0.420207 76.2348C-2.11234 51.2412 25.9936 33.6538 49.5877 19.2244C69.8937 6.80599 94.6309 0.602127 120.652 0.705214C146.107 0.806079 169.305 8.18597 189.731 19.7797C214.199 33.6678 243.21 48.4466 245.635 71.6448C248.13 95.5146 226.01 117.055 201.458 131.965C179.687 145.185 150.962 148.108 123.286 145.94C98.9642 144.035 80.2128 132.28 60.7914 120.946C37.1272 107.135 2.91551 96.8904 0.420207 74.2348Z" fill="#1A0B1C" className='translate-x-4 translate-y-1.5' />
+            <path fillRule="evenodd" clipRule="evenodd" d="M0.500968 78.4269C-2.1734 54.1456 27.5064 35.5734 52.4218 20.336C73.8649 7.22217 99.9872 0.670903 127.465 0.77978C154.346 0.886281 191.227 -0.361951 212.797 11.881C228 15.881 258 22.8808 278.5 56.3808C288.5 67.3807 300.499 88.8813 294.999 141.381C272.009 155.341 159.473 156.437 130.247 154.148C104.563 152.136 84.7618 139.723 64.2528 127.753C39.2635 113.169 3.13601 102.351 0.500968 78.4269Z" fill="url(#paint0_linear_745_2827)" />
+            <path fillRule="evenodd" clipRule="evenodd" d="M0.420207 76.2348C-2.11234 51.2412 25.9936 33.6538 49.5877 19.2244C69.8937 6.80599 94.6309 0.602127 120.652 0.705214C146.107 0.806079 169.305 8.18597 189.731 19.7797C214.199 33.6678 243.21 48.4466 245.635 71.6448C248.13 95.5146 226.01 117.055 201.458 131.965C179.687 145.185 150.962 148.108 123.286 145.94C98.9642 144.035 80.2128 132.28 60.7914 120.946C37.1272 107.135 2.91551 96.8904 0.420207 74.2348Z" fill="#1A0B1C" className='translate-x-4 translate-y-1.5' />
             <defs>
                 <linearGradient id="paint0_linear_745_2827" x1="-62.001" y1="23.8804" x2="276.164" y2="173.788" gradientUnits="userSpaceOnUse">
-                    <stop stop-color="#B43255" />
-                    <stop offset="0.370783" stop-color="#D73A4E" />
-                    <stop offset="0.569842" stop-color="#DB3E43" />
-                    <stop offset="0.835184" stop-color="#E5482D" />
-                    <stop offset="1" stop-color="#EA6825" />
+                    <stop stopColor="#B43255" />
+                    <stop offset="0.370783" stopColor="#D73A4E" />
+                    <stop offset="0.569842" stopColor="#DB3E43" />
+                    <stop offset="0.835184" stopColor="#E5482D" />
+                    <stop offset="1" stopColor="#EA6825" />
                 </linearGradient>
             </defs>
         </svg>
@@ -289,26 +289,26 @@ export const RedeemIcon: React.FC<IconProps> = ({ className, width = "63", heigh
             <g filter="url(#filter0_b_992_2726)">
                 <rect width="63" height="63" rx="31.5" fill="#1A0B1C" fill-opacity="0.4" />
                 <path d="M30.9393 49.0607C31.5251 49.6464 32.4749 49.6464 33.0607 49.0607L42.6066 39.5147C43.1924 38.9289 43.1924 37.9792 42.6066 37.3934C42.0208 36.8076 41.0711 36.8076 40.4853 37.3934L32 45.8787L23.5147 37.3934C22.9289 36.8076 21.9792 36.8076 21.3934 37.3934C20.8076 37.9792 20.8076 38.9289 21.3934 39.5147L30.9393 49.0607ZM30.5 16L30.5 48H33.5V16H30.5Z" fill="url(#paint0_linear_992_2726)" />
-                <rect x="1.08088" y="1.08088" width="60.8382" height="60.8382" rx="30.4191" stroke="url(#paint1_linear_992_2726)" stroke-width="2.16176" />
+                <rect x="1.08088" y="1.08088" width="60.8382" height="60.8382" rx="30.4191" stroke="url(#paint1_linear_992_2726)" strokeWidth="2.16176" />
             </g>
             <defs>
-                <filter id="filter0_b_992_2726" x="-131.25" y="-131.25" width="325.5" height="325.5" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-                    <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                <filter id="filter0_b_992_2726" x="-131.25" y="-131.25" width="325.5" height="325.5" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+                    <feFlood floodOpacity="0" result="BackgroundImageFix" />
                     <feGaussianBlur in="BackgroundImageFix" stdDeviation="65.625" />
                     <feComposite in2="SourceAlpha" operator="in" result="effect1_backgroundBlur_992_2726" />
                     <feBlend mode="normal" in="SourceGraphic" in2="effect1_backgroundBlur_992_2726" result="shape" />
                 </filter>
                 <linearGradient id="paint0_linear_992_2726" x1="63.5" y1="32" x2="-0.5" y2="32" gradientUnits="userSpaceOnUse">
-                    <stop stop-color="#F8B611" />
-                    <stop offset="0.472821" stop-color="#DC3F41" />
-                    <stop offset="0.714556" stop-color="#BE3454" />
-                    <stop offset="1" stop-color="#58245C" />
+                    <stop stopColor="#F8B611" />
+                    <stop offset="0.472821" stopColor="#DC3F41" />
+                    <stop offset="0.714556" stopColor="#BE3454" />
+                    <stop offset="1" stopColor="#58245C" />
                 </linearGradient>
                 <linearGradient id="paint1_linear_992_2726" x1="-2.97062e-08" y1="31.5963" x2="63" y2="31.5963" gradientUnits="userSpaceOnUse">
-                    <stop stop-color="#56235C" />
-                    <stop offset="0.328586" stop-color="#D43752" />
-                    <stop offset="0.693468" stop-color="#E4462D" />
-                    <stop offset="1" stop-color="#F8B810" />
+                    <stop stopColor="#56235C" />
+                    <stop offset="0.328586" stopColor="#D43752" />
+                    <stop offset="0.693468" stopColor="#E4462D" />
+                    <stop offset="1" stopColor="#F8B810" />
                 </linearGradient>
             </defs>
         </svg>
@@ -318,8 +318,8 @@ export const RedeemIcon: React.FC<IconProps> = ({ className, width = "63", heigh
 export const BellIcon: React.FC<IconProps> = ({ className, width, height }) => {
     return (
         <svg className={className} width={width} height={height} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path strokeWidth='2' fill-rule="evenodd" clip-rule="evenodd" d="M20.7518 17.2996C20.0583 18.0903 19.6667 19.2366 19.6667 20.6V22.3333C19.6667 23.1939 19.2794 23.9088 18.8688 24.4535C18.4934 24.9517 18.0258 25.399 17.6586 25.7502C17.6277 25.7797 17.5976 25.8085 17.5683 25.8366C17.2248 26.1662 17 26.6136 17 27.1333C17 27.6585 17.3936 28 17.7778 28H30.2222C30.6064 28 31 27.6585 31 27.1333C31 26.6136 30.7752 26.1662 30.4317 25.8366C30.4024 25.8085 30.3723 25.7797 30.3414 25.7502C29.9742 25.399 29.5066 24.9517 29.1312 24.4535C28.7206 23.9088 28.3333 23.1939 28.3333 22.3333V20.6C28.3333 19.2366 27.9417 18.0903 27.2482 17.2996C26.5713 16.5278 25.5251 16 24 16C22.4749 16 21.4287 16.5278 20.7518 17.2996ZM19.2482 15.9808C20.349 14.7258 21.9695 14 24 14C26.0305 14 27.651 14.7258 28.7518 15.9808C29.836 17.2169 30.3333 18.8706 30.3333 20.6V22.3333C30.3333 22.5774 30.4428 22.8709 30.7283 23.2498C31.002 23.6129 31.3573 23.9534 31.7498 24.3296C31.7718 24.3508 31.794 24.372 31.8163 24.3934C32.5 25.0494 33 25.9996 33 27.1333C33 28.67 31.8018 30 30.2222 30H17.7778C16.1982 30 15 28.67 15 27.1333C15 25.9996 15.5 25.0494 16.1837 24.3934C16.206 24.372 16.2282 24.3508 16.2502 24.3296C16.6427 23.9534 16.998 23.6129 17.2717 23.2498C17.5572 22.8709 17.6667 22.5774 17.6667 22.3333V20.6C17.6667 18.8706 18.164 17.2169 19.2482 15.9808Z" fill="white" />
-            <path strokeWidth='2' fill-rule="evenodd" clip-rule="evenodd" d="M21.4431 31.1694C21.9018 30.8618 22.523 30.9843 22.8306 31.443C22.93 31.5912 23.0844 31.731 23.292 31.8345C23.4999 31.938 23.7445 31.9964 24.0001 31.9964C24.2557 31.9964 24.5003 31.938 24.7082 31.8345C24.9158 31.731 25.0702 31.5912 25.1696 31.443C25.4772 30.9843 26.0984 30.8618 26.5571 31.1694C27.0158 31.4771 27.1382 32.0983 26.8306 32.557C26.5235 33.0149 26.0945 33.3783 25.6001 33.6246C25.1059 33.8708 24.5547 33.9964 24.0001 33.9964C23.4455 33.9964 22.8943 33.8708 22.4001 33.6246C21.9057 33.3783 21.4767 33.0149 21.1696 32.557C20.862 32.0983 20.9844 31.4771 21.4431 31.1694Z" fill="white" />
+            <path strokeWidth='2' fillRule="evenodd" clipRule="evenodd" d="M20.7518 17.2996C20.0583 18.0903 19.6667 19.2366 19.6667 20.6V22.3333C19.6667 23.1939 19.2794 23.9088 18.8688 24.4535C18.4934 24.9517 18.0258 25.399 17.6586 25.7502C17.6277 25.7797 17.5976 25.8085 17.5683 25.8366C17.2248 26.1662 17 26.6136 17 27.1333C17 27.6585 17.3936 28 17.7778 28H30.2222C30.6064 28 31 27.6585 31 27.1333C31 26.6136 30.7752 26.1662 30.4317 25.8366C30.4024 25.8085 30.3723 25.7797 30.3414 25.7502C29.9742 25.399 29.5066 24.9517 29.1312 24.4535C28.7206 23.9088 28.3333 23.1939 28.3333 22.3333V20.6C28.3333 19.2366 27.9417 18.0903 27.2482 17.2996C26.5713 16.5278 25.5251 16 24 16C22.4749 16 21.4287 16.5278 20.7518 17.2996ZM19.2482 15.9808C20.349 14.7258 21.9695 14 24 14C26.0305 14 27.651 14.7258 28.7518 15.9808C29.836 17.2169 30.3333 18.8706 30.3333 20.6V22.3333C30.3333 22.5774 30.4428 22.8709 30.7283 23.2498C31.002 23.6129 31.3573 23.9534 31.7498 24.3296C31.7718 24.3508 31.794 24.372 31.8163 24.3934C32.5 25.0494 33 25.9996 33 27.1333C33 28.67 31.8018 30 30.2222 30H17.7778C16.1982 30 15 28.67 15 27.1333C15 25.9996 15.5 25.0494 16.1837 24.3934C16.206 24.372 16.2282 24.3508 16.2502 24.3296C16.6427 23.9534 16.998 23.6129 17.2717 23.2498C17.5572 22.8709 17.6667 22.5774 17.6667 22.3333V20.6C17.6667 18.8706 18.164 17.2169 19.2482 15.9808Z" fill="white" />
+            <path strokeWidth='2' fillRule="evenodd" clipRule="evenodd" d="M21.4431 31.1694C21.9018 30.8618 22.523 30.9843 22.8306 31.443C22.93 31.5912 23.0844 31.731 23.292 31.8345C23.4999 31.938 23.7445 31.9964 24.0001 31.9964C24.2557 31.9964 24.5003 31.938 24.7082 31.8345C24.9158 31.731 25.0702 31.5912 25.1696 31.443C25.4772 30.9843 26.0984 30.8618 26.5571 31.1694C27.0158 31.4771 27.1382 32.0983 26.8306 32.557C26.5235 33.0149 26.0945 33.3783 25.6001 33.6246C25.1059 33.8708 24.5547 33.9964 24.0001 33.9964C23.4455 33.9964 22.8943 33.8708 22.4001 33.6246C21.9057 33.3783 21.4767 33.0149 21.1696 32.557C20.862 32.0983 20.9844 31.4771 21.4431 31.1694Z" fill="white" />
         </svg>
     )
 }
@@ -327,9 +327,9 @@ export const BellIcon: React.FC<IconProps> = ({ className, width, height }) => {
 export const ExitIcon: React.FC<IconProps> = ({ className, width, height }) => {
     return (
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className={className}>
-            <path d="M10 2L12.6667 2C13.0203 2 13.3594 2.14048 13.6095 2.39052C13.8595 2.64057 14 2.97971 14 3.33333L14 12.6667C14 13.0203 13.8595 13.3594 13.6095 13.6095C13.3594 13.8595 13.0203 14 12.6667 14H10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-            <path d="M7 11L10 8L7 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-            <path d="M10 8L2 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M10 2L12.6667 2C13.0203 2 13.3594 2.14048 13.6095 2.39052C13.8595 2.64057 14 2.97971 14 3.33333L14 12.6667C14 13.0203 13.8595 13.3594 13.6095 13.6095C13.3594 13.8595 13.0203 14 12.6667 14H10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M7 11L10 8L7 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M10 8L2 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
     )
 }
@@ -337,7 +337,7 @@ export const ExitIcon: React.FC<IconProps> = ({ className, width, height }) => {
 export const ArrowLeftIcon: React.FC<IconProps> = ({ className, width = 24, height = 24 }) => {
     return (
         <svg width={width} height={height} viewBox="0 0 24 24" fill="none" className={className}>
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M10.7071 4.29289C11.0976 4.68342 11.0976 5.31658 10.7071 5.70711L5.41421 11H21C21.5523 11 22 11.4477 22 12C22 12.5523 21.5523 13 21 13H5.41421L10.7071 18.2929C11.0976 18.6834 11.0976 19.3166 10.7071 19.7071C10.3166 20.0976 9.68342 20.0976 9.29289 19.7071L2.29289 12.7071C1.90237 12.3166 1.90237 11.6834 2.29289 11.2929L9.29289 4.29289C9.68342 3.90237 10.3166 3.90237 10.7071 4.29289Z" fill="currentColor" />
+            <path fillRule="evenodd" clipRule="evenodd" d="M10.7071 4.29289C11.0976 4.68342 11.0976 5.31658 10.7071 5.70711L5.41421 11H21C21.5523 11 22 11.4477 22 12C22 12.5523 21.5523 13 21 13H5.41421L10.7071 18.2929C11.0976 18.6834 11.0976 19.3166 10.7071 19.7071C10.3166 20.0976 9.68342 20.0976 9.29289 19.7071L2.29289 12.7071C1.90237 12.3166 1.90237 11.6834 2.29289 11.2929L9.29289 4.29289C9.68342 3.90237 10.3166 3.90237 10.7071 4.29289Z" fill="currentColor" />
         </svg>
     )
 }
@@ -345,7 +345,7 @@ export const ArrowLeftIcon: React.FC<IconProps> = ({ className, width = 24, heig
 export const ArrowDownIcon: React.FC<IconProps> = ({ className }) => {
     return (
         <svg viewBox="0 0 17 16" fill="none" className={className}>
-            <path d="M8.5 4L8.5 12M8.5 12L12.5 8M8.5 12L4.5 8" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M8.5 4L8.5 12M8.5 12L12.5 8M8.5 12L4.5 8" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
     )
 }
@@ -353,8 +353,8 @@ export const ArrowDownIcon: React.FC<IconProps> = ({ className }) => {
 export const PlusIcon: React.FC<IconProps> = ({ className }) => {
     return (
         <svg viewBox="0 0 12 12" fill="none" className={className}>
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M0 5.99996C0 5.63177 0.298477 5.3333 0.666667 5.3333H11.3333C11.7015 5.3333 12 5.63177 12 5.99996C12 6.36815 11.7015 6.66663 11.3333 6.66663H0.666667C0.298477 6.66663 0 6.36815 0 5.99996Z" fill="currentColor" />
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M5.99984 -2.91409e-08C6.36803 -1.30468e-08 6.6665 0.298477 6.6665 0.666667L6.6665 11.3333C6.6665 11.7015 6.36803 12 5.99984 12C5.63165 12 5.33317 11.7015 5.33317 11.3333L5.33317 0.666667C5.33317 0.298477 5.63165 -4.5235e-08 5.99984 -2.91409e-08Z" fill="currentColor" />
+            <path fillRule="evenodd" clipRule="evenodd" d="M0 5.99996C0 5.63177 0.298477 5.3333 0.666667 5.3333H11.3333C11.7015 5.3333 12 5.63177 12 5.99996C12 6.36815 11.7015 6.66663 11.3333 6.66663H0.666667C0.298477 6.66663 0 6.36815 0 5.99996Z" fill="currentColor" />
+            <path fillRule="evenodd" clipRule="evenodd" d="M5.99984 -2.91409e-08C6.36803 -1.30468e-08 6.6665 0.298477 6.6665 0.666667L6.6665 11.3333C6.6665 11.7015 6.36803 12 5.99984 12C5.63165 12 5.33317 11.7015 5.33317 11.3333L5.33317 0.666667C5.33317 0.298477 5.63165 -4.5235e-08 5.99984 -2.91409e-08Z" fill="currentColor" />
         </svg>
     )
 }
@@ -368,8 +368,8 @@ export const ChevronUpIcon: React.FC<IconProps> = ({ className }) => {
 
 export const RocketIcon: React.FC<IconProps> = ({ className }) => {
     return (
-        <svg className={className} fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M15.59 14.37a6 6 0 01-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 006.16-12.12A14.98 14.98 0 009.631 8.41m5.96 5.96a14.926 14.926 0 01-5.841 2.58m-.119-8.54a6 6 0 00-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 00-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 01-2.448-2.448 14.9 14.9 0 01.06-.312m-2.24 2.39a4.493 4.493 0 00-1.757 4.306 4.493 4.493 0 004.306-1.758M16.5 9a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" />
+        <svg className={className} fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15.59 14.37a6 6 0 01-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 006.16-12.12A14.98 14.98 0 009.631 8.41m5.96 5.96a14.926 14.926 0 01-5.841 2.58m-.119-8.54a6 6 0 00-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 00-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 01-2.448-2.448 14.9 14.9 0 01.06-.312m-2.24 2.39a4.493 4.493 0 00-1.757 4.306 4.493 4.493 0 004.306-1.758M16.5 9a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" />
         </svg>
     )
 }
@@ -387,65 +387,65 @@ export const InjectiveBackgroundWave: React.FC<IconProps> = ({ className, animat
     if (animate) {
         return <motion.svg layout width="485" height="973" viewBox="0 0 485 973" fill="none" className={className}>
             <g filter="url(#filter0_b_111_4953)">
-                <path d="M607.157 244.393C622.754 253.403 640.238 258.752 658.041 262.648C669.529 265.162 681.431 267.121 693.1 269.042C699.373 270.075 705.578 271.097 711.616 272.187C746.797 278.543 777.441 287.452 795.786 314.047C814.289 340.872 819.916 373.932 817.6 408.415C815.285 442.894 805.047 478.407 792.283 509.642C781.204 536.754 759.509 555.626 734.867 573.93C730.376 577.266 725.776 580.589 721.134 583.942C700.645 598.743 679.334 614.138 662.883 633.912C652.509 646.382 644.632 661.004 637.76 676.015C634.319 683.529 631.105 691.199 627.956 698.779C627.607 699.619 627.259 700.459 626.911 701.296C624.113 708.039 621.354 714.689 618.481 721.177C605.483 750.537 590.837 774.909 563.738 785.019C536.776 795.079 509.771 786.941 480.968 773.636C473.809 770.33 466.617 766.743 459.327 763.086C458.692 762.767 458.056 762.448 457.42 762.129C450.771 758.792 444.038 755.412 437.27 752.204C422.451 745.177 407.202 738.839 391.577 735.303C367.19 729.785 341.18 729.317 316.035 728.864C307.173 728.704 298.417 728.547 289.879 728.171C256.636 726.706 226.102 722.001 201.169 702.623C147.757 661.112 109.312 590.332 116.536 523.958C120.032 491.828 139.265 466.749 163.752 442.626C172.022 434.479 180.732 426.587 189.56 418.589C193.831 414.719 198.13 410.824 202.42 406.863C215.473 394.811 228.275 382.294 239.132 368.628C247.455 358.15 255.503 347.787 263.471 337.527C284.771 310.098 305.497 283.409 329.381 257.266C340.806 244.761 351.002 229.988 360.805 215.042C363.216 211.367 365.599 207.686 367.973 204.022C375.323 192.672 382.574 181.476 390.227 171.051C410.514 143.416 432.431 122.933 463.01 121.444C492.843 119.991 513.978 140.609 535.545 167.912C539.431 172.832 543.357 178.003 547.338 183.246C554.114 192.17 561.048 201.301 568.205 209.75C579.681 223.296 592.291 235.805 607.157 244.393Z" stroke="url(#paint0_linear_111_4953)" stroke-width="6" />
+                <path d="M607.157 244.393C622.754 253.403 640.238 258.752 658.041 262.648C669.529 265.162 681.431 267.121 693.1 269.042C699.373 270.075 705.578 271.097 711.616 272.187C746.797 278.543 777.441 287.452 795.786 314.047C814.289 340.872 819.916 373.932 817.6 408.415C815.285 442.894 805.047 478.407 792.283 509.642C781.204 536.754 759.509 555.626 734.867 573.93C730.376 577.266 725.776 580.589 721.134 583.942C700.645 598.743 679.334 614.138 662.883 633.912C652.509 646.382 644.632 661.004 637.76 676.015C634.319 683.529 631.105 691.199 627.956 698.779C627.607 699.619 627.259 700.459 626.911 701.296C624.113 708.039 621.354 714.689 618.481 721.177C605.483 750.537 590.837 774.909 563.738 785.019C536.776 795.079 509.771 786.941 480.968 773.636C473.809 770.33 466.617 766.743 459.327 763.086C458.692 762.767 458.056 762.448 457.42 762.129C450.771 758.792 444.038 755.412 437.27 752.204C422.451 745.177 407.202 738.839 391.577 735.303C367.19 729.785 341.18 729.317 316.035 728.864C307.173 728.704 298.417 728.547 289.879 728.171C256.636 726.706 226.102 722.001 201.169 702.623C147.757 661.112 109.312 590.332 116.536 523.958C120.032 491.828 139.265 466.749 163.752 442.626C172.022 434.479 180.732 426.587 189.56 418.589C193.831 414.719 198.13 410.824 202.42 406.863C215.473 394.811 228.275 382.294 239.132 368.628C247.455 358.15 255.503 347.787 263.471 337.527C284.771 310.098 305.497 283.409 329.381 257.266C340.806 244.761 351.002 229.988 360.805 215.042C363.216 211.367 365.599 207.686 367.973 204.022C375.323 192.672 382.574 181.476 390.227 171.051C410.514 143.416 432.431 122.933 463.01 121.444C492.843 119.991 513.978 140.609 535.545 167.912C539.431 172.832 543.357 178.003 547.338 183.246C554.114 192.17 561.048 201.301 568.205 209.75C579.681 223.296 592.291 235.805 607.157 244.393Z" stroke="url(#paint0_linear_111_4953)" strokeWidth="6" />
             </g>
             <g opacity="0.75" filter="url(#filter1_b_111_4953)">
-                <path d="M570.913 307.649C582.666 314.439 595.802 318.448 609.089 321.356C617.654 323.23 626.563 324.697 635.257 326.128C639.909 326.894 644.5 327.65 648.943 328.453C675.085 333.176 697.351 339.735 710.655 359.021C724.185 378.636 728.348 402.881 726.639 428.323C724.931 453.762 717.371 480.01 707.92 503.138C699.832 522.931 683.972 536.774 665.682 550.36C662.375 552.817 658.978 555.27 655.542 557.752C640.312 568.752 624.312 580.308 611.974 595.139C604.16 604.532 598.252 615.514 593.126 626.709C590.559 632.315 588.163 638.033 585.824 643.665C585.564 644.29 585.306 644.913 585.048 645.535C582.967 650.547 580.923 655.474 578.795 660.28C569.146 682.076 558.444 699.721 538.845 707.034C519.332 714.314 499.694 708.48 478.333 698.613C473.035 696.166 467.707 693.509 462.29 690.792C461.818 690.555 461.345 690.318 460.872 690.08C455.933 687.601 450.918 685.084 445.876 682.693C434.836 677.459 423.405 672.702 411.657 670.044C393.397 665.912 373.871 665.56 355.151 665.224C348.594 665.106 342.136 664.99 335.866 664.714C311.215 663.628 288.877 660.139 270.684 646C231.256 615.357 202.98 563.169 208.288 514.4C210.836 490.986 224.851 472.619 242.995 454.745C249.121 448.71 255.559 442.877 262.106 436.945C265.285 434.065 268.489 431.162 271.696 428.2C281.407 419.234 290.978 409.88 299.109 399.646C305.313 391.836 311.304 384.121 317.23 376.49C333.046 356.124 348.399 336.353 366.109 316.969C374.672 307.595 382.296 296.545 389.584 285.433C391.385 282.687 393.162 279.943 394.929 277.214C400.385 268.789 405.744 260.514 411.406 252.802C426.437 232.327 442.41 217.542 464.513 216.465C485.963 215.421 501.296 230.197 517.338 250.506C520.192 254.119 523.095 257.943 526.048 261.831C531.102 268.486 536.298 275.329 541.633 281.627C550.198 291.737 559.68 301.16 570.913 307.649Z" stroke="url(#paint1_linear_111_4953)" stroke-width="6" />
+                <path d="M570.913 307.649C582.666 314.439 595.802 318.448 609.089 321.356C617.654 323.23 626.563 324.697 635.257 326.128C639.909 326.894 644.5 327.65 648.943 328.453C675.085 333.176 697.351 339.735 710.655 359.021C724.185 378.636 728.348 402.881 726.639 428.323C724.931 453.762 717.371 480.01 707.92 503.138C699.832 522.931 683.972 536.774 665.682 550.36C662.375 552.817 658.978 555.27 655.542 557.752C640.312 568.752 624.312 580.308 611.974 595.139C604.16 604.532 598.252 615.514 593.126 626.709C590.559 632.315 588.163 638.033 585.824 643.665C585.564 644.29 585.306 644.913 585.048 645.535C582.967 650.547 580.923 655.474 578.795 660.28C569.146 682.076 558.444 699.721 538.845 707.034C519.332 714.314 499.694 708.48 478.333 698.613C473.035 696.166 467.707 693.509 462.29 690.792C461.818 690.555 461.345 690.318 460.872 690.08C455.933 687.601 450.918 685.084 445.876 682.693C434.836 677.459 423.405 672.702 411.657 670.044C393.397 665.912 373.871 665.56 355.151 665.224C348.594 665.106 342.136 664.99 335.866 664.714C311.215 663.628 288.877 660.139 270.684 646C231.256 615.357 202.98 563.169 208.288 514.4C210.836 490.986 224.851 472.619 242.995 454.745C249.121 448.71 255.559 442.877 262.106 436.945C265.285 434.065 268.489 431.162 271.696 428.2C281.407 419.234 290.978 409.88 299.109 399.646C305.313 391.836 311.304 384.121 317.23 376.49C333.046 356.124 348.399 336.353 366.109 316.969C374.672 307.595 382.296 296.545 389.584 285.433C391.385 282.687 393.162 279.943 394.929 277.214C400.385 268.789 405.744 260.514 411.406 252.802C426.437 232.327 442.41 217.542 464.513 216.465C485.963 215.421 501.296 230.197 517.338 250.506C520.192 254.119 523.095 257.943 526.048 261.831C531.102 268.486 536.298 275.329 541.633 281.627C550.198 291.737 559.68 301.16 570.913 307.649Z" stroke="url(#paint1_linear_111_4953)" strokeWidth="6" />
             </g>
             <g opacity="0.5" filter="url(#filter2_b_111_4953)">
-                <path d="M537.339 366.258C545.53 370.99 554.64 373.758 563.743 375.75C569.6 377.032 575.736 378.043 581.674 379.021C584.824 379.539 587.918 380.049 590.886 380.585C608.654 383.795 623.158 388.177 631.791 400.692C640.715 413.629 643.521 429.707 642.375 446.774C641.229 463.838 636.15 481.503 629.769 497.12C624.451 510.132 613.997 519.317 601.591 528.533C599.381 530.174 597.099 531.822 594.78 533.496C584.422 540.975 573.342 548.975 564.814 559.226C559.371 565.768 555.287 573.379 551.78 581.039C550.023 584.877 548.385 588.787 546.794 592.615C546.618 593.04 546.442 593.465 546.266 593.888C544.852 597.296 543.47 600.625 542.032 603.873C535.486 618.66 528.438 630.074 515.787 634.794C503.175 639.499 490.36 635.8 475.894 629.118C472.32 627.467 468.72 625.672 465.038 623.825C464.717 623.664 464.395 623.502 464.073 623.341C460.719 621.657 457.295 619.939 453.85 618.306C446.312 614.731 438.418 611.439 430.263 609.594C417.678 606.746 404.158 606.503 391.391 606.274C386.971 606.195 382.641 606.117 378.471 605.933C361.78 605.198 347.034 602.837 335.086 593.551C308.612 572.976 289.758 538.011 293.29 505.553C294.96 490.213 304.142 478.064 316.409 465.979C320.549 461.9 324.882 457.975 329.317 453.957C331.483 451.995 333.673 450.01 335.877 447.975C342.492 441.867 349.07 435.443 354.674 428.388C358.916 423.05 363.001 417.789 367.036 412.592C377.771 398.769 388.148 385.407 400.137 372.284C406.049 365.813 411.289 358.211 416.247 350.651C417.484 348.766 418.699 346.889 419.905 345.027C423.606 339.312 427.212 333.744 431.03 328.544C441.191 314.702 451.657 305.195 465.908 304.501C479.593 303.835 489.549 313.198 500.473 327.028C502.371 329.431 504.327 332.007 506.327 334.64C509.785 339.192 513.373 343.916 517.019 348.221C522.888 355.148 529.472 361.713 537.339 366.258Z" stroke="url(#paint2_linear_111_4953)" stroke-width="6" />
+                <path d="M537.339 366.258C545.53 370.99 554.64 373.758 563.743 375.75C569.6 377.032 575.736 378.043 581.674 379.021C584.824 379.539 587.918 380.049 590.886 380.585C608.654 383.795 623.158 388.177 631.791 400.692C640.715 413.629 643.521 429.707 642.375 446.774C641.229 463.838 636.15 481.503 629.769 497.12C624.451 510.132 613.997 519.317 601.591 528.533C599.381 530.174 597.099 531.822 594.78 533.496C584.422 540.975 573.342 548.975 564.814 559.226C559.371 565.768 555.287 573.379 551.78 581.039C550.023 584.877 548.385 588.787 546.794 592.615C546.618 593.04 546.442 593.465 546.266 593.888C544.852 597.296 543.47 600.625 542.032 603.873C535.486 618.66 528.438 630.074 515.787 634.794C503.175 639.499 490.36 635.8 475.894 629.118C472.32 627.467 468.72 625.672 465.038 623.825C464.717 623.664 464.395 623.502 464.073 623.341C460.719 621.657 457.295 619.939 453.85 618.306C446.312 614.731 438.418 611.439 430.263 609.594C417.678 606.746 404.158 606.503 391.391 606.274C386.971 606.195 382.641 606.117 378.471 605.933C361.78 605.198 347.034 602.837 335.086 593.551C308.612 572.976 289.758 538.011 293.29 505.553C294.96 490.213 304.142 478.064 316.409 465.979C320.549 461.9 324.882 457.975 329.317 453.957C331.483 451.995 333.673 450.01 335.877 447.975C342.492 441.867 349.07 435.443 354.674 428.388C358.916 423.05 363.001 417.789 367.036 412.592C377.771 398.769 388.148 385.407 400.137 372.284C406.049 365.813 411.289 358.211 416.247 350.651C417.484 348.766 418.699 346.889 419.905 345.027C423.606 339.312 427.212 333.744 431.03 328.544C441.191 314.702 451.657 305.195 465.908 304.501C479.593 303.835 489.549 313.198 500.473 327.028C502.371 329.431 504.327 332.007 506.327 334.64C509.785 339.192 513.373 343.916 517.019 348.221C522.888 355.148 529.472 361.713 537.339 366.258Z" stroke="url(#paint2_linear_111_4953)" strokeWidth="6" />
             </g>
             <g opacity="0.15" filter="url(#filter3_b_111_4953)">
-                <path d="M503.505 425.307C508.108 427.966 513.159 429.485 518.047 430.554C521.176 431.239 524.52 431.79 527.68 432.311C529.315 432.581 530.901 432.842 532.382 433.11C541.712 434.795 548.396 436.984 552.323 442.677C556.605 448.884 558.044 456.732 557.465 465.361C556.886 473.986 554.307 483.003 551.018 491.052C548.493 497.232 543.485 501.724 537.008 506.535C535.902 507.356 534.742 508.193 533.55 509.053C528.104 512.981 521.981 517.399 517.291 523.036C514.238 526.706 511.991 530.92 510.115 535.018C509.173 537.075 508.298 539.163 507.463 541.172C507.371 541.396 507.278 541.618 507.187 541.839C506.442 543.632 505.728 545.354 504.985 547.032C501.565 554.758 498.198 559.893 492.548 562.001C486.89 564.112 480.951 562.564 473.431 559.091C471.594 558.242 469.736 557.316 467.801 556.345C467.632 556.261 467.463 556.175 467.293 556.09C465.536 555.208 463.714 554.294 461.881 553.425C457.87 551.523 453.54 549.707 449.004 548.681C442.136 547.126 434.664 546.993 427.904 546.873C425.638 546.832 423.452 546.793 421.395 546.703C412.724 546.321 405.628 545.096 399.972 540.7C386.551 530.269 377.19 512.658 378.934 496.635C379.718 489.43 384.03 483.546 390.376 477.294C392.515 475.187 394.727 473.183 397.033 471.095C398.178 470.057 399.347 468.998 400.541 467.895C404.036 464.668 407.599 461.196 410.658 457.345C412.921 454.497 415.087 451.708 417.216 448.965C422.831 441.736 428.193 434.83 434.418 428.017C437.659 424.469 440.497 420.341 443.108 416.36C443.776 415.342 444.425 414.339 445.065 413.352C446.998 410.367 448.838 407.526 450.797 404.857C456.052 397.7 460.969 393.511 467.309 393.202C473.169 392.917 477.708 396.827 483.475 404.128C484.411 405.313 485.412 406.63 486.45 407.996C488.298 410.428 490.267 413.02 492.213 415.317C495.366 419.038 499.03 422.722 503.505 425.307Z" stroke="url(#paint3_linear_111_4953)" stroke-width="6" />
+                <path d="M503.505 425.307C508.108 427.966 513.159 429.485 518.047 430.554C521.176 431.239 524.52 431.79 527.68 432.311C529.315 432.581 530.901 432.842 532.382 433.11C541.712 434.795 548.396 436.984 552.323 442.677C556.605 448.884 558.044 456.732 557.465 465.361C556.886 473.986 554.307 483.003 551.018 491.052C548.493 497.232 543.485 501.724 537.008 506.535C535.902 507.356 534.742 508.193 533.55 509.053C528.104 512.981 521.981 517.399 517.291 523.036C514.238 526.706 511.991 530.92 510.115 535.018C509.173 537.075 508.298 539.163 507.463 541.172C507.371 541.396 507.278 541.618 507.187 541.839C506.442 543.632 505.728 545.354 504.985 547.032C501.565 554.758 498.198 559.893 492.548 562.001C486.89 564.112 480.951 562.564 473.431 559.091C471.594 558.242 469.736 557.316 467.801 556.345C467.632 556.261 467.463 556.175 467.293 556.09C465.536 555.208 463.714 554.294 461.881 553.425C457.87 551.523 453.54 549.707 449.004 548.681C442.136 547.126 434.664 546.993 427.904 546.873C425.638 546.832 423.452 546.793 421.395 546.703C412.724 546.321 405.628 545.096 399.972 540.7C386.551 530.269 377.19 512.658 378.934 496.635C379.718 489.43 384.03 483.546 390.376 477.294C392.515 475.187 394.727 473.183 397.033 471.095C398.178 470.057 399.347 468.998 400.541 467.895C404.036 464.668 407.599 461.196 410.658 457.345C412.921 454.497 415.087 451.708 417.216 448.965C422.831 441.736 428.193 434.83 434.418 428.017C437.659 424.469 440.497 420.341 443.108 416.36C443.776 415.342 444.425 414.339 445.065 413.352C446.998 410.367 448.838 407.526 450.797 404.857C456.052 397.7 460.969 393.511 467.309 393.202C473.169 392.917 477.708 396.827 483.475 404.128C484.411 405.313 485.412 406.63 486.45 407.996C488.298 410.428 490.267 413.02 492.213 415.317C495.366 419.038 499.03 422.722 503.505 425.307Z" stroke="url(#paint3_linear_111_4953)" strokeWidth="6" />
             </g>
             <defs>
-                <filter id="filter0_b_111_4953" x="60.6619" y="66.3711" width="812.43" height="778.146" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-                    <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                <filter id="filter0_b_111_4953" x="60.6619" y="66.3711" width="812.43" height="778.146" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+                    <feFlood floodOpacity="0" result="BackgroundImageFix" />
                     <feGaussianBlur in="BackgroundImageFix" stdDeviation="25" />
                     <feComposite in2="SourceAlpha" operator="in" result="effect1_backgroundBlur_111_4953" />
                     <feBlend mode="normal" in="SourceGraphic" in2="effect1_backgroundBlur_111_4953" result="shape" />
                 </filter>
-                <filter id="filter1_b_111_4953" x="152.646" y="161.413" width="629.356" height="603.882" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-                    <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                <filter id="filter1_b_111_4953" x="152.646" y="161.413" width="629.356" height="603.882" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+                    <feFlood floodOpacity="0" result="BackgroundImageFix" />
                     <feGaussianBlur in="BackgroundImageFix" stdDeviation="25" />
                     <feComposite in2="SourceAlpha" operator="in" result="effect1_backgroundBlur_111_4953" />
                     <feBlend mode="normal" in="SourceGraphic" in2="effect1_backgroundBlur_111_4953" result="shape" />
                 </filter>
-                <filter id="filter2_b_111_4953" x="237.863" y="249.467" width="459.754" height="442.442" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-                    <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                <filter id="filter2_b_111_4953" x="237.863" y="249.467" width="459.754" height="442.442" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+                    <feFlood floodOpacity="0" result="BackgroundImageFix" />
                     <feGaussianBlur in="BackgroundImageFix" stdDeviation="25" />
                     <feComposite in2="SourceAlpha" operator="in" result="effect1_backgroundBlur_111_4953" />
                     <feBlend mode="normal" in="SourceGraphic" in2="effect1_backgroundBlur_111_4953" result="shape" />
                 </filter>
-                <filter id="filter3_b_111_4953" x="323.723" y="338.187" width="288.864" height="279.775" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-                    <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                <filter id="filter3_b_111_4953" x="323.723" y="338.187" width="288.864" height="279.775" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+                    <feFlood floodOpacity="0" result="BackgroundImageFix" />
                     <feGaussianBlur in="BackgroundImageFix" stdDeviation="25" />
                     <feComposite in2="SourceAlpha" operator="in" result="effect1_backgroundBlur_111_4953" />
                     <feBlend mode="normal" in="SourceGraphic" in2="effect1_backgroundBlur_111_4953" result="shape" />
                 </filter>
                 <linearGradient className={"shape-animation"} id="paint0_linear_111_4953" x1="219.547" y1="331.483" x2="716.606" y2="642.712" gradientUnits="userSpaceOnUse">
-                    <stop stop-color="#56235C" />
-                    <stop offset="0.328586" stop-color="#D43752" />
-                    <stop offset="0.693468" stop-color="#E4462D" />
-                    <stop offset="1" stop-color="#F8B810" />
+                    <stop stopColor="#56235C" />
+                    <stop offset="0.328586" stopColor="#D43752" />
+                    <stop offset="0.693468" stopColor="#E4462D" />
+                    <stop offset="1" stopColor="#F8B810" />
                 </linearGradient>
                 <linearGradient className={"shape-animation"} id="paint1_linear_111_4953" x1="283.551" y1="371.247" x2="652.879" y2="602.499" gradientUnits="userSpaceOnUse">
-                    <stop stop-color="#56235C" />
-                    <stop offset="0.328586" stop-color="#D43752" />
-                    <stop offset="0.693468" stop-color="#E4462D" />
-                    <stop offset="1" stop-color="#F8B810" />
+                    <stop stopColor="#56235C" />
+                    <stop offset="0.328586" stopColor="#D43752" />
+                    <stop offset="0.693468" stopColor="#E4462D" />
+                    <stop offset="1" stopColor="#F8B810" />
                 </linearGradient>
                 <linearGradient className={"shape-animation"} id="paint2_linear_111_4953" x1="342.847" y1="408.092" x2="593.845" y2="565.252" gradientUnits="userSpaceOnUse">
-                    <stop stop-color="#56235C" />
-                    <stop offset="0.328586" stop-color="#D43752" />
-                    <stop offset="0.693468" stop-color="#E4462D" />
-                    <stop offset="1" stop-color="#F8B810" />
+                    <stop stopColor="#56235C" />
+                    <stop offset="0.328586" stopColor="#D43752" />
+                    <stop offset="0.693468" stopColor="#E4462D" />
+                    <stop offset="1" stopColor="#F8B810" />
                 </linearGradient>
                 <linearGradient className={"shape-animation"} id="paint3_linear_111_4953" x1="402.589" y1="445.213" x2="534.358" y2="527.719" gradientUnits="userSpaceOnUse">
-                    <stop stop-color="#56235C" />
-                    <stop offset="0.328586" stop-color="#D43752" />
-                    <stop offset="0.693468" stop-color="#E4462D" />
-                    <stop offset="1" stop-color="#F8B810" />
+                    <stop stopColor="#56235C" />
+                    <stop offset="0.328586" stopColor="#D43752" />
+                    <stop offset="0.693468" stopColor="#E4462D" />
+                    <stop offset="1" stopColor="#F8B810" />
                 </linearGradient>
             </defs>
         </motion.svg>
@@ -453,65 +453,65 @@ export const InjectiveBackgroundWave: React.FC<IconProps> = ({ className, animat
     return (
         <motion.svg layout width="485" height="973" viewBox="0 0 485 973" fill="none" className={className}>
             <g filter="url(#filter0_b_93_8689)">
-                <path d="M608.658 241.795C623.872 250.584 641.016 255.851 658.682 259.717C670.103 262.217 681.854 264.151 693.466 266.062C699.76 267.097 706.012 268.126 712.149 269.235C747.328 275.59 779.147 284.64 798.255 312.343C817.268 339.906 822.938 373.714 820.594 408.616C818.25 443.516 807.901 479.353 795.06 510.776C783.645 538.712 761.343 558.001 736.656 576.338C732.093 579.728 727.444 583.088 722.771 586.464C702.3 601.257 681.374 616.377 665.189 635.831C655.062 648.003 647.316 662.35 640.488 677.264C637.072 684.724 633.876 692.35 630.727 699.93C630.378 700.771 630.029 701.611 629.68 702.451C626.885 709.188 624.112 715.87 621.225 722.391C608.206 751.799 593.138 777.252 564.787 787.83C536.609 798.343 508.608 789.708 479.71 776.36C472.503 773.03 465.27 769.424 457.982 765.767C457.347 765.449 456.713 765.131 456.077 764.812C449.423 761.472 442.721 758.108 435.985 754.914C421.233 747.92 406.218 741.692 390.915 738.229C366.855 732.785 341.309 732.324 316.254 731.872C307.326 731.711 298.461 731.552 289.747 731.168C256.389 729.698 225.04 724.974 199.329 704.992C145.314 663.012 106.191 591.292 113.554 523.633C117.167 490.432 137.041 464.729 161.647 440.489C169.961 432.299 178.751 424.334 187.606 416.31C191.866 412.45 196.141 408.577 200.385 404.659C213.409 392.633 226.074 380.242 236.783 366.762C245.061 356.342 253.082 346.013 261.035 335.771C282.361 308.309 303.195 281.481 327.166 255.243C338.418 242.927 348.504 228.327 358.297 213.397C360.685 209.756 363.054 206.098 365.419 202.446C372.78 191.079 380.099 179.778 387.808 169.276C408.197 141.503 430.844 120.007 462.865 118.447C494.37 116.913 516.374 138.801 537.899 166.052C541.863 171.071 545.822 176.285 549.814 181.544C556.546 190.412 563.376 199.408 570.495 207.811C581.88 221.25 594.228 233.459 608.658 241.795Z" stroke="url(#paint0_linear_93_8689)" stroke-width="4" />
+                <path d="M608.658 241.795C623.872 250.584 641.016 255.851 658.682 259.717C670.103 262.217 681.854 264.151 693.466 266.062C699.76 267.097 706.012 268.126 712.149 269.235C747.328 275.59 779.147 284.64 798.255 312.343C817.268 339.906 822.938 373.714 820.594 408.616C818.25 443.516 807.901 479.353 795.06 510.776C783.645 538.712 761.343 558.001 736.656 576.338C732.093 579.728 727.444 583.088 722.771 586.464C702.3 601.257 681.374 616.377 665.189 635.831C655.062 648.003 647.316 662.35 640.488 677.264C637.072 684.724 633.876 692.35 630.727 699.93C630.378 700.771 630.029 701.611 629.68 702.451C626.885 709.188 624.112 715.87 621.225 722.391C608.206 751.799 593.138 777.252 564.787 787.83C536.609 798.343 508.608 789.708 479.71 776.36C472.503 773.03 465.27 769.424 457.982 765.767C457.347 765.449 456.713 765.131 456.077 764.812C449.423 761.472 442.721 758.108 435.985 754.914C421.233 747.92 406.218 741.692 390.915 738.229C366.855 732.785 341.309 732.324 316.254 731.872C307.326 731.711 298.461 731.552 289.747 731.168C256.389 729.698 225.04 724.974 199.329 704.992C145.314 663.012 106.191 591.292 113.554 523.633C117.167 490.432 137.041 464.729 161.647 440.489C169.961 432.299 178.751 424.334 187.606 416.31C191.866 412.45 196.141 408.577 200.385 404.659C213.409 392.633 226.074 380.242 236.783 366.762C245.061 356.342 253.082 346.013 261.035 335.771C282.361 308.309 303.195 281.481 327.166 255.243C338.418 242.927 348.504 228.327 358.297 213.397C360.685 209.756 363.054 206.098 365.419 202.446C372.78 191.079 380.099 179.778 387.808 169.276C408.197 141.503 430.844 120.007 462.865 118.447C494.37 116.913 516.374 138.801 537.899 166.052C541.863 171.071 545.822 176.285 549.814 181.544C556.546 190.412 563.376 199.408 570.495 207.811C581.88 221.25 594.228 233.459 608.658 241.795Z" stroke="url(#paint0_linear_93_8689)" strokeWidth="4" />
             </g>
             <g opacity="0.75" filter="url(#filter1_b_93_8689)">
-                <path d="M572.414 305.052C583.784 311.62 596.581 315.547 609.731 318.425C618.228 320.285 626.985 321.726 635.623 323.148C640.296 323.917 644.934 324.68 649.477 325.501C675.616 330.223 699.057 336.923 713.124 357.318C727.164 377.671 731.369 402.663 729.633 428.524C727.896 454.384 720.225 480.956 710.698 504.273C702.273 524.888 685.806 539.149 667.471 552.769C664.093 555.278 660.647 557.768 657.18 560.273C641.966 571.266 626.352 582.548 614.28 597.058C606.713 606.153 600.935 616.86 595.854 627.958C593.312 633.51 590.934 639.184 588.594 644.816C588.335 645.44 588.077 646.063 587.818 646.685C585.74 651.693 583.682 656.654 581.539 661.495C571.869 683.338 560.745 702.065 539.894 709.844C519.165 717.578 498.531 711.247 477.075 701.336C471.728 698.866 466.361 696.19 460.945 693.473C460.473 693.237 460.001 693 459.529 692.763C454.586 690.282 449.601 687.78 444.591 685.404C433.618 680.202 422.421 675.555 410.995 672.97C393.062 668.912 374.001 668.568 355.369 668.232C348.747 668.113 342.178 667.995 335.734 667.711C310.968 666.62 287.814 663.113 268.843 648.369C228.812 617.257 199.859 564.128 205.306 514.076C207.97 489.589 222.627 470.599 240.89 452.608C247.06 446.529 253.578 440.624 260.153 434.666C263.32 431.797 266.5 428.915 269.662 425.996C279.344 417.056 288.777 407.828 296.76 397.78C302.919 390.028 308.883 382.347 314.795 374.734C330.636 354.335 346.098 334.424 363.894 314.945C372.284 305.762 379.798 294.884 387.075 283.788C388.854 281.076 390.616 278.354 392.375 275.639C397.843 267.196 403.269 258.817 408.988 251.027C424.12 230.414 440.822 214.616 464.367 213.469C487.49 212.343 503.691 228.389 519.692 248.646C522.624 252.358 525.56 256.225 528.524 260.13C533.534 266.729 538.626 273.436 543.923 279.688C552.398 289.692 561.617 298.815 572.414 305.052Z" stroke="url(#paint1_linear_93_8689)" stroke-width="4" />
+                <path d="M572.414 305.052C583.784 311.62 596.581 315.547 609.731 318.425C618.228 320.285 626.985 321.726 635.623 323.148C640.296 323.917 644.934 324.68 649.477 325.501C675.616 330.223 699.057 336.923 713.124 357.318C727.164 377.671 731.369 402.663 729.633 428.524C727.896 454.384 720.225 480.956 710.698 504.273C702.273 524.888 685.806 539.149 667.471 552.769C664.093 555.278 660.647 557.768 657.18 560.273C641.966 571.266 626.352 582.548 614.28 597.058C606.713 606.153 600.935 616.86 595.854 627.958C593.312 633.51 590.934 639.184 588.594 644.816C588.335 645.44 588.077 646.063 587.818 646.685C585.74 651.693 583.682 656.654 581.539 661.495C571.869 683.338 560.745 702.065 539.894 709.844C519.165 717.578 498.531 711.247 477.075 701.336C471.728 698.866 466.361 696.19 460.945 693.473C460.473 693.237 460.001 693 459.529 692.763C454.586 690.282 449.601 687.78 444.591 685.404C433.618 680.202 422.421 675.555 410.995 672.97C393.062 668.912 374.001 668.568 355.369 668.232C348.747 668.113 342.178 667.995 335.734 667.711C310.968 666.62 287.814 663.113 268.843 648.369C228.812 617.257 199.859 564.128 205.306 514.076C207.97 489.589 222.627 470.599 240.89 452.608C247.06 446.529 253.578 440.624 260.153 434.666C263.32 431.797 266.5 428.915 269.662 425.996C279.344 417.056 288.777 407.828 296.76 397.78C302.919 390.028 308.883 382.347 314.795 374.734C330.636 354.335 346.098 334.424 363.894 314.945C372.284 305.762 379.798 294.884 387.075 283.788C388.854 281.076 390.616 278.354 392.375 275.639C397.843 267.196 403.269 258.817 408.988 251.027C424.12 230.414 440.822 214.616 464.367 213.469C487.49 212.343 503.691 228.389 519.692 248.646C522.624 252.358 525.56 256.225 528.524 260.13C533.534 266.729 538.626 273.436 543.923 279.688C552.398 289.692 561.617 298.815 572.414 305.052Z" stroke="url(#paint1_linear_93_8689)" strokeWidth="4" />
             </g>
             <g opacity="0.5" filter="url(#filter2_b_93_8689)">
-                <path d="M538.84 363.66C546.649 368.171 555.418 370.858 564.384 372.82C570.174 374.087 576.157 375.072 582.04 376.04C585.211 376.562 588.353 377.079 591.419 377.633C609.184 380.842 624.864 385.366 634.261 398.989C643.693 412.664 646.542 429.489 645.368 446.975C644.194 464.46 639.005 482.449 632.546 498.255C626.893 512.09 615.831 521.692 603.38 530.941C601.099 532.635 598.768 534.319 596.418 536.017C586.075 543.489 575.381 551.215 567.121 561.145C561.925 567.389 557.971 574.725 554.508 582.288C552.775 586.073 551.155 589.938 549.565 593.766C549.389 594.19 549.213 594.615 549.037 595.038C547.624 598.442 546.229 601.805 544.776 605.087C538.209 619.921 530.739 632.417 516.836 637.605C503.008 642.764 489.197 638.567 474.636 631.841C471.013 630.168 467.374 628.353 463.693 626.506C463.372 626.346 463.051 626.185 462.73 626.023C459.372 624.338 455.977 622.634 452.565 621.016C445.094 617.474 437.434 614.292 429.601 612.52C417.343 609.746 404.29 609.511 391.609 609.283C387.122 609.202 382.681 609.122 378.339 608.931C361.533 608.19 345.971 605.811 333.245 595.92C306.168 574.876 286.636 538.97 290.308 505.229C292.094 488.816 301.918 476.043 314.304 463.842C318.488 459.72 322.9 455.722 327.363 451.679C329.518 449.726 331.684 447.763 333.842 445.771C340.429 439.689 346.869 433.391 352.326 426.522C356.521 421.242 360.58 416.014 364.601 410.837C375.361 396.98 385.846 383.479 397.922 370.261C403.661 363.979 408.791 356.55 413.739 349.005C414.952 347.155 416.153 345.301 417.35 343.452C421.064 337.718 424.737 332.046 428.612 326.768C438.874 312.789 450.069 302.269 465.763 301.505C481.12 300.757 491.944 311.39 502.827 325.168C504.803 327.67 506.792 330.289 508.804 332.939C512.218 337.436 515.701 342.023 519.309 346.281C525.088 353.103 531.409 359.367 538.84 363.66Z" stroke="url(#paint2_linear_93_8689)" stroke-width="4" />
+                <path d="M538.84 363.66C546.649 368.171 555.418 370.858 564.384 372.82C570.174 374.087 576.157 375.072 582.04 376.04C585.211 376.562 588.353 377.079 591.419 377.633C609.184 380.842 624.864 385.366 634.261 398.989C643.693 412.664 646.542 429.489 645.368 446.975C644.194 464.46 639.005 482.449 632.546 498.255C626.893 512.09 615.831 521.692 603.38 530.941C601.099 532.635 598.768 534.319 596.418 536.017C586.075 543.489 575.381 551.215 567.121 561.145C561.925 567.389 557.971 574.725 554.508 582.288C552.775 586.073 551.155 589.938 549.565 593.766C549.389 594.19 549.213 594.615 549.037 595.038C547.624 598.442 546.229 601.805 544.776 605.087C538.209 619.921 530.739 632.417 516.836 637.605C503.008 642.764 489.197 638.567 474.636 631.841C471.013 630.168 467.374 628.353 463.693 626.506C463.372 626.346 463.051 626.185 462.73 626.023C459.372 624.338 455.977 622.634 452.565 621.016C445.094 617.474 437.434 614.292 429.601 612.52C417.343 609.746 404.29 609.511 391.609 609.283C387.122 609.202 382.681 609.122 378.339 608.931C361.533 608.19 345.971 605.811 333.245 595.92C306.168 574.876 286.636 538.97 290.308 505.229C292.094 488.816 301.918 476.043 314.304 463.842C318.488 459.72 322.9 455.722 327.363 451.679C329.518 449.726 331.684 447.763 333.842 445.771C340.429 439.689 346.869 433.391 352.326 426.522C356.521 421.242 360.58 416.014 364.601 410.837C375.361 396.98 385.846 383.479 397.922 370.261C403.661 363.979 408.791 356.55 413.739 349.005C414.952 347.155 416.153 345.301 417.35 343.452C421.064 337.718 424.737 332.046 428.612 326.768C438.874 312.789 450.069 302.269 465.763 301.505C481.12 300.757 491.944 311.39 502.827 325.168C504.803 327.67 506.792 330.289 508.804 332.939C512.218 337.436 515.701 342.023 519.309 346.281C525.088 353.103 531.409 359.367 538.84 363.66Z" stroke="url(#paint2_linear_93_8689)" strokeWidth="4" />
             </g>
             <g opacity="0.15" filter="url(#filter3_b_93_8689)">
-                <path d="M505.006 422.71C509.226 425.148 513.938 426.584 518.688 427.624C521.749 428.294 524.938 428.819 528.044 429.33C529.702 429.603 531.337 429.872 532.915 430.157C542.242 431.842 550.102 434.172 554.793 440.973C559.584 447.919 561.066 456.515 560.458 465.562C559.851 474.608 557.162 483.949 553.795 492.187C550.934 499.19 545.319 504.099 538.797 508.943C537.622 509.816 536.414 510.689 535.19 511.572C529.755 515.498 524.019 519.64 519.597 524.955C516.792 528.327 514.674 532.266 512.843 536.266C511.925 538.271 511.069 540.314 510.234 542.323C510.142 542.546 510.049 542.769 509.957 542.991C509.215 544.779 508.487 546.534 507.729 548.247C504.287 556.019 500.5 562.237 493.597 564.812C486.723 567.377 479.788 565.331 472.174 561.814C470.287 560.943 468.389 559.996 466.456 559.027C466.288 558.942 466.119 558.858 465.95 558.773C464.188 557.889 462.397 556.989 460.596 556.135C456.652 554.265 452.557 552.56 448.342 551.607C441.804 550.127 434.804 550.001 428.119 549.881C425.784 549.839 423.488 549.798 421.263 549.7C412.477 549.313 404.566 548.07 398.131 543.069C384.107 532.169 374.068 513.617 375.951 496.31C376.852 488.034 381.806 481.526 388.271 475.157C390.454 473.007 392.745 470.931 395.079 468.817C396.214 467.788 397.359 466.751 398.506 465.691C401.973 462.491 405.397 459.144 408.309 455.479C410.526 452.689 412.665 449.934 414.781 447.21C420.421 439.946 425.891 432.902 432.203 425.993C435.271 422.635 437.999 418.68 440.6 414.715C441.244 413.732 441.879 412.752 442.51 411.777C444.456 408.773 446.363 405.828 448.379 403.082C453.735 395.787 459.381 390.585 467.163 390.206C474.696 389.839 480.103 395.019 485.83 402.269C486.842 403.551 487.876 404.912 488.929 406.298C490.735 408.676 492.596 411.128 494.503 413.378C497.565 416.993 500.967 420.376 505.006 422.71Z" stroke="url(#paint3_linear_93_8689)" stroke-width="4" />
+                <path d="M505.006 422.71C509.226 425.148 513.938 426.584 518.688 427.624C521.749 428.294 524.938 428.819 528.044 429.33C529.702 429.603 531.337 429.872 532.915 430.157C542.242 431.842 550.102 434.172 554.793 440.973C559.584 447.919 561.066 456.515 560.458 465.562C559.851 474.608 557.162 483.949 553.795 492.187C550.934 499.19 545.319 504.099 538.797 508.943C537.622 509.816 536.414 510.689 535.19 511.572C529.755 515.498 524.019 519.64 519.597 524.955C516.792 528.327 514.674 532.266 512.843 536.266C511.925 538.271 511.069 540.314 510.234 542.323C510.142 542.546 510.049 542.769 509.957 542.991C509.215 544.779 508.487 546.534 507.729 548.247C504.287 556.019 500.5 562.237 493.597 564.812C486.723 567.377 479.788 565.331 472.174 561.814C470.287 560.943 468.389 559.996 466.456 559.027C466.288 558.942 466.119 558.858 465.95 558.773C464.188 557.889 462.397 556.989 460.596 556.135C456.652 554.265 452.557 552.56 448.342 551.607C441.804 550.127 434.804 550.001 428.119 549.881C425.784 549.839 423.488 549.798 421.263 549.7C412.477 549.313 404.566 548.07 398.131 543.069C384.107 532.169 374.068 513.617 375.951 496.31C376.852 488.034 381.806 481.526 388.271 475.157C390.454 473.007 392.745 470.931 395.079 468.817C396.214 467.788 397.359 466.751 398.506 465.691C401.973 462.491 405.397 459.144 408.309 455.479C410.526 452.689 412.665 449.934 414.781 447.21C420.421 439.946 425.891 432.902 432.203 425.993C435.271 422.635 437.999 418.68 440.6 414.715C441.244 413.732 441.879 412.752 442.51 411.777C444.456 408.773 446.363 405.828 448.379 403.082C453.735 395.787 459.381 390.585 467.163 390.206C474.696 389.839 480.103 395.019 485.83 402.269C486.842 403.551 487.876 404.912 488.929 406.298C490.735 408.676 492.596 411.128 494.503 413.378C497.565 416.993 500.967 420.376 505.006 422.71Z" stroke="url(#paint3_linear_93_8689)" strokeWidth="4" />
             </g>
             <defs>
-                <filter id="filter0_b_93_8689" x="60.6621" y="66.3711" width="812.43" height="778.146" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-                    <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                <filter id="filter0_b_93_8689" x="60.6621" y="66.3711" width="812.43" height="778.146" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+                    <feFlood floodOpacity="0" result="BackgroundImageFix" />
                     <feGaussianBlur in="BackgroundImageFix" stdDeviation="25" />
                     <feComposite in2="SourceAlpha" operator="in" result="effect1_backgroundBlur_93_8689" />
                     <feBlend mode="normal" in="SourceGraphic" in2="effect1_backgroundBlur_93_8689" result="shape" />
                 </filter>
-                <filter id="filter1_b_93_8689" x="152.646" y="161.413" width="629.356" height="603.882" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-                    <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                <filter id="filter1_b_93_8689" x="152.646" y="161.413" width="629.356" height="603.882" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+                    <feFlood floodOpacity="0" result="BackgroundImageFix" />
                     <feGaussianBlur in="BackgroundImageFix" stdDeviation="25" />
                     <feComposite in2="SourceAlpha" operator="in" result="effect1_backgroundBlur_93_8689" />
                     <feBlend mode="normal" in="SourceGraphic" in2="effect1_backgroundBlur_93_8689" result="shape" />
                 </filter>
-                <filter id="filter2_b_93_8689" x="237.864" y="249.467" width="459.754" height="442.442" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-                    <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                <filter id="filter2_b_93_8689" x="237.864" y="249.467" width="459.754" height="442.442" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+                    <feFlood floodOpacity="0" result="BackgroundImageFix" />
                     <feGaussianBlur in="BackgroundImageFix" stdDeviation="25" />
                     <feComposite in2="SourceAlpha" operator="in" result="effect1_backgroundBlur_93_8689" />
                     <feBlend mode="normal" in="SourceGraphic" in2="effect1_backgroundBlur_93_8689" result="shape" />
                 </filter>
-                <filter id="filter3_b_93_8689" x="323.724" y="338.187" width="288.863" height="279.775" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-                    <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                <filter id="filter3_b_93_8689" x="323.724" y="338.187" width="288.863" height="279.775" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+                    <feFlood floodOpacity="0" result="BackgroundImageFix" />
                     <feGaussianBlur in="BackgroundImageFix" stdDeviation="25" />
                     <feComposite in2="SourceAlpha" operator="in" result="effect1_backgroundBlur_93_8689" />
                     <feBlend mode="normal" in="SourceGraphic" in2="effect1_backgroundBlur_93_8689" result="shape" />
                 </filter>
                 <linearGradient id="paint0_linear_93_8689" x1="219.547" y1="331.483" x2="716.606" y2="642.712" gradientUnits="userSpaceOnUse">
-                    <stop stop-color="#56235C" />
-                    <stop offset="0.328586" stop-color="#D43752" />
-                    <stop offset="0.693468" stop-color="#E4462D" />
-                    <stop offset="1" stop-color="#F8B810" />
+                    <stop stopColor="#56235C" />
+                    <stop offset="0.328586" stopColor="#D43752" />
+                    <stop offset="0.693468" stopColor="#E4462D" />
+                    <stop offset="1" stopColor="#F8B810" />
                 </linearGradient>
                 <linearGradient id="paint1_linear_93_8689" x1="283.551" y1="371.247" x2="652.88" y2="602.499" gradientUnits="userSpaceOnUse">
-                    <stop stop-color="#56235C" />
-                    <stop offset="0.328586" stop-color="#D43752" />
-                    <stop offset="0.693468" stop-color="#E4462D" />
-                    <stop offset="1" stop-color="#F8B810" />
+                    <stop stopColor="#56235C" />
+                    <stop offset="0.328586" stopColor="#D43752" />
+                    <stop offset="0.693468" stopColor="#E4462D" />
+                    <stop offset="1" stopColor="#F8B810" />
                 </linearGradient>
                 <linearGradient id="paint2_linear_93_8689" x1="342.847" y1="408.092" x2="593.846" y2="565.252" gradientUnits="userSpaceOnUse">
-                    <stop stop-color="#56235C" />
-                    <stop offset="0.328586" stop-color="#D43752" />
-                    <stop offset="0.693468" stop-color="#E4462D" />
-                    <stop offset="1" stop-color="#F8B810" />
+                    <stop stopColor="#56235C" />
+                    <stop offset="0.328586" stopColor="#D43752" />
+                    <stop offset="0.693468" stopColor="#E4462D" />
+                    <stop offset="1" stopColor="#F8B810" />
                 </linearGradient>
                 <linearGradient id="paint3_linear_93_8689" x1="402.589" y1="445.213" x2="534.358" y2="527.719" gradientUnits="userSpaceOnUse">
-                    <stop stop-color="#56235C" />
-                    <stop offset="0.328586" stop-color="#D43752" />
-                    <stop offset="0.693468" stop-color="#E4462D" />
-                    <stop offset="1" stop-color="#F8B810" />
+                    <stop stopColor="#56235C" />
+                    <stop offset="0.328586" stopColor="#D43752" />
+                    <stop offset="0.693468" stopColor="#E4462D" />
+                    <stop offset="1" stopColor="#F8B810" />
                 </linearGradient>
             </defs>
         </motion.svg>
@@ -523,31 +523,31 @@ export const AnimatedShapeIcon: React.FC<IconProps> = ({ className }) => {
         <>
             <svg className={className} viewBox="0 0 298 291" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <g filter="url(#filter0_f_321_73)">
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M58.2798 117.842C64.6131 94.2298 49.3261 64.9341 65.1718 46.3174C80.802 27.954 109.979 25.9629 133.902 28.9964C155.5 31.7352 168.965 52.8675 188.735 61.9854C208.75 71.2165 237.363 64.6564 250.15 82.6096C262.851 100.441 248.392 125.075 249.251 146.95C250.174 170.438 264.51 194.106 255.381 215.766C245.911 238.234 224.812 258.382 200.716 262.108C176.86 265.796 157.579 243.923 135.436 234.311C119.572 227.425 104.36 221.578 89.0074 213.615C68.2667 202.857 36.6258 201.605 29.4879 179.358C22.4284 157.354 52.2934 140.161 58.2798 117.842Z" fill="url(#paint0_linear_321_73)" />
+                    <path fillRule="evenodd" clipRule="evenodd" d="M58.2798 117.842C64.6131 94.2298 49.3261 64.9341 65.1718 46.3174C80.802 27.954 109.979 25.9629 133.902 28.9964C155.5 31.7352 168.965 52.8675 188.735 61.9854C208.75 71.2165 237.363 64.6564 250.15 82.6096C262.851 100.441 248.392 125.075 249.251 146.95C250.174 170.438 264.51 194.106 255.381 215.766C245.911 238.234 224.812 258.382 200.716 262.108C176.86 265.796 157.579 243.923 135.436 234.311C119.572 227.425 104.36 221.578 89.0074 213.615C68.2667 202.857 36.6258 201.605 29.4879 179.358C22.4284 157.354 52.2934 140.161 58.2798 117.842Z" fill="url(#paint0_linear_321_73)" />
                 </g>
-                <path fill-rule="evenodd" clip-rule="evenodd" d="M58.2798 117.842C64.6131 94.2298 49.3261 64.9341 65.1718 46.3174C80.802 27.954 109.979 25.9629 133.902 28.9964C155.5 31.7352 168.965 52.8675 188.735 61.9854C208.75 71.2165 237.363 64.6564 250.15 82.6096C262.851 100.441 248.392 125.075 249.251 146.95C250.174 170.438 264.51 194.106 255.381 215.766C245.911 238.234 224.812 258.382 200.716 262.108C176.86 265.796 157.579 243.923 135.436 234.311C119.572 227.425 104.36 221.578 89.0074 213.615C68.2667 202.857 36.6258 201.605 29.4879 179.358C22.4284 157.354 52.2934 140.161 58.2798 117.842Z" fill="url(#paint1_linear_321_73)" />
-                <path fill-rule="evenodd" clip-rule="evenodd" d="M69.5542 126.286C75.2851 104.92 61.4523 78.4111 75.7906 61.5655C89.9339 44.949 116.335 43.1473 137.982 45.8922C157.526 48.3704 169.709 67.4924 187.599 75.743C205.71 84.0959 231.601 78.1598 243.172 94.4051C254.664 110.54 241.581 132.831 242.358 152.625C243.193 173.878 256.165 195.295 247.905 214.894C239.336 235.225 220.244 253.456 198.441 256.828C176.854 260.165 159.407 240.373 139.37 231.675C125.015 225.444 111.25 220.153 97.3587 212.948C78.5911 203.214 49.9602 202.081 43.5013 181.949C37.1134 162.039 64.1373 146.482 69.5542 126.286Z" fill="#1A0B1C" />
+                <path fillRule="evenodd" clipRule="evenodd" d="M58.2798 117.842C64.6131 94.2298 49.3261 64.9341 65.1718 46.3174C80.802 27.954 109.979 25.9629 133.902 28.9964C155.5 31.7352 168.965 52.8675 188.735 61.9854C208.75 71.2165 237.363 64.6564 250.15 82.6096C262.851 100.441 248.392 125.075 249.251 146.95C250.174 170.438 264.51 194.106 255.381 215.766C245.911 238.234 224.812 258.382 200.716 262.108C176.86 265.796 157.579 243.923 135.436 234.311C119.572 227.425 104.36 221.578 89.0074 213.615C68.2667 202.857 36.6258 201.605 29.4879 179.358C22.4284 157.354 52.2934 140.161 58.2798 117.842Z" fill="url(#paint1_linear_321_73)" />
+                <path fillRule="evenodd" clipRule="evenodd" d="M69.5542 126.286C75.2851 104.92 61.4523 78.4111 75.7906 61.5655C89.9339 44.949 116.335 43.1473 137.982 45.8922C157.526 48.3704 169.709 67.4924 187.599 75.743C205.71 84.0959 231.601 78.1598 243.172 94.4051C254.664 110.54 241.581 132.831 242.358 152.625C243.193 173.878 256.165 195.295 247.905 214.894C239.336 235.225 220.244 253.456 198.441 256.828C176.854 260.165 159.407 240.373 139.37 231.675C125.015 225.444 111.25 220.153 97.3587 212.948C78.5911 203.214 49.9602 202.081 43.5013 181.949C37.1134 162.039 64.1373 146.482 69.5542 126.286Z" fill="#1A0B1C" />
                 <defs>
-                    <filter id="filter0_f_321_73" x="0.887627" y="0.309898" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-                        <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                    <filter id="filter0_f_321_73" x="0.887627" y="0.309898" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+                        <feFlood floodOpacity="0" result="BackgroundImageFix" />
                         <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
                         <feGaussianBlur stdDeviation="13.7637" result="effect1_foregroundBlur_321_73" />
                     </filter>
                     <linearGradient className={"shape-animation"} id="paint0_linear_321_73" x1="60.7876" y1="59.3647" x2="347.829" y2="305.873" gradientUnits="userSpaceOnUse">
-                        <stop stop-color="#56235C" />
-                        <stop offset="0.294825" stop-color="#D43752" />
-                        <stop offset="0.402713" stop-color="#E4462D" />
-                        <stop offset="0.638994" stop-color="#F8B810" />
-                        <stop offset="0.827343" stop-color="#29499C" />
-                        <stop offset="1" stop-color="#2C3384" />
+                        <stop stopColor="#56235C" />
+                        <stop offset="0.294825" stopColor="#D43752" />
+                        <stop offset="0.402713" stopColor="#E4462D" />
+                        <stop offset="0.638994" stopColor="#F8B810" />
+                        <stop offset="0.827343" stopColor="#29499C" />
+                        <stop offset="1" stopColor="#2C3384" />
                     </linearGradient>
                     <linearGradient className={"shape-animation"} id="paint1_linear_321_73" x1="60.7876" y1="59.3647" x2="347.829" y2="305.873" gradientUnits="userSpaceOnUse">
-                        <stop stop-color="#56235C" />
-                        <stop offset="0.294825" stop-color="#D43752" />
-                        <stop offset="0.402713" stop-color="#E4462D" />
-                        <stop offset="0.638994" stop-color="#F8B810" />
-                        <stop offset="0.827343" stop-color="#29499C" />
-                        <stop offset="1" stop-color="#2C3384" />
+                        <stop stopColor="#56235C" />
+                        <stop offset="0.294825" stopColor="#D43752" />
+                        <stop offset="0.402713" stopColor="#E4462D" />
+                        <stop offset="0.638994" stopColor="#F8B810" />
+                        <stop offset="0.827343" stopColor="#29499C" />
+                        <stop offset="1" stopColor="#2C3384" />
                     </linearGradient>
                 </defs>
             </svg>
