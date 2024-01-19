@@ -27,8 +27,7 @@ export default function Home() {
               >
                 <Text size='base'>Launch App</Text>
               </GradientButton>
-            </Link>
-            <Faq />
+            </Link>            
           </div>
           <div className="md:mt-32 md:ml-20 p-4">
             <Link target={"_blank"} className="border border-[#073DC8]/60 bg-[#0c0c2766] px-4 md:px-10 py-8 rounded-lg flex gap-6 backdrop-blur-2xl" href={'https://twitter.com/Injective_/status/1745933949132488934?s=20'}>
@@ -67,7 +66,9 @@ export default function Home() {
             </Link>
           </div>
         </div>
-
+        <div className='max-w-[626px] md:ml-[200px] p-6 md:p-0'>
+        <Faq />
+        </div>
         <InjectiveBackgroundWave animate className="absolute top-40 md:-top-3 right-0 -z-10 md:w-[1200px] w-[300px]" />
       </main>
       <footer className='flex flex-col gap-x-48 gap-y-16 items-top flex-wrap px-6 md:px-20 pr-16 mt-40 pb-24 relative'>
