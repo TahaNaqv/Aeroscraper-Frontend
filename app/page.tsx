@@ -4,6 +4,7 @@ import GradientButton from '@/components/Buttons/GradientButton'
 import Faq from '@/components/FAQ/Faq'
 import { InjectiveBackgroundWave, LogoSecondary, MedalIcon } from '@/components/Icons/Icons'
 import Text from '@/components/Texts/Text'
+import Tooltip from '@/components/Tooltip/Tooltip'
 import Link from 'next/link'
 export default function Home() {
   return (
@@ -27,7 +28,7 @@ export default function Home() {
               >
                 <Text size='base'>Launch App</Text>
               </GradientButton>
-            </Link>            
+            </Link>
           </div>
           <div className="md:mt-32 md:ml-20 p-4">
             <Link target={"_blank"} className="border border-[#073DC8]/60 bg-[#0c0c2766] px-4 md:px-10 py-8 rounded-lg flex gap-6 backdrop-blur-2xl" href={'https://twitter.com/Injective_/status/1745933949132488934?s=20'}>
@@ -67,7 +68,7 @@ export default function Home() {
           </div>
         </div>
         <div className='max-w-[626px] md:ml-[200px] p-6 md:p-0'>
-        <Faq />
+          <Faq />
         </div>
         <InjectiveBackgroundWave animate className="absolute top-40 md:-top-3 right-0 -z-10 md:w-[1200px] w-[300px]" />
       </main>
@@ -79,10 +80,12 @@ export default function Home() {
         <div className='grid grid-cols-1 md:grid-cols-4 gap-10 md:gap-40'>
           <div className='flex flex-col content-start justify-start gap-4'>
             <Text size="sm" textColor='text-white' weight="font-semibold">Product</Text>
-            <Link href={'#'} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
-              <Text size="sm" textColor='text-white' className="cursor-pointer">Audit</Text>
-              <img alt='external-link' src='/images/external-link.svg' className='w-4 h-4' />
-            </Link>
+            <Tooltip title={<Text size='base'>The Audit Report will be Shared Publicly in a Short Time.</Text>} width='w-[191px]'>
+              <Link href={'#'} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
+                <Text size="sm" textColor='text-white' className="cursor-pointer">Audit</Text>
+                <img alt='external-link' src='/images/external-link.svg' className='w-4 h-4' />
+              </Link>
+            </Tooltip>
             <Link href={'/?scroll=FAQ'} target="_parent" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
               <Text size="sm" textColor='text-white' className="cursor-pointer">FAQ</Text>
             </Link>
