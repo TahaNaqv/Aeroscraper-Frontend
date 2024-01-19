@@ -86,16 +86,16 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
         anyWindow.leap?.getOfflineSigner ? walletExtensions.installed.push({ name: WalletType.LEAP }) : walletExtensions.otherWallets.push({ name: WalletType.LEAP, downloadLink: "https://www.leapwallet.io/" });
         // anyWindow.fin?.getOfflineSigner ? walletExtensions.installed.push({ name: WalletType.FIN }) : walletExtensions.otherWallets.push({ name: WalletType.FIN, downloadLink: "https://chrome.google.com/webstore/detail/fin-wallet-for-sei/dbgnhckhnppddckangcjbkjnlddbjkna" });
         // anyWindow.compass?.getOfflineSigner ? walletExtensions.installed.push({ name: WalletType.COMPASS }) : walletExtensions.otherWallets.push({ name: WalletType.COMPASS, downloadLink: "https://chrome.google.com/webstore/detail/compass-wallet-for-sei/anokgmphncpekkhclmingpimjmcooifb" });
-        anyWindow.ethereum ? walletExtensions.installed.push({ name: WalletType.METAMASK }) : walletExtensions.otherWallets.push({ name: WalletType.METAMASK, downloadLink: "https://chromewebstore.google.com/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?pli=1" });
-        anyWindow.ninji ? walletExtensions.installed.push({ name: WalletType.NINJI }) : walletExtensions.otherWallets.push({ name: WalletType.NINJI, downloadLink: "https://chromewebstore.google.com/detail/ninji-wallet/kkpllbgjhchghjapjbinnoddmciocphm" });
-        anyWindow.cosmostation ? walletExtensions.installed.push({ name: WalletType.COSMOSTATION }) : walletExtensions.otherWallets.push({ name: WalletType.COSMOSTATION, downloadLink: "https://chromewebstore.google.com/detail/cosmostation-wallet/fpkhgmpbidmiogeglndfbkegfdlnajnf" });
+        // anyWindow.ethereum ? walletExtensions.installed.push({ name: WalletType.METAMASK }) : walletExtensions.otherWallets.push({ name: WalletType.METAMASK, downloadLink: "https://chromewebstore.google.com/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?pli=1" });
+        // anyWindow.ninji ? walletExtensions.installed.push({ name: WalletType.NINJI }) : walletExtensions.otherWallets.push({ name: WalletType.NINJI, downloadLink: "https://chromewebstore.google.com/detail/ninji-wallet/kkpllbgjhchghjapjbinnoddmciocphm" });
+        // anyWindow.cosmostation ? walletExtensions.installed.push({ name: WalletType.COSMOSTATION }) : walletExtensions.otherWallets.push({ name: WalletType.COSMOSTATION, downloadLink: "https://chromewebstore.google.com/detail/cosmostation-wallet/fpkhgmpbidmiogeglndfbkegfdlnajnf" });
 
         setWalletExtensions({
             ...walletExtensions,
-            installed: [
-                ...walletExtensions.installed,
-                { name: WalletType.LEDGER }
-            ]
+            // installed: [
+            //     ...walletExtensions.installed,
+            //     { name: WalletType.LEDGER }
+            // ]
         });
     }
 
@@ -217,7 +217,7 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
                                         </div>
                                     })
                                 }
-                                {
+                                {/* {
                                     selectedChainName === ChainName.INJECTIVE &&
                                     <div className='mr-auto md:inline-block hidden' >
                                         {
@@ -237,7 +237,7 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
                                                 </Button>
                                         }
                                     </div>
-                                }
+                                } */}
                                 {
                                     otherWallets.map((wallet, idx) => (
                                         <div key={idx} className={`mr-auto ${wallet.walletInfo.name === WalletType.LEAP ? "" : "md:inline-block hidden"}`}>
@@ -256,6 +256,7 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
                             <div className={`gap-y-4 flex-col mt-10 md:flex hidden`}>
                                 {
                                     installedHoveredWallets.map((wallet, idx) => {
+
                                         return (
                                             <motion.div
                                                 key={idx}
@@ -279,7 +280,7 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
                                         )
                                     })
                                 }
-                                {
+                                {/* {
                                     onHoverChain === ChainName.INJECTIVE &&
                                     <motion.div
                                         key={WalletType.METAMASK}
@@ -305,7 +306,7 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
                                                 </Button>
                                         }
                                     </motion.div>
-                                }
+                                } */}
                                 {
                                     otherHoveredWallets.map((wallet, idx) => {
                                         return (
@@ -362,10 +363,10 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
                                                 return <img alt={wallet.walletInfo.name} key={idx} className={`w-6 h-6 object-contain ${wallet.walletInfo.name === WalletType.LEAP ? "" : "md:inline-block hidden"}`} src={wallet.walletInfo.logo as string} />
                                             })
                                         }
-                                        {
+                                        {/* {
                                             selectedChainName === ChainName.INJECTIVE &&
                                             <img alt={metamaskWalletInfo.name} className='w-6 h-6 object-contain md:inline-block hidden' src={metamaskWalletInfo.logo} />
-                                        }
+                                        } */}
                                     </div>
                                     <Text size='base' textColor='text-[#989396]'>If you want to connect an installed wallet, you can log in by selecting your wallet under &quot;Installed Wallets&quot; on the left side of the screen and using the browser extension.</Text>
                                     <Text size='base' textColor='text-[#989396]' className='mt-2 md:mt-10'>If you do not have an installed wallet, you can choose one of the wallet options on the left side of the screen and follow the instructions to set up your wallet.</Text>
@@ -377,7 +378,7 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
                                     <h3 className='text-white text-3xl font-medium'>Please choose your chain</h3>
                                     <div className='space-y-6 mt-10'>
                                         {
-                                            isNil(selectedChainName) && availableChains.map((chain, idx) => {                                                
+                                            isNil(selectedChainName) && availableChains.map((chain, idx) => {
                                                 return <Button
                                                     key={idx}
                                                     onClick={() => { selectChainName(chain.chain_name as ChainName) }}
