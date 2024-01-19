@@ -203,7 +203,7 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
                             <div className={`gap-y-4 flex flex-col mt-10 ${isNil(selectedChainName) ? "hidden" : ""}`}>
                                 {
                                     installedWallets.map((wallet:any, idx:any) => {
-                                        return <div key={idx} className={`mr-auto ${wallet.walletInfo.name === WalletType.LEAP ? "" : "md:inline-block hidden"}`} >
+                                        return <div key={idx} className={`mr-auto ${wallet.walletInfo.name === WalletType.LEAP || wallet.walletInfo.name === WalletType.KEPLR ? "" : "md:inline-block hidden"}`} >
 
                                             {idx === 0 && <Text size='base' className='mb-4'>Installed Wallets</Text>}
                                             <Button
@@ -241,7 +241,7 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
                                 } */}
                                 {
                                     otherWallets.map((wallet:any, idx:any) => (
-                                        <div key={idx} className={`mr-auto ${wallet.walletInfo.name === WalletType.LEAP ? "" : "md:inline-block hidden"}`}>
+                                        <div key={idx} className={`mr-auto ${wallet.walletInfo.name === WalletType.LEAP || wallet.walletInfo.name === WalletType.KEPLR ? "" : "md:inline-block hidden"}`}>
 
                                             {idx === 0 && <Text size='base' className='mb-4'>Other Wallets</Text>}
                                             <Button
@@ -362,7 +362,7 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
                                     <div className='flex justify-center items-center gap-16 mb-8'>
                                         {
                                             filteredWallets.map((wallet:any, idx:any) => {
-                                                return <img alt={wallet.walletInfo.name} key={idx} className={`w-6 h-6 object-contain ${wallet.walletInfo.name === WalletType.LEAP ? "" : "md:inline-block hidden"}`} src={wallet.walletInfo.logo as string} />
+                                                return <img alt={wallet.walletInfo.name} key={idx} className={`w-6 h-6 object-contain ${wallet.walletInfo.name === WalletType.LEAP || wallet.walletInfo.name === WalletType.KEPLR ? "" : "md:inline-block hidden"}`} src={wallet.walletInfo.logo as string} />
                                             })
                                         }
                                         {/* {
