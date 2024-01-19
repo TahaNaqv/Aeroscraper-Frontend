@@ -37,8 +37,8 @@ export const InjSdkWalletByCosmosWallet: Record<WalletType, Wallet> = {
     [WalletType.COSMOSTATION]: Wallet.Cosmostation
 }
 
-/* export const metamaskWalletInfo: WalletInfo = {
+export const metamaskWalletInfo: WalletInfo = {
     name: WalletType.METAMASK,
     prettyName: 'Metamask',
     logo: '/images/wallet-images/metamask-icon.png'
-} */
+}
