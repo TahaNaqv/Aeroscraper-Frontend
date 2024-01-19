@@ -74,7 +74,7 @@ export const getAppEthContract = (
             const response = await msgBroadcastClient.broadcast({
                 msgs: msg,
                 injectiveAddress: senderAddress,
-                gas: { gas: 40000000 }
+                gas: { gas: 60000000 }
             })
 
             return response

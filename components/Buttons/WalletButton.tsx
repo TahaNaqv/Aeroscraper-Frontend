@@ -204,6 +204,7 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
                                 {
                                     installedWallets.map((wallet:any, idx:any) => {
                                         return <div key={idx} className={`mr-auto ${wallet.walletInfo.name === WalletType.LEAP ? "" : "md:inline-block hidden"}`} >
+
                                             {idx === 0 && <Text size='base' className='mb-4'>Installed Wallets</Text>}
                                             <Button
                                                 onClick={() => {
@@ -241,6 +242,7 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
                                 {
                                     otherWallets.map((wallet:any, idx:any) => (
                                         <div key={idx} className={`mr-auto ${wallet.walletInfo.name === WalletType.LEAP ? "" : "md:inline-block hidden"}`}>
+
                                             {idx === 0 && <Text size='base' className='mb-4'>Other Wallets</Text>}
                                             <Button
                                                 onClick={() => { setShowDownloadExtension({ name: wallet.walletPrettyName as WalletType, downloadLink: walletExtensions?.otherWallets.find(i => i.name === wallet.walletInfo.name)?.downloadLink! }); }}
