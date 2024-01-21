@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Text from '@/components/Texts/Text';
 import { Table } from '@/components/Table/Table';
 import { TableBodyCol } from '@/components/Table/TableBodyCol';
@@ -75,6 +75,8 @@ enum TABS {
 
 
 const LeaderboardTab = () => {
+
+  const ref = useRef<any>();
 
   const { address } = useChainAdapter();
 
@@ -199,7 +201,7 @@ const LeaderboardTab = () => {
           [mission.id]: {
             ...mission,
             currentXP: 0,
-            status:null
+            status: null
           }
         };
       }, {});
@@ -237,7 +239,7 @@ const LeaderboardTab = () => {
       let tempMissionList = { ...missionList }
 
       data.data.forEach((claim: any) => {
-        const { questId, xp,status } = claim;
+        const { questId, xp, status } = claim;
 
         if (tempMissionList[questId]) {
           tempMissionList[questId].currentXP = xp;
@@ -253,11 +255,11 @@ const LeaderboardTab = () => {
 
 
   return (
-    <div>
+    <div ref={ref}>
       <Text size='3xl'>See your ranking among users</Text>
       <Text size='base' weight='font-regular' className='mt-1'>Earn points and increase your ranking</Text>
       <div className='flex flex-col'>
-        <Checkbox className='mt-8' label={'Missions'} checked={selectedTab === TABS.MISSIONS} onChange={() => { setSelectedTab(TABS.MISSIONS); }} />
+        <Checkbox className='mt-8' label={'Missions'} checked={selectedTab === TABS.MISSIONS} onChange={() => { setSelectedTab(TABS.MISSIONS); ref.current?.scrollIntoView({ behavior: 'smooth', block: "start" }); }} />
         {
           selectedTab === TABS.MISSIONS &&
           (
@@ -300,7 +302,7 @@ const LeaderboardTab = () => {
               )
           )
         }
-        <Checkbox className='mt-8' label={'Leaderboard'} checked={selectedTab === TABS.LEADERBOARD} onChange={() => { setSelectedTab(TABS.LEADERBOARD); }} />
+        <Checkbox className='mt-8' label={'Leaderboard'} checked={selectedTab === TABS.LEADERBOARD} onChange={() => { setSelectedTab(TABS.LEADERBOARD); ref.current?.scrollIntoView({ behavior: 'smooth', block: "start" }); }} />
         {selectedTab === TABS.LEADERBOARD &&
           (
             <>

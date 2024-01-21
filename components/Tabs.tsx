@@ -2,7 +2,6 @@
 import { camelCaseToTitleCase } from '@/utils/stringUtils';
 import { motion } from 'framer-motion';
 import React, { FC } from 'react';
-import ReactDOM from 'react-dom';
 import { ShapeIcon } from './Icons/Icons';
 import SkeletonLoading from './Table/SkeletonLoading';
 
