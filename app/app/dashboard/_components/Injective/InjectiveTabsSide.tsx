@@ -88,9 +88,9 @@ const InjectiveTabsSide: FC<Props> = ({ setTabPosition }) => {
   }
 
   return (
-    <div ref={ref} className='md:flex-1 md:max-w-[754px] px-3 md:px-0 md:mt-16 md:ml-auto'>
+    <div ref={ref} className='md:flex-1 md:max-w-[754px] px-3 md:px-0 md:ml-auto'>
       <Tabs tabs={TabList} dots={pageData.rewardAmount > 0 ? ["rewards"] : undefined} selectedTab={selectedTab} onTabSelected={(e) => { handleChangeTab(e); }} loading={loading} />
-      <button onClick={() => { setSelectedTab("leaderboard&missions"); }} className={`border border-white/10 px-6 py-2 mt-1 text-sm rounded-md font-medium text-white inline-block relative`}>
+      <button onClick={() => { setSelectedTab("leaderboard&missions"); }} className={`border border-white/10 px-2 md:px-6 py-2 mt-1 text-sm rounded-md font-medium text-white inline-block relative mb-4`}>
         {selectedTab === "leaderboard&missions" && <motion.div layoutId={"gliding"} className="absolute bottom-1 h-[28px] border rounded border-red-500 left-1 right-1" />}
         Leaderboard & Missions
       </button>
@@ -126,8 +126,6 @@ const InjectiveTabsSide: FC<Props> = ({ setTabPosition }) => {
         </motion.main>
       }
       {selectedTab === "leaderboard&missions" && <LeaderboardTab />}
-
-
     </div>
   )
 }
