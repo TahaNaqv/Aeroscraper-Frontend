@@ -76,7 +76,7 @@ const WalletButton: FC<Props> = ({
       };
       getChainId();
 
-      window.ethereum?.on("chainChanged", (chainId:any) => {
+      window.ethereum?.on("chainChanged", (chainId: any) => {
         CheckChain(chainId);
         if (chainID === chainId) {
           ToastSuccess.fire({
@@ -90,55 +90,53 @@ const WalletButton: FC<Props> = ({
   const [chainData, setChainData] = useState<any>(ChainData);
 
   const CheckChain = (id: string) => {
-    let chainId = "5"; //goerli
-    console.log("id", id);
-    id = Number(id).toString();
-    if (id !== chainId && selectedWallet === WalletType.METAMASK) {
-      //dispatch(setClear());
-      console.log("chainId", chainId);
-      console.log("chain", Number(id).toString());
-
-      const { name } = chainData[id] || { name: "UNKNOW" };
-      const fromNetwork = name || "Unknown Network";
-      const toNetwork = chainData[chainId]?.name || "Binance Smart Chain 2";
-
-      const alert = async () =>
-        await Swal.fire({
-          title: "Please Change Network",
-          text: `From ${fromNetwork} to ${toNetwork}`,
-          icon: "warning",
-          iconColor: "#fff",
-          showCancelButton: false,
-          backdrop: true,
-          background: "#191919",
-          confirmButtonColor: "#282828",
-          color: "#fff",
-          confirmButtonText: "Yes, Change It!",
-        }).then((result) => {
-          if (result.isConfirmed) {
-            window.ethereum?.request({
-              method: "wallet_switchEthereumChain",
-              params: [{ chainId: chainData[chainId].chainId }],
-            }) ||
-              window.ethereum.request({
-                method: "wallet_addEthereumChain",
-                params: [
-                  {
-                    chainId: chainData[chainId].chainId,
-                    chainName: chainData[chainId].name,
-                    nativeCurrency: {
-                      name: chainData[chainId].nativeCurrency.name,
-                      symbol: chainData[chainId].nativeCurrency.symbol,
-                      decimals: 18,
+    try {
+      let chainId = "5"; //goerli
+      id = Number(id).toString();
+      if (id !== chainId && selectedWallet === WalletType.METAMASK) {
+        const { name } = chainData[id] || { name: "UNKNOW" };
+        const fromNetwork = name || "Unknown Network";
+        const toNetwork = chainData[chainId]?.name || "GOERLI NETWORK ";
+        const alert = async () =>
+          await Swal.fire({
+            title: "Please Change Network",
+            text: `From ${fromNetwork} to ${toNetwork}`,
+            icon: "warning",
+            iconColor: "#fff",
+            showCancelButton: false,
+            backdrop: true,
+            background: "#191919",
+            confirmButtonColor: "#282828",
+            color: "#fff",
+            confirmButtonText: "Yes, Change It!",
+          }).then((result) => {
+            if (result.isConfirmed) {
+              window.ethereum?.request({
+                method: "wallet_switchEthereumChain",
+                params: [{ chainId: chainData[chainId].chainId }],
+              }) ||
+                window.ethereum.request({
+                  method: "wallet_addEthereumChain",
+                  params: [
+                    {
+                      chainId: chainData[chainId].chainId,
+                      chainName: chainData[chainId].name,
+                      nativeCurrency: {
+                        name: chainData[chainId].nativeCurrency.name,
+                        symbol: chainData[chainId].nativeCurrency.symbol,
+                        decimals: 18,
+                      },
+                      rpcUrls: chainData[chainId].rpcUrls,
+                      blockExplorerUrls: chainData[chainId].blockExplorerUrls,
                     },
-                    rpcUrls: chainData[chainId].rpcUrls,
-                    blockExplorerUrls: chainData[chainId].blockExplorerUrls,
-                  },
-                ],
-              });
-          }
-        });
-      alert();
+                  ],
+                });
+            }
+          });
+        alert();
+      }
+    } catch (error) {
+      console.log("CheckChain error:", error);
     }
   };
   const [accountModal, setAccountModal] = useState(false);
