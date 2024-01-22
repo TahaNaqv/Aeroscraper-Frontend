@@ -56,10 +56,14 @@ export default function InjectiveDashboard() {
     /* getPrice(); */
     //page load event
     //@ts-ignore
-    window.addEventListener("load", getPrice);
+    const handleLoad = () => {
+      getPrice();
+    };
+
+    window.addEventListener("load", handleLoad);
+
     return () => {
-      //@ts-ignore
-      window.removeEventListener("load", getPrice);
+      window.removeEventListener("load", handleLoad);
     };
   }, []);
 
