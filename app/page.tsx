@@ -30,7 +30,7 @@ export default function Home() {
               </GradientButton>
             </Link>
           </div>
-          <div className="md:mt-32 md:ml-20 p-4">
+          <div className="md:mt-32 md:ml-20 p-4 md:block hidden">
             <Link target={"_blank"} className="border border-[#073DC8]/60 bg-[#0c0c2766] px-4 md:px-10 py-8 rounded-lg flex gap-6 backdrop-blur-2xl" href={'https://twitter.com/Injective_/status/1745933949132488934?s=20'}>
               <div className='flex gap-4 items-center'>
                 <MedalIcon className="text-[#F8B810]" />
