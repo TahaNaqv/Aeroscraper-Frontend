@@ -90,10 +90,6 @@ const InjectiveTabsSide: FC<Props> = ({ setTabPosition }) => {
   return (
     <div ref={ref} className='md:flex-1 md:max-w-[754px] px-3 md:px-0 md:ml-auto'>
       <Tabs tabs={TabList} dots={pageData.rewardAmount > 0 ? ["rewards"] : undefined} selectedTab={selectedTab} onTabSelected={(e) => { handleChangeTab(e); }} loading={loading} />
-      <button onClick={() => { setSelectedTab("leaderboard&missions"); }} className={`border border-white/10 px-2 md:px-6 py-2 mt-1 text-sm rounded-md font-medium text-white inline-block relative mb-4`}>
-        {selectedTab === "leaderboard&missions" && <motion.div layoutId={"gliding"} className="absolute bottom-1 h-[28px] border rounded border-red-500 left-1 right-1" />}
-        Leaderboard & Missions
-      </button>
       {loading ? <>
         <div className='mt-16'>
           <SkeletonLoading height={'h-10'} width={"w-1/2"} noPadding noMargin />
@@ -116,16 +112,20 @@ const InjectiveTabsSide: FC<Props> = ({ setTabPosition }) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.7 }}
-          className={`md:mt-14 ${isNil(walletInfo) ? "blur-[2px]" : ""} relative`}>
+          className={`md:mt-6 ${(isNil(walletInfo) && selectedTab !== "leaderboard&missions") ? "blur-[2px]" : ""} relative`}>
+          {(isNil(walletInfo) && selectedTab !== "leaderboard&missions") &&
+            <div className='cursor-not-allowed h-full w-full absolute top-0 bottom-0 left-0 z-50'>
+            </div>
+          }
           {isNil(walletInfo) && <div className='cursor-not-allowed h-full w-full absolute top-0 bottom-0 left-0 z-50' />}
           {selectedTab === (isTroveOpened ? "trove" : "createTrove") && <TroveTab pageData={pageData} getPageData={getPageData} basePrice={basePrice} />}
           {selectedTab === "stabilityPool" && <StabilityPoolTab pageData={pageData} getPageData={getPageData} />}
           {selectedTab === "redeem" && <RedeemTab pageData={pageData} getPageData={getPageData} refreshBalance={refreshBalance} basePrice={basePrice} />}
           {selectedTab === "riskyTroves" && <RiskyTrovesTab pageData={pageData} getPageData={getPageData} basePrice={basePrice} />}
           {selectedTab === "rewards" && <ClaimRewardTab pageData={pageData} getPageData={getPageData} refreshBalance={refreshBalance} basePrice={basePrice} />}
+          {selectedTab === "leaderboard&missions" && <LeaderboardTab />}
         </motion.main>
       }
-      {selectedTab === "leaderboard&missions" && <LeaderboardTab />}
     </div>
   )
 }

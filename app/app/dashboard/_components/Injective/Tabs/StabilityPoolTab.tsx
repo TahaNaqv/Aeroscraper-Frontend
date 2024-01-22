@@ -95,7 +95,7 @@ const StabilityPoolTab: FC<Props> = ({ pageData, getPageData }) => {
   }
 
   return (
-    <div className="md:-ml-4 overflow-hidden md:overflow-visible">
+    <div className="overflow-hidden md:overflow-visible">
       <Text size='3xl'>Add to stability pool to earn rewards</Text>
       <Text size='base' weight='font-regular' className='mt-1 mb-8'>Deposit or Withdraw AUSD from your wallet to the Aeroscraper protocol to earn rewards. </Text>
       <div className='flex flex-col'>

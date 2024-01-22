@@ -32,12 +32,12 @@ const Tabs: FC<TabsProps<string>> = ({ tabs, selectedTab, onTabSelected, loading
 
   return (
     <nav>
-      <ul className='grid grid-cols-5 gap-2 py-4 left-0 bottom-0 fixed shadow shadow-white/10 w-full bg-chinese-black md:hidden z-[999]'>
+      <ul className='grid grid-cols-6 gap-2 py-4 left-0 bottom-0 fixed shadow shadow-white/10 w-full bg-chinese-black md:hidden z-[999]'>
         {tabs.map((tab) => (
           <motion.li
             key={tab}
-            onClick={() => onTabSelected && onTabSelected(tab)}
-            className={`m-1 text-[10px] font-medium text-white relative cursor-pointer rounded-md hover:text-red-500 duration-700 flex-1 whitespace-wrap items-center justify-center flex text-center`}
+            onClick={() => onTabSelected?.(tab)}
+            className={`m-1 text-[8px] font-medium text-white relative cursor-pointer rounded-md hover:text-red-500 duration-700 flex-1 whitespace-wrap items-center justify-center flex text-center`}
           >
             {camelCaseToTitleCase(tab)}
             {dots?.includes(tab) && <div className='h-2 w-2 absolute bg-red-500 right-3 -top-2.5 md:top-2 animate-pulse rounded-full' />}
@@ -49,7 +49,7 @@ const Tabs: FC<TabsProps<string>> = ({ tabs, selectedTab, onTabSelected, loading
         {tabs.map((tab) => (
           <motion.li
             key={tab}
-            onClick={() => onTabSelected && onTabSelected(tab)}
+            onClick={() => onTabSelected?.(tab)}
             className={`px-6 py-3 m-1 text-base font-medium text-white relative cursor-pointer rounded-md hover:text-red-500 duration-700 flex-1 whitespace-nowrap text-center`}
           >
             {camelCaseToTitleCase(tab)}
@@ -58,6 +58,12 @@ const Tabs: FC<TabsProps<string>> = ({ tabs, selectedTab, onTabSelected, loading
           </motion.li>
         ))}
       </ul>
+      <button onClick={() => { onTabSelected?.("leaderboard&missions"); }} className={`md:border z-[999] border-white/10 px-2 md:px-6 py-2 mt-1 text-[8px] md:text-sm rounded-md md:font-medium text-white md:inline-block md:w-auto w-14 fixed md:bottom-0 bottom-1 md:right-0 right-2 md:relative md:mb-4`}>
+        {selectedTab === "leaderboard&missions" && <motion.div layoutId={"gliding"} className="absolute bottom-1 h-[28px] border rounded border-red-500 left-1 right-1 md:block hidden" />}
+        {selectedTab === "leaderboard&missions" && <ShapeIcon className='w-12 h-12 absolute -bottom-10 md:hidden block' />}
+
+        Leaderboard & Missions
+      </button>
     </nav>
   );
 };
