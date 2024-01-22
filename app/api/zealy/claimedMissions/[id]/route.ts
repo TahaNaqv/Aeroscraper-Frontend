@@ -3,9 +3,10 @@ import { NextRequest, NextResponse } from "next/server";
 export const runtime = "edge";
 export async function GET(req: NextRequest) {
 
-  const path = req.nextUrl.pathname;
+  /* const path = req.nextUrl.pathname;
   const parts = path.split("/");
-  const zealyId = parts[4];
+  const zealyId = parts[4]; */
+  const zealyId = req.nextUrl.searchParams.get("id");
 
   const missionDatas = await fetch(`https://api.zealy.io/communities/aeroscraper/claimed-quests?user_id=${zealyId}`, {
     headers: {
