@@ -58,9 +58,15 @@ const WalletButton: FC<Props> = ({
       setWalletSelectionOpen(false);
     }
   }, [isWalletConnected]);
+
   useEffect(() => {
     let chainID = "5";
-    if (window.ethereum && typeof window !== "undefined") {
+    if (
+      window.ethereum &&
+      typeof window !== "undefined" &&
+      selectedWallet === WalletType.METAMASK
+    ) {
+
       const getChainId = async () => {
         const { ethereum } = window as any;
         const chainIdMetamask: any = await ethereum?.request({
@@ -78,7 +84,7 @@ const WalletButton: FC<Props> = ({
 
       window.ethereum?.on("chainChanged", (chainId: any) => {
         CheckChain(chainId);
-        if (chainID === chainId) {
+        if (chainID === Number(chainId).toString()) {
           ToastSuccess.fire({
             title: "Network Changed",
           });
@@ -86,14 +92,14 @@ const WalletButton: FC<Props> = ({
         }
       });
     }
-  }, []);
+  });
   const [chainData, setChainData] = useState<any>(ChainData);
 
   const CheckChain = (id: string) => {
     try {
       let chainId = "5"; //goerli
       id = Number(id).toString();
-      if (id !== chainId && selectedWallet === WalletType.METAMASK) {
+      if (id !== chainId) {
         const { name } = chainData[id] || { name: "UNKNOW" };
         const fromNetwork = name || "Unknown Network";
         const toNetwork = chainData[chainId]?.name || "GOERLI NETWORK ";
