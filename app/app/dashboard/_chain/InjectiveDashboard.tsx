@@ -1,10 +1,15 @@
-'use client';
+"use client";
 
-import { InjectiveBackgroundWave, LogoSecondary } from "@/components/Icons/Icons";
+import {
+  InjectiveBackgroundWave,
+  LogoSecondary,
+} from "@/components/Icons/Icons";
 import Link from "next/link";
 import InjectiveStatisticSide from "../_components/Injective/InjectiveStatisticSide";
-import InjectiveTabsSide, { InjectiveTabs } from "../_components/Injective/InjectiveTabsSide";
-import Text from "@/components/Texts/Text"
+import InjectiveTabsSide, {
+  InjectiveTabs,
+} from "../_components/Injective/InjectiveTabsSide";
+import Text from "@/components/Texts/Text";
 import { useCallback, useEffect, useState } from "react";
 import { PriceServiceConnection } from "@pythnetwork/price-service-client";
 import { motion } from "framer-motion";
@@ -12,40 +17,49 @@ import { useNotification } from "@/contexts/NotificationProvider";
 import Tooltip from "@/components/Tooltip/Tooltip";
 
 export default function InjectiveDashboard() {
-
   const [basePrice, setBasePrice] = useState(1);
 
   const [tabPosition, setTabPosition] = useState<InjectiveTabs>("redeem");
 
   const { processLoading } = useNotification();
 
-  useEffect(() => {
-    const getPrice = async () => {
-      const connection = new PriceServiceConnection(
-        "https://hermes-beta.pyth.network/",
-        {
-          priceFeedRequestConfig: {
-            binary: true,
-          },
-        }
-      )
-
-      const priceId = ["2d9315a88f3019f8efa88dfe9c0f0843712da0bac814461e27733f6b83eb51b3"];
-
-      const currentPrices = await connection.getLatestPriceFeeds(priceId);
-
-      if (currentPrices) {
-        setBasePrice(Number(currentPrices[0].getPriceUnchecked().price) / 100000000);
+  const getPrice = async () => {
+    const connection = new PriceServiceConnection(
+      "https://hermes-beta.pyth.network/",
+      {
+        priceFeedRequestConfig: {
+          binary: true,
+        },
       }
+    );
+
+    const priceId = [
+      "2d9315a88f3019f8efa88dfe9c0f0843712da0bac814461e27733f6b83eb51b3",
+    ];
+
+    const currentPrices = await connection.getLatestPriceFeeds(priceId);
+
+    if (currentPrices) {
+      setBasePrice(
+        Number(currentPrices[0].getPriceUnchecked().price) / 100000000
+      );
     }
+  };
 
-    getPrice()
-  }, [])
+  useEffect(() => {
+    /* getPrice(); */
+    //page load event
+    //@ts-ignore
+    window.addEventListener("load", getPrice);
+    return () => {
+      //@ts-ignore
+      window.removeEventListener("load", getPrice);
+    };
+  }, []);
 
-  const changeTabPosition = useCallback(
-    (e: InjectiveTabs) => {
-      setTabPosition(e)
-    }, []);
+  const changeTabPosition = useCallback((e: InjectiveTabs) => {
+    setTabPosition(e);
+  }, []);
 
   return (
     <div className="h-screen">
@@ -56,8 +70,14 @@ export default function InjectiveDashboard() {
           transition={{ duration: 0.8, delay: 0.7 }}
           className="md:block hidden"
         >
-          <InjectiveBackgroundWave animate={processLoading} className="absolute -bottom-40 -right-0 -z-10" />
-          <InjectiveBackgroundWave animate={processLoading} className="absolute -top-[400px] left-48 -z-10 h-[584px] rotate-270" />
+          <InjectiveBackgroundWave
+            animate={processLoading}
+            className="absolute -bottom-40 -right-0 -z-10"
+          />
+          <InjectiveBackgroundWave
+            animate={processLoading}
+            className="absolute -top-[400px] left-48 -z-10 h-[584px] rotate-270"
+          />
         </motion.div>
       )}
       {tabPosition === "stabilityPool" && (
@@ -67,8 +87,14 @@ export default function InjectiveDashboard() {
           transition={{ duration: 0.8, delay: 0.7 }}
           className="md:block hidden"
         >
-          <InjectiveBackgroundWave animate={processLoading} className="absolute -top-40 -right-60 -z-10" />
-          <InjectiveBackgroundWave animate={processLoading} className="absolute -bottom-[200px] -left-20 -z-10 h-[584px] rotate-[180deg]" />
+          <InjectiveBackgroundWave
+            animate={processLoading}
+            className="absolute -top-40 -right-60 -z-10"
+          />
+          <InjectiveBackgroundWave
+            animate={processLoading}
+            className="absolute -bottom-[200px] -left-20 -z-10 h-[584px] rotate-[180deg]"
+          />
         </motion.div>
       )}
       {tabPosition === "redeem" && (
@@ -78,8 +104,14 @@ export default function InjectiveDashboard() {
           transition={{ duration: 0.8, delay: 0.7 }}
           className="md:block hidden"
         >
-          <InjectiveBackgroundWave animate={processLoading} className="absolute -bottom-0 -right-0 -z-10" />
-          <InjectiveBackgroundWave animate={processLoading} className="absolute -bottom-[240px] -left-10 -z-10 h-[584px] rotate-[180deg]" />
+          <InjectiveBackgroundWave
+            animate={processLoading}
+            className="absolute -bottom-0 -right-0 -z-10"
+          />
+          <InjectiveBackgroundWave
+            animate={processLoading}
+            className="absolute -bottom-[240px] -left-10 -z-10 h-[584px] rotate-[180deg]"
+          />
         </motion.div>
       )}
       {tabPosition === "riskyTroves" && (
@@ -89,8 +121,14 @@ export default function InjectiveDashboard() {
           transition={{ duration: 0.8, delay: 0.7 }}
           className="md:block hidden"
         >
-          <InjectiveBackgroundWave animate={processLoading} className="absolute -bottom-40 -right-0 -z-10" />
-          <InjectiveBackgroundWave animate={processLoading} className="absolute -top-[240px] left-80 -z-10 h-[664px] rotate-[300deg]" />
+          <InjectiveBackgroundWave
+            animate={processLoading}
+            className="absolute -bottom-40 -right-0 -z-10"
+          />
+          <InjectiveBackgroundWave
+            animate={processLoading}
+            className="absolute -top-[240px] left-80 -z-10 h-[664px] rotate-[300deg]"
+          />
         </motion.div>
       )}
       {tabPosition === "rewards" && (
@@ -100,95 +138,268 @@ export default function InjectiveDashboard() {
           transition={{ duration: 0.8, delay: 0.7 }}
           className="md:block hidden"
         >
-          <InjectiveBackgroundWave animate={processLoading} className="absolute  -bottom-40 -right-0 -z-10" />
-          <InjectiveBackgroundWave animate={processLoading} className="absolute -bottom-[200px] -left-20 -z-10 h-[584px] rotate-[180deg]" />
+          <InjectiveBackgroundWave
+            animate={processLoading}
+            className="absolute  -bottom-40 -right-0 -z-10"
+          />
+          <InjectiveBackgroundWave
+            animate={processLoading}
+            className="absolute -bottom-[200px] -left-20 -z-10 h-[584px] rotate-[180deg]"
+          />
         </motion.div>
       )}
       <div className="flex gap-4 flex-col md:flex-row md:gap-24 z-10 relative md:min-h-[720px]">
         <InjectiveStatisticSide basePrice={basePrice} />
         <InjectiveTabsSide setTabPosition={changeTabPosition} />
       </div>
-      <footer className='flex flex-col md:gap-x-48 md:gap-y-16 items-top flex-wrap px-6 md:px-20 bg-transparent md:-mx-20 md:pr-16 mt-40 pb-24 relative'>
-        <div className='flex items-center gap-6 md:mt-20'>
+      <footer className="flex flex-col md:gap-x-48 md:gap-y-16 items-top flex-wrap px-6 md:px-20 bg-transparent md:-mx-20 md:pr-16 mt-40 pb-24 relative">
+        <div className="flex items-center gap-6 md:mt-20">
           <LogoSecondary />
-          <Text size="2xl" textColor='text-white'>Aeroscraper</Text>
+          <Text size="2xl" textColor="text-white">
+            Aeroscraper
+          </Text>
         </div>
-        <div className='grid md:grid-cols-4 gap-10 md:gap-40 md:mt-0 mt-10'>
-          <div className='flex flex-col content-start justify-start gap-4'>
-            <Text size="sm" textColor='text-white' weight="font-semibold">Product</Text>
-            <Tooltip title={<Text size='base'>The Audit Report will be Shared Publicly in a Short Time.</Text>} width='w-[191px]'>
-              <Link href={{}} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
-                <Text size="sm" textColor='text-white' className="cursor-pointer">Audit</Text>
-                <img alt='external-link' src='/images/external-link.svg' className='w-4 h-4' />
+        <div className="grid md:grid-cols-4 gap-10 md:gap-40 md:mt-0 mt-10">
+          <div className="flex flex-col content-start justify-start gap-4">
+            <Text size="sm" textColor="text-white" weight="font-semibold">
+              Product
+            </Text>
+            <Tooltip
+              title={
+                <Text size="base">
+                  The Audit Report will be Shared Publicly in a Short Time.
+                </Text>
+              }
+              width="w-[191px]"
+            >
+              <Link
+                href={{}}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:scale-105 transition-all flex gap-2"
+              >
+                <Text
+                  size="sm"
+                  textColor="text-white"
+                  className="cursor-pointer"
+                >
+                  Audit
+                </Text>
+                <img
+                  alt="external-link"
+                  src="/images/external-link.svg"
+                  className="w-4 h-4"
+                />
               </Link>
             </Tooltip>
-            <Link href={'/?scroll=FAQ'} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
-              <Text size="sm" textColor='text-white' className="cursor-pointer">FAQ</Text>
+            <Link
+              href={"/?scroll=FAQ"}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:scale-105 transition-all flex gap-2"
+            >
+              <Text size="sm" textColor="text-white" className="cursor-pointer">
+                FAQ
+              </Text>
             </Link>
-            <Link href={'https://novaratio.gitbook.io/aeroscraper/aeroscraper/whitepaper'} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
-              <Text size="sm" textColor='text-white' className="cursor-pointer">Whitepaper</Text>
+            <Link
+              href={
+                "https://novaratio.gitbook.io/aeroscraper/aeroscraper/whitepaper"
+              }
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:scale-105 transition-all flex gap-2"
+            >
+              <Text size="sm" textColor="text-white" className="cursor-pointer">
+                Whitepaper
+              </Text>
             </Link>
-            <Link href={'https://aeroscraper.gitbook.io/aeroscraper/brand-identity/brand-kit'} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
-              <Text size="sm" textColor='text-white'>Brand Identity</Text>
+            <Link
+              href={
+                "https://aeroscraper.gitbook.io/aeroscraper/brand-identity/brand-kit"
+              }
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:scale-105 transition-all flex gap-2"
+            >
+              <Text size="sm" textColor="text-white">
+                Brand Identity
+              </Text>
             </Link>
-            <Link href={'https://testnet.faucet.injective.network/'} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
-              <Text size="sm" textColor='text-white'>Injective Faucet</Text>
+            <Link
+              href={"https://testnet.faucet.injective.network/"}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:scale-105 transition-all flex gap-2"
+            >
+              <Text size="sm" textColor="text-white">
+                Injective Faucet
+              </Text>
             </Link>
           </div>
-          <div className='flex flex-col content-start justify-start gap-6'>
-            <Text size="sm" weight="font-semibold">Deep dive</Text>
-            <div className='flex flex-col content-start gap-3'>
-              <Link href={'https://aeroscraper.gitbook.io/aeroscraper/definitions-of-aeroscraper/definition-of-name'} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
-                <Text size="sm" textColor='text-white'>Definition of name</Text>
+          <div className="flex flex-col content-start justify-start gap-6">
+            <Text size="sm" weight="font-semibold">
+              Deep dive
+            </Text>
+            <div className="flex flex-col content-start gap-3">
+              <Link
+                href={
+                  "https://aeroscraper.gitbook.io/aeroscraper/definitions-of-aeroscraper/definition-of-name"
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:scale-105 transition-all flex gap-2"
+              >
+                <Text size="sm" textColor="text-white">
+                  Definition of name
+                </Text>
               </Link>
-              <Link href={'https://aeroscraper.gitbook.io/aeroscraper/definitions-of-aeroscraper/definition-of-icon'} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
-                <Text size="sm" textColor='text-white'>Definition of icon</Text>
+              <Link
+                href={
+                  "https://aeroscraper.gitbook.io/aeroscraper/definitions-of-aeroscraper/definition-of-icon"
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:scale-105 transition-all flex gap-2"
+              >
+                <Text size="sm" textColor="text-white">
+                  Definition of icon
+                </Text>
               </Link>
-              <Link href={'https://aeroscraper.gitbook.io/aeroscraper/definitions-of-aeroscraper/definition-of-colors'} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
-                <Text size="sm" textColor='text-white'>Definition of colors</Text>
+              <Link
+                href={
+                  "https://aeroscraper.gitbook.io/aeroscraper/definitions-of-aeroscraper/definition-of-colors"
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:scale-105 transition-all flex gap-2"
+              >
+                <Text size="sm" textColor="text-white">
+                  Definition of colors
+                </Text>
               </Link>
-              <Link href={'https://aeroscraper.gitbook.io/aeroscraper/definitions-of-aeroscraper/definition-of-typography'} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
-                <Text size="sm" textColor='text-white'>Definition of typography</Text>
+              <Link
+                href={
+                  "https://aeroscraper.gitbook.io/aeroscraper/definitions-of-aeroscraper/definition-of-typography"
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:scale-105 transition-all flex gap-2"
+              >
+                <Text size="sm" textColor="text-white">
+                  Definition of typography
+                </Text>
               </Link>
-              <Link href={'https://aeroscraper.gitbook.io/aeroscraper/'} className='hover:scale-105 transition-all flex gap-2'>
-                <Text size="sm" textColor='text-white'>Definition of concept</Text>
+              <Link
+                href={"https://aeroscraper.gitbook.io/aeroscraper/"}
+                className="hover:scale-105 transition-all flex gap-2"
+              >
+                <Text size="sm" textColor="text-white">
+                  Definition of concept
+                </Text>
               </Link>
             </div>
           </div>
-          <div className='flex flex-col content-start justify-start gap-6'>
-            <Text size="sm" weight="font-semibold">Hackathon</Text>
-            <div className='flex flex-col content-start gap-3'>
-              <Link href={'https://twitter.com/Injective_/status/1745933949132488934?s=20'} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
-                <Text size="sm" textColor='text-white'>Injective Illuminate Hackathon</Text>
+          <div className="flex flex-col content-start justify-start gap-6">
+            <Text size="sm" weight="font-semibold">
+              Hackathon
+            </Text>
+            <div className="flex flex-col content-start gap-3">
+              <Link
+                href={
+                  "https://twitter.com/Injective_/status/1745933949132488934?s=20"
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:scale-105 transition-all flex gap-2"
+              >
+                <Text size="sm" textColor="text-white">
+                  Injective Illuminate Hackathon
+                </Text>
               </Link>
-              <Link href={'https://x.com/SeiNetwork/status/1705128171534717322?s=20'} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
-                <Text size="sm" textColor='text-white'>Code Sei Hackathon</Text>
+              <Link
+                href={
+                  "https://x.com/SeiNetwork/status/1705128171534717322?s=20"
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:scale-105 transition-all flex gap-2"
+              >
+                <Text size="sm" textColor="text-white">
+                  Code Sei Hackathon
+                </Text>
               </Link>
             </div>
           </div>
-          <div className='flex flex-col content-start justify-start gap-6'>
-            <Text size="sm" weight="font-semibold">Social</Text>
-            <div className='flex flex-col content-start gap-4'>
-              <Link href={'https://twitter.com/aeroscraper'} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
-                <Text size="sm" textColor='text-white'>X</Text>
-                <img alt='external-link' src='/images/external-link.svg' className='w-4 h-4' />
+          <div className="flex flex-col content-start justify-start gap-6">
+            <Text size="sm" weight="font-semibold">
+              Social
+            </Text>
+            <div className="flex flex-col content-start gap-4">
+              <Link
+                href={"https://twitter.com/aeroscraper"}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:scale-105 transition-all flex gap-2"
+              >
+                <Text size="sm" textColor="text-white">
+                  X
+                </Text>
+                <img
+                  alt="external-link"
+                  src="/images/external-link.svg"
+                  className="w-4 h-4"
+                />
               </Link>
-              <Link href={'https://discord.gg/3R6yTqB8hC'} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
-                <Text size="sm" textColor='text-white'>Discord</Text>
-                <img alt='external-link' src='/images/external-link.svg' className='w-4 h-4' />
+              <Link
+                href={"https://discord.gg/3R6yTqB8hC"}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:scale-105 transition-all flex gap-2"
+              >
+                <Text size="sm" textColor="text-white">
+                  Discord
+                </Text>
+                <img
+                  alt="external-link"
+                  src="/images/external-link.svg"
+                  className="w-4 h-4"
+                />
               </Link>
-              <Link href={'https://zealy.io/c/aeroscraper/questboard'} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
-                <Text size="sm" textColor='text-white'>Zealy</Text>
-                <img alt='external-link' src='/images/external-link.svg' className='w-4 h-4' />
+              <Link
+                href={"https://zealy.io/c/aeroscraper/questboard"}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:scale-105 transition-all flex gap-2"
+              >
+                <Text size="sm" textColor="text-white">
+                  Zealy
+                </Text>
+                <img
+                  alt="external-link"
+                  src="/images/external-link.svg"
+                  className="w-4 h-4"
+                />
               </Link>
-              <Link href={'https://medium.com/@aeroscraper'} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
-                <Text size="sm" textColor='text-white'>Medium</Text>
-                <img alt='external-link' src='/images/external-link.svg' className='w-4 h-4' />
+              <Link
+                href={"https://medium.com/@aeroscraper"}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:scale-105 transition-all flex gap-2"
+              >
+                <Text size="sm" textColor="text-white">
+                  Medium
+                </Text>
+                <img
+                  alt="external-link"
+                  src="/images/external-link.svg"
+                  className="w-4 h-4"
+                />
               </Link>
             </div>
           </div>
         </div>
       </footer>
     </div>
-  )
+  );
 }
