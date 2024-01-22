@@ -50,7 +50,7 @@ const WalletButton: FC<Props> = ({
     walletInfo,
     address,
     selectWallet,
-    selectedWallet
+    selectedWallet,
   } = useChainAdapter();
 
   useEffect(() => {
@@ -59,37 +59,40 @@ const WalletButton: FC<Props> = ({
     }
   }, [isWalletConnected]);
   useEffect(() => {
+    let chainID = "5";
     if (window.ethereum && typeof window !== "undefined") {
       const getChainId = async () => {
         const { ethereum } = window as any;
-        const chainIdMetamask:any = await ethereum?.request({
+        const chainIdMetamask: any = await ethereum?.request({
           method: "eth_chainId",
         });
 
-        let chainId = "5"; //goerli
+        //goerli
         console.log("chainIdMetamask", chainIdMetamask);
-        
-        if (chainIdMetamask.toString() !== chainId) {
+
+        if (chainIdMetamask.toString() !== chainID) {
           CheckChain(chainIdMetamask);
         }
       };
       getChainId();
-      try {
-        //@ts-ignore
-        window.ethereum?.on("chainChanged", (chainId) => {
-          CheckChain(chainId);
-        });
-      } catch (err) {
-        console.error(err);
-      }
+
+      window.ethereum?.on("chainChanged", (chainId:any) => {
+        CheckChain(chainId);
+        if (chainID === chainId) {
+          ToastSuccess.fire({
+            title: "Network Changed",
+          });
+          //window.location.reload();
+        }
+      });
     }
-  });
+  }, []);
   const [chainData, setChainData] = useState<any>(ChainData);
-  
+
   const CheckChain = (id: string) => {
     let chainId = "5"; //goerli
     console.log("id", id);
-    id=Number(id).toString();
+    id = Number(id).toString();
     if (id !== chainId && selectedWallet === WalletType.METAMASK) {
       //dispatch(setClear());
       console.log("chainId", chainId);
@@ -136,12 +139,6 @@ const WalletButton: FC<Props> = ({
           }
         });
       alert();
-    }
-    if (id === chainId) {
-      ToastSuccess.fire({
-        title: "Network Changed",
-      });
-      //window.location.reload();
     }
   };
   const [accountModal, setAccountModal] = useState(false);
