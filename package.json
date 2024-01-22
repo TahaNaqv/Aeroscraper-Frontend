@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "analyze": "cross-env ANALYZE=true next build",
+    "analyze:server": "cross-env BUNDLE_ANALYZE=server next build",
+    "analyze:browser": "cross-env BUNDLE_ANALYZE=browser next build"
   },
   "dependencies": {
     "@archwayhq/arch3.js": "^0.4.0",
@@ -51,6 +54,8 @@
     "typescript": "5.1.6"
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.195"
+    "@next/bundle-analyzer": "^14.1.0",
+    "@types/lodash": "^4.14.195",
+    "cross-env": "^7.0.3"
   }
 }
