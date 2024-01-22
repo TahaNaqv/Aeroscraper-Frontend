@@ -19,7 +19,7 @@ export const WalletsByChainName: Record<ChainName, WalletType[]> = {
         WalletType.KEPLR,
     ],
     [ChainName.INJECTIVE]: [
-        // WalletType.METAMASK,
+        WalletType.METAMASK,
         WalletType.LEAP,
         WalletType.KEPLR,
     //     WalletType.NINJI,

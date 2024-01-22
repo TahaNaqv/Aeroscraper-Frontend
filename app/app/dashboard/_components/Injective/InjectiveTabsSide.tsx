@@ -18,8 +18,8 @@ interface Props {
   setTabPosition: Dispatch<InjectiveTabs>
 }
 
-export type InjectiveTabs = "trove" | "createTrove" | "stabilityPool" | "redeem" | "riskyTroves" | "rewards" | "Leaderboard & Missions";
-/* export type InjectiveTabs = "trove" | "createTrove" | "stabilityPool" | "redeem" | "riskyTroves" | "rewards"; */
+/* export type InjectiveTabs = "trove" | "createTrove" | "stabilityPool" | "redeem" | "riskyTroves" | "rewards" | "Leaderboard & Missions"; */
+export type InjectiveTabs = "trove" | "createTrove" | "stabilityPool" | "redeem" | "riskyTroves" | "rewards";
 const InjectiveTabsSide: FC<Props> = ({ setTabPosition }) => {
 
   const ref = useRef<HTMLDivElement>(null);
@@ -31,8 +31,8 @@ const InjectiveTabsSide: FC<Props> = ({ setTabPosition }) => {
 
   const [isTroveOpened, setIsTroveOpened] = useState(false);
 
-  let TabList: InjectiveTabs[] = [isTroveOpened ? "trove" : "createTrove", "stabilityPool", "redeem", "riskyTroves", "rewards", "Leaderboard & Missions"];
-/* let TabList: InjectiveTabs[] = [isTroveOpened ? "trove" : "createTrove", "stabilityPool", "redeem", "riskyTroves", "rewards"]; */
+/*   let TabList: InjectiveTabs[] = [isTroveOpened ? "trove" : "createTrove", "stabilityPool", "redeem", "riskyTroves", "rewards", "Leaderboard & Missions"]; */
+let TabList: InjectiveTabs[] = [isTroveOpened ? "trove" : "createTrove", "stabilityPool", "redeem", "riskyTroves", "rewards"];
 
   const [selectedTab, setSelectedTab] = useState<InjectiveTabs>(isTroveOpened ? "trove" : "createTrove");
 
@@ -97,8 +97,8 @@ const InjectiveTabsSide: FC<Props> = ({ setTabPosition }) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.7 }}
-          className={`md:mt-14 ${(isNil(walletInfo) && selectedTab !== "Leaderboard & Missions") ? "blur-[2px]" : ""} relative`}>
-          {(isNil(walletInfo) && selectedTab !== "Leaderboard & Missions") &&
+          className={`md:mt-14 ${(isNil(walletInfo)/*  && selectedTab !== "Leaderboard & Missions" */) ? "blur-[2px]" : ""} relative`}>
+          {(isNil(walletInfo) && selectedTab/*  !== "Leaderboard & Missions" */) &&
             <div className='cursor-not-allowed h-full w-full absolute top-0 bottom-0 left-0 z-50'>
             </div>
           }
@@ -107,7 +107,7 @@ const InjectiveTabsSide: FC<Props> = ({ setTabPosition }) => {
           {selectedTab === "redeem" && <RedeemTab pageData={pageData} getPageData={getPageData} refreshBalance={refreshBalance} basePrice={basePrice} />}
           {selectedTab === "riskyTroves" && <RiskyTrovesTab pageData={pageData} getPageData={getPageData} basePrice={basePrice} />}
           {selectedTab === "rewards" && <ClaimRewardTab pageData={pageData} getPageData={getPageData} refreshBalance={refreshBalance} basePrice={basePrice} />}
-          {selectedTab === "Leaderboard & Missions" && <LeaderboardTab />}
+          {/* {selectedTab === "Leaderboard & Missions" && <LeaderboardTab />} */}
         </motion.main>
       }
 
