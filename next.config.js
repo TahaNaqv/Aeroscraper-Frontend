@@ -10,7 +10,6 @@ const nextConfig = withBundleAnalyzer({
   },
   compress: true,
   trailingSlash: true,
-  reactStrictMode: env.NODE_ENV === "production" ? false : true,
   experimental: {
     forceSwcTransforms: true,
   },
