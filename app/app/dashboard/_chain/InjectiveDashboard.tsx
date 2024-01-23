@@ -174,16 +174,8 @@ export default function InjectiveDashboard() {
             <Text size="sm" textColor="text-white" weight="font-semibold">
               Product
             </Text>
-            <Tooltip
-              title={
-                <Text size="base">
-                  The Audit Report will be Shared Publicly in a Short Time.
-                </Text>
-              }
-              width="w-[191px]"
-            >
               <Link
-                href={{}}
+                href={'https://x.com/aeroscraper/status/1740683514457243693?s=20'}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:scale-105 transition-all flex gap-2"
@@ -201,7 +193,6 @@ export default function InjectiveDashboard() {
                   className="w-4 h-4"
                 />
               </Link>
-            </Tooltip>
             <Link
               href={"/?scroll=FAQ"}
               target="_blank"

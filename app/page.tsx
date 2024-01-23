@@ -80,12 +80,10 @@ export default function Home() {
         <div className='grid grid-cols-1 md:grid-cols-4 gap-10 md:gap-40'>
           <div className='flex flex-col content-start justify-start gap-4'>
             <Text size="sm" textColor='text-white' weight="font-semibold">Product</Text>
-            <Tooltip title={<Text size='base'>The Audit Report will be Shared Publicly in a Short Time.</Text>} width='w-[191px]'>
-              <Link href={{}} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
+              <Link href={'https://x.com/aeroscraper/status/1740683514457243693?s=20'} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
                 <Text size="sm" textColor='text-white' className="cursor-pointer">Audit</Text>
                 <img alt='external-link' src='/images/external-link.svg' className='w-4 h-4' />
               </Link>
-            </Tooltip>
             <Link href={'/?scroll=FAQ'} target="_parent" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
               <Text size="sm" textColor='text-white' className="cursor-pointer">FAQ</Text>
             </Link>
