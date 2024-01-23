@@ -24,6 +24,7 @@ import { WalletType } from "@/enums/WalletType";
 import ChainData from "@/services/data/chain.json";
 import { ToastSuccess } from "@/services/data/alert/SweatAlert";
 import Swal from "sweetalert2";
+import { useNotification } from "@/contexts/NotificationProvider";
 type Props = {
   ausdBalance?: number;
   baseCoinBalance?: number;
@@ -58,7 +59,7 @@ const WalletButton: FC<Props> = ({
       setWalletSelectionOpen(false);
     }
   }, [isWalletConnected]);
-
+  const {addNotification} = useNotification();
   useEffect(() => {
     let chainID = "5";
     if (
@@ -82,12 +83,18 @@ const WalletButton: FC<Props> = ({
       };
       getChainId();
 
+      
       window.ethereum?.on("chainChanged", (chainId: any) => {
         CheckChain(chainId);
         if (chainID === Number(chainId).toString()) {
-          ToastSuccess.fire({
+          /* ToastSuccess.fire({
             title: "Network Changed",
-          });
+          }); */
+          addNotification({
+            status: 'networkchange',
+            directLink: "",
+            message: "Network Changed",
+        });
           //window.location.reload();
         }
       });

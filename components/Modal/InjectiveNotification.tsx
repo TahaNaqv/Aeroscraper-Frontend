@@ -22,10 +22,18 @@ const VARIANTS: Record<Status, any> = {
     title: "Transaction Failed",
     borderColor: "border-[#ED0E00]/70",
     backgroundColor: "bg-[#2E030066]/40"
+  },
+  networkchange:{
+    icon: (
+      <img alt='transaction-success' src='/images/transaction-success.svg' />
+    ),
+    title: "Network Changed",
+    borderColor: "border-[#00CF30]/70",
+    backgroundColor: "bg-[#001A0666]/40"
   }
 };
 
-type Status = "error" | "success"
+type Status = "error" | "success" | "networkchange";
 
 const InjectiveNotification: FC = () => {
   const { selectedChainName } = useChainAdapter();
