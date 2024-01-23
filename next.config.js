@@ -1,5 +1,5 @@
 /** @type {import('next').NextConfig} */
-
+//const million = require("million/compiler");
 const { env } = require("process");
 const withBundleAnalyzer = require("@next/bundle-analyzer")({
   enabled: process.env.ANALYZE === "true",
@@ -17,3 +17,5 @@ const nextConfig = withBundleAnalyzer({
 });
 
 module.exports = nextConfig;
+
+//module.exports = million.next(nextConfig,{ auto: true });
