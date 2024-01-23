@@ -22,7 +22,7 @@ export const WalletsByChainName: Record<ChainName, WalletType[]> = {
         WalletType.METAMASK,
         WalletType.LEAP,
         WalletType.KEPLR,
-        WalletType.NINJI,
+    //    WalletType.NINJI,
     //     WalletType.LEDGER,
     //     WalletType.COSMOSTATION
     // 
