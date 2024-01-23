@@ -18,10 +18,18 @@ const VARIANTS: Record<Status, any> = {
       <img alt='transaction-error' src='/images/transaction-error.svg' />
     ),
     title: "Transaction Failed",
+  },
+  networkchange:{
+    icon: (
+      <img alt='transaction-success' src='/images/transaction-success.svg' />
+    ),
+    title: "Network Changed",
+    borderColor: "border-[#00CF30]/70",
+    backgroundColor: "bg-[#001A0666]/40"
   }
 };
 
-type Status = "error" | "success"
+type Status = "error" | "success" | "networkchange";
 
 const ModalNotification: FC = () => {
   const { selectedChainName } = useChainAdapter();
