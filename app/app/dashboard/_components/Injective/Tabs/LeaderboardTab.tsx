@@ -93,44 +93,16 @@ const LeaderboardTab = () => {
   const [zealyId, setZealyId] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchZealyData();
-    getZealyUserId();
+    getUserId();
   }, []);
 
   useEffect(() => {
     if (zealyId) {
-      fetchZealyInformationData();
+      getZealyMissions();
     }
   }, [zealyId]);
 
-  useEffect(() => {
-    if (selectedTab === TABS.MISSIONS) {
-      fetchZealyMissionData();
-    }
-  }, [selectedTab]);
-
-  const fetchZealyData = async () => {
-    try {
-      const result = await fetch("/api/zealy/leaderboard",
-        {
-          next: {
-            revalidate: false
-          },
-          cache: 'no-cache'
-        });
-
-      const data: ZealyResponseModel = await result.json();
-
-      setTotalUsers(data.totalUsers);
-      setLeaderboard(data.items);
-
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-  };
-
-  const getZealyUserId = async () => {
+  const getUserId = async () => {
     try {
       const result = await fetch(`https://db.aeroscraper.io/api/collections/leaderboard/records?filter=address="${address}"`,
         {
@@ -151,7 +123,28 @@ const LeaderboardTab = () => {
     }
   };
 
-  const fetchZealyInformationData = async () => {
+  const getLeaderboardList = async () => {
+    try {
+      const result = await fetch("/api/zealy/leaderboard",
+        {
+          next: {
+            revalidate: false
+          },
+          cache: 'no-cache'
+        });
+
+      const data: ZealyResponseModel = await result.json();
+
+      setTotalUsers(data.totalUsers);
+      setLeaderboard(data.items);
+
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  const getUserInformation = async () => {
     setInformationLoading(true);
 
     try {
@@ -174,7 +167,7 @@ const LeaderboardTab = () => {
     }
   };
 
-  const fetchZealyMissionData = async () => {
+  const getZealyMissions = async () => {
     try {
       const result: any = await fetch(`/api/zealy/missions?userId=${zealyId}`,
         {
@@ -208,14 +201,14 @@ const LeaderboardTab = () => {
 
       setMissionList(missionList);
 
-      fetchZealyMissionClaimedData(missionList);
+      getZealyClaimedMissions(missionList);
 
     } catch (error) {
       console.error('Error fetching data:', error);
     }
   };
 
-  const fetchZealyMissionClaimedData = async (missionList: Record<string, ZealyMission>) => {
+  const getZealyClaimedMissions = async (missionList: Record<string, ZealyMission>) => {
     try {
       const result: any = await fetch(`/api/zealy/claimedMissions/${zealyId}`,
         {
@@ -253,13 +246,24 @@ const LeaderboardTab = () => {
     }
   };
 
+  const handleSelectTab = (tab: TABS) => {
+    setSelectedTab(tab);
+
+    if (tab === TABS.LEADERBOARD && leaderboard.length === 0) {
+      getLeaderboardList();
+    }
+
+    if (tab === TABS.LEADERBOARD && userInformation === null) {
+      getUserInformation();
+    }
+  }
 
   return (
     <div ref={ref}>
       <Text size='3xl'>See your ranking among users</Text>
       <Text size='base' weight='font-regular' className='mt-1'>Earn points and increase your ranking</Text>
       <div className='flex flex-col'>
-        <Checkbox className='mt-8' label={'Missions'} checked={selectedTab === TABS.MISSIONS} onChange={() => { setSelectedTab(TABS.MISSIONS); ref.current?.scrollIntoView({ behavior: 'smooth', block: "start" }); }} />
+        <Checkbox className='mt-8' label={'Missions'} checked={selectedTab === TABS.MISSIONS} onChange={() => { handleSelectTab(TABS.MISSIONS); ref.current?.scrollIntoView({ behavior: 'smooth', block: "start" }); }} />
         {
           selectedTab === TABS.MISSIONS &&
           (
@@ -302,7 +306,7 @@ const LeaderboardTab = () => {
               )
           )
         }
-        <Checkbox className='mt-8' label={'Leaderboard'} checked={selectedTab === TABS.LEADERBOARD} onChange={() => { setSelectedTab(TABS.LEADERBOARD); ref.current?.scrollIntoView({ behavior: 'smooth', block: "start" }); }} />
+        <Checkbox className='mt-8' label={'Leaderboard'} checked={selectedTab === TABS.LEADERBOARD} onChange={() => { handleSelectTab(TABS.LEADERBOARD); ref.current?.scrollIntoView({ behavior: 'smooth', block: "start" }); }} />
         {selectedTab === TABS.LEADERBOARD &&
           (
             <>
