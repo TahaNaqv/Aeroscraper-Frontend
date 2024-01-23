@@ -250,7 +250,7 @@ const WalletButton: FC<Props> = ({
           downloadLink:
             "https://chromewebstore.google.com/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?pli=1",
         });
-    // anyWindow.ninji ? walletExtensions.installed.push({ name: WalletType.NINJI }) : walletExtensions.otherWallets.push({ name: WalletType.NINJI, downloadLink: "https://chromewebstore.google.com/detail/ninji-wallet/kkpllbgjhchghjapjbinnoddmciocphm" });
+    anyWindow.ninji ? walletExtensions.installed.push({ name: WalletType.NINJI }) : walletExtensions.otherWallets.push({ name: WalletType.NINJI, downloadLink: "https://chromewebstore.google.com/detail/ninji-wallet/kkpllbgjhchghjapjbinnoddmciocphm" });
     // anyWindow.cosmostation ? walletExtensions.installed.push({ name: WalletType.COSMOSTATION }) : walletExtensions.otherWallets.push({ name: WalletType.COSMOSTATION, downloadLink: "https://chromewebstore.google.com/detail/cosmostation-wallet/fpkhgmpbidmiogeglndfbkegfdlnajnf" });
 
     setWalletExtensions({
