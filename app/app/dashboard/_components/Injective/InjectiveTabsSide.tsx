@@ -19,7 +19,8 @@ interface Props {
   setTabPosition: Dispatch<InjectiveTabs>
 }
 
-export type InjectiveTabs = "trove" | "createTrove" | "stabilityPool" | "redeem" | "riskyTroves" | "rewards" | "leaderboard&missions";
+/* export type InjectiveTabs = "trove" | "createTrove" | "stabilityPool" | "redeem" | "riskyTroves" | "rewards" | "leaderboard&missions"; */
+export type InjectiveTabs = "trove" | "createTrove" | "stabilityPool" | "redeem" | "riskyTroves" | "rewards";
 const InjectiveTabsSide: FC<Props> = ({ setTabPosition }) => {
 
   const router = useRouter();
@@ -112,8 +113,8 @@ const InjectiveTabsSide: FC<Props> = ({ setTabPosition }) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.7 }}
-          className={`md:mt-6 ${(isNil(walletInfo) && selectedTab !== "leaderboard&missions") ? "blur-[2px]" : ""} relative`}>
-          {(isNil(walletInfo) && selectedTab !== "leaderboard&missions") &&
+          className={`md:mt-6 ${(isNil(walletInfo)/*  && selectedTab !== "leaderboard&missions" */) ? "blur-[2px]" : ""} relative`}>
+          {(isNil(walletInfo)/*  && selectedTab !== "leaderboard&missions" */) &&
             <div className='cursor-not-allowed h-full w-full absolute top-0 bottom-0 left-0 z-50'>
             </div>
           }
@@ -123,7 +124,7 @@ const InjectiveTabsSide: FC<Props> = ({ setTabPosition }) => {
           {selectedTab === "redeem" && <RedeemTab pageData={pageData} getPageData={getPageData} refreshBalance={refreshBalance} basePrice={basePrice} />}
           {selectedTab === "riskyTroves" && <RiskyTrovesTab pageData={pageData} getPageData={getPageData} basePrice={basePrice} />}
           {selectedTab === "rewards" && <ClaimRewardTab pageData={pageData} getPageData={getPageData} refreshBalance={refreshBalance} basePrice={basePrice} />}
-          {selectedTab === "leaderboard&missions" && <LeaderboardTab />}
+          {/* {selectedTab === "leaderboard&missions" && <LeaderboardTab />} */}
         </motion.main>
       }
     </div>
