@@ -40,6 +40,7 @@ export default function InjectiveDashboard() {
       ];
 
       const currentPrices = await connection.getLatestPriceFeeds(priceId);
+      console.log(currentPrices);
 
       if (currentPrices) {
         setBasePrice(
@@ -51,20 +52,10 @@ export default function InjectiveDashboard() {
       setBasePrice(0);
     }
   };
+  //console.log(basePrice);
 
   useEffect(() => {
-    /* getPrice(); */
-    //page load event
-    //@ts-ignore
-    const handleLoad = () => {
-      getPrice();
-    };
-
-    window.addEventListener("load", handleLoad);
-
-    return () => {
-      window.removeEventListener("load", handleLoad);
-    };
+    getPrice();
   }, []);
 
   const changeTabPosition = useCallback((e: InjectiveTabs) => {
@@ -158,7 +149,7 @@ export default function InjectiveDashboard() {
           />
         </motion.div>
       )}
-      <div className="flex gap-4 flex-col md:flex-row md:gap-24 z-10 relative md:min-h-[720px]">
+      <div className="flex gap-4 flex-col md:flex-row md:gap-24 z-10 relative md:min-h-[720px] px-3 md:px-6">
         <InjectiveStatisticSide basePrice={basePrice} />
         <InjectiveTabsSide setTabPosition={changeTabPosition} />
       </div>
@@ -174,25 +165,21 @@ export default function InjectiveDashboard() {
             <Text size="sm" textColor="text-white" weight="font-semibold">
               Product
             </Text>
-              <Link
-                href={'https://x.com/aeroscraper/status/1740683514457243693?s=20'}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:scale-105 transition-all flex gap-2"
-              >
-                <Text
-                  size="sm"
-                  textColor="text-white"
-                  className="cursor-pointer"
-                >
-                  Audit
-                </Text>
-                <img
-                  alt="external-link"
-                  src="/images/external-link.svg"
-                  className="w-4 h-4"
-                />
-              </Link>
+            <Link
+              href={"https://x.com/aeroscraper/status/1740683514457243693?s=20"}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:scale-105 transition-all flex gap-2"
+            >
+              <Text size="sm" textColor="text-white" className="cursor-pointer">
+                Audit
+              </Text>
+              <img
+                alt="external-link"
+                src="/images/external-link.svg"
+                className="w-4 h-4"
+              />
+            </Link>
             <Link
               href={"/?scroll=FAQ"}
               target="_blank"
