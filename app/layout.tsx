@@ -1,37 +1,52 @@
-import Providers from '@/contexts/Providers';
-import './globals.css'
-import { Exo } from 'next/font/google'
-import NextTopLoader from 'nextjs-toploader';
+'use client'
+import Providers from "@/contexts/Providers";
+import "./globals.css";
+import { Exo } from "next/font/google";
+import NextTopLoader from "nextjs-toploader";
 
-const exo = Exo({ subsets: ['latin'] })
+import { AbstraxionProvider } from "@burnt-labs/abstraxion";
+
+import "@burnt-labs/abstraxion/styles.css";
+import "@burnt-labs/ui/styles.css";
+
+const exo = Exo({ subsets: ["latin"] });
 
 export const metadata = {
-  title: 'Aeroscraper',
-}
+  title: "Aeroscraper",
+};
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <html lang="en">
       <body className={`${exo.className} relative min-h-screen flex flex-col`}>
-        <Providers>
-          {children}
-          <NextTopLoader
-            color="#E4462D"
-            initialPosition={0.08}
-            crawlSpeed={200}
-            height={3}
-            crawl={true}
-            showSpinner={true}
-            easing="ease"
-            speed={200}
-            shadow="0 0 10px #E4462D,0 0 5px #E4462D"
-          />
-        </Providers>
+        <AbstraxionProvider
+          config={{
+            contracts: [
+              "xion1z70cvc08qv5764zeg3dykcyymj5z6nu4sqr7x8vl4zjef2gyp69s9mmdka",
+            ],
+          }}
+        >
+          <Providers>
+            {children}
+
+            <NextTopLoader
+              color="#E4462D"
+              initialPosition={0.08}
+              crawlSpeed={200}
+              height={3}
+              crawl={true}
+              showSpinner={true}
+              easing="ease"
+              speed={200}
+              shadow="0 0 10px #E4462D,0 0 5px #E4462D"
+            />
+          </Providers>
+        </AbstraxionProvider>
       </body>
     </html>
-  )
+  );
 }
