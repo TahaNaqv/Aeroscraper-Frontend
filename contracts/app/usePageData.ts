@@ -42,12 +42,12 @@ const usePageData = ({ basePrice }: Props) => {
     minRedeemAmount: 0
   });
 
-  const [troveLoading, setTroveLoading] = useState<boolean>(false);
-  const [ausdBalanceLoading, setAusdBalanceLoading] = useState<boolean>(false);
-  const [stakeLoading, setStakeLoading] = useState<boolean>(false);
-  const [rewardLoading, setRewardLoading] = useState<boolean>(false);
-  const [totalTrovesLoading, setTotalTrovesLoading] = useState<boolean>(false);
-  const [totalInfoLoading, setTotalInfoLoading] = useState<boolean>(false);
+  const [troveLoading, setTroveLoading] = useState<boolean>(true);
+  const [ausdBalanceLoading, setAusdBalanceLoading] = useState<boolean>(true);
+  const [stakeLoading, setStakeLoading] = useState<boolean>(true);
+  const [rewardLoading, setRewardLoading] = useState<boolean>(true);
+  const [totalTrovesLoading, setTotalTrovesLoading] = useState<boolean>(true);
+  const [totalInfoLoading, setTotalInfoLoading] = useState<boolean>(true);
 
   const loading = useMemo(() =>
     troveLoading ||
