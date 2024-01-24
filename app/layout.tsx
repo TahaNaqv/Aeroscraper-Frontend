@@ -3,9 +3,6 @@ import "./globals.css";
 import { Exo } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
 
-import "@burnt-labs/abstraxion/styles.css";
-import "@burnt-labs/ui/styles.css";
-
 const exo = Exo({ subsets: ["latin"] });
 
 export const metadata = {
