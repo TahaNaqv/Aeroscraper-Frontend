@@ -13,7 +13,6 @@
   },
   "dependencies": {
     "@archwayhq/arch3.js": "^0.4.0",
-    "@burnt-labs/abstraxion": "^0.1.0-alpha.23",
     "@cosmjs/cosmwasm-stargate": "^0.32.2",
     "@cosmjs/crypto": "^0.32.2",
     "@cosmjs/math": "^0.32.2",
