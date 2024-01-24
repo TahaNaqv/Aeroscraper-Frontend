@@ -182,3 +182,7 @@ background-blend-mode: multiply, normal, normal;
   border-radius: 0.375rem;
   margin-right: 0.5rem;
 }
+
+.confirmBtn {
+  background: var(--Gadient, linear-gradient(90deg, #D43752 0%, #E4462D 43.78%, #F8B810 150.15%)) !important;
+}
