@@ -149,7 +149,7 @@ export default function InjectiveDashboard() {
           />
         </motion.div>
       )}
-      <div className="flex gap-4 flex-col md:flex-row md:gap-24 z-10 relative md:min-h-[720px] px-3 md:px-[64px]">
+      <div className="flex gap-4 flex-col md:flex-row md:gap-24 z-10 relative md:min-h-[720px] ">
         <InjectiveStatisticSide basePrice={basePrice} />
         <InjectiveTabsSide setTabPosition={changeTabPosition} />
       </div>
