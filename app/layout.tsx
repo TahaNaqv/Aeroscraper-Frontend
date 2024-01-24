@@ -1,4 +1,3 @@
-'use client'
 import Providers from "@/contexts/Providers";
 import "./globals.css";
 import { Exo } from "next/font/google";
@@ -23,13 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${exo.className} relative min-h-screen flex flex-col`}>
-        <AbstraxionProvider
-          config={{
-            contracts: [
-              "xion1z70cvc08qv5764zeg3dykcyymj5z6nu4sqr7x8vl4zjef2gyp69s9mmdka",
-            ],
-          }}
-        >
+        
           <Providers>
             {children}
 
@@ -45,7 +38,7 @@ export default function RootLayout({
               shadow="0 0 10px #E4462D,0 0 5px #E4462D"
             />
           </Providers>
-        </AbstraxionProvider>
+        
       </body>
     </html>
   );
