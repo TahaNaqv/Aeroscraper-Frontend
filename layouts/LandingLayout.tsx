@@ -35,11 +35,11 @@ const LandingLayout = ({ children }: { children: React.ReactNode }) => {
             <div className='container mx-auto px-8'>
                 {children}
             </div>
-            <footer className='flex justify-center sm:justify-between gap-x-48 gap-y-16 items-top flex-wrap px-24 pt-6 pr-16 pb-24 mt-auto relative'>
+            <footer className='flex justify-center sm:justify-between gap-x-48 gap-y-16 items-top flex-wrap px-24 pt-6 pr-16 pb-24 mt-auto relative md:px-[64px] container w-full'>
                 <div className="flex-row flex gap-20 items-top">
                     <div className='flex flex-col items-center gap-6 lg:mt-20'>
                         <Logo />
-                        <Text size="2xl" textColor='text-white'>Aeroscraper</Text>
+                        <Text size="2xl" textColor='text-white'>Aeroscraper 213</Text>
                     </div>
                     <div className='flex flex-col items-center lg:justify-normal justify-center gap-4'>
                         <Text size="2xl" textColor='text-white'>Product</Text>

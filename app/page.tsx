@@ -9,9 +9,9 @@ import Link from 'next/link'
 export default function Home() {
   return (
     <div>
-      <main>
-        <div className='flex md:flex-row flex-col'>
-          <div className='max-w-[626px] md:ml-[200px] p-6 md:p-0'>
+      <main className='container w-full px-3 md:px-[64px] mx-auto '>
+        <div className='flex md:flex-row flex-col w-full'>
+          <div className='max-w-[626px] p-6 md:p-0'>
             <div className='flex items-center gap-6 lg:mt-20'>
               <LogoSecondary />
               <Text size="2xl" textColor='text-white'>Aeroscraper</Text>
@@ -67,12 +67,12 @@ export default function Home() {
             </Link>
           </div>
         </div>
-        <div className='max-w-[626px] md:ml-[200px] p-6 md:p-0'>
+        <div className='max-w-[626px]  p-6 md:p-0'>
           <Faq />
         </div>
         <InjectiveBackgroundWave animate className="absolute top-40 md:-top-3 right-0 -z-10 md:w-[1200px] w-[300px]" />
       </main>
-      <footer className='flex flex-col gap-x-48 gap-y-16 items-top flex-wrap px-6 md:px-20 pr-16 mt-40 pb-24 relative'>
+      <footer className='flex flex-col gap-x-48 gap-y-16 items-top flex-wrap px-6 mx-auto pr-16 mt-40 pb-24 relative md:px-[64px] container w-full'>
         <div className='flex items-center gap-6 lg:mt-20'>
           <LogoSecondary />
           <Text size="2xl" textColor='text-white'>Aeroscraper</Text>
