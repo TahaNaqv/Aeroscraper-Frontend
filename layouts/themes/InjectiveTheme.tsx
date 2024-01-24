@@ -59,7 +59,7 @@ const InjeciveTheme = () => {
   return (
     <>
       <div className='bg-[#5C5CFF] opacity-[0.09] h-[600px] w-full  md:w-[600px] absolute -top-60 -translate-x-1/3 left-1/3 rounded-full blur-3xl -z-10 ' />
-      <header className='md:mb-[88px] px-3 w-full container mx-auto mt-8 flex justify-between items-center'>
+      <header className='md:mb-[88px]  w-full container mx-auto mt-8 flex justify-between items-center px-3 md:px-[64px]'>
         <div className='flex items-center gap-2 mr-2'>
           <LogoSecondary className='w-6 md:w-10 h-6 md:h-10' />
           <Text size='2xl'>Aeroscraper</Text>
