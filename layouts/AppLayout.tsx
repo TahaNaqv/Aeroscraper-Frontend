@@ -7,6 +7,7 @@ import InjeciveTheme from "./themes/InjectiveTheme";
 import { PrimaryTheme } from "./themes/PrimaryTheme";
 import useChainAdapter from "@/hooks/useChainAdapter";
 import { ChainName } from "@/enums/Chain";
+import XionTheme from "./themes/XionTheme";
 
 const AppLayout = ({ children }: { children: React.ReactNode }) => {
     const { selectedChainName } = useChainAdapter();
@@ -16,6 +17,7 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
         [ChainName.ARCHWAY]: <ArchwayTheme />,
         [ChainName.NEUTRON]: <PrimaryTheme selectedChainName={ChainName.NEUTRON} />,
         [ChainName.INJECTIVE]: <InjeciveTheme />,
+        [ChainName.XION]: <XionTheme />,
     }
 
     const selectedTheme = chainTheme[selectedChainName!] || <InjeciveTheme />;

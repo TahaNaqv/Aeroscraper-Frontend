@@ -3,7 +3,6 @@ import "./globals.css";
 import { Exo } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
 
-import { AbstraxionProvider } from "@burnt-labs/abstraxion";
 
 import "@burnt-labs/abstraxion/styles.css";
 import "@burnt-labs/ui/styles.css";
@@ -21,7 +20,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${exo.className} relative min-h-screen flex flex-col`}>
+      <body className={`${exo.className} relative min-h-screen flex flex-col xion`}>
         
           <Providers>
             {children}

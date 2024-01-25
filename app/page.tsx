@@ -4,8 +4,8 @@ import GradientButton from '@/components/Buttons/GradientButton'
 import Faq from '@/components/FAQ/Faq'
 import { InjectiveBackgroundWave, LogoSecondary, MedalIcon } from '@/components/Icons/Icons'
 import Text from '@/components/Texts/Text'
-import Tooltip from '@/components/Tooltip/Tooltip'
 import Link from 'next/link'
+
 export default function Home() {
   return (
     <div>

@@ -60,8 +60,10 @@ const WalletButton: FC<Props> = ({
     }
   }, [isWalletConnected]);
   const { addNotification } = useNotification();
+
+  const chainID = "5";//goerli
+
   useEffect(() => {
-    let chainID = "5";
     if (
       window.ethereum &&
       typeof window !== "undefined" &&
@@ -101,13 +103,12 @@ const WalletButton: FC<Props> = ({
   const [chainData, setChainData] = useState<any>(ChainData);
 
   const CheckChain = (id: string) => {
-    try {
-      let chainId = "5"; //goerli
+    try { 
       id = Number(id).toString();
-      if (id !== chainId) {
+      if (id !== chainID) {
         const { name } = chainData[id] || { name: "UNKNOW" };
         const fromNetwork = name || "Unknown Network";
-        const toNetwork = chainData[chainId]?.name || "GOERLI NETWORK ";
+        const toNetwork = chainData[chainID]?.name || "GOERLI NETWORK ";
         const alert = async () =>
           await Swal.fire({
             title: "Please Change Network",
@@ -146,21 +147,21 @@ const WalletButton: FC<Props> = ({
             if (result.isConfirmed) {
               window.ethereum?.request({
                 method: "wallet_switchEthereumChain",
-                params: [{ chainId: chainData[chainId].chainId }],
+                params: [{ chainId: chainData[chainID].chainId }],
               }) ||
                 window.ethereum.request({
                   method: "wallet_addEthereumChain",
                   params: [
                     {
-                      chainId: chainData[chainId].chainId,
-                      chainName: chainData[chainId].name,
+                      chainId: chainData[chainID].chainId,
+                      chainName: chainData[chainID].name,
                       nativeCurrency: {
-                        name: chainData[chainId].nativeCurrency.name,
-                        symbol: chainData[chainId].nativeCurrency.symbol,
+                        name: chainData[chainID].nativeCurrency.name,
+                        symbol: chainData[chainID].nativeCurrency.symbol,
                         decimals: 18,
                       },
-                      rpcUrls: chainData[chainId].rpcUrls,
-                      blockExplorerUrls: chainData[chainId].blockExplorerUrls,
+                      rpcUrls: chainData[chainID].rpcUrls,
+                      blockExplorerUrls: chainData[chainID].blockExplorerUrls,
                     },
                   ],
                 });

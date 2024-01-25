@@ -1,0 +1,32 @@
+"use client";
+import Link from "next/link";
+import { useState } from "react";
+import {
+  Abstraxion,
+  useAbstraxionAccount,
+  useAbstraxionSigningClient,
+} from "@burnt-labs/abstraxion";
+
+import "@burnt-labs/ui/styles.css";
+import type { ExecuteResult } from "@cosmjs/cosmwasm-stargate";
+import useChainAdapter from "@/hooks/useChainAdapter";
+import XionTheme from "@/layouts/themes/XionTheme";
+
+
+export default function Page(): JSX.Element {
+  const { selectedChainName } = useChainAdapter();
+  // Abstraxion hooks
+  const { data: account } = useAbstraxionAccount();
+  
+  
+  return (
+    <main className="m-auto xion flex min-h-screen flex-col items-center text-white justify-start gap-4 p-4 container mx-auto px-3 md:px-[64px] w-full">
+      <XionTheme />
+      <div className="max-w-xs">
+        <h1 className="text-2xl font-bold tracking-tighter text-white">
+          ABSTRAXION
+        </h1>
+      </div>
+    </main>
+  );
+}
