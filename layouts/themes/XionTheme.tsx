@@ -5,17 +5,8 @@ import {
   InjectiveBackgroundWave,
   LogoSecondary,
 } from "@/components/Icons/Icons";
-import NotificationDropdown from "@/app/app/dashboard/_components/NotificationDropdown";
 import usePageData from "@/contracts/app/usePageData";
-import { PriceServiceConnection } from "@pythnetwork/price-service-client";
-import { isNil } from "lodash";
-import InjectiveAccountModal from "@/components/AccountModal/InjectiveAccountModal";
-import { convertAmount } from "@/utils/contractUtils";
-import InjectiveNotification from "@/components/Modal/InjectiveNotification";
-import WalletButton from "@/components/Buttons/WalletButton";
-import useChainAdapter from "@/hooks/useChainAdapter";
 import useBalances from "@/hooks/useBalances";
-import { WalletType } from "@/enums/WalletType";
 import Image from "next/image";
 //import { seatContractAddress } from "./layout";
 import { motion } from "framer-motion";
