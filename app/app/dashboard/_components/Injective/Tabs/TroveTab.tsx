@@ -347,11 +347,7 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
                       </div>
                       <div className='flex justify-between md:mt-6'>
                         <div className='flex'>
-                          <label className="font-regular text-[10px] md:text-base text-gray-300">Borrowing Capacity:</label>
-                          <p className='text-white font-regular text-xs md:text-base ml-1 md:ml-3'>{(((pageData.collateralAmount * basePrice * 100) / 115) - (pageData.debtAmount)).toFixed(6)} AUSD</p>
-                        </div>
-                        <div className='flex'>
-                          <label className="font-regular text-[10px] md:text-base text-gray-300">In Wallet AUSD:</label>
+                          <label className="font-regular text-[10px] md:text-base text-gray-300">In Wallet:</label>
                           <NumericFormat
                             value={pageData.ausdBalance}
                             thousandsGroupStyle="thousand"
@@ -364,6 +360,12 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
                             }
                           />
                         </div>
+
+                        <div className='flex'>
+                          <label className="font-regular text-[10px] md:text-base text-gray-300">Borrowing Capacity:</label>
+                          <p className='text-white font-regular text-xs md:text-base ml-1 md:ml-3'>{(((pageData.collateralAmount * basePrice * 100) / 115) - (pageData.debtAmount)).toFixed(6)} AUSD</p>
+                        </div>
+
                         <div className='flex'>
                           <label className="font-regular text-[10px] md:text-base text-gray-300">Debt:</label>
                           <p className='text-white font-regular text-xs md:text-base ml-1 md:ml-3'>{`${pageData.debtAmount.toFixed(6)} AUSD`}</p>
