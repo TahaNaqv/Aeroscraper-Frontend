@@ -34,7 +34,7 @@ const XionTheme = () => {
   const address = account?.bech32Address;
   return (
     <>
-      <motion.div
+      {/* <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8, delay: 0.7 }}
@@ -48,7 +48,7 @@ const XionTheme = () => {
           animate={processLoading}
           className="absolute -bottom-[200px] -left-20 -z-10 h-[584px] rotate-[180deg]"
         />
-      </motion.div>
+      </motion.div> */}
       <div className="bg-[#5C5CFF] opacity-[0.09] h-[600px] w-full  md:w-[600px] absolute -top-60 -translate-x-1/3 left-1/3 rounded-full blur-3xl -z-10 px-3" />
       <header className="md:mb-[88px]  w-full container mx-auto mt-0 flex justify-between items-center px-3 md:px-[64px]">
         <div className="flex items-center gap-2 mr-2">

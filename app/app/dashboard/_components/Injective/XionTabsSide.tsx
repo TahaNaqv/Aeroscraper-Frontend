@@ -28,7 +28,7 @@ const XionTabsSide: FC<Props> = ({ setTabPosition }) => {
 
   const ref = useRef<HTMLDivElement>(null);
 
-  const [basePrice, setBasePrice] = useState(0);
+  const [basePrice, setBasePrice] = useState(1);
   const { pageData, getPageData, loading } = usePageData({ basePrice });
   const { refreshBalance } = useBalances();
   const { walletInfo } = useChainAdapter();
@@ -39,28 +39,7 @@ const XionTabsSide: FC<Props> = ({ setTabPosition }) => {
 
   const [selectedTab, setSelectedTab] = useState<XionTabs>(isTroveOpened ? "trove" : "createTrove");
 
-  useEffect(() => {
-    const getPrice = async () => {
-      const connection = new PriceServiceConnection(
-        "https://hermes-beta.pyth.network/",
-        {
-          priceFeedRequestConfig: {
-            binary: true,
-          },
-        }
-      )
-
-      const priceId = ["2d9315a88f3019f8efa88dfe9c0f0843712da0bac814461e27733f6b83eb51b3"];
-
-      const currentPrices = await connection.getLatestPriceFeeds(priceId);
-
-      if (currentPrices) {
-        setBasePrice(Number(currentPrices[0].getPriceUnchecked().price) / 100000000);
-      }
-    }
-
-    getPrice()
-  }, [])
+ 
 
   useEffect(() => {
     setIsTroveOpened(pageData.collateralAmount > 0);
@@ -83,7 +62,7 @@ const XionTabsSide: FC<Props> = ({ setTabPosition }) => {
   }, []);
 
   const handleChangeTab = (e: XionTabs) => {
-    router.push(`/app/dashboard?tab=${e}`);
+    router.push(`?tab=${e}`);
 
     setSelectedTab(e);
     setTabPosition(e);

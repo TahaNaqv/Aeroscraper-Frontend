@@ -5,8 +5,17 @@ import Faq from '@/components/FAQ/Faq'
 import { InjectiveBackgroundWave, LogoSecondary, MedalIcon } from '@/components/Icons/Icons'
 import Text from '@/components/Texts/Text'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 
 export default function Home() {
+  const router = useRouter()
+  useEffect(() => {
+    //prefetching xion page
+    router.prefetch('/xion')
+    router.prefetch('/app/dashboard')
+  }, [])
+
   return (
     <div>
       <main className='container w-full px-3 md:px-[64px] mx-auto '>
