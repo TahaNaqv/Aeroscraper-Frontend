@@ -5,27 +5,26 @@ import {
   LogoSecondary,
 } from "@/components/Icons/Icons";
 import Link from "next/link";
-import InjectiveStatisticSide from "../_components/Injective/InjectiveStatisticSide";
-import InjectiveTabsSide, {
-  InjectiveTabs,
-} from "../_components/Injective/InjectiveTabsSide";
+
 import Text from "@/components/Texts/Text";
 import { useCallback, useEffect, useState } from "react";
 import { PriceServiceConnection } from "@pythnetwork/price-service-client";
 import { motion } from "framer-motion";
 import { useNotification } from "@/contexts/NotificationProvider";
 import Tooltip from "@/components/Tooltip/Tooltip";
+import XionStatisticSide from "../_components/Injective/XionStatisticSide";
+import XionTabsSide, { XionTabs } from "../_components/Injective/XionTabsSide";
 
-export default function InjectiveDashboard() {
+export default function XionDashboard() {
   const [basePrice, setBasePrice] = useState(1);
 
-  const [tabPosition, setTabPosition] = useState<InjectiveTabs>("redeem");
+  const [tabPosition, setTabPosition] = useState<XionTabs>("redeem");
 
   const { processLoading } = useNotification();
 
 
 
-  const changeTabPosition = useCallback((e: InjectiveTabs) => {
+  const changeTabPosition = useCallback((e: XionTabs) => {
     setTabPosition(e);
   }, []);
 
@@ -117,8 +116,8 @@ export default function InjectiveDashboard() {
         </motion.div>
       )}
       <div className="flex gap-4 flex-col md:flex-row md:gap-24 z-10 relative md:min-h-[720px] ">
-        <InjectiveStatisticSide basePrice={basePrice} />
-        <InjectiveTabsSide setTabPosition={changeTabPosition} />
+        <XionStatisticSide basePrice={basePrice} />
+        <XionTabsSide setTabPosition={changeTabPosition} />
       </div>
       <footer className="flex flex-col md:gap-x-48 md:gap-y-16 items-top flex-wrap px-6 md:px-20 bg-transparent md:-mx-20 md:pr-16 mt-40 pb-24 relative">
         <div className="flex items-center gap-6 md:mt-20">
