@@ -15,7 +15,7 @@ export default function Home() {
     //prefetching xion page
     router.prefetch('/xion')
     router.prefetch('/app/dashboard')
-  }, [])
+  }, [router])
 
   return (
     <div>

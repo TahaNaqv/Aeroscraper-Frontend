@@ -36,7 +36,7 @@ const RedeemSide: FC<Props> = ({ pageData, getPageData, refreshBalance, basePric
 
   const changeRedeemAmount = useCallback((values: NumberFormatValues) => {
     setRedeemAmount(Number(values.value))
-    setSeiAmount(getValueByRatio(values.value, pageData.minRedeemAmount))
+    setSeiAmount(getValueByRatio(values.value, pageData.baseMinRedeemAmount))
   }, [pageData]);
 
   const redeemDisabled = useMemo(() =>
@@ -114,7 +114,7 @@ const RedeemSide: FC<Props> = ({ pageData, getPageData, refreshBalance, basePric
               containerClassName="w-[61px] h-6"
               onClick={() => {
                 setRedeemAmount(pageData.ausdBalance)
-                setSeiAmount(getValueByRatio(pageData.ausdBalance, pageData.minRedeemAmount))
+                setSeiAmount(getValueByRatio(pageData.ausdBalance, pageData.baseMinRedeemAmount))
               }}
             >
               Max
@@ -123,7 +123,7 @@ const RedeemSide: FC<Props> = ({ pageData, getPageData, refreshBalance, basePric
               containerClassName="w-[61px] h-6"
               onClick={() => {
                 setRedeemAmount(getValueByRatio(pageData.ausdBalance, 2))
-                setSeiAmount(getValueByRatio(getValueByRatio(pageData.ausdBalance, 2), pageData.minRedeemAmount))
+                setSeiAmount(getValueByRatio(getValueByRatio(pageData.ausdBalance, 2), pageData.baseMinRedeemAmount))
               }}
             >
               Half

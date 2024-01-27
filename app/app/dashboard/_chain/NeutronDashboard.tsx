@@ -10,7 +10,6 @@ import Text from "@/components/Texts/Text"
 import Tooltip from "@/components/Tooltip/Tooltip";
 import usePageData from "@/contracts/app/usePageData";
 import { convertAmount } from "@/utils/contractUtils";
-import { PriceServiceConnection } from "@pythnetwork/price-service-client";
 import { isNil } from "lodash";
 import { useState, useMemo, useEffect } from "react";
 import { NumericFormat } from "react-number-format";
@@ -25,37 +24,13 @@ import useBalances from "@/hooks/useBalances";
 
 export default function NeutronDashboard() {
   const { balanceByDenom, refreshBalance } = useBalances();
-  const { baseCoin, walletInfo } = useChainAdapter();
+  const { baseCoin, walletInfo, basePrice } = useChainAdapter();
   const [troveModal, setTroveModal] = useState(false);
   const [stabilityModal, setStabilityModal] = useState(false);
   const [riskyModal, setRiskyModal] = useState(false);
-  const [basePrice, setBasePrice] = useState(1); // TODO:After updating NTRN data on PYTH, initial value will be 0
-  const { pageData, getPageData } = usePageData({ basePrice });
+  const { pageData, getPageData } = usePageData();
 
-  useEffect(() => {
-    const getPrice = async () => {
-      const connection = new PriceServiceConnection(
-        "https://hermes-beta.pyth.network/",
-        {
-          priceFeedRequestConfig: {
-            binary: true,
-          },
-        }
-      )
-
-      const priceId = ["8112fed370f3d9751e513f7696472eab61b7f4e2487fd9f46c93de00a338631c"];
-
-      const currentPrices = await connection.getLatestPriceFeeds(priceId);
-
-      if (currentPrices) {
-        setBasePrice(Number(currentPrices[0].getPriceUnchecked().price) / 100000000);
-      }
-    }
-
-    getPrice()
-  }, [])
-
-  const isTroveOpened = useMemo(() => pageData.collateralAmount > 0, [pageData]);
+  const isTroveOpened = useMemo(() => pageData.baseCollateralAmount > 0, [pageData]);
 
   return (
     <div>
@@ -103,7 +78,7 @@ export default function NeutronDashboard() {
               />
               <StatisticCard
                 title="TVL"
-                description={isNil(baseCoin) ? '-' : `${Number(pageData.totalCollateralAmount).toFixed(3)} ${baseCoin.name}`}
+                description={isNil(baseCoin) ? '-' : `${Number(pageData.baseTotalCollateralAmount).toFixed(3)} ${baseCoin.name}`}
                 className="w-[191px] h-14"
                 tooltip="The Total Value Locked (TVL) is the total value of sei locked as collateral in the system."
                 tooltipPlacement="top"
@@ -139,7 +114,7 @@ export default function NeutronDashboard() {
               <StatisticCard
                 title="Total Collateral Ratio"
                 tooltipPlacement="top"
-                description={`${isFinite(Number(((pageData.totalCollateralAmount * basePrice) / pageData.totalDebtAmount) * 100)) ? Number(((pageData.totalCollateralAmount * basePrice) / pageData.totalDebtAmount) * 100).toFixed(3) : 0} %`}
+                description={`${isFinite(Number(((pageData.baseTotalCollateralAmount * basePrice) / pageData.totalDebtAmount) * 100)) ? Number(((pageData.baseTotalCollateralAmount * basePrice) / pageData.totalDebtAmount) * 100).toFixed(3) : 0} %`}
                 className="w-[191px] h-14"
                 tooltip={`The ratio of the Dollar value of the entire system collateral at the current ${baseCoin?.name}:AUSD price, to the entire system debt.`}
               />

@@ -3,7 +3,6 @@ import Text from "@/components/Texts/Text"
 import { ExitIcon, LogoSecondary } from '@/components/Icons/Icons';
 import NotificationDropdown from '@/app/app/dashboard/_components/NotificationDropdown';
 import usePageData from '@/contracts/app/usePageData';
-import { PriceServiceConnection } from '@pythnetwork/price-service-client';
 import { isNil } from 'lodash';
 import InjectiveAccountModal from '@/components/AccountModal/InjectiveAccountModal';
 import { convertAmount } from '@/utils/contractUtils';
@@ -17,33 +16,10 @@ const ArchwayTheme = () => {
   const { isWalletConnected, walletInfo, username, baseCoin, address, disconnect, disconnectMetamask } = useChainAdapter();
   const { balanceByDenom } = useBalances();
 
-  const [basePrice, setBasePrice] = useState(0);
-  const { pageData, getPageData } = usePageData({ basePrice });
+  const { basePrice } = useChainAdapter();
+  const { pageData, getPageData } = usePageData();
 
   const [accountModal, setAccountModal] = useState(false);
-
-  useEffect(() => {
-    const getPrice = async () => {
-      const connection = new PriceServiceConnection(
-        "https://xc-mainnet.pyth.network/",
-        {
-          priceFeedRequestConfig: {
-            binary: true,
-          },
-        }
-      )
-
-      const priceId = ["b00b60f88b03a6a625a8d1c048c3f66653edf217439983d037e7222c4e612819"];
-
-      const currentPrices = await connection.getLatestPriceFeeds(priceId);
-
-      if (currentPrices) {
-        setBasePrice(Number(currentPrices[0].getPriceUnchecked().price) / 100000000);
-      }
-    }
-
-    getPrice()
-  }, []);
 
   const disconnectWallet = () => {
     if (walletInfo?.name === WalletType.METAMASK) {

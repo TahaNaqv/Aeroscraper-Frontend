@@ -1,6 +1,14 @@
+import { CollateralInfo } from "@/contracts/app/types";
+
 export type PageData = {
-    collateralAmount: number;
-    totalCollateralAmount: number
+    baseCollateralAmount: number;
+    collateralAmountsByDenom: Record<string, CollateralInfo | undefined>;
+    baseTotalCollateralAmount: number;
+    totalCollateralAmountsByDenom: Record<string, CollateralInfo | undefined>;
+    baseMinCollateralRatio: number;
+    minCollateralRatioByDenom: Record<string, number | undefined>;
+    baseMinRedeemAmount: number;
+    minRedeemAmountByDenom: Record<string, number | undefined>;
     debtAmount: number;
     totalDebtAmount: number;
     ausdBalance: number;
@@ -9,8 +17,6 @@ export type PageData = {
     totalAusdSupply: number;
     poolShare: number;
     rewardAmount: number;
-    minCollateralRatio: number;
-    minRedeemAmount: number;
     totalTrovesAmount: number;
 }
 

@@ -5,41 +5,16 @@ import Link from "next/link";
 import InjectiveStatisticSide from "../_components/Injective/InjectiveStatisticSide";
 import InjectiveTabsSide, { InjectiveTabs } from "../_components/Injective/InjectiveTabsSide";
 import Text from "@/components/Texts/Text"
-import { useCallback, useEffect, useState } from "react";
-import { PriceServiceConnection } from "@pythnetwork/price-service-client";
+import { useCallback, useState } from "react";
 import { motion } from "framer-motion";
 import { useNotification } from "@/contexts/NotificationProvider";
+import useChainAdapter from "@/hooks/useChainAdapter";
 
 export default function ArchwayDashboard() {
-
-  const [basePrice, setBasePrice] = useState(1);
-
+  const { basePrice } = useChainAdapter();
   const [tabPosition, setTabPosition] = useState<InjectiveTabs>("redeem");
 
   const { processLoading } = useNotification();
-
-  useEffect(() => {
-    const getPrice = async () => {
-      const connection = new PriceServiceConnection(
-        "https://xc-mainnet.pyth.network/",
-        {
-          priceFeedRequestConfig: {
-            binary: true,
-          },
-        }
-      )
-
-      const priceId = ["b00b60f88b03a6a625a8d1c048c3f66653edf217439983d037e7222c4e612819"];
-
-      const currentPrices = await connection.getLatestPriceFeeds(priceId);
-
-      if (currentPrices) {
-        setBasePrice(Number(currentPrices[0].getPriceUnchecked().price) / 100000000);
-      }
-    }
-
-    getPrice()
-  }, [])
 
   const changeTabPosition = useCallback(
     (e: InjectiveTabs) => {

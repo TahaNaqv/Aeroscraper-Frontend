@@ -1,12 +1,16 @@
 "use client";
 import { ChainName } from "@/enums/Chain";
 import {
+  AppVersion,
   RiskyTrovesResponse,
   TotalTrovesResponse,
 } from "@/types/types";
 import { request, gql } from "graphql-request";
 
-export default function graphql({ selectedChainName = ChainName.INJECTIVE }: { selectedChainName?: ChainName }) {
+export default function graphql({
+  selectedChainName = ChainName.INJECTIVE,
+  selectedAppVersion = AppVersion.V1
+}: { selectedChainName?: ChainName, selectedAppVersion: AppVersion }) {
 
 
   const URL = (): string => {
@@ -18,7 +22,10 @@ export default function graphql({ selectedChainName = ChainName.INJECTIVE }: { s
       case ChainName.NEUTRON:
         return process.env.NEXT_PUBLIC_INDEXER_NEUTRON as string;
       case ChainName.INJECTIVE:
-        return process.env.NEXT_PUBLIC_INDEXER_INJ as string;
+        if (selectedAppVersion === AppVersion.V1) {
+          return process.env.NEXT_PUBLIC_INDEXER_INJ_V1 as string;
+        }
+        return process.env.NEXT_PUBLIC_INDEXER_INJ_V2 as string;
       default:
         return process.env.NEXT_PUBLIC_INDEXER_DOMAIN as string;
     }
