@@ -122,9 +122,9 @@ const StabilityPoolTab: FC<Props> = ({ pageData, getPageData }) => {
                 />
               </div>
               <div className='flex justify-between mt-6'>
-                <div className='flex'>
-                  <label className="font-regular text-xs md:text-base text-white">Pool Share:</label>
-                  <p className='text-[#00CF30] font-regular text-sm md:text-base ml-3'>{pageData.poolShare || "0"}%</p>
+                <div className='flex text-white'>
+                  <label className="font-regular text-xs md:text-base">Pool Share:</label>
+                  <p className='font-regular text-sm md:text-base ml-3'>{pageData.poolShare || "0"}%</p>
                 </div>
                 <NumericFormat
                   value={pageData.ausdBalance}
@@ -176,9 +176,9 @@ const StabilityPoolTab: FC<Props> = ({ pageData, getPageData }) => {
                 />
               </div>
               <div className='flex justify-between mt-6'>
-                <div className='flex'>
-                  <label className="font-regular text-xs md:text-base text-white">Pool Share:</label>
-                  <p className='text-[#ED0E00] font-regular text-sm md:text-base ml-3'>{pageData.poolShare || "0"}%</p>
+                <div className='flex text-white'>
+                  <label className="font-regular text-xs md:text-base">Pool Share:</label>
+                  <p className='font-regular text-sm md:text-base ml-3'>{pageData.poolShare || "0"}%</p>
                 </div>
                 <NumericFormat
                   value={pageData.stakedAmount}

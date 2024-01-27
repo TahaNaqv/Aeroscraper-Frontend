@@ -201,6 +201,11 @@ export default function InjectiveDashboard() {
               <Text size="sm" textColor="text-white" className="cursor-pointer">
                 Whitepaper
               </Text>
+              <img
+                alt="external-link"
+                src="/images/external-link.svg"
+                className="w-4 h-4"
+              />
             </Link>
             <Link
               href={
@@ -213,6 +218,11 @@ export default function InjectiveDashboard() {
               <Text size="sm" textColor="text-white">
                 Brand Identity
               </Text>
+              <img
+                alt="external-link"
+                src="/images/external-link.svg"
+                className="w-4 h-4"
+              />
             </Link>
             <Link
               href={"https://testnet.faucet.injective.network/"}
@@ -223,6 +233,11 @@ export default function InjectiveDashboard() {
               <Text size="sm" textColor="text-white">
                 Injective Faucet
               </Text>
+              <img
+                alt="external-link"
+                src="/images/external-link.svg"
+                className="w-4 h-4"
+              />
             </Link>
           </div>
           <div className="flex flex-col content-start justify-start gap-6">
