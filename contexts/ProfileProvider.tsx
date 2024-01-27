@@ -22,8 +22,11 @@ const ProfileProvider: FC<PropsWithChildren> = ({ children }) => {
     const { address } = useChainAdapter();
     const [profileDetail, setProfileDetail] = useState<ProfileDetailModel | undefined>(undefined);
 
+
     const getProfileDetail = useCallback(async () => {
+        
         if (address) {
+            
             try {
                 const response = await fetch(`${process.env.NEXT_PUBLIC_PROFILE_API}/api/users/profile-detail`, {
                     method: 'POST',

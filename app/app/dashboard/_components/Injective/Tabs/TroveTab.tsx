@@ -269,26 +269,49 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
                       <div className='flex justify-between md:mt-6'>
                         <div className='flex'>
                           <label className="font-regular text-xs md:text-base text-gray-300">In Wallet:</label>
-                          <p className='text-white font-regular text-xs md:text-base ml-3'>{!isNil(baseCoin) ? Number(convertAmount(balanceByDenom[baseCoin.denom]?.amount ?? 0, baseCoin.decimal)).toFixed(6) : 0} {baseCoin?.name}</p>
+                          <NumericFormat
+                            value={!isNil(baseCoin) ? Number(convertAmount(balanceByDenom[baseCoin.denom]?.amount ?? 0, baseCoin.decimal)).toFixed(6) : 0}
+                            thousandsGroupStyle="thousand"
+                            thousandSeparator=","
+                            fixedDecimalScale
+                            decimalScale={4}
+                            displayType="text"
+                            renderText={(value) =>
+                              <p className='text-white font-regular text-xs md:text-base ml-3'>{value} {baseCoin?.name}</p>
+                            }
+                          />
                         </div>
                         <div className='flex'>
                           <label className="font-regular text-xs md:text-base text-gray-300">In Trove Balance:</label>
-                          <p className='text-white font-regular text-xs md:text-base ml-3'>{pageData.collateralAmount} {baseCoin?.name}</p>
+                          <NumericFormat
+                            value={pageData.collateralAmount}
+                            thousandsGroupStyle="thousand"
+                            thousandSeparator=","
+                            fixedDecimalScale
+                            decimalScale={4}
+                            displayType="text"
+                            renderText={(value) =>
+                              <p className='text-white font-regular text-xs md:text-base ml-3'>{value} {baseCoin?.name}</p>
+                            }
+                          />
                         </div>
                       </div>
                     </div>
                     <div className='grid grid-cols-2 md:grid-cols-4 gap-20 md:gap-6 gap-y-4 mt-4 md:mt-0 md:p-4'>
                       <InjectiveStatisticCard
+                        isNumeric
                         title='Management Fee'
                         description={`${Number(collateralAmount * 0.005).toFixed(6)} ${baseCoin?.name ?? ""} (0.5%)`}
                         tooltip='This amount is deducted from the collateral amount as a management fee. There are no recurring fees for borrowing, which is thus interest-free.'
                       />
                       <InjectiveStatisticCard
+                        isNumeric
                         title='Total Debt'
                         description={`${pageData.debtAmount} AUSD`}
                         tooltip='The total amount of AUSD you have borrowed'
                       />
                       <InjectiveStatisticCard
+                        isNumeric
                         title='Liquidation Price'
                         description={Number((pageData.debtAmount * 115) / ((pageData.collateralAmount || 1) * 100)).toFixed(6).toString()}
                         tooltip='The dollar value per unit of collateral at which your Trove will drop below a 115% Collateral Ratio and be liquidated. You should ensure you are comfortable with managing your position so that the price of your collateral never reaches this level.'
@@ -347,26 +370,48 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
                       </div>
                       <div className='flex justify-between md:mt-6'>
                         <div className='flex'>
-                          <label className="font-regular text-[10px] md:text-base text-gray-300">Borrowing Capacity:</label>
-                          <p className='text-white font-regular text-xs md:text-base ml-1 md:ml-3'>{(((pageData.collateralAmount * basePrice * 100) / 115) - (pageData.debtAmount)).toFixed(6)} AUSD</p>
-                        </div>
-                        <div className='flex'>
-                          <label className="font-regular text-[10px] md:text-base text-gray-300">In Wallet AUSD:</label>
+                          <label className="font-regular text-[10px] md:text-base text-gray-300">In Wallet:</label>
                           <NumericFormat
                             value={pageData.ausdBalance}
                             thousandsGroupStyle="thousand"
                             thousandSeparator=","
                             fixedDecimalScale
-                            decimalScale={2}
+                            decimalScale={4}
                             displayType="text"
                             renderText={(value) =>
                               <p className='text-white font-regular text-xs md:text-base ml-1 md:ml-3'>{value} AUSD</p>
                             }
                           />
                         </div>
+
+                        <div className='flex'>
+                          <label className="font-regular text-[10px] md:text-base text-gray-300">Borrowing Capacity:</label>
+                          <NumericFormat
+                            value={(((pageData.collateralAmount * basePrice * 100) / 115) - (pageData.debtAmount))}
+                            thousandsGroupStyle="thousand"
+                            thousandSeparator=","
+                            fixedDecimalScale
+                            decimalScale={4}
+                            displayType="text"
+                            renderText={(value) =>
+                              <p className='text-white font-regular text-xs md:text-base ml-1 md:ml-3'>{value} AUSD</p>
+                            }
+                          />
+                        </div>
+
                         <div className='flex'>
                           <label className="font-regular text-[10px] md:text-base text-gray-300">Debt:</label>
-                          <p className='text-white font-regular text-xs md:text-base ml-1 md:ml-3'>{`${pageData.debtAmount.toFixed(6)} AUSD`}</p>
+                          <NumericFormat
+                            value={pageData.debtAmount}
+                            thousandsGroupStyle="thousand"
+                            thousandSeparator=","
+                            fixedDecimalScale
+                            decimalScale={4}
+                            displayType="text"
+                            renderText={(value) =>
+                              <p className='text-white font-regular text-xs md:text-base ml-1 md:ml-3'>{`${value} AUSD`}</p>
+                            }
+                          />
                         </div>
                       </div>
                     </div>
@@ -374,6 +419,7 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
                       <div className='md:col-start-3'>
                         <InjectiveStatisticCard
                           title='Liquidation Price'
+                          isNumeric
                           description={Number((pageData.debtAmount * 115) / ((pageData.collateralAmount || 1) * 100)).toFixed(6).toString()}
                           tooltip='The dollar value per unit of collateral at which your Trove will drop below a 115% Collateral Ratio and be liquidated. You should ensure you are comfortable with managing your position so that the price of your collateral never reaches this level.'
                         />
@@ -466,17 +512,20 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
               className="grid grid-cols-2 md:grid-cols-4 content-center md:gap-16 mt-8">
               <InjectiveStatisticCard
                 title="Management Fee"
+                isNumeric
                 description={`${Number(openTroveAmount * 0.005).toFixed(6)} ${baseCoin?.name ?? ""} (0.5%)`}
                 className="w-full h-14"
                 tooltip="This amount is deducted from the collateral amount as a management fee. There are no recurring fees for borrowing, which is thus interest-free."
               />
               <InjectiveStatisticCard
                 title="Total Debt"
+                isNumeric
                 description={`${borrowAmount} AUSD`}
                 className="w-full h-14"
                 tooltip="The total amount of AUSD you have borrowed"
               />
               <InjectiveStatisticCard
+                isNumeric
                 title="Liquidation Price"
                 description={Number((borrowAmount * 115) / ((openTroveAmount || 1) * 100)).toFixed(6).toString()}
                 className="w-full h-14"

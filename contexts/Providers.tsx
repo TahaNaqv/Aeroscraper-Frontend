@@ -13,6 +13,7 @@ import { wallets as cosmostationWallets } from "@cosmos-kit/cosmostation";
 import { ChainName } from "@/enums/Chain";
 import { GasPrice } from "@cosmjs/stargate";
 import { AbstraxionProvider } from "@burnt-labs/abstraxion";
+import ProfileProvider from "./ProfileProvider";
 
 const Providers: FC<PropsWithChildren> = ({ children }) => {
   return (
@@ -61,7 +62,11 @@ const Providers: FC<PropsWithChildren> = ({ children }) => {
         }}
       >
         <AppProvider>
-          <NotificationProvider>{children}</NotificationProvider>
+          <NotificationProvider>
+            <ProfileProvider>
+              {children}
+            </ProfileProvider>
+          </NotificationProvider>
         </AppProvider>
       </ChainProvider>
     </AbstraxionProvider>

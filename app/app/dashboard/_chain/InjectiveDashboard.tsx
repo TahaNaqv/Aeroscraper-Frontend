@@ -169,7 +169,7 @@ export default function InjectiveDashboard() {
               href={"https://x.com/aeroscraper/status/1740683514457243693?s=20"}
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:scale-105 transition-all flex gap-2"
+              className="hover:scale-105 transition-all gap-2 flex"
             >
               <Text size="sm" textColor="text-white" className="cursor-pointer">
                 Audit
@@ -201,6 +201,11 @@ export default function InjectiveDashboard() {
               <Text size="sm" textColor="text-white" className="cursor-pointer">
                 Whitepaper
               </Text>
+              <img
+                alt="external-link"
+                src="/images/external-link.svg"
+                className="w-4 h-4"
+              />
             </Link>
             <Link
               href={
@@ -213,6 +218,11 @@ export default function InjectiveDashboard() {
               <Text size="sm" textColor="text-white">
                 Brand Identity
               </Text>
+              <img
+                alt="external-link"
+                src="/images/external-link.svg"
+                className="w-4 h-4"
+              />
             </Link>
             <Link
               href={"https://testnet.faucet.injective.network/"}
@@ -223,6 +233,11 @@ export default function InjectiveDashboard() {
               <Text size="sm" textColor="text-white">
                 Injective Faucet
               </Text>
+              <img
+                alt="external-link"
+                src="/images/external-link.svg"
+                className="w-4 h-4"
+              />
             </Link>
           </div>
           <div className="flex flex-col content-start justify-start gap-6">

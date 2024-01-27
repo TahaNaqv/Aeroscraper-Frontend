@@ -1,6 +1,7 @@
 'use client'
 
 import GradientButton from '@/components/Buttons/GradientButton'
+import OutlinedButton from '@/components/Buttons/OutlinedButton'
 import Faq from '@/components/FAQ/Faq'
 import { InjectiveBackgroundWave, LogoSecondary, MedalIcon } from '@/components/Icons/Icons'
 import Text from '@/components/Texts/Text'
@@ -31,13 +32,22 @@ export default function Home() {
               <br /><br />
               The protocol only charges a one-time fee. Deposit collateral and access loans in stablecoins pegged to the US dollar.
             </h2>
-            <Link href={"/app/dashboard"}>
-              <GradientButton
-                className='w-full lg:w-[227px] h-[37px] rounded-lg self-end px-8 group mt-10'
-              >
-                <Text size='base'>Launch App</Text>
-              </GradientButton>
-            </Link>
+            <div className='flex gap-8 mt-10'>
+              <Link href={"/app/dashboard"}>
+                <GradientButton
+                  className='w-full lg:w-[227px] h-[37px] rounded-lg self-end px-8 group'
+                >
+                  <Text size='base'>Launch App</Text>
+                </GradientButton>
+              </Link>
+              <Link href={"https://aeroscraper.gitbook.io/aeroscraper/"} target="_blank">
+                <OutlinedButton
+                  className='w-full lg:w-[227px] h-[41px] rounded-lg self-end group'
+                >
+                  <Text size='base'>Learn More</Text>
+                </OutlinedButton>
+              </Link>
+            </div>
           </div>
           <div className="md:mt-32 md:ml-20 p-4 md:block hidden">
             <Link target={"_blank"} className="border border-[#073DC8]/60 bg-[#0c0c2766] px-4 md:px-10 py-8 rounded-lg flex gap-6 backdrop-blur-2xl" href={'https://twitter.com/Injective_/status/1745933949132488934?s=20'}>
@@ -89,18 +99,28 @@ export default function Home() {
         <div className='grid grid-cols-1 md:grid-cols-4 gap-10 md:gap-40'>
           <div className='flex flex-col content-start justify-start gap-4'>
             <Text size="sm" textColor='text-white' weight="font-semibold">Product</Text>
-              <Link href={'https://x.com/aeroscraper/status/1740683514457243693?s=20'} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
-                <Text size="sm" textColor='text-white' className="cursor-pointer">Audit</Text>
-                <img alt='external-link' src='/images/external-link.svg' className='w-4 h-4' />
-              </Link>
+            <Link href={'https://x.com/aeroscraper/status/1740683514457243693?s=20'} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
+              <Text size="sm" textColor='text-white' className="cursor-pointer">Audit</Text>
+              <img alt='external-link' src='/images/external-link.svg' className='w-4 h-4' />
+            </Link>
             <Link href={'/?scroll=FAQ'} target="_parent" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
               <Text size="sm" textColor='text-white' className="cursor-pointer">FAQ</Text>
             </Link>
             <Link href={'https://novaratio.gitbook.io/aeroscraper/aeroscraper/whitepaper'} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
               <Text size="sm" textColor='text-white' className="cursor-pointer">Whitepaper</Text>
+              <img
+                alt="external-link"
+                src="/images/external-link.svg"
+                className="w-4 h-4"
+              />
             </Link>
             <Link href={'https://aeroscraper.gitbook.io/aeroscraper/brand-identity/brand-kit'} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
               <Text size="sm" textColor='text-white'>Brand Identity</Text>
+              <img
+                alt="external-link"
+                src="/images/external-link.svg"
+                className="w-4 h-4"
+              />
             </Link>
           </div>
           <div className='flex flex-col content-start justify-start gap-6'>
