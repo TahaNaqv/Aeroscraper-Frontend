@@ -13,7 +13,7 @@ export default function Home() {
   const router = useRouter()
   useEffect(() => {
     //prefetching xion page
-    router.prefetch('/xion')
+    router.prefetch('/app/xion')
     router.prefetch('/app/dashboard')
   }, [router])
 

@@ -9,7 +9,7 @@ import "@burnt-labs/ui/styles.css";
 import type { ExecuteResult } from "@cosmjs/cosmwasm-stargate";
 import useChainAdapter from "@/hooks/useChainAdapter";
 import XionTheme from "@/layouts/themes/XionTheme";
-import XionDashboard from "../app/dashboard/_chain/XionDashboard";
+import XionDashboard from "../dashboard/_chain/XionDashboard";
 
 
 export default function Page(): JSX.Element {
