@@ -57,7 +57,7 @@ const AppProvider: React.FC<PropsWithChildren> = ({ children }) => {
 
     const selectChainName = useCallback((chainName?: ChainName) => {
         setSelectedChainName(chainName);
-        localStorage.setItem('selectedChainName', chainName || '');
+        localStorage.setItem("savedChainName", chainName || '');
     }, [])
 
     const selectWallet = useCallback(async (wallet?: WalletType) => {
@@ -105,7 +105,7 @@ const AppProvider: React.FC<PropsWithChildren> = ({ children }) => {
     ])
 
     useEffect(() => {
-        const savedChainName = localStorage.getItem('selectedChainName');
+        const savedChainName = localStorage.getItem("savedChainName");
         if (!isNil(savedChainName) && !isEmpty(savedChainName)) {
             setSelectedChainName(savedChainName as ChainName);
         }

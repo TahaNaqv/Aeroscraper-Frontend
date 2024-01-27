@@ -8,7 +8,7 @@ import React, { Dispatch, FC, useEffect, useRef, useState } from 'react'
 import ClaimRewardTab from './Tabs/ClaimRewardTab';
 import LeaderboardTab from './Tabs/LeaderboardTab';
 import RedeemTab from './Tabs/RedeemTab';
-import RiskyTrovesTab from './Tabs/RiskyTrovesTab';
+import RiskyTrovesTabV1 from './Tabs/RiskyTrovesTabV1';
 import StabilityPoolTab from './Tabs/StabilityPoolTab';
 import TroveTab from './Tabs/TroveTab';
 import useChainAdapter from '@/hooks/useChainAdapter';
@@ -29,7 +29,7 @@ const XionTabsSide: FC<Props> = ({ setTabPosition }) => {
   const ref = useRef<HTMLDivElement>(null);
 
   const [basePrice, setBasePrice] = useState(1);
-  const { pageData, getPageData, loading } = usePageData({ basePrice });
+  const { pageData, getPageData, loading } = usePageData();
   const { refreshBalance } = useBalances();
   const { walletInfo } = useChainAdapter();
 
@@ -39,13 +39,10 @@ const XionTabsSide: FC<Props> = ({ setTabPosition }) => {
 
   const [selectedTab, setSelectedTab] = useState<XionTabs>(isTroveOpened ? "trove" : "createTrove");
 
- 
-
   useEffect(() => {
-    setIsTroveOpened(pageData.collateralAmount > 0);
-
     if (selectedTab === "trove" || selectedTab === "createTrove") {
-      setSelectedTab(pageData.collateralAmount > 0 ? "trove" : "createTrove");
+      setIsTroveOpened(pageData.baseCollateralAmount > 0);
+      setSelectedTab(pageData.baseCollateralAmount > 0 ? "trove" : "createTrove");
     }
   }, [pageData]);
 
@@ -102,7 +99,7 @@ const XionTabsSide: FC<Props> = ({ setTabPosition }) => {
           {selectedTab === (isTroveOpened ? "trove" : "createTrove") && <TroveTab pageData={pageData} getPageData={getPageData} basePrice={basePrice} />}
           {selectedTab === "stabilityPool" && <StabilityPoolTab pageData={pageData} getPageData={getPageData} />}
           {selectedTab === "redeem" && <RedeemTab pageData={pageData} getPageData={getPageData} refreshBalance={refreshBalance} basePrice={basePrice} />}
-          {selectedTab === "riskyTroves" && <RiskyTrovesTab pageData={pageData} getPageData={getPageData} basePrice={basePrice} />}
+          {selectedTab === "riskyTroves" && <RiskyTrovesTabV1 getPageData={getPageData} basePrice={basePrice} />}
           {selectedTab === "rewards" && <ClaimRewardTab pageData={pageData} getPageData={getPageData} refreshBalance={refreshBalance} basePrice={basePrice} />}
           {/* {selectedTab === "leaderboard&missions" && <LeaderboardTab />} */}
         </motion.main>

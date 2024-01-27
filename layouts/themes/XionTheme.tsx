@@ -23,7 +23,7 @@ const XionTheme = () => {
   const [loading, setLoading] = useState(false);
   const { balanceByDenom } = useBalances();
   const [basePrice, setBasePrice] = useState(0);
-  const { pageData, getPageData } = usePageData({ basePrice });
+  const { pageData, getPageData } = usePageData();
 
   const [accountModal, setAccountModal] = useState(false);
 
@@ -78,9 +78,8 @@ const XionTheme = () => {
               setIsOpen(true);
             }}
             structure="base"
-            className={` py-2  rounded-md text-white  ${
-              account.bech32Address ? "bg-transparent" : "confirmBtn  px-12"
-            }`}
+            className={` py-2  rounded-md text-white  ${account.bech32Address ? "bg-transparent" : "confirmBtn  px-12"
+              }`}
           >
             {account.bech32Address ? (
               <div className="flex items-center justify-center">

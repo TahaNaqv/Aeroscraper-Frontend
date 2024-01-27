@@ -49,6 +49,18 @@ const neutronAsset: CollateralAsset = {
     oracleContractAddress: ''
 }
 
+const xionAsset: CollateralAsset = {
+    name: "Xion",
+    shortName: "XION",
+    denom: "uxion",
+    decimal: 6,
+    ausdDecimal: 6,
+    imageURL: "/images/token-images/xion.svg",
+    priceId: "",
+    priceServiceUrl: "",
+    oracleContractAddress: ''
+}
+
 export const collateralAssets: CollateralAsset[] = [
     injAsset,
     seiAsset
@@ -58,7 +70,8 @@ export const DefaultAssetByChainName: Record<ChainName, CollateralAsset> = {
     [ChainName.SEI]: seiAsset,
     [ChainName.INJECTIVE]: injAsset,
     [ChainName.ARCHWAY]: archAsset,
-    [ChainName.NEUTRON]: neutronAsset
+    [ChainName.NEUTRON]: neutronAsset,
+    [ChainName.XION]: xionAsset
 }
 
 export const assetByDenom: Record<string, CollateralAsset | undefined> = Object

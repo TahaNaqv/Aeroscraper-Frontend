@@ -67,7 +67,7 @@ export const getAppContract = (
         }
     }
 
-    const getTotalCollateralAmount = async (): Promise<TotalCollateralModel | undefined> => {
+    const getTotalCollateralAmounts = async (): Promise<TotalCollateralModel | undefined> => {
         if (chainName === ChainName.INJECTIVE) {
             const res = await chainGrpcWasmApi.fetchSmartContractState(contractAddress, toBase64({ total_collateral_amounts: {} }))
             const data: any = fromBase64(res.data as any);
@@ -873,7 +873,7 @@ export const getAppContract = (
     }
 
     return {
-        getTotalCollateralAmount,
+        getTotalCollateralAmounts,
         getTotalDebtAmount,
         getTrove,
         getStake,

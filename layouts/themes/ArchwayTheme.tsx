@@ -28,7 +28,7 @@ const ArchwayTheme = () => {
     else {
       disconnect();
     }
-    localStorage.removeItem("selectedChainName");
+    localStorage.removeItem("savedChainName");
     localStorage.removeItem("selectedWallet");
     localStorage.removeItem("profile-detail");
   }

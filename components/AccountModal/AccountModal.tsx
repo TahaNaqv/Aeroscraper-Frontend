@@ -75,7 +75,7 @@ const AccountModal: FC<Props> = (props: Props) => {
         selectWallet(undefined);
         setProfileDetail(undefined);
         localStorage.removeItem("profile-detail");
-        localStorage.removeItem("selectedChainName");
+        localStorage.removeItem("savedChainName");
         localStorage.removeItem("selectedWallet")
         closeModal();
     }

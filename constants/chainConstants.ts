@@ -42,6 +42,14 @@ export const BaseCoinByChainName: Record<ChainName, BaseCoin> = {
         decimal: 6,
         ausdDecimal: 6
     },
+    [ChainName.XION]: {
+        name: "XION",
+        denom: "uxion",
+        image: "/images/token-images/xion.svg",
+        tokenImage: "/images/token-images/xion.svg",
+        decimal: 6,
+        ausdDecimal: 6
+    }
 }
 
 export const BaseCoinByDenom = Object.values(BaseCoinByChainName).reduce<Record<string, BaseCoin>>((acc, baseCoin) => {
@@ -66,6 +74,10 @@ export const TransactionDomainByChainName: Record<ChainName, { accountUrl: strin
         txDetailUrl: "https://neutron.celat.one/transactions/",
         accountUrl: "https://neutron.celat.one/account/"
     },
+    [ChainName.XION]: {
+        txDetailUrl: "",
+        accountUrl: ""
+    }
 }
 
 export const getContractAddressesByChain = (appVersion: AppVersion, chainName?: ChainName) => {
@@ -116,6 +128,7 @@ export const ChainImagesByName: Record<ChainName, string> = {
     [ChainName.ARCHWAY]: "/images/token-images/archway-coin.png",
     [ChainName.INJECTIVE]: "/images/token-images/inj.svg",
     [ChainName.NEUTRON]: "/images/token-images/neutron.svg",
+    [ChainName.XION]: "/images/token-images/xion.svg"
 }
 
 export const priceIdByChainName: Record<ChainName, { priceId: string, serviceUrl: string }> = {
@@ -123,4 +136,5 @@ export const priceIdByChainName: Record<ChainName, { priceId: string, serviceUrl
     [ChainName.ARCHWAY]: { priceId: "b00b60f88b03a6a625a8d1c048c3f66653edf217439983d037e7222c4e612819", serviceUrl: "https://xc-mainnet.pyth.network/" },
     [ChainName.NEUTRON]: { priceId: "8112fed370f3d9751e513f7696472eab61b7f4e2487fd9f46c93de00a338631c", serviceUrl: "https://hermes-beta.pyth.network/" },
     [ChainName.INJECTIVE]: { priceId: "2d9315a88f3019f8efa88dfe9c0f0843712da0bac814461e27733f6b83eb51b3", serviceUrl: "https://hermes-beta.pyth.network/" },
+    [ChainName.XION]: { priceId: "", serviceUrl: "" }
 }

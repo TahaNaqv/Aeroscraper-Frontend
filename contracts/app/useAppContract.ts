@@ -34,7 +34,7 @@ const useAppContract = () => {
 
     const getTotalCollateralAmounts = useCallback(async () => {
         if (isNil(contract)) return;
-        return await contract.getTotalCollateralAmount();
+        return await contract.getTotalCollateralAmounts();
     }, [contract])
 
     const getTotalDebtAmount = useCallback(async () => {
