@@ -256,6 +256,7 @@ export default function InjectiveDashboard() {
                 <Text size="sm" textColor="text-white">
                   Definition of name
                 </Text>
+                <img alt='external-link' src='/images/external-link.svg' className='w-4 h-4' />
               </Link>
               <Link
                 href={
@@ -268,6 +269,7 @@ export default function InjectiveDashboard() {
                 <Text size="sm" textColor="text-white">
                   Definition of icon
                 </Text>
+                <img alt='external-link' src='/images/external-link.svg' className='w-4 h-4' />
               </Link>
               <Link
                 href={
@@ -280,6 +282,7 @@ export default function InjectiveDashboard() {
                 <Text size="sm" textColor="text-white">
                   Definition of colors
                 </Text>
+                <img alt='external-link' src='/images/external-link.svg' className='w-4 h-4' />
               </Link>
               <Link
                 href={
@@ -292,6 +295,7 @@ export default function InjectiveDashboard() {
                 <Text size="sm" textColor="text-white">
                   Definition of typography
                 </Text>
+                <img alt='external-link' src='/images/external-link.svg' className='w-4 h-4' />
               </Link>
               <Link
                 href={"https://aeroscraper.gitbook.io/aeroscraper/"}
@@ -300,6 +304,7 @@ export default function InjectiveDashboard() {
                 <Text size="sm" textColor="text-white">
                   Definition of concept
                 </Text>
+                <img alt='external-link' src='/images/external-link.svg' className='w-4 h-4' />
               </Link>
             </div>
           </div>
@@ -314,11 +319,12 @@ export default function InjectiveDashboard() {
                 }
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:scale-105 transition-all flex gap-2"
+                className="hover:scale-105 transition-all flex gap-2 whitespace-nowrap"
               >
                 <Text size="sm" textColor="text-white">
                   Injective Illuminate Hackathon
                 </Text>
+                <img alt='external-link' src='/images/external-link.svg' className='w-4 h-4' />
               </Link>
               <Link
                 href={
@@ -331,6 +337,7 @@ export default function InjectiveDashboard() {
                 <Text size="sm" textColor="text-white">
                   Code Sei Hackathon
                 </Text>
+                <img alt='external-link' src='/images/external-link.svg' className='w-4 h-4' />
               </Link>
             </div>
           </div>
