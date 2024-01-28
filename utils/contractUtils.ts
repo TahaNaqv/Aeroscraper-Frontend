@@ -73,7 +73,7 @@ export const getRatioColor = (value: number) => {
     if (value < 115) {
         return '#cc2340';
     }
-    else if (value > 115 && value < 150) {
+    else if (value > 115 && value < 130) {
         return '#d4b737'
     }
 
@@ -84,7 +84,7 @@ export const getRatioText = (value: number) => {
     if (value < 115) {
         return "Troves below 115% collateral ratio will be liquidated. Your trove is in the risky troves range."
     }
-    else if (value > 115 && value < 150) {
+    else if (value > 115 && value < 130) {
         return "Troves below 115% collateral ratio will be liquidated. Your trove's risk is moderate."
     }
 
