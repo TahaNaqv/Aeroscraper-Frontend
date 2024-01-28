@@ -169,7 +169,7 @@ export default function InjectiveDashboard() {
               href={"https://x.com/aeroscraper/status/1740683514457243693?s=20"}
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:scale-105 transition-all flex gap-2"
+              className="hover:scale-105 transition-all gap-2 flex"
             >
               <Text size="sm" textColor="text-white" className="cursor-pointer">
                 Audit
