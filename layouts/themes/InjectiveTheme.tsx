@@ -12,6 +12,7 @@ import useChainAdapter from '@/hooks/useChainAdapter';
 import useBalances from '@/hooks/useBalances';
 import { WalletType } from '@/enums/WalletType';
 import VersionSelector from '@/components/VersionSelector/VersionSelector';
+import { useProfile } from '@/contexts/ProfileProvider';
 
 const InjeciveTheme = () => {
   const {
@@ -27,6 +28,8 @@ const InjeciveTheme = () => {
 
   const { basePrice } = useChainAdapter();
   const { pageData, getPageData } = usePageData();
+
+  const { profileDetail } = useProfile();
 
   const [accountModal, setAccountModal] = useState(false);
 
@@ -84,7 +87,7 @@ const InjeciveTheme = () => {
                 <img
                   alt="user-profile-image"
                   src={
-                    /*wallet.profileDetail?.photoUrl ??*/ "/images/profile-images/profile-i-1.jpg"
+                    profileDetail?.photoUrl ??"/images/profile-images/profile-i-1.jpg"
                   }
                   className="rounded-sm bg-raisin-black w-12 h-12"
                 />

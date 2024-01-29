@@ -6,7 +6,7 @@ import React, { FC, useEffect, useMemo, useState } from 'react'
 import { NumberFormatValues } from 'react-number-format/types/types';
 import OutlinedButton from '@/components/Buttons/OutlinedButton';
 import { useNotification } from '@/contexts/NotificationProvider';
-import { convertAmount, getIsInjectiveResponse, getRatioColor, getRatioText } from '@/utils/contractUtils';
+import { AUSD_PRICE, convertAmount, getIsInjectiveResponse, getRatioColor, getRatioText } from '@/utils/contractUtils';
 import { isNil } from 'lodash';
 import { PageData } from '../../../_types/types';
 import InjectiveStatisticCard from '@/components/Cards/InjectiveStatisticCard';
@@ -34,6 +34,7 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
   const contract = useAppContract();
   const { balanceByDenom, refreshBalance } = useBalances();
   const { selectedChainName, selectedAppVersion } = useChainAdapter();
+
   const [openTroveAmount, setOpenTroveAmount] = useState<number>(0);
   const [borrowAmount, setBorrowAmount] = useState<number>(0);
   const [collateralAmount, setCollateralAmount] = useState<number>(0);
@@ -311,12 +312,22 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
                       </div>
                     </div>
                     <div className='grid grid-cols-2 md:grid-cols-4 gap-20 md:gap-6 gap-y-4 mt-4 md:mt-0 md:p-4'>
-                      <InjectiveStatisticCard
-                        isNumeric
-                        title='Management Fee'
-                        description={`${Number(collateralAmount * 0.005)} ${selectedAsset?.shortName ?? ""} (0.5%)`}
-                        tooltip='This amount is deducted from the collateral amount as a management fee. There are no recurring fees for borrowing, which is thus interest-free.'
+                      <NumericFormat
+                        value={Number(collateralAmount * 0.005)}
+                        thousandsGroupStyle="thousand"
+                        thousandSeparator=","
+                        fixedDecimalScale
+                        decimalScale={3}
+                        displayType="text"
+                        renderText={(value) =>
+                          <InjectiveStatisticCard
+                            title='Management Fee'
+                            description={`${value} ${selectedAsset?.shortName ?? ""} (0.5%)`}
+                            tooltip='This amount is deducted from the collateral amount as a management fee. There are no recurring fees for borrowing, which is thus interest-free.'
+                          />
+                        }
                       />
+
                       <InjectiveStatisticCard
                         isNumeric
                         title='Total Debt'
@@ -473,7 +484,7 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
           <div>
             <Text size='3xl'>Borrow AUSD</Text>
             <Text size='base' weight='font-regular' className='mt-1'>Open a trove to borrow AUSD, Aeroscraper’s native stable coin.</Text>
-            <div className="w-full bg-cetacean-dark-blue border backdrop-blur-[37px] border-white/10 rounded-xl md:rounded-2xl px-3 pt-4 pb-3 md:px-6 md:py-8 flex flex-col gap-4 mt-6">
+            <div className="w-full bg-cetacean-dark-blue border backdrop-blur-[37px] border-white/10 rounded-xl md:rounded-2xl px-3 pt-4 pb-4 md:px-6 md:pt-8 flex flex-col gap-4 mt-6">
               <div className="flex items-end justify-between">
                 <div>
                   <Text size="sm" weight="mb-2">Collateral</Text>
@@ -495,6 +506,20 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
                   className="text-end"
                 />
               </div>
+              <div className='flex mt-1'>
+                <label className="font-regular text-xs md:text-base text-gray-300">In Wallet:</label>
+                <NumericFormat
+                  value={Number(convertAmount(balanceByDenom[selectedAsset.denom]?.amount ?? 0, selectedAsset.decimal)).toFixed(6)}
+                  thousandsGroupStyle="thousand"
+                  thousandSeparator=","
+                  fixedDecimalScale
+                  decimalScale={4}
+                  displayType="text"
+                  renderText={(value) =>
+                    <p className='text-white font-regular text-xs md:text-base ml-3'>{value} {selectedAsset.shortName}</p>
+                  }
+                />
+              </div>
             </div>
             <div className="w-full bg-cetacean-dark-blue border backdrop-blur-[37px] border-white/10 rounded-xl md:rounded-2xl px-3 pt-4 pb-3 md:px-6 md:py-8 flex flex-col gap-4 mt-6">
               <div className="flex items-end justify-between">
@@ -511,6 +536,20 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
                   containerClassName="h-10 text-end flex-1 ml-6"
                   bgVariant="blue"
                   className="text-end"
+                />
+              </div>
+              <div className='flex mt-1'>
+                <label className="font-regular text-xs md:text-base text-gray-300">In Wallet:</label>
+                <NumericFormat
+                  value={Number(pageData.ausdBalance * AUSD_PRICE)}
+                  thousandsGroupStyle="thousand"
+                  thousandSeparator=","
+                  fixedDecimalScale
+                  decimalScale={2}
+                  displayType="text"
+                  renderText={(value) =>
+                    <p className='text-white font-regular text-xs md:text-base ml-3'>{value} AUSD</p>
+                  }
                 />
               </div>
             </div>

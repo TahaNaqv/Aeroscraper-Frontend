@@ -149,7 +149,7 @@ const InjectiveStatisticSide: FC<Props> = ({ basePrice }) => {
             description="115%"
             className="w-[191px] h-14"
             tooltip="Liquidation Threshold Ratio"
-            tooltipPlacement="left-bottom"
+            tooltipPlacement="left-bottom-corner"
           />
           <InjectiveStatisticCard
             title="Total Value Locked"

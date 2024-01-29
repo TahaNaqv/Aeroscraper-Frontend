@@ -89,6 +89,42 @@ export default function Home() {
         <div className='max-w-[626px]  p-6 md:p-0'>
           <Faq />
         </div>
+        <div className='flex gap-8 mt-10'>
+          <Link href={"/app/dashboard"}>
+            <GradientButton
+              className='w-full lg:w-[227px] h-[37px] rounded-lg self-end px-8 group'
+            >
+              <Text size='base'>Launch App</Text>
+            </GradientButton>
+          </Link>
+          <Link href={"https://aeroscraper.gitbook.io/aeroscraper/"} target="_blank">
+            <OutlinedButton
+              className='w-full lg:w-[227px] h-[41px] rounded-lg self-end group'
+            >
+              <Text size='base'>Learn More</Text>
+            </OutlinedButton>
+          </Link>
+        </div>
+        <div>
+          <h2 className="text-4xl font-semibold text-white mb-4 mt-14">Our Partners</h2>
+          <Text size='base' className='mt-8' textColor='text-white/60'>Chains</Text>
+          <div className='flex gap-4'>
+            <Link className='flex gap-6' href={'https://injective.com/'}>
+              <img alt={"injective"} src={"/images/token-images/injective.svg"} className='px-4 w-[148px] h-[60px] mt-4 border border-white/10 rounded-md' />
+            </Link>
+            <Link className='flex gap-6' href={'https://www.sei.io/'}>
+              <img alt={"sei"} src={"/images/token-images/sei.svg"} className='px-4 w-[148px] h-[60px] mt-4 border border-white/10 rounded-md' />
+            </Link>
+          </div>
+          <Text size='base' className='mt-8' textColor='text-white/60'>Security</Text>
+          <Link className='flex gap-6' href={'https://beosin.com/'}>
+            <img alt={"beosin security"} src={"/images/beosin.svg"} className='px-4 w-[148px] h-[60px] mt-4 border border-white/10 rounded-md' />
+          </Link>
+          <Text size='base' className='mt-8' textColor='text-white/60'>Oracle</Text>
+          <Link className='flex gap-6' href={'https://pyth.network/'}>
+            <img alt={"pyth"} src={"/images/pyth2.svg"} className='px-8 w-[148px] h-[60px] mt-4 border border-white/10 rounded-md' />
+          </Link>
+        </div>
         <InjectiveBackgroundWave animate className="absolute top-40 md:-top-3 right-0 -z-10 md:w-[1200px] w-[300px]" />
       </main>
       <footer className='flex flex-col gap-x-48 gap-y-16 items-top flex-wrap px-6 mx-auto pr-16 mt-40 pb-24 relative md:px-[64px] container w-full'>

@@ -40,8 +40,9 @@ const InjectiveTabsSide: FC<Props> = ({ setTabPosition }) => {
   const [selectedTab, setSelectedTab] = useState<InjectiveTabs>(isTroveOpened ? "trove" : "createTrove");
 
   useEffect(() => {
+    setIsTroveOpened(pageData.baseCollateralAmount > 0);
+    
     if (selectedTab === "trove" || selectedTab === "createTrove") {
-      setIsTroveOpened(pageData.baseCollateralAmount > 0);
       setSelectedTab(pageData.baseCollateralAmount > 0 ? "trove" : "createTrove");
     }
   }, [pageData]);

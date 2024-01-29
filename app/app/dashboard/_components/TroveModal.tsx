@@ -397,7 +397,7 @@ const TroveModal: FC<Props> = ({ open, pageData, onClose, getPageData, basePrice
                             className="grid grid-cols-12 content-center gap-6 mt-2">
                             <StatisticCard
                                 title="Management Fee"
-                                description={`${Number(openTroveAmount * 0.005).toFixed(3)} ${selectedAsset?.shortName ?? ""} (0.5%)`}
+                                description={`${Number(openTroveAmount * 0.005)} ${selectedAsset?.shortName ?? ""} (0.5%)`}
                                 className="w-full h-14 col-span-6"
                                 tooltip="This amount is deducted from the collateral amount as a management fee. There are no recurring fees for borrowing, which is thus interest-free."
                             />
