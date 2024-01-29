@@ -21,7 +21,7 @@ export default function Home() {
     <div>
       <main className='container w-full px-3 md:px-[64px] mx-auto '>
         <div className='flex md:flex-row flex-col w-full'>
-          <div className='max-w-[626px] p-6 md:p-0'>
+          <div className='max-w-[626px] pt-6 md:pt-0'>
             <div className='flex items-center gap-6 lg:mt-20'>
               <LogoSecondary />
               <Text size="2xl" textColor='text-white'>Aeroscraper</Text>
@@ -35,14 +35,14 @@ export default function Home() {
             <div className='flex gap-8 mt-10'>
               <Link href={"/app/dashboard"}>
                 <GradientButton
-                  className='w-full lg:w-[227px] h-[37px] rounded-lg self-end px-8 group'
+                  className='w-[140px] lg:w-[227px] h-[37px] rounded-lg self-end px-8 group'
                 >
                   <Text size='base'>Launch App</Text>
                 </GradientButton>
               </Link>
               <Link href={"https://aeroscraper.gitbook.io/aeroscraper/"} target="_blank">
                 <OutlinedButton
-                  className='w-full lg:w-[227px] h-[41px] rounded-lg self-end group'
+                  className='w-[140px] lg:w-[227px] h-[41px] rounded-lg self-end group'
                 >
                   <Text size='base'>Learn More</Text>
                 </OutlinedButton>
@@ -86,20 +86,20 @@ export default function Home() {
             </Link>
           </div>
         </div>
-        <div className='max-w-[626px]  p-6 md:p-0'>
+        <div className='max-w-[626px]'>
           <Faq />
         </div>
         <div className='flex gap-8 mt-10'>
           <Link href={"/app/dashboard"}>
             <GradientButton
-              className='w-full lg:w-[227px] h-[37px] rounded-lg self-end px-8 group'
+              className='w-[140px] lg:w-[227px] h-[37px] rounded-lg self-end px-8 group'
             >
               <Text size='base'>Launch App</Text>
             </GradientButton>
           </Link>
           <Link href={"https://aeroscraper.gitbook.io/aeroscraper/"} target="_blank">
             <OutlinedButton
-              className='w-full lg:w-[227px] h-[41px] rounded-lg self-end group'
+              className='w-[140px] lg:w-[227px] h-[41px] rounded-lg self-end group'
             >
               <Text size='base'>Learn More</Text>
             </OutlinedButton>
