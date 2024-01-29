@@ -120,16 +120,19 @@ const usePageData = () => {
         baseMinCollateralRatio,
         minRedeemAmountByDenom: coinPricesByDenom,
         baseMinRedeemAmount: coinPricesByDenom[baseCoin?.denom ?? ''] ?? 0,
-        debtAmount,
+        debtAmount
       }))
     }
     catch (err) {
       setPageData(prev => ({
         ...prev,
-        collateralAmount: 0,
-        debtAmount: 0,
-        minCollateralRatio: 0,
-        minRedeemAmount: 0
+        collateralAmountsByDenom: {},
+        baseCollateralAmount: 0,
+        minCollateralRatioByDenom: {},
+        baseMinCollateralRatio: 0,
+        minRedeemAmountByDenom: {},
+        baseMinRedeemAmount: 0,
+        debtAmount: 0
       }))
     }
     finally {
