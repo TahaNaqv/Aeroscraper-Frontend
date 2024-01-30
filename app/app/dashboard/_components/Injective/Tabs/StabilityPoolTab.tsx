@@ -13,8 +13,7 @@ import { getIsInjectiveResponse } from '@/utils/contractUtils';
 import { PageData } from '../../../_types/types';
 import Checkbox from '@/components/Checkbox';
 import BorderedNumberInput from '@/components/Input/BorderedNumberInput';
-import useChainAdapter from '@/hooks/useChainAdapter';
-import useBalances from '@/hooks/useBalances';
+import { useBalances } from '@/contexts/BalanceProvider';
 
 enum TABS {
   DEPOSIT = 0,

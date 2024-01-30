@@ -13,11 +13,11 @@ import InjectiveStatisticCard from '@/components/Cards/InjectiveStatisticCard';
 import BorderedNumberInput from '@/components/Input/BorderedNumberInput';
 import Checkbox from '@/components/Checkbox';
 import { NumericFormat } from 'react-number-format';
-import useBalances from '@/hooks/useBalances';
 import useChainAdapter from '@/hooks/useChainAdapter';
 import { CollateralAsset } from '@/types/types';
 import { DefaultAssetByChainName } from '@/constants/assetConstants';
 import { ChainName } from '@/enums/Chain';
+import { useBalances } from '@/contexts/BalanceProvider';
 
 enum TABS {
   COLLATERAL = 0,

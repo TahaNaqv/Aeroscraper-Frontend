@@ -1,12 +1,12 @@
 import InjectiveStatisticCard from '@/components/Cards/InjectiveStatisticCard';
 import { ChevronUpIcon } from '@/components/Icons/Icons';
-import usePageData from '@/contracts/app/usePageData';
 import useIsMobile from '@/hooks/useIsMobile';
 import useChainAdapter from '@/hooks/useChainAdapter';
 import { motion } from 'framer-motion';
 import { isNil } from 'lodash';
 import Link from 'next/link';
 import React, { FC, useEffect, useState } from 'react'
+import { usePageData } from '../../../../../contexts/DashboardProvider';
 
 interface Props {
   basePrice: number
