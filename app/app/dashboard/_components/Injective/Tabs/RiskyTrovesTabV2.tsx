@@ -101,7 +101,6 @@ const RiskyTrovesTabV2: FC<Props> = ({ getPageData, basePrice }) => {
                             const dollarValue = (coinPricesByDenom[curr.denom] ?? 0) * curr.amount;
                             return acc + dollarValue;
                         }, 0)
-                        console.log(item.owner,troveRes?.debt_amount,convertAmount(troveRes?.debt_amount ?? 0,baseCoin?.ausdDecimal),);
                         
                         return {
                             owner: item.owner,
