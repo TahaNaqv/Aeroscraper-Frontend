@@ -10,15 +10,21 @@ import { wallets as leapWallets } from "@cosmos-kit/leap";
 import { wallets as ninjiWallets } from "@cosmos-kit/ninji";
 import { wallets as ledgerWallets } from "@cosmos-kit/ledger";
 import { wallets as cosmostationWallets } from "@cosmos-kit/cosmostation";
-import { ChainName } from '@/enums/Chain';
-import { GasPrice } from '@cosmjs/stargate';
-import ProfileProvider from './ProfileProvider';
-import PriceProvider from './PriceProvider';
+import { ChainName } from "@/enums/Chain";
+import { GasPrice } from "@cosmjs/stargate";
+import ProfileProvider from "./ProfileProvider";
+import PriceProvider from "./PriceProvider";
 import { AbstraxionProvider } from "@burnt-labs/abstraxion";
 
 const Providers: FC<PropsWithChildren> = ({ children }) => {
   return (
-
+    <AbstraxionProvider
+      config={{
+        contracts: [
+          "xion1z70cvc08qv5764zeg3dykcyymj5z6nu4sqr7x8vl4zjef2gyp69s9mmdka",
+        ],
+      }}
+    >
       <ChainProvider
         chains={chains}
         assetLists={assets}
@@ -27,7 +33,7 @@ const Providers: FC<PropsWithChildren> = ({ children }) => {
           leapWallets[0],
           ninjiWallets[0],
           cosmostationWallets[0],
-          ledgerWallets[0]
+          ledgerWallets[0],
         ]}
         signerOptions={{
           signingCosmwasm: (chain) => {
@@ -35,39 +41,37 @@ const Providers: FC<PropsWithChildren> = ({ children }) => {
               case ChainName.INJECTIVE:
                 return {
                   gasPrice: GasPrice.fromString("0.025inj"),
-                }
+                };
               case ChainName.SEI:
                 return {
                   gasPrice: GasPrice.fromString("0.025sei"),
-                }
+                };
               case ChainName.ARCHWAY:
                 return {
                   gasPrice: GasPrice.fromString("0.025uatom"),
-                }
+                };
               case ChainName.NEUTRON:
                 return {
                   gasPrice: GasPrice.fromString("0.025untrn"),
-                }
+                };
               default:
                 return {
                   gasPrice: GasPrice.fromString("0.025inj"),
-                }
+                };
             }
-          }
+          },
         }}
       >
         <PriceProvider>
           <AppProvider>
             <NotificationProvider>
-              <ProfileProvider>
-                {children}
-              </ProfileProvider>
+              <ProfileProvider>{children}</ProfileProvider>
             </NotificationProvider>
           </AppProvider>
         </PriceProvider>
       </ChainProvider>
     </AbstraxionProvider>
-  )
-}
+  );
+};
 
 export default Providers;
