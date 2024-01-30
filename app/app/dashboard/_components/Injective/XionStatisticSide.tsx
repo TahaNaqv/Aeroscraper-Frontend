@@ -51,7 +51,7 @@ const content:
     }
   ]
 
-const InjectiveStatisticSide: FC<Props> = ({ basePrice }) => {
+const XionStatisticSide: FC<Props> = ({ basePrice }) => {
   const isMobile = useIsMobile()
   const { baseCoin, walletInfo } = useChainAdapter();
   const [showStatistic, setShowStatistic] = useState<boolean>(true);
@@ -149,7 +149,7 @@ const InjectiveStatisticSide: FC<Props> = ({ basePrice }) => {
             description="115%"
             className="w-[191px] h-14"
             tooltip="Liquidation Threshold Ratio"
-            tooltipPlacement="left-bottom-corner"
+            tooltipPlacement="left-bottom"
           />
           <InjectiveStatisticCard
             title="Total Value Locked"
@@ -157,7 +157,6 @@ const InjectiveStatisticSide: FC<Props> = ({ basePrice }) => {
             className="w-[191px] h-14"
             tooltip="The Total Value Locked (TVL) is the total value of sei locked as collateral in the system."
             tooltipPlacement="bottom"
-            isNumeric
           />
           <InjectiveStatisticCard
             title="AUSD in Stability Pool"
@@ -165,7 +164,6 @@ const InjectiveStatisticSide: FC<Props> = ({ basePrice }) => {
             description={Number(pageData.totalStakedAmount).toFixed(3).toString()}
             className="w-[191px] h-14"
             tooltip="The total AUSD currently held in the Stability Pool."
-            isNumeric
           />
           <InjectiveStatisticCard
             title="Troves"
@@ -187,7 +185,6 @@ const InjectiveStatisticSide: FC<Props> = ({ basePrice }) => {
             className="w-[191px] h-14"
             tooltip="The total AUSD minted by the Aeroscraper Protocol."
             tooltipPlacement="top"
-            isNumeric
           />
         </motion.div>
       )}
@@ -196,4 +193,4 @@ const InjectiveStatisticSide: FC<Props> = ({ basePrice }) => {
   )
 }
 
-export default React.memo(InjectiveStatisticSide)
+export default React.memo(XionStatisticSide)

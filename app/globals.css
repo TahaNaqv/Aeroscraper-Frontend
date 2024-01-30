@@ -35,6 +35,14 @@ body::-webkit-scrollbar {
   .gradient-background {
     @apply  tertiary-gradient transition-all delay-300
   }
+  .xion .ui-backdrop-blur-lg {
+    
+    @apply  !bg-black/10 !backdrop-blur-sm
+  }
+  .xion .ui-bg-modal-overlay {
+    background-image: none !important;
+    @apply  !bg-black/10 
+  }
 }
 
 @keyframes gradient-animation {
@@ -185,4 +193,5 @@ background-blend-mode: multiply, normal, normal;
 
 .confirmBtn {
   background: var(--Gadient, linear-gradient(90deg, #D43752 0%, #E4462D 43.78%, #F8B810 150.15%)) !important;
-}
+} 
+

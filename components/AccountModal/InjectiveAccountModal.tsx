@@ -79,18 +79,14 @@ const AccountModal: FC<Props> = (props: Props) => {
     }
     setProfileDetail(undefined);
     localStorage.removeItem("profile-detail");
-    localStorage.removeItem("selectedChainName");
     localStorage.removeItem("selectedWallet");
     closeModal();
   }
 
   const updateProfilePhoto = async (photoUrl: string, idx?: number) => {
 
-    const walletAddress = localStorage.getItem("wallet_address");
-
     const previousPhotos = JSON.parse(localStorage.getItem("previous-photos")!) ?? []
-
-    if (walletAddress) {
+    if (address) {
       setProcessLoading({ status: true, idx });
 
       try {
@@ -98,7 +94,7 @@ const AccountModal: FC<Props> = (props: Props) => {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            walletAddress,
+            walletAddress:address,
             photoUrl: photoUrl,
             appType: 999
           })
@@ -116,7 +112,7 @@ const AccountModal: FC<Props> = (props: Props) => {
           setPhotoUrlInput("");
 
           setProfileDetail({
-            walletAddress,
+            walletAddress:address,
             photoUrl: photoUrl,
             appType: 999
           });
@@ -295,7 +291,7 @@ const AccountModal: FC<Props> = (props: Props) => {
                     {capitalizeFirstLetter(walletInfo?.prettyName?.toLocaleLowerCase() ?? "")}
                   </Button>
                 </div>
-                <a href={`${scanDomain}${address}`} target='_blank' rel="noreferrer" className='ml-auto underline text-white hidden md:flex'>
+                <a href={`${scanDomain}${address}`} target='_blank' rel="noreferrer" className='ml-auto underline text-white mt-6 hidden md:flex'>
                   Scan
                   <img alt='link' src="/images/external-link.svg" className='w-full h-full object-contain ml-1.5' />
                 </a>

@@ -5,28 +5,28 @@ import {
   LogoSecondary,
 } from "@/components/Icons/Icons";
 import Link from "next/link";
-import InjectiveStatisticSide from "../_components/Injective/InjectiveStatisticSide";
-import InjectiveTabsSide, {
-  InjectiveTabs,
-} from "../_components/Injective/InjectiveTabsSide";
+
 import Text from "@/components/Texts/Text";
 import { useCallback, useEffect, useState } from "react";
 import { PriceServiceConnection } from "@pythnetwork/price-service-client";
 import { motion } from "framer-motion";
 import { useNotification } from "@/contexts/NotificationProvider";
-import useChainAdapter from "@/hooks/useChainAdapter";
+import Tooltip from "@/components/Tooltip/Tooltip";
+import XionStatisticSide from "../_components/Injective/XionStatisticSide";
+import XionTabsSide, { XionTabs } from "../_components/Injective/XionTabsSide";
 
-export default function InjectiveDashboard() {
+export default function XionDashboard() {
+  const [basePrice, setBasePrice] = useState(1);
 
-  const { basePrice } = useChainAdapter();
-  const [tabPosition, setTabPosition] = useState<InjectiveTabs>("redeem");
+  const [tabPosition, setTabPosition] = useState<XionTabs>("redeem");
 
   const { processLoading } = useNotification();
 
-  const changeTabPosition = useCallback(
-    (e: InjectiveTabs) => {
-      setTabPosition(e)
-    }, []);
+
+
+  const changeTabPosition = useCallback((e: XionTabs) => {
+    setTabPosition(e);
+  }, []);
 
   return (
     <div className="h-screen">
@@ -116,8 +116,8 @@ export default function InjectiveDashboard() {
         </motion.div>
       )}
       <div className="flex gap-4 flex-col md:flex-row md:gap-24 z-10 relative md:min-h-[720px] ">
-        <InjectiveStatisticSide basePrice={basePrice} />
-        <InjectiveTabsSide setTabPosition={changeTabPosition} />
+        <XionStatisticSide basePrice={basePrice} />
+        <XionTabsSide setTabPosition={changeTabPosition} />
       </div>
       <footer className="flex flex-col md:gap-x-48 md:gap-y-16 items-top flex-wrap px-6 md:px-20 bg-transparent md:-mx-20 md:pr-16 mt-40 pb-24 relative">
         <div className="flex items-center gap-6 md:mt-20">
@@ -135,7 +135,7 @@ export default function InjectiveDashboard() {
               href={"https://x.com/aeroscraper/status/1740683514457243693?s=20"}
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:scale-105 transition-all gap-2 flex"
+              className="hover:scale-105 transition-all flex gap-2"
             >
               <Text size="sm" textColor="text-white" className="cursor-pointer">
                 Audit
@@ -167,11 +167,6 @@ export default function InjectiveDashboard() {
               <Text size="sm" textColor="text-white" className="cursor-pointer">
                 Whitepaper
               </Text>
-              <img
-                alt="external-link"
-                src="/images/external-link.svg"
-                className="w-4 h-4"
-              />
             </Link>
             <Link
               href={
@@ -184,11 +179,6 @@ export default function InjectiveDashboard() {
               <Text size="sm" textColor="text-white">
                 Brand Identity
               </Text>
-              <img
-                alt="external-link"
-                src="/images/external-link.svg"
-                className="w-4 h-4"
-              />
             </Link>
             <Link
               href={"https://testnet.faucet.injective.network/"}
@@ -199,11 +189,6 @@ export default function InjectiveDashboard() {
               <Text size="sm" textColor="text-white">
                 Injective Faucet
               </Text>
-              <img
-                alt="external-link"
-                src="/images/external-link.svg"
-                className="w-4 h-4"
-              />
             </Link>
           </div>
           <div className="flex flex-col content-start justify-start gap-6">
@@ -222,7 +207,6 @@ export default function InjectiveDashboard() {
                 <Text size="sm" textColor="text-white">
                   Definition of name
                 </Text>
-                <img alt='external-link' src='/images/external-link.svg' className='w-4 h-4' />
               </Link>
               <Link
                 href={
@@ -235,7 +219,6 @@ export default function InjectiveDashboard() {
                 <Text size="sm" textColor="text-white">
                   Definition of icon
                 </Text>
-                <img alt='external-link' src='/images/external-link.svg' className='w-4 h-4' />
               </Link>
               <Link
                 href={
@@ -248,7 +231,6 @@ export default function InjectiveDashboard() {
                 <Text size="sm" textColor="text-white">
                   Definition of colors
                 </Text>
-                <img alt='external-link' src='/images/external-link.svg' className='w-4 h-4' />
               </Link>
               <Link
                 href={
@@ -261,7 +243,6 @@ export default function InjectiveDashboard() {
                 <Text size="sm" textColor="text-white">
                   Definition of typography
                 </Text>
-                <img alt='external-link' src='/images/external-link.svg' className='w-4 h-4' />
               </Link>
               <Link
                 href={"https://aeroscraper.gitbook.io/aeroscraper/"}
@@ -270,7 +251,6 @@ export default function InjectiveDashboard() {
                 <Text size="sm" textColor="text-white">
                   Definition of concept
                 </Text>
-                <img alt='external-link' src='/images/external-link.svg' className='w-4 h-4' />
               </Link>
             </div>
           </div>
@@ -285,12 +265,11 @@ export default function InjectiveDashboard() {
                 }
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:scale-105 transition-all flex gap-2 whitespace-nowrap"
+                className="hover:scale-105 transition-all flex gap-2"
               >
                 <Text size="sm" textColor="text-white">
                   Injective Illuminate Hackathon
                 </Text>
-                <img alt='external-link' src='/images/external-link.svg' className='w-4 h-4' />
               </Link>
               <Link
                 href={
@@ -303,7 +282,6 @@ export default function InjectiveDashboard() {
                 <Text size="sm" textColor="text-white">
                   Code Sei Hackathon
                 </Text>
-                <img alt='external-link' src='/images/external-link.svg' className='w-4 h-4' />
               </Link>
             </div>
           </div>

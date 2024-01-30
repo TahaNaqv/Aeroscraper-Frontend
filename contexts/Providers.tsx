@@ -12,10 +12,19 @@ import { wallets as ledgerWallets } from "@cosmos-kit/ledger";
 import { wallets as cosmostationWallets } from "@cosmos-kit/cosmostation";
 import { ChainName } from "@/enums/Chain";
 import { GasPrice } from "@cosmjs/stargate";
+import ProfileProvider from "./ProfileProvider";
+import PriceProvider from "./PriceProvider";
+import { AbstraxionProvider } from "@burnt-labs/abstraxion";
 
 const Providers: FC<PropsWithChildren> = ({ children }) => {
   return (
-
+    <AbstraxionProvider
+      config={{
+        contracts: [
+          "xion1z70cvc08qv5764zeg3dykcyymj5z6nu4sqr7x8vl4zjef2gyp69s9mmdka",
+        ],
+      }}
+    >
       <ChainProvider
         chains={chains}
         assetLists={assets}
@@ -28,7 +37,7 @@ const Providers: FC<PropsWithChildren> = ({ children }) => {
         ]}
         signerOptions={{
           signingCosmwasm: (chain) => {
-            switch (chain.chain_name) {
+            switch (typeof chain === "string" ? chain : chain.chain_name) {
               case ChainName.INJECTIVE:
                 return {
                   gasPrice: GasPrice.fromString("0.025inj"),
@@ -53,10 +62,15 @@ const Providers: FC<PropsWithChildren> = ({ children }) => {
           },
         }}
       >
-        <AppProvider>
-          <NotificationProvider>{children}</NotificationProvider>
-        </AppProvider>
+        <PriceProvider>
+          <AppProvider>
+            <NotificationProvider>
+              <ProfileProvider>{children}</ProfileProvider>
+            </NotificationProvider>
+          </AppProvider>
+        </PriceProvider>
       </ChainProvider>
+    </AbstraxionProvider>
   );
 };
 

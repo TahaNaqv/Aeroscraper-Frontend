@@ -10,11 +10,12 @@ import { PageData } from '../_types/types';
 import useAppContract from '@/contracts/app/useAppContract';
 import { useNotification } from '@/contexts/NotificationProvider';
 import graphql from '@/services/graphql';
-import { RiskyTroves } from '@/types/types';
+import { RiskyTrovesModelV1 } from '@/types/types';
 import { convertAmount, getIsInjectiveResponse, getRatioColor } from '@/utils/contractUtils';
 import { getCroppedString } from '@/utils/stringUtils';
 import SkeletonLoading from '@/components/Table/SkeletonLoading';
 import useChainAdapter from '@/hooks/useChainAdapter';
+import { isV2TroveResponse } from '@/contracts/app/types';
 
 type Props = {
     open: boolean;
@@ -25,11 +26,11 @@ type Props = {
 }
 
 const RiskyTrovesModal: FC<Props> = ({ open, onClose, pageData, getPageData, basePrice }) => {
-    const { baseCoin, selectedChainName } = useChainAdapter();
+    const { baseCoin, selectedChainName, selectedAppVersion } = useChainAdapter();
     const contract = useAppContract();
     const [loading, setLoading] = useState(false);
     const [processLoading, setProcessLoading] = useState<boolean>(false);
-    const [riskyTroves, setRiskyTroves] = useState<RiskyTroves[]>([]);
+    const [riskyTroves, setRiskyTroves] = useState<RiskyTrovesModelV1[]>([]);
     const { addNotification } = useNotification();
 
     const liquidateTrovesa = async () => {
@@ -57,19 +58,19 @@ const RiskyTrovesModal: FC<Props> = ({ open, onClose, pageData, getPageData, bas
         }
     }
 
-    const { requestTotalTroves, requestRiskyTroves } = graphql({ selectedChainName });
+    const { requestTotalTroves, requestRiskyTroves } = graphql({ selectedChainName, selectedAppVersion });
 
     const getRiskyTroves = useCallback(async () => {
         try {
             setLoading(true);
             const res = await requestRiskyTroves();
-            const getTrovesPromises = res.troves.nodes.map<Promise<RiskyTroves>>(async item => {
+            const getTrovesPromises = res.troves.nodes.map<Promise<RiskyTrovesModelV1>>(async item => {
                 try {
                     const troveRes = await contract.getTroveByAddress(item.owner);
                     return {
                         owner: item.owner,
                         liquidityThreshold: item.liquidityThreshold,
-                        collateralAmount: convertAmount(troveRes?.collateral_amount ?? 0, baseCoin?.decimal),
+                        collateralAmount: isV2TroveResponse(troveRes) ? convertAmount(troveRes?.collateral_amounts.find(item => item.denom === baseCoin?.denom)?.amount ?? 0, baseCoin?.decimal) : convertAmount(troveRes?.collateral_amount ?? 0, baseCoin?.decimal),
                         debtAmount: convertAmount(troveRes?.debt_amount ?? 0, baseCoin?.ausdDecimal)
                     }
                 }
@@ -115,7 +116,7 @@ const RiskyTrovesModal: FC<Props> = ({ open, onClose, pageData, getPageData, bas
                             <TableHeaderCol col={1} text="Coll. Ratio" />
                         </div>}
                         bodyCss='space-y-1 max-h-[350px] overflow-auto'
-                        renderItem={(item: RiskyTroves) => {
+                        renderItem={(item: RiskyTrovesModelV1) => {
                             return loading ?
                                 <>
                                     {

@@ -3,6 +3,7 @@ import Text from '@/components/Texts/Text';
 import { InfoIcon } from '@/components/Icons/Icons';
 import Tooltip, { PLACEMENT_CLASSES } from '@/components/Tooltip/Tooltip';
 import { isEmpty } from 'lodash';
+import { NumericFormat } from 'react-number-format';
 
 type Props = {
   title?: string;
@@ -11,9 +12,10 @@ type Props = {
   tooltip?: string;
   tooltipPlacement?: keyof typeof PLACEMENT_CLASSES
   className?: string;
+  isNumeric?: boolean;
 }
 
-const StatisticCard: FC<Props> = ({ title, description, descriptionColor, tooltip, className, tooltipPlacement }) => {
+const StatisticCard: FC<Props> = ({ title, description, descriptionColor, tooltip, className, tooltipPlacement, isNumeric }) => {
   return (
     <div className={`${className} flex flex-col gap-1`}>
       <div className="flex gap-1">
@@ -22,7 +24,24 @@ const StatisticCard: FC<Props> = ({ title, description, descriptionColor, toolti
           <InfoIcon className='text-white w-4 h-4' />
         </Tooltip>
       </div>
-      <Text size="sm" dynamicTextColor={descriptionColor}>{description}</Text>
+      {isNumeric ?
+        (
+          <NumericFormat
+            value={description}
+            thousandsGroupStyle="thousand"
+            thousandSeparator=","
+            fixedDecimalScale
+            decimalScale={3}
+            displayType="text"
+            renderText={(value) =>
+              <Text size="sm" dynamicTextColor={descriptionColor}>{value}</Text>
+            }
+          />
+        ) :
+        (
+          <Text size="sm" dynamicTextColor={descriptionColor}>{description}</Text>
+        )
+      }
     </div>
   )
 }

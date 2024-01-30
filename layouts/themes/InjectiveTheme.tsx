@@ -1,17 +1,18 @@
-import React, { useEffect, useState } from "react";
-import Text from "@/components/Texts/Text";
-import { ExitIcon, LogoSecondary } from "@/components/Icons/Icons";
-import NotificationDropdown from "@/app/app/dashboard/_components/NotificationDropdown";
-import usePageData from "@/contracts/app/usePageData";
-import { PriceServiceConnection } from "@pythnetwork/price-service-client";
-import { isNil } from "lodash";
-import InjectiveAccountModal from "@/components/AccountModal/InjectiveAccountModal";
-import { convertAmount } from "@/utils/contractUtils";
-import InjectiveNotification from "@/components/Modal/InjectiveNotification";
-import WalletButton from "@/components/Buttons/WalletButton";
-import useChainAdapter from "@/hooks/useChainAdapter";
-import useBalances from "@/hooks/useBalances";
-import { WalletType } from "@/enums/WalletType";
+import React, { useState } from 'react'
+import Text from "@/components/Texts/Text"
+import { ExitIcon, LogoSecondary } from '@/components/Icons/Icons';
+import NotificationDropdown from '@/app/app/dashboard/_components/NotificationDropdown';
+import usePageData from '@/contracts/app/usePageData';
+import { isNil } from 'lodash';
+import InjectiveAccountModal from '@/components/AccountModal/InjectiveAccountModal';
+import { convertAmount } from '@/utils/contractUtils';
+import InjectiveNotification from '@/components/Modal/InjectiveNotification';
+import WalletButton from '@/components/Buttons/WalletButton';
+import useChainAdapter from '@/hooks/useChainAdapter';
+import useBalances from '@/hooks/useBalances';
+import { WalletType } from '@/enums/WalletType';
+import VersionSelector from '@/components/VersionSelector/VersionSelector';
+import { useProfile } from '@/contexts/ProfileProvider';
 
 const InjeciveTheme = () => {
   const {
@@ -24,37 +25,13 @@ const InjeciveTheme = () => {
     disconnectMetamask,
   } = useChainAdapter();
   const { balanceByDenom } = useBalances();
-  const [basePrice, setBasePrice] = useState(0);
-  const { pageData, getPageData } = usePageData({ basePrice });
+
+  const { basePrice } = useChainAdapter();
+  const { pageData, getPageData } = usePageData();
+
+  const { profileDetail } = useProfile();
 
   const [accountModal, setAccountModal] = useState(false);
-
-  useEffect(() => {
-    const getPrice = async () => {
-      const connection = new PriceServiceConnection(
-        "https://hermes-beta.pyth.network/",
-        {
-          priceFeedRequestConfig: {
-            binary: true,
-          },
-        }
-      );
-
-      const priceId = [
-        "2d9315a88f3019f8efa88dfe9c0f0843712da0bac814461e27733f6b83eb51b3",
-      ];
-
-      const currentPrices = await connection.getLatestPriceFeeds(priceId);
-
-      if (currentPrices) {
-        setBasePrice(
-          Number(currentPrices[0].getPriceUnchecked().price) / 100000000
-        );
-      }
-    };
-
-    getPrice();
-  }, []);
 
   const disconnectWallet = () => {
     if (walletInfo?.name === WalletType.METAMASK) {
@@ -62,7 +39,6 @@ const InjeciveTheme = () => {
     } else {
       disconnect();
     }
-    localStorage.removeItem("selectedChainName");
     localStorage.removeItem("selectedWallet");
     localStorage.removeItem("profile-detail");
   };
@@ -96,7 +72,10 @@ const InjeciveTheme = () => {
           )}
           {isWalletConnected && !isNil(baseCoin) ? (
             <>
-              <div className="md:flex hidden">
+              <div className='md:flex hidden mr-4'>
+                <VersionSelector />
+              </div>
+              <div className='md:flex hidden'>
                 <NotificationDropdown />
               </div>
               <button
@@ -108,7 +87,7 @@ const InjeciveTheme = () => {
                 <img
                   alt="user-profile-image"
                   src={
-                    /*wallet.profileDetail?.photoUrl ??*/ "/images/profile-images/profile-i-1.jpg"
+                    profileDetail?.photoUrl ??"/images/profile-images/profile-i-1.jpg"
                   }
                   className="rounded-sm bg-raisin-black w-12 h-12"
                 />
@@ -150,11 +129,11 @@ const InjeciveTheme = () => {
               baseCoinBalance={
                 !isNil(baseCoin)
                   ? Number(
-                      convertAmount(
-                        balanceByDenom[baseCoin.denom]?.amount ?? 0,
-                        baseCoin.decimal
-                      )
+                    convertAmount(
+                      balanceByDenom[baseCoin.denom]?.amount ?? 0,
+                      baseCoin.decimal
                     )
+                  )
                   : 0
               }
               basePrice={0}
@@ -168,11 +147,11 @@ const InjeciveTheme = () => {
             ausd: pageData.ausdBalance,
             base: !isNil(baseCoin)
               ? Number(
-                  convertAmount(
-                    balanceByDenom[baseCoin.denom]?.amount ?? 0,
-                    baseCoin.decimal
-                  )
+                convertAmount(
+                  balanceByDenom[baseCoin.denom]?.amount ?? 0,
+                  baseCoin.decimal
                 )
+              )
               : 0,
           }}
           basePrice={basePrice}
@@ -209,7 +188,7 @@ const InjeciveTheme = () => {
           )}
         </div>
       )}
-      
+
     </>
   );
 };

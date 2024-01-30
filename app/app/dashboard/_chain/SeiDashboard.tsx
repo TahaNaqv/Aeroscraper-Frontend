@@ -29,33 +29,10 @@ export default function SeiDashboard() {
   const [troveModal, setTroveModal] = useState(false);
   const [stabilityModal, setStabilityModal] = useState(false);
   const [riskyModal, setRiskyModal] = useState(false);
-  const [basePrice, setBasePrice] = useState(0);
-  const { pageData, getPageData } = usePageData({ basePrice });
+  const { basePrice } = useChainAdapter();
+  const { pageData, getPageData } = usePageData();
 
-  useEffect(() => {
-    const getPrice = async () => {
-      const connection = new PriceServiceConnection(
-        "https://xc-mainnet.pyth.network/",
-        {
-          priceFeedRequestConfig: {
-            binary: true,
-          },
-        }
-      )
-
-      const priceId = "53614f1cb0c031d4af66c04cb9c756234adad0e1cee85303795091499a4084eb";
-
-      const currentPrices = await connection.getLatestPriceFeeds([priceId]);
-
-      if (currentPrices) {
-        setBasePrice(Number(currentPrices[0].getPriceUnchecked().price) / 100000000);
-      }
-    }
-
-    getPrice()
-  }, [])
-
-  const isTroveOpened = useMemo(() => pageData.collateralAmount > 0, [pageData]);
+  const isTroveOpened = useMemo(() => pageData.baseCollateralAmount > 0, [pageData]);
 
   return (
     <div>
@@ -103,7 +80,7 @@ export default function SeiDashboard() {
               />
               <StatisticCard
                 title="TVL"
-                description={isNil(baseCoin) ? '-' : `${Number(pageData.totalCollateralAmount).toFixed(3)} ${baseCoin.name}`}
+                description={isNil(baseCoin) ? '-' : `${Number(pageData.baseTotalCollateralAmount).toFixed(3)} ${baseCoin.name}`}
                 className="w-[191px] h-14"
                 tooltip="The Total Value Locked (TVL) is the total value of sei locked as collateral in the system."
                 tooltipPlacement="top"
@@ -139,7 +116,7 @@ export default function SeiDashboard() {
               <StatisticCard
                 title="Total Collateral Ratio"
                 tooltipPlacement="top"
-                description={`${isFinite(Number(((pageData.totalCollateralAmount * basePrice) / pageData.totalDebtAmount) * 100)) ? Number(((pageData.totalCollateralAmount * basePrice) / pageData.totalDebtAmount) * 100).toFixed(3) : 0} %`}
+                description={`${isFinite(Number(((pageData.baseTotalCollateralAmount * basePrice) / pageData.totalDebtAmount) * 100)) ? Number(((pageData.baseTotalCollateralAmount * basePrice) / pageData.totalDebtAmount) * 100).toFixed(3) : 0} %`}
                 className="w-[191px] h-14"
                 tooltip={`The ratio of the Dollar value of the entire system collateral at the current ${baseCoin?.name}:AUSD price, to the entire system debt.`}
               />

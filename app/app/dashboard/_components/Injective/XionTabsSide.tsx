@@ -1,6 +1,7 @@
 import SkeletonLoading from '@/components/Table/SkeletonLoading';
 import Tabs from '@/components/Tabs';
 import usePageData from '@/contracts/app/usePageData';
+import { PriceServiceConnection } from '@pythnetwork/price-service-client';
 import { motion } from 'framer-motion';
 import { isNil } from 'lodash';
 import React, { Dispatch, FC, useEffect, useRef, useState } from 'react'
@@ -13,36 +14,34 @@ import TroveTab from './Tabs/TroveTab';
 import useChainAdapter from '@/hooks/useChainAdapter';
 import useBalances from '@/hooks/useBalances';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { AppVersion } from '@/types/types';
-import RiskyTrovesTabV2 from './Tabs/RiskyTrovesTabV2';
 
 interface Props {
-  setTabPosition: Dispatch<InjectiveTabs>
+  setTabPosition: Dispatch<XionTabs>
 }
 
-/* export type InjectiveTabs = "trove" | "createTrove" | "stabilityPool" | "redeem" | "riskyTroves" | "rewards" | "leaderboard&missions"; */
-export type InjectiveTabs = "trove" | "createTrove" | "stabilityPool" | "redeem" | "riskyTroves" | "rewards";
-const InjectiveTabsSide: FC<Props> = ({ setTabPosition }) => {
+/* export type XionTabs = "trove" | "createTrove" | "stabilityPool" | "redeem" | "riskyTroves" | "rewards" | "leaderboard&missions"; */
+export type XionTabs = "trove" | "createTrove" | "stabilityPool" | "redeem" | "riskyTroves" | "rewards";
+const XionTabsSide: FC<Props> = ({ setTabPosition }) => {
 
   const router = useRouter();
   const params = useSearchParams();
 
   const ref = useRef<HTMLDivElement>(null);
 
-  const { basePrice, walletInfo, selectedAppVersion } = useChainAdapter();
+  const [basePrice, setBasePrice] = useState(1);
   const { pageData, getPageData, loading } = usePageData();
   const { refreshBalance } = useBalances();
+  const { walletInfo } = useChainAdapter();
 
   const [isTroveOpened, setIsTroveOpened] = useState(false);
 
-  let TabList: InjectiveTabs[] = [isTroveOpened ? "trove" : "createTrove", "stabilityPool", "redeem", "riskyTroves", "rewards"];
+  let TabList: XionTabs[] = [isTroveOpened ? "trove" : "createTrove", "stabilityPool", "redeem", "riskyTroves", "rewards"];
 
-  const [selectedTab, setSelectedTab] = useState<InjectiveTabs>(isTroveOpened ? "trove" : "createTrove");
+  const [selectedTab, setSelectedTab] = useState<XionTabs>(isTroveOpened ? "trove" : "createTrove");
 
   useEffect(() => {
-    setIsTroveOpened(pageData.baseCollateralAmount > 0);
-    
     if (selectedTab === "trove" || selectedTab === "createTrove") {
+      setIsTroveOpened(pageData.baseCollateralAmount > 0);
       setSelectedTab(pageData.baseCollateralAmount > 0 ? "trove" : "createTrove");
     }
   }, [pageData]);
@@ -55,12 +54,12 @@ const InjectiveTabsSide: FC<Props> = ({ setTabPosition }) => {
 
   useEffect(() => {
     if (params.get("tab")) {
-      setSelectedTab(params.get("tab") as InjectiveTabs);
+      setSelectedTab(params.get("tab") as XionTabs);
     }
   }, []);
 
-  const handleChangeTab = (e: InjectiveTabs) => {
-    router.push(`/app/dashboard?tab=${e}`);
+  const handleChangeTab = (e: XionTabs) => {
+    router.push(`?tab=${e}`);
 
     setSelectedTab(e);
     setTabPosition(e);
@@ -100,15 +99,7 @@ const InjectiveTabsSide: FC<Props> = ({ setTabPosition }) => {
           {selectedTab === (isTroveOpened ? "trove" : "createTrove") && <TroveTab pageData={pageData} getPageData={getPageData} basePrice={basePrice} />}
           {selectedTab === "stabilityPool" && <StabilityPoolTab pageData={pageData} getPageData={getPageData} />}
           {selectedTab === "redeem" && <RedeemTab pageData={pageData} getPageData={getPageData} refreshBalance={refreshBalance} basePrice={basePrice} />}
-          {
-            selectedTab === "riskyTroves" &&
-            (
-              selectedAppVersion === AppVersion.V1 ?
-                <RiskyTrovesTabV1 getPageData={getPageData} basePrice={basePrice} />
-                :
-                <RiskyTrovesTabV2 getPageData={getPageData} basePrice={basePrice} />
-            )
-          }
+          {selectedTab === "riskyTroves" && <RiskyTrovesTabV1 getPageData={getPageData} basePrice={basePrice} />}
           {selectedTab === "rewards" && <ClaimRewardTab pageData={pageData} getPageData={getPageData} refreshBalance={refreshBalance} basePrice={basePrice} />}
           {/* {selectedTab === "leaderboard&missions" && <LeaderboardTab />} */}
         </motion.main>
@@ -117,4 +108,4 @@ const InjectiveTabsSide: FC<Props> = ({ setTabPosition }) => {
   )
 }
 
-export default React.memo(InjectiveTabsSide);
+export default React.memo(XionTabsSide);
