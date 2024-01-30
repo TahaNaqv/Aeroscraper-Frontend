@@ -32,12 +32,7 @@ type Props = {
   basePrice?: number;
 };
 
-const WalletButton: FC<Props> = ({
-  ausdBalance = 0,
-  baseCoinBalance = 0,
-  basePrice = 0,
-  className = "w-[268px] h-[69px]",
-}) => {
+const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePrice = 0, className = "w-[268px] h-[69px]" }) => {
   const ref = useRef<HTMLDivElement>(null);
   const [walletSelectionOpen, setWalletSelectionOpen] = useState(false);
   const { baseCoin } = useChainAdapter();
@@ -51,8 +46,93 @@ const WalletButton: FC<Props> = ({
     walletInfo,
     address,
     selectWallet,
-    selectedWallet,
+    selectedWallet
   } = useChainAdapter();
+
+  const [accountModal, setAccountModal] = useState(false);
+
+  const [walletExtensions, setWalletExtensions] = useState<{ installed: { name: WalletType }[], otherWallets: { name: WalletType, downloadLink: string }[] } | undefined>();
+  const [showDownloadExtension, setShowDownloadExtension] = useState<{ name: string, downloadLink: string } | undefined>();
+
+  const [onHoverChain, setOnHoverChain] = useState<ChainName | null>();
+
+  const filteredWallets = useMemo(() => walletRepo.wallets
+    .filter(wallet => selectedChainName && WalletsByChainName[selectedChainName].includes(wallet.walletInfo.name as WalletType)),
+    [walletRepo, selectedChainName])
+
+  const hoveredChainWallets = useMemo(() => walletRepo.wallets
+    .filter(wallet => onHoverChain && WalletsByChainName[onHoverChain].includes(wallet.walletInfo.name as WalletType))
+    , [onHoverChain, walletRepo])
+
+  const {
+    installedWallets,
+    otherWallets
+  } = useMemo(() => ({
+    installedWallets: filteredWallets.filter(item => walletExtensions?.installed.some(extension => extension.name === item.walletInfo.name)),
+    otherWallets: filteredWallets.filter(item => walletExtensions?.otherWallets.some(extension => extension.name === item.walletInfo.name))
+  }), [filteredWallets, walletExtensions])
+
+  const {
+    installedHoveredWallets,
+    otherHoveredWallets
+  } = useMemo(() => ({
+    installedHoveredWallets: hoveredChainWallets.filter(item => walletExtensions?.installed.some(extension => extension.name === item.walletInfo.name)),
+    otherHoveredWallets: hoveredChainWallets.filter(item => walletExtensions?.otherWallets.some(extension => extension.name === item.walletInfo.name))
+  }), [hoveredChainWallets, walletExtensions])
+
+  useEffect(() => {
+    checkWalletExtensions();
+  }, []);
+
+  const checkWalletExtensions = () => {
+    const anyWindow: any = window;
+
+    const walletExtensions: { installed: { name: WalletType }[], otherWallets: { name: WalletType, downloadLink: string }[] } = { installed: [], otherWallets: [] };
+
+    anyWindow.keplr?.getOfflineSigner ? walletExtensions.installed.push({ name: WalletType.KEPLR }) : walletExtensions.otherWallets.push({ name: WalletType.KEPLR, downloadLink: "https://www.keplr.app/" });
+    anyWindow.leap?.getOfflineSigner ? walletExtensions.installed.push({ name: WalletType.LEAP }) : walletExtensions.otherWallets.push({ name: WalletType.LEAP, downloadLink: "https://www.leapwallet.io/" });
+    // anyWindow.fin?.getOfflineSigner ? walletExtensions.installed.push({ name: WalletType.FIN }) : walletExtensions.otherWallets.push({ name: WalletType.FIN, downloadLink: "https://chrome.google.com/webstore/detail/fin-wallet-for-sei/dbgnhckhnppddckangcjbkjnlddbjkna" });
+    // anyWindow.compass?.getOfflineSigner ? walletExtensions.installed.push({ name: WalletType.COMPASS }) : walletExtensions.otherWallets.push({ name: WalletType.COMPASS, downloadLink: "https://chrome.google.com/webstore/detail/compass-wallet-for-sei/anokgmphncpekkhclmingpimjmcooifb" });
+    anyWindow.ethereum ? walletExtensions.installed.push({ name: WalletType.METAMASK }) : walletExtensions.otherWallets.push({ name: WalletType.METAMASK, downloadLink: "https://chromewebstore.google.com/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?pli=1" });
+    // anyWindow.ninji ? walletExtensions.installed.push({ name: WalletType.NINJI }) : walletExtensions.otherWallets.push({ name: WalletType.NINJI, downloadLink: "https://chromewebstore.google.com/detail/ninji-wallet/kkpllbgjhchghjapjbinnoddmciocphm" });
+    // anyWindow.cosmostation ? walletExtensions.installed.push({ name: WalletType.COSMOSTATION }) : walletExtensions.otherWallets.push({ name: WalletType.COSMOSTATION, downloadLink: "https://chromewebstore.google.com/detail/cosmostation-wallet/fpkhgmpbidmiogeglndfbkegfdlnajnf" });
+
+    setWalletExtensions({
+      ...walletExtensions,
+      /* installed: [
+          ...walletExtensions.installed,
+          { name: WalletType.LEDGER }
+      ] */
+    });
+  }
+
+  const openAccountModal = () => {
+    setAccountModal(true);
+  }
+
+  const toggleWallet = () => {
+    if (isWalletConnected) {
+      openAccountModal();
+    }
+    else {
+      setWalletSelectionOpen(prev => !prev);
+    }
+  }
+
+  const closeWalletSelection = () => {
+    setWalletSelectionOpen(false);
+    setShowDownloadExtension(undefined);
+    if (!isWalletConnected) {
+      //Reset client type selection
+      selectChainName(undefined);
+    }
+  }
+
+  const resetChain = () => {
+    selectChainName(undefined);
+  }
+
+  useOutsideHandler(ref, closeWalletSelection);
 
   useEffect(() => {
     if (isWalletConnected) {
@@ -103,7 +183,7 @@ const WalletButton: FC<Props> = ({
   const [chainData, setChainData] = useState<any>(ChainData);
 
   const CheckChain = (id: string) => {
-    try { 
+    try {
       id = Number(id).toString();
       if (id !== chainID) {
         const { name } = chainData[id] || { name: "UNKNOW" };
@@ -139,9 +219,9 @@ const WalletButton: FC<Props> = ({
             customClass: {
               confirmButton:
                 "w-full md:w-[350px] py-2 px-8 h-[50px] text-base font-normal confirmBtn md:mb-8",
-                 htmlContainer: "!text-white/50 !text-sm md:mb-3",
-                 title: "!text-[32px] ",
-                 popup: " lg:!p-10"
+              htmlContainer: "!text-white/50 !text-sm md:mb-3",
+              title: "!text-[32px] ",
+              popup: " lg:!p-10"
             },
           }).then((result) => {
             if (result.isConfirmed) {
@@ -173,149 +253,6 @@ const WalletButton: FC<Props> = ({
       console.log("CheckChain error:", error);
     }
   };
-  const [accountModal, setAccountModal] = useState(false);
-
-  const [walletExtensions, setWalletExtensions] = useState<
-    | {
-        installed: { name: WalletType }[];
-        otherWallets: { name: WalletType; downloadLink: string }[];
-      }
-    | undefined
-  >();
-  const [showDownloadExtension, setShowDownloadExtension] = useState<
-    { name: string; downloadLink: string } | undefined
-  >();
-
-  const [onHoverChain, setOnHoverChain] = useState<ChainName | null>();
-
-  const filteredWallets = useMemo(
-    () =>
-      walletRepo.wallets //@ts-ignore
-        .filter(
-          (wallet: any) =>
-            selectedChainName &&
-            WalletsByChainName[selectedChainName].includes(
-              wallet.walletInfo.name as WalletType
-            )
-        ),
-    [walletRepo, selectedChainName]
-  );
-
-  const hoveredChainWallets = useMemo(
-    () =>
-      walletRepo.wallets.filter(
-        (wallet: any) =>
-          onHoverChain &&
-          WalletsByChainName[onHoverChain].includes(
-            wallet.walletInfo.name as WalletType
-          )
-      ),
-    [onHoverChain, walletRepo]
-  );
-
-  const { installedWallets, otherWallets } = useMemo(
-    () => ({
-      installedWallets: filteredWallets.filter((item: any) =>
-        walletExtensions?.installed.some(
-          (extension) => extension.name === item.walletInfo.name
-        )
-      ),
-      otherWallets: filteredWallets.filter((item: any) =>
-        walletExtensions?.otherWallets.some(
-          (extension) => extension.name === item.walletInfo.name
-        )
-      ),
-    }),
-    [filteredWallets, walletExtensions]
-  );
-
-  const { installedHoveredWallets, otherHoveredWallets } = useMemo(
-    () => ({
-      installedHoveredWallets: hoveredChainWallets.filter((item: any) =>
-        walletExtensions?.installed.some(
-          (extension) => extension.name === item.walletInfo.name
-        )
-      ),
-      otherHoveredWallets: hoveredChainWallets.filter((item: any) =>
-        walletExtensions?.otherWallets.some(
-          (extension) => extension.name === item.walletInfo.name
-        )
-      ),
-    }),
-    [hoveredChainWallets, walletExtensions]
-  );
-
-  useEffect(() => {
-    checkWalletExtensions();
-  }, []);
-
-  const checkWalletExtensions = () => {
-    const anyWindow: any = window;
-
-    const walletExtensions: {
-      installed: { name: WalletType }[];
-      otherWallets: { name: WalletType; downloadLink: string }[];
-    } = { installed: [], otherWallets: [] };
-
-    anyWindow.keplr?.getOfflineSigner
-      ? walletExtensions.installed.push({ name: WalletType.KEPLR })
-      : walletExtensions.otherWallets.push({
-          name: WalletType.KEPLR,
-          downloadLink: "https://www.keplr.app/",
-        });
-    anyWindow.leap?.getOfflineSigner
-      ? walletExtensions.installed.push({ name: WalletType.LEAP })
-      : walletExtensions.otherWallets.push({
-          name: WalletType.LEAP,
-          downloadLink: "https://www.leapwallet.io/",
-        });
-    // anyWindow.fin?.getOfflineSigner ? walletExtensions.installed.push({ name: WalletType.FIN }) : walletExtensions.otherWallets.push({ name: WalletType.FIN, downloadLink: "https://chrome.google.com/webstore/detail/fin-wallet-for-sei/dbgnhckhnppddckangcjbkjnlddbjkna" });
-    // anyWindow.compass?.getOfflineSigner ? walletExtensions.installed.push({ name: WalletType.COMPASS }) : walletExtensions.otherWallets.push({ name: WalletType.COMPASS, downloadLink: "https://chrome.google.com/webstore/detail/compass-wallet-for-sei/anokgmphncpekkhclmingpimjmcooifb" });
-    anyWindow.ethereum
-      ? walletExtensions.installed.push({ name: WalletType.METAMASK })
-      : walletExtensions.otherWallets.push({
-          name: WalletType.METAMASK,
-          downloadLink:
-            "https://chromewebstore.google.com/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?pli=1",
-        });
-    // anyWindow.ninji ? walletExtensions.installed.push({ name: WalletType.NINJI }) : walletExtensions.otherWallets.push({ name: WalletType.NINJI, downloadLink: "https://chromewebstore.google.com/detail/ninji-wallet/kkpllbgjhchghjapjbinnoddmciocphm" });
-    // anyWindow.cosmostation ? walletExtensions.installed.push({ name: WalletType.COSMOSTATION }) : walletExtensions.otherWallets.push({ name: WalletType.COSMOSTATION, downloadLink: "https://chromewebstore.google.com/detail/cosmostation-wallet/fpkhgmpbidmiogeglndfbkegfdlnajnf" });
-
-    setWalletExtensions({
-      ...walletExtensions,
-      // installed: [
-      //     ...walletExtensions.installed,
-      //     { name: WalletType.LEDGER }
-      // ]
-    });
-  };
-
-  const openAccountModal = () => {
-    setAccountModal(true);
-  };
-
-  const toggleWallet = () => {
-    if (isWalletConnected) {
-      openAccountModal();
-    } else {
-      setWalletSelectionOpen((prev) => !prev);
-    }
-  };
-
-  const closeWalletSelection = () => {
-    setWalletSelectionOpen(false);
-    setShowDownloadExtension(undefined);
-    if (!isWalletConnected) {
-      //Reset client type selection
-      selectChainName(undefined);
-    }
-  };
-
-  const resetChain = () => {
-    selectChainName(undefined);
-  };
-
-  useOutsideHandler(ref, closeWalletSelection);
 
   if (isWalletConnected) {
     return (
@@ -418,20 +355,18 @@ const WalletButton: FC<Props> = ({
             </h2>
             {!isNil(selectedChainName) && (
               <div
-                className={`gap-y-4 flex flex-col mt-10 ${
-                  isNil(selectedChainName) ? "hidden" : ""
-                }`}
+                className={`gap-y-4 flex flex-col mt-10 ${isNil(selectedChainName) ? "hidden" : ""
+                  }`}
               >
                 {installedWallets.map((wallet: any, idx: any) => {
                   return (
                     <div
                       key={idx}
-                      className={`mr-auto ${
-                        wallet.walletInfo.name === WalletType.LEAP ||
+                      className={`mr-auto ${wallet.walletInfo.name === WalletType.LEAP ||
                         wallet.walletInfo.name === WalletType.KEPLR
-                          ? ""
-                          : "md:inline-block hidden"
-                      }`}
+                        ? ""
+                        : "md:inline-block hidden"
+                        }`}
                     >
                       {idx === 0 && (
                         <Text size="base" className="mb-4">
@@ -505,12 +440,11 @@ const WalletButton: FC<Props> = ({
                 {otherWallets.map((wallet: any, idx: any) => (
                   <div
                     key={idx}
-                    className={`mr-auto ${
-                      wallet.walletInfo.name === WalletType.LEAP ||
+                    className={`mr-auto ${wallet.walletInfo.name === WalletType.LEAP ||
                       wallet.walletInfo.name === WalletType.KEPLR
-                        ? ""
-                        : "md:inline-block hidden"
-                    }`}
+                      ? ""
+                      : "md:inline-block hidden"
+                      }`}
                   >
                     {idx === 0 && (
                       <Text size="base" className="mb-4">
@@ -729,12 +663,11 @@ const WalletButton: FC<Props> = ({
                         <img
                           alt={wallet.walletInfo.name}
                           key={idx}
-                          className={`w-6 h-6 object-contain ${
-                            wallet.walletInfo.name === WalletType.LEAP ||
+                          className={`w-6 h-6 object-contain ${wallet.walletInfo.name === WalletType.LEAP ||
                             wallet.walletInfo.name === WalletType.KEPLR
-                              ? ""
-                              : "md:inline-block hidden"
-                          }`}
+                            ? ""
+                            : "md:inline-block hidden"
+                            }`}
                           src={wallet.walletInfo.logo as string}
                         />
                       );
@@ -777,11 +710,10 @@ const WalletButton: FC<Props> = ({
                             onClick={() => {
                               selectChainName(chain.chain_name as ChainName);
                             }}
-                            className={`${
-                              chain.bech32_prefix !== "inj"
-                                ? "md:flex hidden"
-                                : ""
-                            }`}
+                            className={`${chain.bech32_prefix !== "inj"
+                              ? "md:flex hidden"
+                              : ""
+                              }`}
                             onMouseEnter={() =>
                               setOnHoverChain(chain.chain_name as ChainName)
                             }
@@ -791,7 +723,7 @@ const WalletButton: FC<Props> = ({
                                 alt={chain.chain_name}
                                 src={
                                   ChainImagesByName[
-                                    chain.chain_name as ChainName
+                                  chain.chain_name as ChainName
                                   ]
                                 }
                                 className="w-8 h-8"

@@ -8,6 +8,7 @@ import NeutronDashboard from "./_chain/NeutronDashboard";
 import InjectiveDashboard from "./_chain/InjectiveDashboard";
 import useChainAdapter from "@/hooks/useChainAdapter";
 import { ChainName } from "@/enums/Chain";
+import XionDashboard from "./_chain/XionDashboard";
 
 export default function Dashboard() {
     const { selectedChainName } = useChainAdapter();
@@ -27,6 +28,10 @@ export default function Dashboard() {
 
         if (selectedChainName === ChainName.INJECTIVE) {
             return <InjectiveDashboard />
+        }
+
+        if (selectedChainName === ChainName.XION) {
+            return <XionDashboard />
         }
     }
 

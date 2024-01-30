@@ -10,10 +10,11 @@ import { wallets as leapWallets } from "@cosmos-kit/leap";
 import { wallets as ninjiWallets } from "@cosmos-kit/ninji";
 import { wallets as ledgerWallets } from "@cosmos-kit/ledger";
 import { wallets as cosmostationWallets } from "@cosmos-kit/cosmostation";
-import { ChainName } from "@/enums/Chain";
-import { GasPrice } from "@cosmjs/stargate";
+import { ChainName } from '@/enums/Chain';
+import { GasPrice } from '@cosmjs/stargate';
+import ProfileProvider from './ProfileProvider';
+import PriceProvider from './PriceProvider';
 import { AbstraxionProvider } from "@burnt-labs/abstraxion";
-import ProfileProvider from "./ProfileProvider";
 
 const Providers: FC<PropsWithChildren> = ({ children }) => {
   return (
@@ -32,45 +33,47 @@ const Providers: FC<PropsWithChildren> = ({ children }) => {
           leapWallets[0],
           ninjiWallets[0],
           cosmostationWallets[0],
-          ledgerWallets[0],
+          ledgerWallets[0]
         ]}
         signerOptions={{
           signingCosmwasm: (chain) => {
-            switch (chain.chain_name) {
+            switch (typeof chain === "string" ? chain : chain.chain_name) {
               case ChainName.INJECTIVE:
                 return {
                   gasPrice: GasPrice.fromString("0.025inj"),
-                };
+                }
               case ChainName.SEI:
                 return {
                   gasPrice: GasPrice.fromString("0.025sei"),
-                };
+                }
               case ChainName.ARCHWAY:
                 return {
                   gasPrice: GasPrice.fromString("0.025uatom"),
-                };
+                }
               case ChainName.NEUTRON:
                 return {
                   gasPrice: GasPrice.fromString("0.025untrn"),
-                };
+                }
               default:
                 return {
                   gasPrice: GasPrice.fromString("0.025inj"),
-                };
+                }
             }
-          },
+          }
         }}
       >
-        <AppProvider>
-          <NotificationProvider>
-            <ProfileProvider>
-              {children}
-            </ProfileProvider>
-          </NotificationProvider>
-        </AppProvider>
+        <PriceProvider>
+          <AppProvider>
+            <NotificationProvider>
+              <ProfileProvider>
+                {children}
+              </ProfileProvider>
+            </NotificationProvider>
+          </AppProvider>
+        </PriceProvider>
       </ChainProvider>
     </AbstraxionProvider>
-  );
-};
+  )
+}
 
 export default Providers;

@@ -2,11 +2,11 @@ import GradientButton from '@/components/Buttons/GradientButton';
 import Text from '@/components/Texts/Text';
 import useAppContract from '@/contracts/app/useAppContract';
 import { motion } from 'framer-motion';
-import React, { FC, useMemo, useState } from 'react'
+import React, { FC, useEffect, useMemo, useState } from 'react'
 import { NumberFormatValues } from 'react-number-format/types/types';
 import OutlinedButton from '@/components/Buttons/OutlinedButton';
 import { useNotification } from '@/contexts/NotificationProvider';
-import { convertAmount, getIsInjectiveResponse, getRatioColor, getRatioText } from '@/utils/contractUtils';
+import { AUSD_PRICE, convertAmount, getIsInjectiveResponse, getRatioColor, getRatioText } from '@/utils/contractUtils';
 import { isNil } from 'lodash';
 import { PageData } from '../../../_types/types';
 import InjectiveStatisticCard from '@/components/Cards/InjectiveStatisticCard';
@@ -15,6 +15,9 @@ import Checkbox from '@/components/Checkbox';
 import { NumericFormat } from 'react-number-format';
 import useBalances from '@/hooks/useBalances';
 import useChainAdapter from '@/hooks/useChainAdapter';
+import { CollateralAsset } from '@/types/types';
+import { DefaultAssetByChainName } from '@/constants/assetConstants';
+import { ChainName } from '@/enums/Chain';
 
 enum TABS {
   COLLATERAL = 0,
@@ -30,17 +33,22 @@ type Props = {
 const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
   const contract = useAppContract();
   const { balanceByDenom, refreshBalance } = useBalances();
-  const { baseCoin } = useChainAdapter();
+  const { selectedChainName, selectedAppVersion } = useChainAdapter();
+
   const [openTroveAmount, setOpenTroveAmount] = useState<number>(0);
   const [borrowAmount, setBorrowAmount] = useState<number>(0);
   const [collateralAmount, setCollateralAmount] = useState<number>(0);
   const [borrowingAmount, setBorrowingAmount] = useState<number>(0);
+  const [selectedAsset, setSelectedAsset] = useState<CollateralAsset>(DefaultAssetByChainName[selectedChainName ?? ChainName.INJECTIVE]);
 
   const [selectedTab, setSelectedTab] = useState<TABS>(TABS.COLLATERAL);
 
   const { addNotification, processLoading, setProcessLoading } = useNotification();
 
-  const isTroveOpened = useMemo(() => pageData.collateralAmount > 0, [pageData]);
+  const selectedCollateral = useMemo(() => pageData.collateralAmountsByDenom[selectedAsset.denom] ?? { denom: selectedAsset.denom, amount: 0 }, [selectedAsset, pageData.collateralAmountsByDenom])
+  const selectedMinCollateral = useMemo(() => pageData.minCollateralRatioByDenom[selectedAsset.denom] ?? 0, [selectedAsset, pageData.minCollateralRatioByDenom])
+
+  const isTroveOpened = useMemo(() => selectedCollateral.amount > 0, [pageData]);
 
   const collacteralRatioCalculate = useMemo(() =>
     Number((openTroveAmount || 0) * basePrice) / ((borrowAmount || 0)),
@@ -54,13 +62,13 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
     borrowAmount > 999 ||
     openTroveAmount > 999 ||
     collacteralRatio < 1.15 ||
-    openTroveAmount > convertAmount(balanceByDenom[baseCoin!.denom]?.amount ?? 0, baseCoin!.decimal) ||
-    collacteralRatio < (pageData.minCollateralRatio - 0.00001),
-    [openTroveAmount, borrowAmount, collacteralRatio, pageData])
+    openTroveAmount > convertAmount(balanceByDenom[selectedAsset!.denom]?.amount ?? 0, selectedAsset!.decimal) ||
+    collacteralRatio < (selectedMinCollateral - 0.00001),
+    [openTroveAmount, borrowAmount, collacteralRatio, pageData, selectedMinCollateral, selectedAsset, balanceByDenom])
 
-  const withdrawDisabled = useMemo(() => collateralAmount <= 0 || collateralAmount > 999 || pageData.collateralAmount < collateralAmount, [collateralAmount])
-  const depositDisabled = useMemo(() => collateralAmount <= 0 || collateralAmount > 999 || (!isNil(baseCoin) ? Number(convertAmount(balanceByDenom[baseCoin.denom]?.amount ?? 0, baseCoin.decimal)) : 0) < collateralAmount, [collateralAmount])
-  const borrowDisabled = useMemo(() => borrowingAmount <= 0 || borrowingAmount > 999 || borrowingAmount > (((pageData.collateralAmount * basePrice * 100) / 115) - (pageData.debtAmount)), [borrowingAmount])
+  const withdrawDisabled = useMemo(() => collateralAmount <= 0 || collateralAmount > 999 || selectedCollateral.amount < collateralAmount, [collateralAmount, selectedCollateral])
+  const depositDisabled = useMemo(() => collateralAmount <= 0 || collateralAmount > 999 || Number(convertAmount(balanceByDenom[selectedAsset.denom]?.amount ?? 0, selectedAsset.decimal)) < collateralAmount, [collateralAmount, selectedAsset])
+  const borrowDisabled = useMemo(() => borrowingAmount <= 0 || borrowingAmount > 999 || borrowingAmount > (((selectedCollateral.amount * basePrice * 100) / 115) - (pageData.debtAmount)), [borrowingAmount, selectedCollateral])
   const repayDisabled = useMemo(() => borrowingAmount <= 0 || borrowingAmount > 999 || borrowingAmount > pageData.debtAmount || borrowingAmount > pageData.ausdBalance, [borrowingAmount])
 
   const changeOpenTroveAmount = (values: NumberFormatValues) => {
@@ -83,12 +91,12 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
     setProcessLoading(true);
 
     try {
-      const res = await contract.addCollateral(collateralAmount);
+      const res = await contract.addCollateral(collateralAmount, selectedAsset);
 
       addNotification({
         status: 'success',
         directLink: getIsInjectiveResponse(res) ? res?.txHash : res?.transactionHash,
-        message: `${collateralAmount} ${baseCoin?.name} Collateral Added`
+        message: `${collateralAmount} ${selectedAsset?.shortName} Collateral Added`
       });
       getPageData();
       refreshBalance();
@@ -111,12 +119,12 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
     setProcessLoading(true);
 
     try {
-      const res = await contract.removeCollateral(collateralAmount);
+      const res = await contract.removeCollateral(collateralAmount, selectedAsset);
 
       addNotification({
         status: 'success',
         directLink: getIsInjectiveResponse(res) ? res?.txHash : res?.transactionHash,
-        message: `${collateralAmount} ${baseCoin?.name} Collateral Removed`
+        message: `${collateralAmount} ${selectedAsset?.shortName} Collateral Removed`
       });
       getPageData();
       refreshBalance();
@@ -205,7 +213,7 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
     try {
       setProcessLoading(true);
 
-      const res = await contract.openTrove(openTroveAmount, borrowAmount);
+      const res = await contract.openTrove(openTroveAmount, borrowAmount, selectedAsset);
 
       addNotification({
         status: 'success',
@@ -228,6 +236,12 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
     }
   }
 
+  useEffect(() => {
+    if (selectedChainName) {
+      setSelectedAsset(DefaultAssetByChainName[selectedChainName]);
+    }
+  }, [selectedChainName, selectedTab, selectedAppVersion])
+
   return (
     <div className='overflow-hidden md:overflow-visible'>
       {
@@ -249,10 +263,10 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
                       <div className="flex items-center md:items-end justify-between">
                         <div>
                           {
-                            !isNil(baseCoin) ?
+                            !isNil(selectedAsset) ?
                               <div className="flex items-center gap-2">
-                                <img alt="token" src={baseCoin.tokenImage} className="w-6 h-6" />
-                                <Text size="base" weight="font-medium">{baseCoin.name}</Text>
+                                <img alt="token" src={selectedAsset.imageURL} className="w-6 h-6" />
+                                <Text size="base" weight="font-medium">{selectedAsset.shortName}</Text>
                               </div>
                               :
                               <Text size="2xl" weight="font-medium" className='flex-1 text-center'>-</Text>
@@ -270,40 +284,50 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
                         <div className='flex'>
                           <label className="font-regular text-xs md:text-base text-gray-300">In Wallet:</label>
                           <NumericFormat
-                            value={!isNil(baseCoin) ? Number(convertAmount(balanceByDenom[baseCoin.denom]?.amount ?? 0, baseCoin.decimal)).toFixed(6) : 0}
+                            value={Number(convertAmount(balanceByDenom[selectedAsset.denom]?.amount ?? 0, selectedAsset.decimal)).toFixed(6)}
                             thousandsGroupStyle="thousand"
                             thousandSeparator=","
                             fixedDecimalScale
                             decimalScale={4}
                             displayType="text"
                             renderText={(value) =>
-                              <p className='text-white font-regular text-xs md:text-base ml-3'>{value} {baseCoin?.name}</p>
+                              <p className='text-white font-regular text-xs md:text-base ml-3'>{value} {selectedAsset.shortName}</p>
                             }
                           />
                         </div>
                         <div className='flex'>
                           <label className="font-regular text-xs md:text-base text-gray-300">In Trove Balance:</label>
                           <NumericFormat
-                            value={pageData.collateralAmount}
+                            value={selectedCollateral.amount}
                             thousandsGroupStyle="thousand"
                             thousandSeparator=","
                             fixedDecimalScale
                             decimalScale={4}
                             displayType="text"
                             renderText={(value) =>
-                              <p className='text-white font-regular text-xs md:text-base ml-3'>{value} {baseCoin?.name}</p>
+                              <p className='text-white font-regular text-xs md:text-base ml-3'>{value} {selectedAsset.shortName}</p>
                             }
                           />
                         </div>
                       </div>
                     </div>
                     <div className='grid grid-cols-2 md:grid-cols-4 gap-20 md:gap-6 gap-y-4 mt-4 md:mt-0 md:p-4'>
-                      <InjectiveStatisticCard
-                        isNumeric
-                        title='Management Fee'
-                        description={`${Number(collateralAmount * 0.005)} ${baseCoin?.name ?? ""} (0.5%)`}
-                        tooltip='This amount is deducted from the collateral amount as a management fee. There are no recurring fees for borrowing, which is thus interest-free.'
+                      <NumericFormat
+                        value={Number(collateralAmount * 0.005)}
+                        thousandsGroupStyle="thousand"
+                        thousandSeparator=","
+                        fixedDecimalScale
+                        decimalScale={3}
+                        displayType="text"
+                        renderText={(value) =>
+                          <InjectiveStatisticCard
+                            title='Management Fee'
+                            description={`${value} ${selectedAsset?.shortName ?? ""} (0.5%)`}
+                            tooltip='This amount is deducted from the collateral amount as a management fee. There are no recurring fees for borrowing, which is thus interest-free.'
+                          />
+                        }
                       />
+
                       <InjectiveStatisticCard
                         isNumeric
                         title='Total Debt'
@@ -313,13 +337,13 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
                       <InjectiveStatisticCard
                         isNumeric
                         title='Liquidation Price'
-                        description={Number((pageData.debtAmount * 115) / ((pageData.collateralAmount || 1) * 100)).toString()}
+                        description={Number((pageData.debtAmount * 115) / ((selectedCollateral.amount || 1) * 100)).toString()}
                         tooltip='The dollar value per unit of collateral at which your Trove will drop below a 115% Collateral Ratio and be liquidated. You should ensure you are comfortable with managing your position so that the price of your collateral never reaches this level.'
                       />
                       <InjectiveStatisticCard
                         title='Collateral Ratio'
-                        description={`${(pageData.minCollateralRatio * 100).toFixed(3)} %`}
-                        descriptionColor={pageData.minCollateralRatio > 0 ? getRatioColor(pageData.minCollateralRatio * 100) : undefined}
+                        description={`${(selectedMinCollateral * 100).toFixed(3)} %`}
+                        descriptionColor={selectedMinCollateral > 0 ? getRatioColor(selectedMinCollateral * 100) : undefined}
                         tooltip='The ratio between the dollar value of the collateral and the debt (in AUSD) you are depositing.'
                       />
                     </div>
@@ -388,7 +412,7 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
                         <div className='flex'>
                           <label className="font-regular text-[10px] md:text-base text-gray-300">Borrowing Capacity:</label>n
                           <NumericFormat
-                            value={(((pageData.collateralAmount * basePrice * 100) / 115) - (pageData.debtAmount))}
+                            value={((((selectedCollateral.amount ?? 0) * basePrice * 100) / 115) - (pageData.debtAmount))}
                             thousandsGroupStyle="thousand"
                             thousandSeparator=","
                             fixedDecimalScale
@@ -420,14 +444,14 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
                         <InjectiveStatisticCard
                           title='Liquidation Price'
                           isNumeric
-                          description={Number((pageData.debtAmount * 115) / ((pageData.collateralAmount || 1) * 100)).toString()}
+                          description={Number((pageData.debtAmount * 115) / ((selectedCollateral.amount || 1) * 100)).toString()}
                           tooltip='The dollar value per unit of collateral at which your Trove will drop below a 115% Collateral Ratio and be liquidated. You should ensure you are comfortable with managing your position so that the price of your collateral never reaches this level.'
                         />
                       </div>
                       <InjectiveStatisticCard
                         title='Collateral Ratio'
-                        description={`${(pageData.minCollateralRatio * 100).toFixed(6)} %`}
-                        descriptionColor={pageData.minCollateralRatio > 0 ? getRatioColor(pageData.minCollateralRatio * 100) : undefined}
+                        description={`${(pageData.baseMinCollateralRatio * 100).toFixed(6)} %`}
+                        descriptionColor={pageData.baseMinCollateralRatio > 0 ? getRatioColor(pageData.baseMinCollateralRatio * 100) : undefined}
                         tooltip='The ratio between the dollar value of the collateral and the debt (in AUSD) you are depositing.'
                       />
                     </div>
@@ -460,15 +484,15 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
           <div>
             <Text size='3xl'>Borrow AUSD</Text>
             <Text size='base' weight='font-regular' className='mt-1'>Open a trove to borrow AUSD, Aeroscraper’s native stable coin.</Text>
-            <div className="w-full bg-cetacean-dark-blue border backdrop-blur-[37px] border-white/10 rounded-xl md:rounded-2xl px-3 pt-4 pb-3 md:px-6 md:py-8 flex flex-col gap-4 mt-6">
+            <div className="w-full bg-cetacean-dark-blue border backdrop-blur-[37px] border-white/10 rounded-xl md:rounded-2xl px-3 pt-4 pb-4 md:px-6 md:pt-8 flex flex-col gap-4 mt-6">
               <div className="flex items-end justify-between">
                 <div>
                   <Text size="sm" weight="mb-2">Collateral</Text>
                   {
-                    !isNil(baseCoin) ?
+                    !isNil(selectedAsset) ?
                       <div className="flex items-center gap-2">
-                        <img alt="token" src={baseCoin.tokenImage} className="w-6 h-6" />
-                        <Text size="base" weight="font-medium">{baseCoin.name}</Text>
+                        <img alt="token" src={selectedAsset.imageURL} className="w-6 h-6" />
+                        <Text size="base" weight="font-medium">{selectedAsset.shortName}</Text>
                       </div>
                       :
                       <Text size="2xl" weight="font-medium" className='flex-1 text-center'>-</Text>
@@ -480,6 +504,20 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
                   containerClassName="h-10 text-end flex-1 ml-6"
                   bgVariant="blue"
                   className="text-end"
+                />
+              </div>
+              <div className='flex mt-1'>
+                <label className="font-regular text-xs md:text-base text-gray-300">In Wallet:</label>
+                <NumericFormat
+                  value={Number(convertAmount(balanceByDenom[selectedAsset.denom]?.amount ?? 0, selectedAsset.decimal)).toFixed(6)}
+                  thousandsGroupStyle="thousand"
+                  thousandSeparator=","
+                  fixedDecimalScale
+                  decimalScale={4}
+                  displayType="text"
+                  renderText={(value) =>
+                    <p className='text-white font-regular text-xs md:text-base ml-3'>{value} {selectedAsset.shortName}</p>
+                  }
                 />
               </div>
             </div>
@@ -500,6 +538,20 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
                   className="text-end"
                 />
               </div>
+              <div className='flex mt-1'>
+                <label className="font-regular text-xs md:text-base text-gray-300">In Wallet:</label>
+                <NumericFormat
+                  value={Number(pageData.ausdBalance * AUSD_PRICE)}
+                  thousandsGroupStyle="thousand"
+                  thousandSeparator=","
+                  fixedDecimalScale
+                  decimalScale={2}
+                  displayType="text"
+                  renderText={(value) =>
+                    <p className='text-white font-regular text-xs md:text-base ml-3'>{value} AUSD</p>
+                  }
+                />
+              </div>
             </div>
             <motion.div
               initial={{ y: 50, x: 50, opacity: 0.1 }}
@@ -514,7 +566,7 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
               <InjectiveStatisticCard
                 title="Management Fee"
                 isNumeric
-                description={`${Number(openTroveAmount * 0.005)} ${baseCoin?.name ?? ""} (0.5%)`}
+                description={`${Number(openTroveAmount * 0.005)} ${selectedAsset?.shortName ?? ""} (0.5%)`}
                 className="w-full h-14"
                 tooltip="This amount is deducted from the collateral amount as a management fee. There are no recurring fees for borrowing, which is thus interest-free."
               />

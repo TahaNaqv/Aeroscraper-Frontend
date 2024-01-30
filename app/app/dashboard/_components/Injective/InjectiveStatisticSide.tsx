@@ -56,7 +56,7 @@ const InjectiveStatisticSide: FC<Props> = ({ basePrice }) => {
   const { baseCoin, walletInfo } = useChainAdapter();
   const [showStatistic, setShowStatistic] = useState<boolean>(true);
 
-  const { pageData } = usePageData({ basePrice });
+  const { pageData } = usePageData();
 
   const [showContentIdx, setShowContentIdx] = useState(0);
   const [hovering, setHovering] = useState(false);
@@ -149,11 +149,11 @@ const InjectiveStatisticSide: FC<Props> = ({ basePrice }) => {
             description="115%"
             className="w-[191px] h-14"
             tooltip="Liquidation Threshold Ratio"
-            tooltipPlacement="left-bottom"
+            tooltipPlacement="left-bottom-corner"
           />
           <InjectiveStatisticCard
             title="Total Value Locked"
-            description={isNil(baseCoin) ? '-' : `${Number(pageData.totalCollateralAmount).toFixed(6)} ${baseCoin.name}`}
+            description={isNil(baseCoin) ? '-' : `${Number(pageData.baseTotalCollateralAmount).toFixed(6)} ${baseCoin.name}`}
             className="w-[191px] h-14"
             tooltip="The Total Value Locked (TVL) is the total value of sei locked as collateral in the system."
             tooltipPlacement="bottom"
@@ -177,7 +177,7 @@ const InjectiveStatisticSide: FC<Props> = ({ basePrice }) => {
           <InjectiveStatisticCard
             title="Total Collateral Ratio"
             tooltipPlacement="left-top"
-            description={`${isFinite(Number(((pageData.totalCollateralAmount * basePrice) / pageData.totalDebtAmount) * 100)) ? Number(((pageData.totalCollateralAmount * basePrice) / pageData.totalDebtAmount) * 100).toFixed(3) : 0} %`}
+            description={`${isFinite(Number(((pageData.baseTotalCollateralAmount * basePrice) / pageData.totalDebtAmount) * 100)) ? Number(((pageData.baseTotalCollateralAmount * basePrice) / pageData.totalDebtAmount) * 100).toFixed(3) : 0} %`}
             className="w-[191px] h-14"
             tooltip={`The ratio of the Dollar value of the entire system collateral at the current ${baseCoin?.name}:AUSD price, to the entire system debt.`}
           />

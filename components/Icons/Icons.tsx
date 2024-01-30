@@ -569,4 +569,10 @@ export const MedalIcon: React.FC<IconProps> = ({ className }) => {
     )
 }
 
-
+export const CheckIcon: React.FC<IconProps> = ({ className, width = "16", height = "16" }) => {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} className={className} viewBox="0 0 16 16" fill="none">
+            <path fillRule="evenodd" clipRule="evenodd" d="M13.1058 4.16496C13.3829 4.40741 13.4109 4.82859 13.1685 5.10568L7.33514 11.7723C7.09359 12.0484 6.67438 12.0775 6.39705 11.8374L2.89705 8.80705C2.6187 8.56605 2.58842 8.14502 2.82942 7.86667C3.07042 7.58831 3.49144 7.55803 3.7698 7.79903L6.76842 10.3952L12.165 4.22767C12.4075 3.95058 12.8287 3.9225 13.1058 4.16496Z" fill="white" />
+        </svg>
+    )
+}

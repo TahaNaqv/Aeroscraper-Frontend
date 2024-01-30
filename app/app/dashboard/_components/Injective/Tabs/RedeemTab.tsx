@@ -35,7 +35,7 @@ const RedeemTab: FC<Props> = ({ pageData, getPageData, refreshBalance, basePrice
 
   const changeRedeemAmount = useCallback((values: NumberFormatValues) => {
     setRedeemAmount(Number(values.value))
-    setInjAmount(getValueByRatio(values.value, pageData.minRedeemAmount))
+    setInjAmount(getValueByRatio(values.value, pageData.baseMinRedeemAmount))
   }, [pageData]);
 
   const redeemDisabled = useMemo(() =>

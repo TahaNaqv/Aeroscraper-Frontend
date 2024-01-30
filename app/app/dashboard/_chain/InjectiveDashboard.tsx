@@ -14,53 +14,19 @@ import { useCallback, useEffect, useState } from "react";
 import { PriceServiceConnection } from "@pythnetwork/price-service-client";
 import { motion } from "framer-motion";
 import { useNotification } from "@/contexts/NotificationProvider";
-import Tooltip from "@/components/Tooltip/Tooltip";
+import useChainAdapter from "@/hooks/useChainAdapter";
 
 export default function InjectiveDashboard() {
-  const [basePrice, setBasePrice] = useState(1);
 
+  const { basePrice } = useChainAdapter();
   const [tabPosition, setTabPosition] = useState<InjectiveTabs>("redeem");
 
   const { processLoading } = useNotification();
 
-  const getPrice = async () => {
-    //try catch block async func larda mutlaka kullanılmalıdır.
-    try {
-      const connection = new PriceServiceConnection(
-        "https://hermes-beta.pyth.network/",
-        {
-          priceFeedRequestConfig: {
-            binary: true,
-          },
-        }
-      );
-
-      const priceId = [
-        "2d9315a88f3019f8efa88dfe9c0f0843712da0bac814461e27733f6b83eb51b3",
-      ];
-
-      const currentPrices = await connection.getLatestPriceFeeds(priceId);
-      console.log(currentPrices);
-
-      if (currentPrices) {
-        setBasePrice(
-          Number(currentPrices[0].getPriceUnchecked().price) / 100000000
-        );
-      }
-    } catch (error) {
-      console.log(error);
-      setBasePrice(0);
-    }
-  };
-  //console.log(basePrice);
-
-  useEffect(() => {
-    getPrice();
-  }, []);
-
-  const changeTabPosition = useCallback((e: InjectiveTabs) => {
-    setTabPosition(e);
-  }, []);
+  const changeTabPosition = useCallback(
+    (e: InjectiveTabs) => {
+      setTabPosition(e)
+    }, []);
 
   return (
     <div className="h-screen">

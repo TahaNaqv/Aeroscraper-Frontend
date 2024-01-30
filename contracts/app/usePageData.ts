@@ -3,43 +3,48 @@ import { convertAmount } from "@/utils/contractUtils";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import useAppContract from "./useAppContract";
 import graphql from "@/services/graphql";
-import { debounce } from "lodash";
+import { debounce, isNil } from "lodash";
 import useChainAdapter from "@/hooks/useChainAdapter";
 import { ChainName } from "@/enums/Chain";
 import axios from "axios";
-import { TotalInfoResponse } from "./types";
+import { CollateralAmount, CollateralInfo, TotalInfoResponseV1, TotalInfoResponseV2, isV2TroveResponse } from "./types";
+import { AppVersion } from "@/types/types";
+import { usePrice } from "@/contexts/PriceProvider";
+import { BaseCoinByDenom } from "@/constants/chainConstants";
 
 const FilterParamByChainName: Record<ChainName, string> = {
   [ChainName.INJECTIVE]: 'INJECTIVE',
   [ChainName.SEI]: 'SEI',
   [ChainName.ARCHWAY]: 'ARCH',
   [ChainName.NEUTRON]: 'NEUTRON',
+  [ChainName.XION]: 'XION'
 }
 
-interface Props {
-  basePrice: number
-}
+const usePageData = () => {
+  const { selectedAppVersion, selectedChainName, baseCoin } = useChainAdapter();
+  const { coinPricesByDenom } = usePrice();
 
-const usePageData = ({ basePrice }: Props) => {
-  const { selectedChainName, baseCoin } = useChainAdapter();
-
-  const { requestTotalTroves } = useMemo(() => graphql({ selectedChainName: selectedChainName ?? ChainName.INJECTIVE }), [selectedChainName]);
+  const { requestTotalTroves } = useMemo(() => graphql({ selectedChainName: selectedChainName ?? ChainName.INJECTIVE, selectedAppVersion }), [selectedChainName, selectedAppVersion]);
   const contract = useAppContract();
 
   const [pageData, setPageData] = useState<PageData>({
-    collateralAmount: 0,
+    baseCollateralAmount: 0,
+    baseTotalCollateralAmount: 0,
+    collateralAmountsByDenom: {},
+    totalCollateralAmountsByDenom: {},
+    baseMinCollateralRatio: 0,
+    minCollateralRatioByDenom: {},
+    baseMinRedeemAmount: 0,
+    minRedeemAmountByDenom: {},
     debtAmount: 0,
     ausdBalance: 0,
     stakedAmount: 0,
-    totalCollateralAmount: 0,
     totalDebtAmount: 0,
     totalAusdSupply: 0,
     totalStakedAmount: 0,
     totalTrovesAmount: 0,
     poolShare: 0,
-    rewardAmount: 0,
-    minCollateralRatio: 0,
-    minRedeemAmount: 0
+    rewardAmount: 0
   });
 
   const [troveLoading, setTroveLoading] = useState<boolean>(true);
@@ -68,32 +73,72 @@ const usePageData = ({ basePrice }: Props) => {
     try {
       setTroveLoading(true);
       const troveRes = await contract.getTrove();
+      if (isNil(troveRes)) throw new Error('Trove is undefined');
 
+      let collateralAmounts: CollateralAmount[] = [];
+      if (isV2TroveResponse(troveRes)) {
+        collateralAmounts = troveRes.collateral_amounts;
+      }
+      else {
+        collateralAmounts = [{
+          amount: troveRes.collateral_amount,
+          denom: baseCoin?.denom ?? ''
+        }]
+      }
 
-      const collateralAmount = convertAmount(troveRes?.collateral_amount ?? 0, baseCoin?.decimal)
       const debtAmount = convertAmount(troveRes?.debt_amount ?? 0, baseCoin?.ausdDecimal);
-      console.log("x",troveRes,"y",collateralAmount);
+
+      const collateralAmountsByDenom = collateralAmounts.reduce<Record<string, CollateralInfo>>((acc, item) => {
+        const decimal = BaseCoinByDenom[item.denom]?.decimal ?? 0;
+        const amount = convertAmount(item.amount, decimal);
+        const denom = item.denom;
+
+        return {
+          ...acc,
+          [denom]: {
+            amount,
+            denom
+          }
+        }
+      }, {});
+      const baseCollateralAmount = collateralAmountsByDenom[baseCoin?.denom ?? '']?.amount ?? 0;
+
+      const minCollateralRatioByDenom = Object.entries(collateralAmountsByDenom).reduce<Record<string, number>>((acc, [denom, collateralInfo]) => {
+        const basePrice = coinPricesByDenom[denom] ?? 0;
+        return {
+          ...acc,
+          [denom]: (collateralInfo.amount * basePrice) / (debtAmount || 1)
+        };
+      }, {})
+      const baseMinCollateralRatio = minCollateralRatioByDenom[baseCoin?.denom ?? ''] ?? 0;
+
       setPageData(prev => ({
         ...prev,
-        collateralAmount,
-        debtAmount,
-        minCollateralRatio: (collateralAmount * basePrice) / (debtAmount || 1),
-        minRedeemAmount: basePrice
+        collateralAmountsByDenom,
+        baseCollateralAmount,
+        minCollateralRatioByDenom,
+        baseMinCollateralRatio,
+        minRedeemAmountByDenom: coinPricesByDenom,
+        baseMinRedeemAmount: coinPricesByDenom[baseCoin?.denom ?? ''] ?? 0,
+        debtAmount
       }))
     }
     catch (err) {
       setPageData(prev => ({
         ...prev,
-        collateralAmount: 0,
-        debtAmount: 0,
-        minCollateralRatio: 0,
-        minRedeemAmount: 0
+        collateralAmountsByDenom: {},
+        baseCollateralAmount: 0,
+        minCollateralRatioByDenom: {},
+        baseMinCollateralRatio: 0,
+        minRedeemAmountByDenom: {},
+        baseMinRedeemAmount: 0,
+        debtAmount: 0
       }))
     }
     finally {
       setTroveLoading(false);
     }
-  }, [contract, baseCoin, basePrice])
+  }, [contract, baseCoin, coinPricesByDenom])
 
   const getAusdBalance = useCallback(async () => {
     try {
@@ -184,13 +229,38 @@ const usePageData = ({ basePrice }: Props) => {
   const getTotalInfo = useCallback(async () => {
     try {
       setTotalInfoLoading(true);
-      const { data } = await axios.get<TotalInfoResponse>(`https://db.aeroscraper.io/api/collections/protocol/records?filter=chainName="${FilterParamByChainName[selectedChainName ?? ChainName.INJECTIVE]}"`)
+      let chainNameQuery = FilterParamByChainName[selectedChainName ?? ChainName.INJECTIVE];
+
+      if (selectedChainName === ChainName.INJECTIVE && selectedAppVersion === AppVersion.V2) {
+        chainNameQuery = `${chainNameQuery}2`;
+      }
+
+      const { data } = await axios.get<TotalInfoResponseV1 | TotalInfoResponseV2>(
+        `https://db.aeroscraper.io/api/collections/protocol/records?filter=chainName="${chainNameQuery}"`
+      )
       const res = data.items[0];
+
+      const totalCollateralAmountsByDenom = Array.isArray(res.totalCollateralAmounts) ?
+        res.totalCollateralAmounts.reduce<Record<string, CollateralInfo>>((acc, item) => {
+          const decimal = BaseCoinByDenom[item.denom]?.decimal ?? 0;
+          const amount = convertAmount(item.amount, decimal);
+          const denom = item.denom;
+
+          return {
+            ...acc,
+            [denom]: {
+              amount,
+              denom
+            }
+          }
+        }, {}) : { [baseCoin?.denom ?? '']: { denom: baseCoin?.denom ?? '', amount: convertAmount(res.totalCollateralAmount ?? 0, baseCoin?.decimal) } };
+      const baseTotalCollateralAmount = totalCollateralAmountsByDenom[baseCoin?.denom ?? '']?.amount ?? 0;
 
       setPageData(prev => ({
         ...prev,
         totalStakedAmount: convertAmount(res.totalStake ?? 0, baseCoin?.decimal),
-        totalCollateralAmount: convertAmount(res.totalCollateralAmount ?? 0, baseCoin?.decimal),
+        baseTotalCollateralAmount,
+        totalCollateralAmountsByDenom,
         totalDebtAmount: convertAmount(res.totalDebtAmount ?? 0, baseCoin?.ausdDecimal),
         totalAusdSupply: convertAmount(res.ausdInfo.total_supply ?? 0, baseCoin?.ausdDecimal),
       }))
@@ -207,7 +277,7 @@ const usePageData = ({ basePrice }: Props) => {
     finally {
       setTotalInfoLoading(false);
     }
-  }, [selectedChainName, baseCoin])
+  }, [selectedAppVersion, selectedChainName, baseCoin])
 
   const getPageData = useCallback(() => {
     getTrove()

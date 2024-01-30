@@ -6,10 +6,10 @@ import { TableHeaderCol } from '@/components/Table/TableHeaderCol';
 import { useNotification } from '@/contexts/NotificationProvider';
 import useAppContract from '@/contracts/app/useAppContract';
 
-import { RiskyTroves } from '@/types/types';
+import { RiskyTrovesModelV1 } from '@/types/types';
 import { getIsInjectiveResponse, convertAmount, getRatioColor } from '@/utils/contractUtils';
 import { getCroppedString } from '@/utils/stringUtils';
-import React, { FC, useCallback, useEffect, useState } from 'react'
+import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { NumericFormat } from 'react-number-format';
 import { PageData } from '../../../_types/types';
 import Text from '@/components/Texts/Text';
@@ -18,22 +18,22 @@ import graphql from '@/services/graphql';
 import { delay } from '@/utils/promiseUtils';
 import useChainAdapter from '@/hooks/useChainAdapter';
 import { ChainName } from '@/enums/Chain';
+import { isV2TroveResponse } from '@/contracts/app/types';
 
 type Props = {
-  pageData: PageData;
   getPageData: () => void;
   basePrice: number;
 }
 
-const RiskyTrovesTab: FC<Props> = ({ getPageData, basePrice }) => {
-
-  const { baseCoin, selectedChainName = ChainName.INJECTIVE } = useChainAdapter();
+const RiskyTrovesTabV1: FC<Props> = ({ getPageData, basePrice }) => {
+  const debounceTimer = useRef<NodeJS.Timeout | undefined>(undefined);
+  const { baseCoin, selectedChainName = ChainName.INJECTIVE, selectedAppVersion } = useChainAdapter();
   const contract = useAppContract();
   const [loading, setLoading] = useState(true);
-  const [riskyTroves, setRiskyTroves] = useState<RiskyTroves[]>([]);
+  const [riskyTroves, setRiskyTroves] = useState<RiskyTrovesModelV1[]>([]);
   const { addNotification, setProcessLoading, processLoading } = useNotification();
 
-  const { requestRiskyTroves } = graphql({ selectedChainName });
+  const { requestRiskyTroves } = useMemo(() => graphql({ selectedChainName, selectedAppVersion }), [selectedChainName, selectedAppVersion]);
 
   const liquidateTroves = async () => {
     try {
@@ -80,10 +80,12 @@ const RiskyTrovesTab: FC<Props> = ({ getPageData, basePrice }) => {
           try {
             const troveRes = await contract.getTroveByAddress(item.owner);
 
+            const collateralAmount = isV2TroveResponse(troveRes) ? convertAmount(troveRes?.collateral_amounts.find(item => item.denom === baseCoin?.denom)?.amount ?? 0, baseCoin?.decimal) : convertAmount(troveRes?.collateral_amount ?? 0, baseCoin?.decimal);
+
             return {
               owner: item.owner,
-              liquidityThreshold: item.liquidityThreshold || Number(isFinite(Number(((convertAmount(troveRes?.collateral_amount ?? 0, baseCoin?.decimal) * basePrice) / convertAmount(troveRes?.debt_amount ?? 0, baseCoin?.ausdDecimal)) * 100)) ? Number(((convertAmount(troveRes?.collateral_amount ?? 0, baseCoin?.decimal) * basePrice) / convertAmount(troveRes?.debt_amount ?? 0, baseCoin?.ausdDecimal)) * 100).toFixed(3) : 0),
-              collateralAmount: convertAmount(troveRes?.collateral_amount ?? 0, baseCoin?.decimal),
+              liquidityThreshold: item.liquidityThreshold || Number(isFinite(Number(((collateralAmount * basePrice) / convertAmount(troveRes?.debt_amount ?? 0, baseCoin?.ausdDecimal)) * 100)) ? Number(((collateralAmount * basePrice) / convertAmount(troveRes?.debt_amount ?? 0, baseCoin?.ausdDecimal)) * 100).toFixed(3) : 0),
+              collateralAmount,
               debtAmount: convertAmount(troveRes?.debt_amount ?? 0, baseCoin?.ausdDecimal),
             };
           } catch (err) {
@@ -108,11 +110,18 @@ const RiskyTrovesTab: FC<Props> = ({ getPageData, basePrice }) => {
     } finally {
       setLoading(false);
     }
-  }, [contract, baseCoin]);
+  }, [contract, baseCoin, requestRiskyTroves]);
+
+  const debouncedGetRiskyTroves = useCallback(() => {
+    clearTimeout(debounceTimer.current);
+    debounceTimer.current = setTimeout(() => {
+      getRiskyTroves();
+    }, 1500);
+  }, [getRiskyTroves]);
 
   useEffect(() => {
-    selectedChainName && getRiskyTroves();
-  }, [getRiskyTroves, selectedChainName])
+    selectedChainName && debouncedGetRiskyTroves();
+  }, [debouncedGetRiskyTroves, selectedChainName])
 
   return (
     <div>
@@ -128,7 +137,7 @@ const RiskyTrovesTab: FC<Props> = ({ getPageData, basePrice }) => {
           </div>}
           bodyCss='space-y-1 max-h-[350px] overflow-auto overflow-x-hidden'
           loading={loading}
-          renderItem={(item: RiskyTroves) => {
+          renderItem={(item: RiskyTrovesModelV1) => {
             return <div className="grid grid-cols-6 gap-4 border-b border-white/10">
               <TableBodyCol col={2} text="XXXXXX" value={
                 <Text size='xs' className='whitespace-nowrap text-start ml-4'>{getCroppedString(item.owner, 6, 8)}</Text>
@@ -195,4 +204,4 @@ const RiskyTrovesTab: FC<Props> = ({ getPageData, basePrice }) => {
   )
 }
 
-export default RiskyTrovesTab
+export default RiskyTrovesTabV1

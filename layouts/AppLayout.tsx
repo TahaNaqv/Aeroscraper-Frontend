@@ -8,9 +8,11 @@ import { PrimaryTheme } from "./themes/PrimaryTheme";
 import useChainAdapter from "@/hooks/useChainAdapter";
 import { ChainName } from "@/enums/Chain";
 import XionTheme from "./themes/XionTheme";
+import { usePathname } from "next/navigation";
 
 const AppLayout = ({ children }: { children: React.ReactNode }) => {
     const { selectedChainName } = useChainAdapter();
+    const pathname = usePathname();
 
     const chainTheme: Record<ChainName, ReactNode> = {
         [ChainName.SEI]: <PrimaryTheme selectedChainName={ChainName.SEI} />,
@@ -26,6 +28,10 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
 
     if (isProjectMaintenance) {
         return <MaintenancePage />
+    }
+
+    if (pathname.includes('xion')) {
+        return <>{children}</>
     }
 
     return (
