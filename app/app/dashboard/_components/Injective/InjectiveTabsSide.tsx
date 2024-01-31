@@ -15,13 +15,13 @@ import useBalances from '@/hooks/useBalances';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { AppVersion } from '@/types/types';
 import RiskyTrovesTabV2 from './Tabs/RiskyTrovesTabV2';
+import Missions from './Tabs/Missions';
 
 interface Props {
   setTabPosition: Dispatch<InjectiveTabs>
 }
 
-/* export type InjectiveTabs = "trove" | "createTrove" | "stabilityPool" | "redeem" | "riskyTroves" | "rewards" | "leaderboard&missions"; */
-export type InjectiveTabs = "trove" | "createTrove" | "stabilityPool" | "redeem" | "riskyTroves" | "rewards";
+export type InjectiveTabs = "trove" | "createTrove" | "stabilityPool" | "redeem" | "riskyTroves" | "rewards" | "leaderboard" | "missions";
 const InjectiveTabsSide: FC<Props> = ({ setTabPosition }) => {
 
   const router = useRouter();
@@ -35,13 +35,13 @@ const InjectiveTabsSide: FC<Props> = ({ setTabPosition }) => {
 
   const [isTroveOpened, setIsTroveOpened] = useState(false);
 
-  let TabList: InjectiveTabs[] = [isTroveOpened ? "trove" : "createTrove", "stabilityPool", "redeem", "riskyTroves", "rewards"];
+  let TabList: InjectiveTabs[] = [isTroveOpened ? "trove" : "createTrove", "stabilityPool", "redeem", "riskyTroves", "rewards", "leaderboard", "missions"];
 
   const [selectedTab, setSelectedTab] = useState<InjectiveTabs>(isTroveOpened ? "trove" : "createTrove");
 
   useEffect(() => {
     setIsTroveOpened(pageData.baseCollateralAmount > 0);
-    
+
     if (selectedTab === "trove" || selectedTab === "createTrove") {
       setSelectedTab(pageData.baseCollateralAmount > 0 ? "trove" : "createTrove");
     }
@@ -91,11 +91,8 @@ const InjectiveTabsSide: FC<Props> = ({ setTabPosition }) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.7 }}
-          className={`md:mt-6 ${(isNil(walletInfo)/*  && selectedTab !== "leaderboard&missions" */) ? "blur-[2px]" : ""} relative`}>
-          {(isNil(walletInfo)/*  && selectedTab !== "leaderboard&missions" */) &&
-            <div className='cursor-not-allowed h-full w-full absolute top-0 bottom-0 left-0 z-50'>
-            </div>
-          }
+          className={`md:mt-6 ${isNil(walletInfo) ? "blur-[2px]" : ""} relative`}>
+          {isNil(walletInfo) && <div className='cursor-not-allowed h-full w-full absolute top-0 bottom-0 left-0 z-50' />}
           {isNil(walletInfo) && <div className='cursor-not-allowed h-full w-full absolute top-0 bottom-0 left-0 z-50' />}
           {selectedTab === (isTroveOpened ? "trove" : "createTrove") && <TroveTab pageData={pageData} getPageData={getPageData} basePrice={basePrice} />}
           {selectedTab === "stabilityPool" && <StabilityPoolTab pageData={pageData} getPageData={getPageData} />}
@@ -110,7 +107,8 @@ const InjectiveTabsSide: FC<Props> = ({ setTabPosition }) => {
             )
           }
           {selectedTab === "rewards" && <ClaimRewardTab pageData={pageData} getPageData={getPageData} refreshBalance={refreshBalance} basePrice={basePrice} />}
-          {/* {selectedTab === "leaderboard&missions" && <LeaderboardTab />} */}
+          {selectedTab === "leaderboard" && <LeaderboardTab />}
+          {selectedTab === "missions" && <Missions />}
         </motion.main>
       }
     </div>
