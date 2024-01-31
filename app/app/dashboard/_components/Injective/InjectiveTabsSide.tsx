@@ -1,6 +1,5 @@
 import SkeletonLoading from '@/components/Table/SkeletonLoading';
 import Tabs from '@/components/Tabs';
-import usePageData from '@/contracts/app/usePageData';
 import { motion } from 'framer-motion';
 import { isNil } from 'lodash';
 import React, { Dispatch, FC, useEffect, useRef, useState } from 'react'
@@ -11,10 +10,11 @@ import RiskyTrovesTabV1 from './Tabs/RiskyTrovesTabV1';
 import StabilityPoolTab from './Tabs/StabilityPoolTab';
 import TroveTab from './Tabs/TroveTab';
 import useChainAdapter from '@/hooks/useChainAdapter';
-import useBalances from '@/hooks/useBalances';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { AppVersion } from '@/types/types';
 import RiskyTrovesTabV2 from './Tabs/RiskyTrovesTabV2';
+import { usePageData } from '../../../../../contexts/DashboardProvider';
+import { useBalances } from '@/contexts/BalanceProvider';
 
 interface Props {
   setTabPosition: Dispatch<InjectiveTabs>
@@ -41,7 +41,7 @@ const InjectiveTabsSide: FC<Props> = ({ setTabPosition }) => {
 
   useEffect(() => {
     setIsTroveOpened(pageData.baseCollateralAmount > 0);
-    
+
     if (selectedTab === "trove" || selectedTab === "createTrove") {
       setSelectedTab(pageData.baseCollateralAmount > 0 ? "trove" : "createTrove");
     }

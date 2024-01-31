@@ -15,6 +15,8 @@ import { GasPrice } from "@cosmjs/stargate";
 import ProfileProvider from "./ProfileProvider";
 import PriceProvider from "./PriceProvider";
 import { AbstraxionProvider } from "@burnt-labs/abstraxion";
+import DashboardProvider from "./DashboardProvider";
+import BalanceProvider from "./BalanceProvider";
 
 const Providers: FC<PropsWithChildren> = ({ children }) => {
   return (
@@ -65,7 +67,13 @@ const Providers: FC<PropsWithChildren> = ({ children }) => {
         <PriceProvider>
           <AppProvider>
             <NotificationProvider>
-              <ProfileProvider>{children}</ProfileProvider>
+              <ProfileProvider>
+                <BalanceProvider>
+                  <DashboardProvider>
+                    {children}
+                  </DashboardProvider>
+                </BalanceProvider>
+              </ProfileProvider>
             </NotificationProvider>
           </AppProvider>
         </PriceProvider>

@@ -12,7 +12,7 @@ import { useNotification } from '@/contexts/NotificationProvider';
 import { PageData } from '../_types/types';
 import { getIsInjectiveResponse } from '@/utils/contractUtils';
 import useChainAdapter from '@/hooks/useChainAdapter';
-import useBalances from '@/hooks/useBalances';
+import { useBalances } from '@/contexts/BalanceProvider';
 
 enum TABS {
   DEPOSIT = 0,
