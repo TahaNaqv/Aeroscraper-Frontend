@@ -101,10 +101,10 @@ const RiskyTrovesTabV2: FC<Props> = ({ getPageData, basePrice }) => {
                             const dollarValue = (coinPricesByDenom[curr.denom] ?? 0) * curr.amount;
                             return acc + dollarValue;
                         }, 0)
-                        
+
                         return {
                             owner: item.owner,
-                            liquidityThreshold: item.liquidityThreshold ?? Number(isFinite(Number((totalDollarValue / convertAmount(troveRes?.debt_amount ?? 0, baseCoin?.ausdDecimal)) * 100)) ? Number((totalDollarValue / convertAmount(troveRes?.debt_amount ?? 0, baseCoin?.ausdDecimal)) * 100).toFixed(3) : (convertAmount(troveRes?.debt_amount ?? 0,baseCoin?.ausdDecimal) > 0) ? -1 : 0),
+                            liquidityThreshold: item.liquidityThreshold ?? Number(isFinite(Number((totalDollarValue / convertAmount(troveRes?.debt_amount ?? 0, baseCoin?.ausdDecimal)) * 100)) ? Number((totalDollarValue / convertAmount(troveRes?.debt_amount ?? 0, baseCoin?.ausdDecimal)) * 100).toFixed(3) : (convertAmount(troveRes?.debt_amount ?? 0, baseCoin?.ausdDecimal) > 0) ? -1 : 0),
                             collateralAmounts,
                             debtAmount: convertAmount(troveRes?.debt_amount ?? 0, baseCoin?.ausdDecimal),
                             totalDollarValue
@@ -226,7 +226,7 @@ const RiskyTrovesTabV2: FC<Props> = ({ getPageData, basePrice }) => {
                                     decimalScale={2}
                                     displayType="text"
                                     renderText={(value) =>
-                                        <Text size='xs' responsive={true} className='whitespace-nowrap'>{ 1 > Number(value) && Number(value) >= 0 ? ' < 0.00' : value } AUSD</Text>
+                                        <Text size='xs' responsive={true} className='whitespace-nowrap'>{1 > Number(value) && Number(value) >= 0 ? ' < 0.00' : value} AUSD</Text>
                                     }
                                 />} />
                             <TableBodyCol col={1} text="XXXXXX" value={
@@ -238,14 +238,15 @@ const RiskyTrovesTabV2: FC<Props> = ({ getPageData, basePrice }) => {
                                     decimalScale={2}
                                     displayType="text"
                                     renderText={(value) =>
-                                        <Text size='xs' responsive={true} className='whitespace-nowrap text-end pr-10' dynamicTextColor={getRatioColor(item.liquidityThreshold)}>{item.liquidityThreshold/1000000 > 1 ? "∞" : item.liquidityThreshold }%</Text>
+                                        <Text size='xs' responsive={true} className='whitespace-nowrap text-end pr-10' dynamicTextColor={getRatioColor(item.liquidityThreshold)}>{item.liquidityThreshold / 1000000 > 1 ? "∞" : item.liquidityThreshold}%</Text>
                                     }
                                 />}
                             />
                             <TableBodyCol col={1} text="XXXXXX" value={
                                 item.liquidityThreshold <= 115 ?
                                     <OutlinedButton
-                                        className='w-[103px] h-8 text-xs mx-auto'
+                                        containerClassName='w-[103px] mx-auto shrink-0'
+                                        className='text-xs h-8'
                                         onClick={() => liquidateTroves(item.owner)}
                                         loading={processLoading}
                                     >

@@ -12,7 +12,7 @@ import { useNotification } from '@/contexts/NotificationProvider';
 import { PageData } from '../_types/types';
 import { getIsInjectiveResponse } from '@/utils/contractUtils';
 import useChainAdapter from '@/hooks/useChainAdapter';
-import useBalances from '@/hooks/useBalances';
+import { useBalances } from '@/contexts/BalanceProvider';
 
 enum TABS {
   DEPOSIT = 0,
@@ -39,8 +39,8 @@ const StabilityPoolModal: FC<Props> = ({ open, onClose, pageData, getPageData })
   const [stakeAmount, setStakeAmount] = useState<number>(0);
   const [unstakeAmount, setUnstakeAmount] = useState<number>(0);
 
-  const stakeDisabled = useMemo(() => stakeAmount <= 0 || stakeAmount > 999, [stakeAmount]);
-  const unstakeDisabled = useMemo(() => unstakeAmount <= 0 || unstakeAmount > 999, [unstakeAmount]);
+  const stakeDisabled = useMemo(() => stakeAmount <= 0 || stakeAmount > 999 || stakeAmount > pageData.ausdBalance, [stakeAmount]);
+  const unstakeDisabled = useMemo(() => unstakeAmount <= 0 || unstakeAmount > 999 || unstakeAmount > pageData.stakedAmount, [unstakeAmount]);
 
   const stakePool = async () => {
     setProcessLoading(true);

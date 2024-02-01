@@ -15,10 +15,10 @@ import { useNotification } from '@/contexts/NotificationProvider';
 import { convertAmount, getIsInjectiveResponse, getRatioColor, getRatioText } from '@/utils/contractUtils';
 import { isNil } from 'lodash';
 import useChainAdapter from '@/hooks/useChainAdapter';
-import useBalances from '@/hooks/useBalances';
 import { CollateralAsset } from '@/types/types';
 import { DefaultAssetByChainName } from '@/constants/assetConstants';
 import { ChainName } from '@/enums/Chain';
+import { useBalances } from '@/contexts/BalanceProvider';
 
 enum TABS {
     COLLATERAL = 0,

@@ -8,7 +8,6 @@ import ShapeContainer from "@/components/Containers/ShapeContainer";
 import { InfoIcon, RightArrow } from "@/components/Icons/Icons";
 import Text from "@/components/Texts/Text"
 import Tooltip from "@/components/Tooltip/Tooltip";
-import usePageData from "@/contracts/app/usePageData";
 import { convertAmount } from "@/utils/contractUtils";
 import { isNil } from "lodash";
 import { useState, useMemo, useEffect } from "react";
@@ -19,8 +18,8 @@ import RiskyTrovesModal from "../_components/RiskyTrovesModal";
 import StabilityPoolModal from "../_components/StabilityPoolModal";
 import TroveModal from "../_components/TroveModal";
 import useChainAdapter from "@/hooks/useChainAdapter";
-import useBalances from "@/hooks/useBalances";
-
+import { usePageData } from "../../../../contexts/DashboardProvider";
+import { useBalances } from "@/contexts/BalanceProvider";
 
 export default function NeutronDashboard() {
   const { balanceByDenom, refreshBalance } = useBalances();

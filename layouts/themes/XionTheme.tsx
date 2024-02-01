@@ -5,8 +5,6 @@ import {
   InjectiveBackgroundWave,
   LogoSecondary,
 } from "@/components/Icons/Icons";
-import usePageData from "@/contracts/app/usePageData";
-import useBalances from "@/hooks/useBalances";
 import Image from "next/image";
 //import { seatContractAddress } from "./layout";
 import { motion } from "framer-motion";
@@ -17,6 +15,8 @@ import {
   useAbstraxionSigningClient,
 } from "@burnt-labs/abstraxion";
 import { Button } from "@burnt-labs/ui";
+import { usePageData } from "@/contexts/DashboardProvider";
+import { useBalances } from "@/contexts/BalanceProvider";
 
 const XionTheme = () => {
   const [isOpen, setIsOpen] = useState(false);
