@@ -150,8 +150,6 @@ const MissionsTab = () => {
 
   return (
     <div ref={ref}>
-      <Text size='3xl'>See your ranking among users</Text>
-      <Text size='base' weight='font-regular' className='mt-1'>Earn points and increase your ranking</Text>
       {
         isNil(missionList) ?
           (
