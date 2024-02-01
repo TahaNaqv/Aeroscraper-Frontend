@@ -19,12 +19,13 @@ import { capitalizeFirstLetter } from "@/utils/stringUtils";
 import TransactionButton from "./TransactionButton";
 import useChainAdapter from "@/hooks/useChainAdapter";
 import { ChainName } from "@/enums/Chain";
-import { ChainImagesByName, availableChains } from "@/constants/chainConstants";
+import { ChainInfoByName, availableChains } from "@/constants/chainConstants";
 import { WalletType } from "@/enums/WalletType";
 import ChainData from "@/services/data/chain.json";
 import { ToastSuccess } from "@/services/data/alert/SweatAlert";
 import Swal from "sweetalert2";
 import { useNotification } from "@/contexts/NotificationProvider";
+import { Abstraxion } from "@burnt-labs/abstraxion";
 type Props = {
   ausdBalance?: number;
   baseCoinBalance?: number;
@@ -39,7 +40,6 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
   const {
     selectedChainName,
     selectChainName,
-    chain,
     walletRepo,
     isWalletConnected,
     isWalletConnecting,
@@ -50,6 +50,7 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
   } = useChainAdapter();
 
   const [accountModal, setAccountModal] = useState(false);
+  const [abstraxionOpen, setAbstraxionOpen] = useState(false);
 
   const [walletExtensions, setWalletExtensions] = useState<{ installed: { name: WalletType }[], otherWallets: { name: WalletType, downloadLink: string }[] } | undefined>();
   const [showDownloadExtension, setShowDownloadExtension] = useState<{ name: string, downloadLink: string } | undefined>();
@@ -703,39 +704,62 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
                   </h3>
                   <div className="space-y-6 mt-10">
                     {isNil(selectedChainName) &&
-                      availableChains.map((chain, idx) => {
-                        return (
-                          <Button
-                            key={idx}
-                            onClick={() => {
-                              selectChainName(chain.chain_name as ChainName);
-                            }}
-                            className={`${chain.bech32_prefix !== "inj"
-                              ? "md:flex hidden"
-                              : ""
-                              }`}
-                            onMouseEnter={() =>
-                              setOnHoverChain(chain.chain_name as ChainName)
-                            }
-                            onMouseLeave={() => setOnHoverChain(null)}
-                            startIcon={
-                              <img
-                                alt={chain.chain_name}
-                                src={
-                                  ChainImagesByName[
-                                  chain.chain_name as ChainName
-                                  ]
+                      <>
+                        {
+
+                          availableChains.map((chain, idx) => {
+                            return (
+                              <Button
+                                key={idx}
+                                onClick={() => {
+                                  selectChainName(chain.chain_name as ChainName);
+                                }}
+                                className={`${chain.bech32_prefix !== "inj"
+                                  ? "md:flex hidden"
+                                  : ""
+                                  }`}
+                                onMouseEnter={() =>
+                                  setOnHoverChain(chain.chain_name as ChainName)
                                 }
-                                className="w-8 h-8"
-                              />
-                            }
-                          >
-                            <span className="text-[18px] font-medium text-ghost-white uppercase">
-                              {chain.pretty_name}
-                            </span>
-                          </Button>
-                        );
-                      })}
+                                onMouseLeave={() => setOnHoverChain(null)}
+                                startIcon={
+                                  <img
+                                    alt={chain.chain_name}
+                                    src={
+                                      ChainInfoByName[
+                                        chain.chain_name as ChainName
+                                      ].logo
+                                    }
+                                    className="w-8 h-8"
+                                  />
+                                }
+                              >
+                                <span className="text-[18px] font-medium text-ghost-white uppercase">
+                                  {chain.pretty_name}
+                                </span>
+                              </Button>
+                            );
+                          })
+                        }
+                        <Button
+                          onClick={() => {
+                            selectChainName(ChainName.XION);
+                            setAbstraxionOpen(true);
+                          }}
+                          startIcon={
+                            <img
+                              alt={ChainName.XION}
+                              src={ChainInfoByName[ChainName.XION].logo}
+                              className="w-8 h-8"
+                            />
+                          }
+                        >
+                          <span className="text-[18px] font-medium text-ghost-white uppercase">
+                            {ChainInfoByName[ChainName.XION].displayName}
+                          </span>
+                        </Button>
+                      </>
+                    }
                   </div>
                 </div>
               ))}
@@ -747,18 +771,22 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
                 onClick={resetChain}
                 startIcon={
                   <img
-                    alt={chain.pretty_name}
-                    src={ChainImagesByName[chain.chain_name as ChainName]}
+                    alt={selectedChainName}
+                    src={ChainInfoByName[selectedChainName].logo}
                     className="w-6 h-6"
                   />
                 }
               >
-                {capitalizeFirstLetter(chain.pretty_name.toLocaleLowerCase())}
+                {capitalizeFirstLetter(ChainInfoByName[selectedChainName].displayName)}
               </Button>
             </div>
           )}
         </div>
       </Modal>
+      <Abstraxion
+        isOpen={abstraxionOpen}
+        onClose={() => setAbstraxionOpen(false)}
+      />
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import { BaseCoinByChainName } from "@/constants/chainConstants";
+import { BaseCoinByChainName, XION_STATIC_PRICE } from "@/constants/chainConstants";
 import { ChainName } from "@/enums/Chain";
 import { PriceServiceConnection } from "@pythnetwork/price-service-client";
 import { isNil } from "lodash";
@@ -131,12 +131,21 @@ const PriceProvider: FC<PropsWithChildren> = ({ children }) => {
         }
     }, [])
 
+    const getXionPrice = useCallback(async () => {
+        const denom = BaseCoinByChainName[ChainName.XION].denom;
+        setCoinPricesByDenom(prev => ({
+            ...prev,
+            [denom]: XION_STATIC_PRICE
+        }))
+    }, [])
+
     const getAllPrices = useCallback(async () => {
         getInjPrice();
         getSeiPrice();
         getArchPrice();
         getNeutronPrice();
-    }, [getInjPrice, getSeiPrice, getArchPrice, getNeutronPrice])
+        getXionPrice();
+    }, [getInjPrice, getSeiPrice, getArchPrice, getNeutronPrice, getXionPrice])
 
     const getPriceByChainName = useCallback((chainName?: ChainName) => {
         if (isNil(chainName)) return 0;

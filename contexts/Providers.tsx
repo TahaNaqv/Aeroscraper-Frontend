@@ -23,7 +23,9 @@ const Providers: FC<PropsWithChildren> = ({ children }) => {
     <AbstraxionProvider
       config={{
         contracts: [
-          "xion1z70cvc08qv5764zeg3dykcyymj5z6nu4sqr7x8vl4zjef2gyp69s9mmdka",
+          process.env.NEXT_PUBLIC_AERO_XION as string,
+          process.env.NEXT_PUBLIC_ORACLE_HELPER_XION as string,
+          process.env.NEXT_PUBLIC_CW20_AUSD_XION as string
         ],
       }}
     >

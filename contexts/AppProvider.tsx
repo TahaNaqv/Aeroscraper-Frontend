@@ -1,10 +1,12 @@
 import { ChainName } from "@/enums/Chain";
 import { WalletType } from "@/enums/WalletType";
-import { AppVersion } from "@/types/types";
+import { AppVersion, ChainInfo } from "@/types/types";
 import { getInjectiveAddress } from "@injectivelabs/sdk-ts";
 import { isEmpty, isNil } from "lodash";
 import { PropsWithChildren, createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { usePrice } from "./PriceProvider";
+import { useAbstraxionAccount } from "@burnt-labs/abstraxion";
+import { ChainInfoByName } from "@/constants/chainConstants";
 
 export type AppContextState = {
     selectedAppVersion: AppVersion;
@@ -13,9 +15,11 @@ export type AppContextState = {
     userAddress?: string;
     isConnecting: boolean;
     basePrice: number;
+    chainInfo: ChainInfo;
     selectChainName: (chainName?: ChainName) => void;
     selectWallet: (wallet?: WalletType) => void;
     disconnectMetamask: () => void;
+    disconnectXion: () => void;
     changeAppVersion: (appVersion: AppVersion) => void;
 }
 
@@ -24,9 +28,11 @@ const AppContext = createContext<AppContextState>({
     selectedChainName: ChainName.INJECTIVE,
     isConnecting: false,
     basePrice: 0,
+    chainInfo: ChainInfoByName[ChainName.INJECTIVE],
     selectChainName: () => { },
     selectWallet: () => { },
     disconnectMetamask: () => { },
+    disconnectXion: () => { },
     changeAppVersion: () => { }
 });
 
@@ -36,10 +42,12 @@ const AppProvider: React.FC<PropsWithChildren> = ({ children }) => {
     const [selectedWallet, setSelectedWallet] = useState<WalletType>();
     const [userAddress, setUserAddress] = useState<string>();  //This state is used to override cosmos-kit address
     const [isConnecting, setIsConnecting] = useState<boolean>(false);  //This state is used to override cosmos-kit loading
+    const { data: abstraxionData } = useAbstraxionAccount();
 
     const { getPriceByChainName } = usePrice();
 
     const basePrice = useMemo(() => getPriceByChainName(selectedChainName), [selectedChainName, getPriceByChainName]);
+    const chainInfo = useMemo(() => ChainInfoByName[selectedChainName ?? ChainName.INJECTIVE], [selectedChainName])
 
     const getMetamaskAccount = useCallback(async () => {
         try {
@@ -75,6 +83,14 @@ const AppProvider: React.FC<PropsWithChildren> = ({ children }) => {
         localStorage.removeItem('selectedWallet');
     }, [])
 
+    const disconnectXion = useCallback(() => {
+        setUserAddress(undefined);
+        setSelectedWallet(undefined);
+        setSelectedChainName(undefined);
+        localStorage.removeItem('selectedWallet');
+        localStorage.removeItem('savedChainName');
+    }, [])
+
     const changeAppVersion = useCallback((appVersion: AppVersion) => {
         setSelectedAppVersion(appVersion);
         localStorage.setItem('selectedAppVersion', appVersion);
@@ -87,9 +103,11 @@ const AppProvider: React.FC<PropsWithChildren> = ({ children }) => {
         userAddress,
         isConnecting,
         basePrice,
+        chainInfo,
         selectChainName,
         selectWallet,
         disconnectMetamask,
+        disconnectXion,
         changeAppVersion
     }), [
         selectedAppVersion,
@@ -98,9 +116,11 @@ const AppProvider: React.FC<PropsWithChildren> = ({ children }) => {
         userAddress,
         isConnecting,
         basePrice,
+        chainInfo,
         selectChainName,
         selectWallet,
         disconnectMetamask,
+        disconnectXion,
         changeAppVersion
     ])
 
@@ -124,6 +144,12 @@ const AppProvider: React.FC<PropsWithChildren> = ({ children }) => {
             }
         }
     }, [getMetamaskAccount])
+
+    useEffect(() => {
+        if (selectedChainName === ChainName.XION && !isNil(abstraxionData)) {
+            setUserAddress(abstraxionData.bech32Address);
+        }
+    }, [selectedChainName, abstraxionData])
 
     return (
         <AppContext.Provider value={value}>

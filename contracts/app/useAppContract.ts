@@ -6,7 +6,9 @@ import { getAppEthContract } from "./ethereumContract";
 import useChainAdapter from "@/hooks/useChainAdapter";
 import { WalletType } from "@/enums/WalletType";
 import { ChainName } from "@/enums/Chain";
-import { AppVersion, CollateralAsset } from "@/types/types";
+import { CollateralAsset } from "@/types/types";
+import { useAbstraxionSigningClient } from "@burnt-labs/abstraxion";
+import { getXionContract } from "./getXionContract";
 
 const useAppContract = () => {
     const {
@@ -20,17 +22,25 @@ const useAppContract = () => {
         getSigningCosmWasmClient
     } = useChainAdapter();
     const [client, setClient] = useState<SigningCosmWasmClient>();
+    const { client: abstraxionClient } = useAbstraxionSigningClient();
 
-    const contract = useMemo(() => (isWalletConnected && !isNil(baseCoin) && !isNil(walletInfo) && !isNil(chain)) ?
-        walletInfo.name === WalletType.METAMASK ?
-            getAppEthContract(chain, baseCoin, selectedAppVersion, selectedChainName ?? ChainName.INJECTIVE, walletInfo.name as WalletType)
-            :
-            !isNil(client) ?
-                getAppContract(client, baseCoin, selectedAppVersion, selectedChainName ?? ChainName.INJECTIVE, walletInfo.name as WalletType)
+    const contract = useMemo(() => (isWalletConnected && !isNil(baseCoin) && !isNil(walletInfo) && !isNil(selectedChainName)) ?
+        selectedChainName === ChainName.XION ?
+            !isNil(abstraxionClient) ?
+                getXionContract(abstraxionClient, baseCoin) :
+                undefined :
+            walletInfo.name === WalletType.METAMASK ?
+                !isNil(chain) ?
+                    getAppEthContract(chain, baseCoin, selectedAppVersion, selectedChainName ?? ChainName.INJECTIVE, walletInfo.name as WalletType)
+                    :
+                    undefined
                 :
-                undefined
+                !isNil(client) ?
+                    getAppContract(client, baseCoin, selectedAppVersion, selectedChainName ?? ChainName.INJECTIVE, walletInfo.name as WalletType)
+                    :
+                    undefined
         : undefined,
-        [isWalletConnected, baseCoin, walletInfo, selectedChainName, chain, client, selectedAppVersion]);
+        [isWalletConnected, baseCoin, walletInfo, selectedChainName, chain, client, selectedAppVersion, abstraxionClient]);
 
     const getTotalCollateralAmounts = useCallback(async () => {
         if (isNil(contract)) return;

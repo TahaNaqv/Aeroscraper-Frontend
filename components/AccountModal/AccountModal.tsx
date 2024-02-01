@@ -29,7 +29,7 @@ const AccountModal: FC<Props> = (props: Props) => {
     const avatarSelectRef = useRef<HTMLDivElement>(null);
     const qrCodeViewRef = useRef<HTMLDivElement>(null);
 
-    const { walletInfo, username, address, baseCoin, selectedChainName, selectWallet, disconnect, disconnectMetamask } = useChainAdapter();
+    const { walletInfo, username, address, baseCoin, selectedChainName, selectWallet, disconnect, disconnectMetamask, disconnectXion } = useChainAdapter();
     const { profileDetail, setProfileDetail } = useProfile();
 
     const [avatarSelectionOpen, setAvatarSelectionOpen] = useState(false);
@@ -66,7 +66,10 @@ const AccountModal: FC<Props> = (props: Props) => {
     }
 
     const logout = () => {
-        if (walletInfo?.name === WalletType.METAMASK) {
+        if (selectedChainName === ChainName.XION) {
+            disconnectXion();
+        }
+        else if (walletInfo?.name === WalletType.METAMASK) {
             disconnectMetamask();
         }
         else {

@@ -55,7 +55,7 @@ const xionAsset: CollateralAsset = {
     denom: "uxion",
     decimal: 6,
     ausdDecimal: 6,
-    imageURL: "/images/token-images/xion.svg",
+    imageURL: "/images/token-images/xion.png",
     priceId: "",
     priceServiceUrl: "",
     oracleContractAddress: ''

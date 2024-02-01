@@ -1,5 +1,5 @@
 import { ChainName } from "@/enums/Chain";
-import { AppVersion, BaseCoin } from "@/types/types";
+import { AppVersion, BaseCoin, ChainInfo } from "@/types/types";
 import { chains } from 'chain-registry'
 
 const visibleChains: ChainName[] = [
@@ -45,8 +45,8 @@ export const BaseCoinByChainName: Record<ChainName, BaseCoin> = {
     [ChainName.XION]: {
         name: "XION",
         denom: "uxion",
-        image: "/images/token-images/xion.svg",
-        tokenImage: "/images/token-images/xion.svg",
+        image: "/images/token-images/xion.png",
+        tokenImage: "/images/token-images/xion.png",
         decimal: 6,
         ausdDecimal: 6
     }
@@ -75,8 +75,8 @@ export const TransactionDomainByChainName: Record<ChainName, { accountUrl: strin
         accountUrl: "https://neutron.celat.one/account/"
     },
     [ChainName.XION]: {
-        txDetailUrl: "",
-        accountUrl: ""
+        txDetailUrl: "https://explorer.burnt.com/xion-testnet-1/tx/",
+        accountUrl: "https://explorer.burnt.com/xion-testnet-1/account/"
     }
 }
 
@@ -114,6 +114,12 @@ export const getContractAddressesByChain = (appVersion: AppVersion, chainName?: 
             ausdContractAddress: process.env.NEXT_PUBLIC_INJECTIVE_AUSD_CONTRACT_ADDRESS_V2 as string,
             oraclecontractAddress: process.env.NEXT_PUBLIC_INJECTIVE_ORACLE_CONTRACT_ADDRESS_V2 as string
         }
+    } else if (chainName === ChainName.XION) {
+        return {
+            contractAddress: process.env.NEXT_PUBLIC_AERO_XION as string,
+            ausdContractAddress: process.env.NEXT_PUBLIC_CW20_AUSD_XION as string,
+            oraclecontractAddress: process.env.NEXT_PUBLIC_ORACLE_HELPER_XION as string,
+        }
     }
 
     return {
@@ -123,12 +129,37 @@ export const getContractAddressesByChain = (appVersion: AppVersion, chainName?: 
     }
 }
 
-export const ChainImagesByName: Record<ChainName, string> = {
-    [ChainName.SEI]: "/images/token-images/sei.png",
-    [ChainName.ARCHWAY]: "/images/token-images/archway-coin.png",
-    [ChainName.INJECTIVE]: "/images/token-images/inj.svg",
-    [ChainName.NEUTRON]: "/images/token-images/neutron.svg",
-    [ChainName.XION]: "/images/token-images/xion.svg"
+export const ChainInfoByName: Record<ChainName, ChainInfo> = {
+    [ChainName.SEI]: {
+        name: ChainName.SEI,
+        displayName: "SEI",
+        logo: "/images/token-images/sei.png",
+        bech32Prefix: "sei"
+    },
+    [ChainName.ARCHWAY]: {
+        name: ChainName.ARCHWAY,
+        displayName: "ARCH",
+        logo: "/images/token-images/archway-coin.png",
+        bech32Prefix: "archway"
+    },
+    [ChainName.INJECTIVE]: {
+        name: ChainName.INJECTIVE,
+        displayName: "INJ",
+        logo: "/images/token-images/inj.svg",
+        bech32Prefix: "inj"
+    },
+    [ChainName.NEUTRON]: {
+        name: ChainName.NEUTRON,
+        displayName: "NTRN",
+        logo: "/images/token-images/neutron.svg",
+        bech32Prefix: "neutron"
+    },
+    [ChainName.XION]: {
+        name: ChainName.XION,
+        displayName: "XION",
+        logo: "/images/token-images/xion.png",
+        bech32Prefix: "xion"
+    }
 }
 
 export const priceIdByChainName: Record<ChainName, { priceId: string, serviceUrl: string }> = {
@@ -138,3 +169,5 @@ export const priceIdByChainName: Record<ChainName, { priceId: string, serviceUrl
     [ChainName.INJECTIVE]: { priceId: "2d9315a88f3019f8efa88dfe9c0f0843712da0bac814461e27733f6b83eb51b3", serviceUrl: "https://hermes-beta.pyth.network/" },
     [ChainName.XION]: { priceId: "", serviceUrl: "" }
 }
+
+export const XION_STATIC_PRICE = 3;
