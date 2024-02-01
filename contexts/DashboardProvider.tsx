@@ -313,7 +313,6 @@ const DashboardProvider: FC<PropsWithChildren> = ({ children }) => {
     }, [selectedAppVersion, selectedChainName, baseCoin])
 
     const getPageData = useCallback(() => {
-        console.log('first')
         getTrove()
         getAusdBalance()
         getStake()
