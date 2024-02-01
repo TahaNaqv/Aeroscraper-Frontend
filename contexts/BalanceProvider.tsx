@@ -1,6 +1,6 @@
 import { ChainName } from '@/enums/Chain';
 import useChainAdapter from '@/hooks/useChainAdapter';
-import { useAbstraxionSigningClient } from '@burnt-labs/abstraxion';
+import { useAbstraxionSigningClient } from '@/hooks/xion';
 import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate';
 import { Coin } from '@cosmjs/proto-signing';
 import { Dictionary, isNil } from 'lodash';

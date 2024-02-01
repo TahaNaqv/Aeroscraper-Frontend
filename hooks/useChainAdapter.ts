@@ -7,7 +7,7 @@ import { BaseCoin, WalletInfo } from "@/types/types";
 import { BaseCoinByChainName, ChainInfoByName } from "@/constants/chainConstants";
 import { WalletType } from "@/enums/WalletType";
 import { isEmpty, isNil } from "lodash";
-import { useAbstraxionAccount } from "@burnt-labs/abstraxion";
+import { useAbstraxionAccount } from "@/hooks/xion";
 
 type ChainAdapterValue = ChainContext & AppContextState & {
     baseCoin?: BaseCoin;

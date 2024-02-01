@@ -22,10 +22,9 @@ import { ChainName } from "@/enums/Chain";
 import { ChainInfoByName, availableChains } from "@/constants/chainConstants";
 import { WalletType } from "@/enums/WalletType";
 import ChainData from "@/services/data/chain.json";
-import { ToastSuccess } from "@/services/data/alert/SweatAlert";
 import Swal from "sweetalert2";
 import { useNotification } from "@/contexts/NotificationProvider";
-import { Abstraxion } from "@burnt-labs/abstraxion";
+
 type Props = {
   ausdBalance?: number;
   baseCoinBalance?: number;
@@ -46,11 +45,11 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
     walletInfo,
     address,
     selectWallet,
-    selectedWallet
+    selectedWallet,
+    openXionChainModal
   } = useChainAdapter();
 
   const [accountModal, setAccountModal] = useState(false);
-  const [abstraxionOpen, setAbstraxionOpen] = useState(false);
 
   const [walletExtensions, setWalletExtensions] = useState<{ installed: { name: WalletType }[], otherWallets: { name: WalletType, downloadLink: string }[] } | undefined>();
   const [showDownloadExtension, setShowDownloadExtension] = useState<{ name: string, downloadLink: string } | undefined>();
@@ -742,10 +741,7 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
                           })
                         }
                         <Button
-                          onClick={() => {
-                            selectChainName(ChainName.XION);
-                            setAbstraxionOpen(true);
-                          }}
+                          onClick={openXionChainModal}
                           startIcon={
                             <img
                               alt={ChainName.XION}
@@ -783,10 +779,6 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
           )}
         </div>
       </Modal>
-      <Abstraxion
-        isOpen={abstraxionOpen}
-        onClose={() => setAbstraxionOpen(false)}
-      />
     </div>
   );
 };

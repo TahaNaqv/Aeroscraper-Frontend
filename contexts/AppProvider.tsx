@@ -2,11 +2,12 @@ import { ChainName } from "@/enums/Chain";
 import { WalletType } from "@/enums/WalletType";
 import { AppVersion, ChainInfo } from "@/types/types";
 import { getInjectiveAddress } from "@injectivelabs/sdk-ts";
-import { isEmpty, isNil } from "lodash";
+import { isEmpty, isNil, set } from "lodash";
 import { PropsWithChildren, createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { usePrice } from "./PriceProvider";
-import { useAbstraxionAccount } from "@burnt-labs/abstraxion";
+import { useAbstraxionAccount } from "@/hooks/xion";
 import { ChainInfoByName } from "@/constants/chainConstants";
+import { Abstraxion } from "@/components/xion/Abstraxion";
 
 export type AppContextState = {
     selectedAppVersion: AppVersion;
@@ -21,6 +22,8 @@ export type AppContextState = {
     disconnectMetamask: () => void;
     disconnectXion: () => void;
     changeAppVersion: (appVersion: AppVersion) => void;
+    selectXionChain: () => void;
+    openXionChainModal: () => void;
 }
 
 const AppContext = createContext<AppContextState>({
@@ -33,10 +36,13 @@ const AppContext = createContext<AppContextState>({
     selectWallet: () => { },
     disconnectMetamask: () => { },
     disconnectXion: () => { },
-    changeAppVersion: () => { }
+    changeAppVersion: () => { },
+    selectXionChain: () => { },
+    openXionChainModal: () => { }
 });
 
 const AppProvider: React.FC<PropsWithChildren> = ({ children }) => {
+    const [abstraxionOpen, setAbstraxionOpen] = useState(false);
     const [selectedAppVersion, setSelectedAppVersion] = useState<AppVersion>(AppVersion.V2);
     const [selectedChainName, setSelectedChainName] = useState<ChainName>();
     const [selectedWallet, setSelectedWallet] = useState<WalletType>();
@@ -96,6 +102,16 @@ const AppProvider: React.FC<PropsWithChildren> = ({ children }) => {
         localStorage.setItem('selectedAppVersion', appVersion);
     }, [])
 
+    const openXionChainModal = useCallback(() => {
+        setAbstraxionOpen(true);
+    }, [])
+
+    const selectXionChain = useCallback(() => {
+        setAbstraxionOpen(false);
+        setSelectedChainName(ChainName.XION);
+        localStorage.setItem("savedChainName", ChainName.XION);
+    }, [])
+
     const value = useMemo<AppContextState>(() => ({
         selectedAppVersion,
         selectedChainName,
@@ -108,7 +124,9 @@ const AppProvider: React.FC<PropsWithChildren> = ({ children }) => {
         selectWallet,
         disconnectMetamask,
         disconnectXion,
-        changeAppVersion
+        changeAppVersion,
+        selectXionChain,
+        openXionChainModal
     }), [
         selectedAppVersion,
         selectedChainName,
@@ -121,13 +139,19 @@ const AppProvider: React.FC<PropsWithChildren> = ({ children }) => {
         selectWallet,
         disconnectMetamask,
         disconnectXion,
-        changeAppVersion
+        changeAppVersion,
+        selectXionChain,
+        openXionChainModal
     ])
 
     useEffect(() => {
         const savedChainName = localStorage.getItem("savedChainName");
         if (!isNil(savedChainName) && !isEmpty(savedChainName)) {
             setSelectedChainName(savedChainName as ChainName);
+
+            if (savedChainName === ChainName.XION) {
+                setAbstraxionOpen(true);
+            }
         }
 
         const savedAppVersion = localStorage.getItem('selectedAppVersion');
@@ -144,7 +168,6 @@ const AppProvider: React.FC<PropsWithChildren> = ({ children }) => {
             }
         }
     }, [getMetamaskAccount])
-
     useEffect(() => {
         if (selectedChainName === ChainName.XION && !isNil(abstraxionData)) {
             setUserAddress(abstraxionData.bech32Address);
@@ -154,6 +177,10 @@ const AppProvider: React.FC<PropsWithChildren> = ({ children }) => {
     return (
         <AppContext.Provider value={value}>
             {children}
+            <Abstraxion
+                isOpen={abstraxionOpen}
+                onClose={() => setAbstraxionOpen(false)}
+            />
         </AppContext.Provider>
     )
 }

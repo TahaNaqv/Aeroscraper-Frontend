@@ -14,21 +14,13 @@ import { ChainName } from "@/enums/Chain";
 import { GasPrice } from "@cosmjs/stargate";
 import ProfileProvider from "./ProfileProvider";
 import PriceProvider from "./PriceProvider";
-import { AbstraxionProvider } from "@burnt-labs/abstraxion";
 import DashboardProvider from "./DashboardProvider";
 import BalanceProvider from "./BalanceProvider";
+import { XionProviders } from "./xionProviders";
 
 const Providers: FC<PropsWithChildren> = ({ children }) => {
   return (
-    <AbstraxionProvider
-      config={{
-        contracts: [
-          process.env.NEXT_PUBLIC_AERO_XION as string,
-          process.env.NEXT_PUBLIC_ORACLE_HELPER_XION as string,
-          process.env.NEXT_PUBLIC_CW20_AUSD_XION as string
-        ],
-      }}
-    >
+    <XionProviders>
       <ChainProvider
         chains={chains}
         assetLists={assets}
@@ -80,7 +72,7 @@ const Providers: FC<PropsWithChildren> = ({ children }) => {
           </AppProvider>
         </PriceProvider>
       </ChainProvider>
-    </AbstraxionProvider>
+    </XionProviders>
   );
 };
 

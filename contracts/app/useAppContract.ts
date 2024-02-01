@@ -7,7 +7,7 @@ import useChainAdapter from "@/hooks/useChainAdapter";
 import { WalletType } from "@/enums/WalletType";
 import { ChainName } from "@/enums/Chain";
 import { CollateralAsset } from "@/types/types";
-import { useAbstraxionSigningClient } from "@burnt-labs/abstraxion";
+import { useAbstraxionSigningClient } from "@/hooks/xion";
 import { getXionContract } from "./getXionContract";
 
 const useAppContract = () => {

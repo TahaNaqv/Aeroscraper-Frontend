@@ -1,5 +1,5 @@
 import { CollateralInfo } from "@/contracts/app/types";
-import { useAbstraxionSigningClient } from "@burnt-labs/abstraxion";
+import { useAbstraxionSigningClient } from "@/hooks/xion";
 import { ChainName } from "@cosmos-kit/core";
 
 export type RiskyTrovesResponse = {
