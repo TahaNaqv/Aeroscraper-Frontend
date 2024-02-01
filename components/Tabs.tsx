@@ -1,7 +1,7 @@
 import { camelCaseToTitleCase } from '@/utils/stringUtils';
 import { motion } from 'framer-motion';
 import React, { FC, useEffect, useRef, useState } from 'react';
-import { ChevronLeftIcon, ChevronRightIcon, ShapeIcon } from './Icons/Icons';
+import { ActiveChevronLeftIcon, ActiveChevronRightIcon, ChevronLeftIcon, ChevronRightIcon, ShapeIcon } from './Icons/Icons';
 import SkeletonLoading from './Table/SkeletonLoading';
 
 interface TabsProps<T> {
@@ -12,25 +12,27 @@ interface TabsProps<T> {
   loading?: boolean;
 }
 
+
 const Tabs: FC<TabsProps<string>> = ({ tabs, selectedTab, onTabSelected, loading, dots }) => {
   const [scrollPosition, setScrollPosition] = useState(0);
   const tabsRef = useRef<HTMLUListElement>(null);
 
   const scrollTabs = (direction: 'left' | 'right') => {
-    const scrollAmount = 300;
     const container = tabsRef.current;
 
+    if (scrollPosition === 0 && direction === "left") return;
+    if (scrollPosition === 600 && direction === "right") return;
+
     if (container) {
+      const scrollAmount = 600; // Adjust this value as needed
       const newScrollPosition =
         direction === 'left' ? scrollPosition - scrollAmount : scrollPosition + scrollAmount;
+
       container.scrollTo({ left: newScrollPosition, behavior: 'smooth' });
       setScrollPosition(newScrollPosition);
     }
   };
 
-  useEffect(() => {
-    setScrollPosition(0);
-  }, [selectedTab]);
 
   if (loading) {
     return (
@@ -69,9 +71,9 @@ const Tabs: FC<TabsProps<string>> = ({ tabs, selectedTab, onTabSelected, loading
         ))}
       </ul>
 
-      <ul ref={tabsRef} className='flex-auto gap-2 border border-white/10 rounded-lg md:flex hidden overflow-x-scroll scrollbar-hidden'>
-        <motion.button onClick={() => scrollTabs('left')} className="absolute -left-2 top-0 h-full py-0 px-4 z-[999]">
-          <ChevronLeftIcon />
+      <ul ref={tabsRef} className='flex-auto gap-2 border border-white/10 rounded-lg md:flex hidden overflow-y-hidden overflow-x-scroll scrollbar-hidden'>
+        <motion.button onClick={() => scrollTabs('left')} className="absolute -left-2 top-0 h-full py-0 px-4 z-[999] active:scale-90">
+          {scrollPosition === 0 ? <ChevronLeftIcon /> : <ActiveChevronLeftIcon />}
         </motion.button>
 
         {tabs.map((tab, _index) => (
@@ -79,8 +81,8 @@ const Tabs: FC<TabsProps<string>> = ({ tabs, selectedTab, onTabSelected, loading
             key={tab}
             onClick={() => onTabSelected?.(tab)}
             className={`
-            ${tabs.length === (_index + 1) ? "mr-10" : ""}
-            ${_index === 0 ? "ml-12" : ""}
+            ${tabs.length === (_index + 1) ? "mr-16" : ""}
+            ${_index === 0 ? "ml-8" : ""}
             px-6 py-3 m-1 text-base font-medium text-white relative cursor-pointer rounded-md hover:text-red-500 duration-700 flex-1 whitespace-nowrap text-center`}
           >
             {camelCaseToTitleCase(tab)}
@@ -93,8 +95,8 @@ const Tabs: FC<TabsProps<string>> = ({ tabs, selectedTab, onTabSelected, loading
           </motion.li>
         ))}
 
-        <motion.button onClick={() => scrollTabs('right')} className="absolute flex right-0 h-full py-5 px-3 top-0 z-[999]">
-          <ChevronRightIcon />
+        <motion.button onClick={() => scrollTabs('right')} className="absolute flex -right-[0.5px] h-full py-5 px-3 top-0 z-[999] scale-[0.93] scale rounded-md bg-[#1a0c1c]">
+          {scrollPosition === 600 ? <ChevronRightIcon /> : <ActiveChevronRightIcon />}
         </motion.button>
       </ul>
     </nav>

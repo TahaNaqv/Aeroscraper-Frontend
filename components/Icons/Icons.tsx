@@ -577,7 +577,7 @@ export const CheckIcon: React.FC<IconProps> = ({ className, width = "16", height
     )
 }
 
-export const ChevronLeftIcon: React.FC<IconProps> = ({ className, width = "16", height = "16" }) => {
+export const ActiveChevronLeftIcon: React.FC<IconProps> = ({ className, width = "16", height = "16" }) => {
     return (
         <div className='flex gap-2 items-center'>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -604,7 +604,24 @@ export const ChevronLeftIcon: React.FC<IconProps> = ({ className, width = "16", 
     )
 }
 
-export const ChevronRightIcon: React.FC<IconProps> = ({ className, width = "16", height = "16" }) => {
+export const ChevronLeftIcon: React.FC<IconProps> = ({ className, width = "16", height = "16" }) => {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <g opacity="0.15">
+                <path d="M10.7369 11.9301L6.8068 7.99996L10.7369 4.06986C11.1437 3.66307 11.1437 3.00352 10.7369 2.59672C10.3301 2.18993 9.67055 2.18993 9.26376 2.59672L4.59709 7.26339C4.19029 7.67019 4.19029 8.32973 4.59709 8.73653L9.26376 13.4032C9.67055 13.81 10.3301 13.81 10.7369 13.4032C11.1437 12.9964 11.1437 12.3369 10.7369 11.9301Z" fill="white" stroke="url(#paint0_linear_1244_7943)" stroke-width="0.75" stroke-linecap="round" stroke-linejoin="round" />
+            </g>
+            <defs>
+                <linearGradient id="paint0_linear_1244_7943" x1="4" y1="8" x2="16.5" y2="8" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#D43752" />
+                    <stop offset="0.45234" stop-color="#E4462D" />
+                    <stop offset="1" stop-color="#F8B810" />
+                </linearGradient>
+            </defs>
+        </svg>
+    )
+}
+
+export const ActiveChevronRightIcon: React.FC<IconProps> = ({ className, width = "16", height = "16" }) => {
     return (
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M5.2631 4.06994L9.1932 8.00004L5.2631 11.9301C4.85631 12.3369 4.85631 12.9965 5.2631 13.4033C5.6699 13.8101 6.32945 13.8101 6.73624 13.4033L11.4029 8.73661C11.8097 8.32981 11.8097 7.67027 11.4029 7.26347L6.73624 2.5968C6.32945 2.19001 5.6699 2.19001 5.2631 2.5968C4.85631 3.0036 4.85631 3.66315 5.2631 4.06994Z" fill="white" stroke="url(#paint0_linear_1244_7945)" stroke-width="0.75" stroke-linecap="round" stroke-linejoin="round" />
@@ -615,6 +632,23 @@ export const ChevronRightIcon: React.FC<IconProps> = ({ className, width = "16",
                     <stop offset="1" stop-color="#F8B810" />
                 </linearGradient>
             </defs>
+        </svg>
+    )
+}
+
+export const ChevronRightIcon: React.FC<IconProps> = ({ className, width = "16", height = "16" }) => {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <g opacity="0.15">
+        <path d="M5.2631 4.06994L9.1932 8.00004L5.2631 11.9301C4.85631 12.3369 4.85631 12.9965 5.2631 13.4033C5.6699 13.8101 6.32945 13.8101 6.73624 13.4033L11.4029 8.73661C11.8097 8.32981 11.8097 7.67027 11.4029 7.26347L6.73624 2.5968C6.32945 2.19001 5.6699 2.19001 5.2631 2.5968C4.85631 3.0036 4.85631 3.66315 5.2631 4.06994Z" fill="white" stroke="url(#paint0_linear_1244_8395)" stroke-width="0.75" stroke-linecap="round" stroke-linejoin="round"/>
+        </g>
+        <defs>
+        <linearGradient id="paint0_linear_1244_8395" x1="12" y1="8" x2="-0.5" y2="8" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#D43752"/>
+        <stop offset="0.45234" stop-color="#E4462D"/>
+        <stop offset="1" stop-color="#F8B810"/>
+        </linearGradient>
+        </defs>
         </svg>
     )
 }

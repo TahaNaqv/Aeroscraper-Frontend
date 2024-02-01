@@ -67,7 +67,7 @@ const InjectiveTabsSide: FC<Props> = ({ setTabPosition }) => {
   }
 
   return (
-    <div ref={ref} className='md:flex-1 md:max-w-[754px] px-3 md:px-0 md:ml-auto'>
+    <div ref={ref} className='md:flex-1 md:max-w-[778px] px-3 md:px-0 md:ml-auto'>
       <Tabs tabs={TabList} dots={pageData.rewardAmount > 0 ? ["rewards"] : undefined} selectedTab={selectedTab} onTabSelected={(e) => { handleChangeTab(e); }} loading={loading} />
       {loading ? <>
         <div className='mt-16'>
