@@ -69,8 +69,10 @@ const TroveModal: FC<Props> = ({ open, pageData, onClose, getPageData, basePrice
         collacteralRatio < (selectedMinCollateral - 0.00001),
         [openTroveAmount, borrowAmount, collacteralRatio, pageData, selectedMinCollateral, selectedAsset, balanceByDenom])
 
-    const withdrawDepositDisabled = useMemo(() => collateralAmount <= 0 || collateralAmount > 999, [collateralAmount])
-    const repayBorrowDisabled = useMemo(() => borrowingAmount <= 0 || borrowAmount > 999, [borrowingAmount])
+    const withdrawDisabled = useMemo(() => collateralAmount <= 0 || collateralAmount > 999 || selectedCollateral.amount < collateralAmount, [collateralAmount, selectedCollateral])
+    const depositDisabled = useMemo(() => collateralAmount <= 0 || collateralAmount > 999 || Number(convertAmount(balanceByDenom[selectedAsset.denom]?.amount ?? 0, selectedAsset.decimal)) < collateralAmount, [collateralAmount, selectedAsset])
+    const borrowDisabled = useMemo(() => borrowingAmount <= 0 || borrowingAmount > 999 || borrowingAmount > (((selectedCollateral.amount * basePrice * 100) / 115) - (pageData.debtAmount)), [borrowingAmount, selectedCollateral])
+    const repayDisabled = useMemo(() => borrowingAmount <= 0 || borrowingAmount > 999 || borrowingAmount > pageData.debtAmount || borrowingAmount > pageData.ausdBalance, [borrowingAmount])
 
     const changeOpenTroveAmount = (values: NumberFormatValues) => {
         setOpenTroveAmount(Number(values.value));
@@ -300,7 +302,7 @@ const TroveModal: FC<Props> = ({ open, pageData, onClose, getPageData, basePrice
                                         </div>
                                         <div className="flex items-center justify-end pr-4 gap-4">
                                             <OutlinedButton
-                                                disabled={withdrawDepositDisabled}
+                                                disabled={withdrawDisabled}
                                                 disabledText={"Enter the SEI amount."}
                                                 loading={processLoading}
                                                 onClick={queryWithdraw}
@@ -309,7 +311,7 @@ const TroveModal: FC<Props> = ({ open, pageData, onClose, getPageData, basePrice
                                                 <Text>Withdraw</Text>
                                             </OutlinedButton>
                                             <GradientButton
-                                                disabled={withdrawDepositDisabled}
+                                                disabled={depositDisabled}
                                                 disabledText={"Enter the SEI amount."}
                                                 loading={processLoading}
                                                 onClick={queryAddColletral}
@@ -357,7 +359,7 @@ const TroveModal: FC<Props> = ({ open, pageData, onClose, getPageData, basePrice
                                         </div>
                                         <div className="flex items-center justify-end pr-4 gap-4">
                                             <OutlinedButton
-                                                disabled={repayBorrowDisabled}
+                                                disabled={repayDisabled}
                                                 loading={processLoading}
                                                 onClick={queryRepay}
                                                 disabledText='Enter the AUSD amount.'
@@ -367,7 +369,7 @@ const TroveModal: FC<Props> = ({ open, pageData, onClose, getPageData, basePrice
                                             </OutlinedButton>
                                             <GradientButton
                                                 disabledText='Enter the AUSD amount.'
-                                                disabled={repayBorrowDisabled}
+                                                disabled={borrowDisabled}
                                                 loading={processLoading}
                                                 onClick={queryBorrow}
                                                 className="min-w-[201px] h-11"
