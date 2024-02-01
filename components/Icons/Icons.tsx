@@ -590,16 +590,6 @@ export const ActiveChevronLeftIcon: React.FC<IconProps> = ({ className, width = 
                     </linearGradient>
                 </defs>
             </svg>
-            <svg width="5" height="48" viewBox="0 0 5 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="-110" y="1" width="114" height="46" rx="3" stroke="url(#paint0_linear_1244_8365)" stroke-width="2" />
-                <defs>
-                    <linearGradient id="paint0_linear_1244_8365" x1="-111" y1="24" x2="63.1691" y2="24" gradientUnits="userSpaceOnUse">
-                        <stop stop-color="#D43752" />
-                        <stop offset="0.291608" stop-color="#E4462D" />
-                        <stop offset="1" stop-color="#F8B810" />
-                    </linearGradient>
-                </defs>
-            </svg>
         </div>
     )
 }
