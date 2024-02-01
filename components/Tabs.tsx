@@ -66,7 +66,6 @@ const Tabs: FC<TabsProps<string>> = ({ tabs, selectedTab, onTabSelected, loading
             {dots?.includes(tab) && (
               <div className='h-2 w-2 absolute bg-red-500 right-3 -top-2.5 md:top-2 animate-pulse rounded-full' />
             )}
-            {tab === selectedTab && <ShapeIcon className='w-12 h-12 absolute -bottom-12' />}
           </motion.li>
         ))}
       </ul>
