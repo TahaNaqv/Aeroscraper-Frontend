@@ -2,15 +2,15 @@ import React, { useEffect, useState } from 'react'
 import Text from "@/components/Texts/Text"
 import { ExitIcon, LogoSecondary } from '@/components/Icons/Icons';
 import NotificationDropdown from '@/app/app/dashboard/_components/NotificationDropdown';
-import usePageData from '@/contracts/app/usePageData';
 import { isNil } from 'lodash';
 import InjectiveAccountModal from '@/components/AccountModal/InjectiveAccountModal';
 import { convertAmount } from '@/utils/contractUtils';
 import InjectiveNotification from '@/components/Modal/InjectiveNotification';
 import WalletButton from '@/components/Buttons/WalletButton';
-import useBalances from '@/hooks/useBalances';
 import useChainAdapter from '@/hooks/useChainAdapter';
 import { WalletType } from '@/enums/WalletType';
+import { usePageData } from '@/contexts/DashboardProvider';
+import { useBalances } from '@/contexts/BalanceProvider';
 
 const ArchwayTheme = () => {
   const { isWalletConnected, walletInfo, username, baseCoin, address, disconnect, disconnectMetamask } = useChainAdapter();

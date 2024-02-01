@@ -2,17 +2,17 @@ import React, { useState } from 'react'
 import Text from "@/components/Texts/Text"
 import { ExitIcon, LogoSecondary } from '@/components/Icons/Icons';
 import NotificationDropdown from '@/app/app/dashboard/_components/NotificationDropdown';
-import usePageData from '@/contracts/app/usePageData';
 import { isNil } from 'lodash';
 import InjectiveAccountModal from '@/components/AccountModal/InjectiveAccountModal';
 import { convertAmount } from '@/utils/contractUtils';
 import InjectiveNotification from '@/components/Modal/InjectiveNotification';
 import WalletButton from '@/components/Buttons/WalletButton';
 import useChainAdapter from '@/hooks/useChainAdapter';
-import useBalances from '@/hooks/useBalances';
 import { WalletType } from '@/enums/WalletType';
 import VersionSelector from '@/components/VersionSelector/VersionSelector';
 import { useProfile } from '@/contexts/ProfileProvider';
+import { usePageData } from '@/contexts/DashboardProvider';
+import { useBalances } from '@/contexts/BalanceProvider';
 
 const InjeciveTheme = () => {
   const {
@@ -87,7 +87,7 @@ const InjeciveTheme = () => {
                 <img
                   alt="user-profile-image"
                   src={
-                    profileDetail?.photoUrl ??"/images/profile-images/profile-i-1.jpg"
+                    profileDetail?.photoUrl ?? "/images/profile-images/profile-i-1.jpg"
                   }
                   className="rounded-sm bg-raisin-black w-12 h-12"
                 />
