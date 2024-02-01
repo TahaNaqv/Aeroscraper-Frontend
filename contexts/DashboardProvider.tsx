@@ -202,7 +202,7 @@ const DashboardProvider: FC<PropsWithChildren> = ({ children }) => {
             setPageData(prev => ({
                 ...prev,
                 stakedAmount: convertAmount(stakeRes?.amount ?? 0, baseCoin?.decimal),
-                poolShare: Number(Number(stakeRes?.percentage).toFixed(3))
+                poolShare: Number(Number(stakeRes?.percentage).toFixed(6))
             }))
         }
         catch (err) {
