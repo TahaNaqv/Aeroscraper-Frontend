@@ -23,7 +23,7 @@ export const AbstraxionWallets = ({ onClose }: { onClose: () => void }) => {
     setAbstractAccount,
     setAbstraxionError,
   } = useContext(AbstraxionContext) as AbstraxionContextProps;
-  const { selectXionChain } = useChainAdapter();
+  const { selectXionChain, disconnectXion } = useChainAdapter();
   console.log("abstractAccount", abstractAccount);
 
   const { user } = useStytchUser();
@@ -63,6 +63,7 @@ export const AbstraxionWallets = ({ onClose }: { onClose: () => void }) => {
 
     setConnectionType("none");
     setAbstractAccount(undefined);
+    disconnectXion();
   };
 
   const handleJwtAALoginOrCreate = async (

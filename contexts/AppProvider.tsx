@@ -93,6 +93,7 @@ const AppProvider: React.FC<PropsWithChildren> = ({ children }) => {
         setUserAddress(undefined);
         setSelectedWallet(undefined);
         setSelectedChainName(undefined);
+        setAbstraxionOpen(false);
         localStorage.removeItem('selectedWallet');
         localStorage.removeItem('savedChainName');
     }, [])
