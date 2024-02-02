@@ -17,7 +17,7 @@ export default function Footer() {
             Product
           </Text>
           <Link
-            href={"https://x.com/aeroscraper/status/1740683514457243693?s=20"}
+            href={"https://beosin.com/audits/Aeroscraper_202402020919.pdf"}
             target="_blank"
             rel="noopener noreferrer"
             className="hover:scale-105 transition-all flex gap-2"
