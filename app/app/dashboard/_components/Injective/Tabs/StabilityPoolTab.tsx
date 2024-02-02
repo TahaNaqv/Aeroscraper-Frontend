@@ -47,7 +47,7 @@ const StabilityPoolTab: FC<Props> = ({ pageData, getPageData }) => {
       addNotification({
         status: 'success',
         directLink: getIsInjectiveResponse(res) ? res?.txHash : res?.transactionHash,
-        message: `${stakeAmount} Staked to Stability Pool`
+        message: `${stakeAmount} AUSD Staked to Stability Pool`
       })
       getPageData();
       refreshBalance();
@@ -73,7 +73,7 @@ const StabilityPoolTab: FC<Props> = ({ pageData, getPageData }) => {
       addNotification({
         status: 'success',
         directLink: getIsInjectiveResponse(res) ? res?.txHash : res?.transactionHash,
-        message: `${stakeAmount} Unstaked from Stability Pool`
+        message: `${unstakeAmount} AUSD Unstaked from Stability Pool`
       })
       getPageData();
       refreshBalance();
