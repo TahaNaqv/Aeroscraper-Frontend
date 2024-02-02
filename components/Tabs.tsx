@@ -71,9 +71,9 @@ const Tabs: FC<TabsProps<string>> = ({ tabs, selectedTab, onTabSelected, loading
       </ul>
 
       <ul ref={tabsRef} className='flex-auto gap-2 border border-white/10 rounded-lg md:flex hidden overflow-y-hidden overflow-x-scroll scrollbar-hidden'>
-        <motion.button onClick={() => scrollTabs('left')} className="absolute -left-2 top-0 h-full py-0 px-4 z-[999] active:scale-90">
+        {tabs.length > 5 && <motion.button onClick={() => scrollTabs('left')} className="absolute -left-2 top-0 h-full py-0 px-4 z-[999] active:scale-90">
           {scrollPosition === 0 ? <ChevronLeftIcon /> : <ActiveChevronLeftIcon />}
-        </motion.button>
+        </motion.button>}
 
         {tabs.map((tab, _index) => (
           <motion.li
@@ -94,9 +94,9 @@ const Tabs: FC<TabsProps<string>> = ({ tabs, selectedTab, onTabSelected, loading
           </motion.li>
         ))}
 
-        <motion.button onClick={() => scrollTabs('right')} className="absolute flex -right-[0.5px] h-full py-5 px-3 top-0 z-[999] scale-[0.93] scale rounded-md bg-[#1a0c1c]">
+        {tabs.length > 5 && <motion.button onClick={() => scrollTabs('right')} className="absolute flex -right-[0.5px] h-full py-5 px-3 top-0 z-[999] scale-[0.93] scale rounded-md bg-[#1a0c1c]">
           {scrollPosition === 600 ? <ChevronRightIcon /> : <ActiveChevronRightIcon />}
-        </motion.button>
+        </motion.button>}
       </ul>
     </nav>
   );
