@@ -219,6 +219,10 @@ export default function Home() {
                 <Text size="sm" textColor='text-white'>Medium</Text>
                 <img alt='external-link' src='/images/external-link.svg' className='w-4 h-4' />
               </Link>
+              <Link href={'https://guild.xyz/aeroscraper'} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
+                <Text size="sm" textColor='text-white'>Guild</Text>
+                <img alt='external-link' src='/images/external-link.svg' className='w-4 h-4' />
+              </Link>
             </div>
           </div>
         </div>

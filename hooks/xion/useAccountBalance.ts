@@ -1,7 +1,7 @@
 import { AbstraxionAccount } from "@/hooks/xion";
 import { useEffect, useState } from "react";
 
-const XION_FRACTIONAL = 1000000;
+const XION_FRACTIONAL = 1;
 
 export function useAccountBalance(account?: AbstraxionAccount, client?: any) {
   const [balanceInfo, setBalanceInfo] = useState<BalanceInfo>({

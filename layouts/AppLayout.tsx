@@ -7,7 +7,6 @@ import InjeciveTheme from "./themes/InjectiveTheme";
 import { PrimaryTheme } from "./themes/PrimaryTheme";
 import useChainAdapter from "@/hooks/useChainAdapter";
 import { ChainName } from "@/enums/Chain";
-import XionTheme from "./themes/XionTheme";
 import { usePathname } from "next/navigation";
 
 const AppLayout = ({ children }: { children: React.ReactNode }) => {
