@@ -61,7 +61,7 @@ const RedeemSide: FC<Props> = ({ pageData, getPageData, refreshBalance, basePric
     try {
       setProcessLoading(true);
 
-      const res = await contract.redeem(redeemAmount);
+      const res:any = await contract.redeem(redeemAmount);
 
       transactionHash = getIsInjectiveResponse(res) ? res?.txHash : res?.transactionHash;
 

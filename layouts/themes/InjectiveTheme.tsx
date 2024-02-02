@@ -13,9 +13,11 @@ import VersionSelector from '@/components/VersionSelector/VersionSelector';
 import { useProfile } from '@/contexts/ProfileProvider';
 import { usePageData } from '@/contexts/DashboardProvider';
 import { useBalances } from '@/contexts/BalanceProvider';
+import { ChainName } from '@/enums/Chain';
 
 const InjeciveTheme = () => {
   const {
+    selectedChainName,
     isWalletConnected,
     baseCoin,
     walletInfo,
@@ -23,6 +25,7 @@ const InjeciveTheme = () => {
     username,
     disconnect,
     disconnectMetamask,
+    disconnectXion
   } = useChainAdapter();
   const { balanceByDenom } = useBalances();
 
@@ -34,7 +37,10 @@ const InjeciveTheme = () => {
   const [accountModal, setAccountModal] = useState(false);
 
   const disconnectWallet = () => {
-    if (walletInfo?.name === WalletType.METAMASK) {
+    if (selectedChainName === ChainName.XION) {
+      disconnectXion();
+    }
+    else if (walletInfo?.name === WalletType.METAMASK) {
       disconnectMetamask();
     } else {
       disconnect();
@@ -73,7 +79,10 @@ const InjeciveTheme = () => {
           {isWalletConnected && !isNil(baseCoin) ? (
             <>
               <div className='md:flex hidden mr-4'>
-                <VersionSelector />
+                {
+                  selectedChainName === ChainName.INJECTIVE &&
+                  <VersionSelector />
+                }
               </div>
               <div className='md:flex hidden'>
                 <NotificationDropdown />

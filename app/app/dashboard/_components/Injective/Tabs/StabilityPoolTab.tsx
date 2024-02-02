@@ -42,7 +42,7 @@ const StabilityPoolTab: FC<Props> = ({ pageData, getPageData }) => {
     setProcessLoading(true);
 
     try {
-      const res = await contract.stake(stakeAmount);
+      const res:any = await contract.stake(stakeAmount);
       setStakeAmount(0);
       addNotification({
         status: 'success',
@@ -67,7 +67,7 @@ const StabilityPoolTab: FC<Props> = ({ pageData, getPageData }) => {
     setProcessLoading(true);
 
     try {
-      const res = await contract.unstake(unstakeAmount);
+      const res:any = await contract.unstake(unstakeAmount);
 
       setUnstakeAmount(0);
       addNotification({

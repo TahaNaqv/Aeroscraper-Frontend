@@ -34,7 +34,7 @@ const AccountModal: FC<Props> = (props: Props) => {
   const avatarSelectRef = useRef<HTMLDivElement>(null);
   const qrCodeViewRef = useRef<HTMLDivElement>(null);
 
-  const { username, address, baseCoin, walletInfo, chain, disconnect, disconnectMetamask } = useChainAdapter();
+  const { selectedChainName, username, address, baseCoin, walletInfo, chainInfo, disconnect, disconnectMetamask, disconnectXion } = useChainAdapter();
   const { profileDetail, setProfileDetail } = useProfile();
 
   const [selectedTab, setSelectedTab] = useState<Tabs | null>(null);
@@ -71,7 +71,10 @@ const AccountModal: FC<Props> = (props: Props) => {
   }
 
   const logout = () => {
-    if (walletInfo?.name === WalletType.METAMASK) {
+    if (selectedChainName === ChainName.XION) {
+      disconnectXion();
+    }
+    else if (walletInfo?.name === WalletType.METAMASK) {
       disconnectMetamask();
     }
     else {
@@ -94,7 +97,7 @@ const AccountModal: FC<Props> = (props: Props) => {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            walletAddress:address,
+            walletAddress: address,
             photoUrl: photoUrl,
             appType: 999
           })
@@ -112,7 +115,7 @@ const AccountModal: FC<Props> = (props: Props) => {
           setPhotoUrlInput("");
 
           setProfileDetail({
-            walletAddress:address,
+            walletAddress: address,
             photoUrl: photoUrl,
             appType: 999
           });
@@ -136,7 +139,7 @@ const AccountModal: FC<Props> = (props: Props) => {
   useOutsideHandler(avatarSelectRef, closeAvatarSelection);
   useOutsideHandler(qrCodeViewRef, closeQrCodeview);
 
-  let scanDomain = TransactionDomainByChainName[chain.chain_name as ChainName]?.accountUrl
+  let scanDomain = TransactionDomainByChainName[chainInfo.name as ChainName]?.accountUrl
 
   return (
     <Modal title="Profile" modalSize='lg' showModal={props.showModal} onClose={closeModal}>
@@ -275,12 +278,12 @@ const AccountModal: FC<Props> = (props: Props) => {
           {selectedTab === "wallet-details" && (
             <div className='md:px-8 w-full'>
               <div className="flex items-center ml-[10%] gap-4 md:gap-0 md:mb-16 md:mt-12">
-                {chain && <div>
+                {selectedChainName && <div>
                   <Text size='sm' className="text-center mb-3" textColor='text-dark-silver'>Selected chain</Text>
                   <Button
-                    startIcon={<img alt={chain.chain_name} src={baseCoin?.image} className='w-6 h-6' />}
+                    startIcon={<img alt={selectedChainName} src={baseCoin?.image} className='w-6 h-6' />}
                   >
-                    {capitalizeFirstLetter(chain.pretty_name.toLocaleLowerCase())}
+                    {capitalizeFirstLetter(chainInfo.displayName.toLocaleLowerCase())}
                   </Button>
                 </div>}
                 <div className="md:ml-14">

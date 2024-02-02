@@ -27,7 +27,7 @@ const ClaimRewardTab: FC<Props> = ({ pageData, getPageData, refreshBalance, base
     setProcessLoading(true);
 
     try {
-      const res = await contract.withdrawLiquidationGains();
+      const res:any = await contract.withdrawLiquidationGains();
       addNotification({
         status: 'success',
         directLink: getIsInjectiveResponse(res) ? res?.txHash : res?.transactionHash,

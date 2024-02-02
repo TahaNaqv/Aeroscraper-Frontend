@@ -91,7 +91,7 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
     setProcessLoading(true);
 
     try {
-      const res = await contract.addCollateral(collateralAmount, selectedAsset);
+      const res : any = await contract.addCollateral(collateralAmount, selectedAsset);
 
       addNotification({
         status: 'success',
@@ -119,7 +119,7 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
     setProcessLoading(true);
 
     try {
-      const res = await contract.removeCollateral(collateralAmount, selectedAsset);
+      const res : any = await contract.removeCollateral(collateralAmount, selectedAsset);
 
       addNotification({
         status: 'success',
@@ -147,7 +147,7 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
     setProcessLoading(true);
 
     try {
-      const res = await contract.borrowLoan(borrowingAmount);
+      const res : any = await contract.borrowLoan(borrowingAmount);
 
       addNotification({
         status: 'success',
@@ -175,7 +175,7 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
     setProcessLoading(true);
 
     try {
-      const res = await contract.repayLoan(borrowingAmount);
+      const res : any = await contract.repayLoan(borrowingAmount);
 
       addNotification({
         status: 'success',
@@ -213,7 +213,7 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
     try {
       setProcessLoading(true);
 
-      const res = await contract.openTrove(openTroveAmount, borrowAmount, selectedAsset);
+      const res : any = await contract.openTrove(openTroveAmount, borrowAmount, selectedAsset);
 
       addNotification({
         status: 'success',

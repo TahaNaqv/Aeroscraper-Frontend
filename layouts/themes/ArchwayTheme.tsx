@@ -11,9 +11,10 @@ import useChainAdapter from '@/hooks/useChainAdapter';
 import { WalletType } from '@/enums/WalletType';
 import { usePageData } from '@/contexts/DashboardProvider';
 import { useBalances } from '@/contexts/BalanceProvider';
+import { ChainName } from '@/enums/Chain';
 
 const ArchwayTheme = () => {
-  const { isWalletConnected, walletInfo, username, baseCoin, address, disconnect, disconnectMetamask } = useChainAdapter();
+  const { isWalletConnected, walletInfo, username, baseCoin, address, selectedChainName, disconnect, disconnectXion, disconnectMetamask } = useChainAdapter();
   const { balanceByDenom } = useBalances();
 
   const { basePrice } = useChainAdapter();
@@ -22,7 +23,10 @@ const ArchwayTheme = () => {
   const [accountModal, setAccountModal] = useState(false);
 
   const disconnectWallet = () => {
-    if (walletInfo?.name === WalletType.METAMASK) {
+    if (selectedChainName === ChainName.XION) {
+      disconnectXion();
+    }
+    else if (walletInfo?.name === WalletType.METAMASK) {
       disconnectMetamask();
     }
     else {
