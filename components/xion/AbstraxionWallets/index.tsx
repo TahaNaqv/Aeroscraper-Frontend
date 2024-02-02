@@ -54,7 +54,9 @@ export const AbstraxionWallets = ({ onClose }: { onClose: () => void }) => {
       stopPolling();
       setFetchingNewWallets(false);
     }
-  }, [data, previousData]);
+    console.log("data", data, "previousData", previousData, "error", error);
+    
+  }, [data, previousData,error]);
 
   const handleDisconnect = async () => {
     if (connectionType === "stytch") {
@@ -67,11 +69,18 @@ export const AbstraxionWallets = ({ onClose }: { onClose: () => void }) => {
     setAbstractAccount(undefined);
     disconnectXion();
   };
-
+  const body= {
+    salt: Date.now().toString(),
+    session_jwt,
+    session_token,
+  };
+  
+  
   const handleJwtAALoginOrCreate = async (
     session_jwt?: string,
     session_token?: string
   ) => {
+    console.log("body", body);
     try {
       if (!session_jwt || !session_token) {
         throw new Error("Missing token/jwt");
@@ -92,6 +101,8 @@ export const AbstraxionWallets = ({ onClose }: { onClose: () => void }) => {
         }
       );
       const body = await res.json();
+      console.log("handleJwtAALoginOrCreate", body);
+      
       if (!res.ok) {
         throw new Error(body.error);
       }
