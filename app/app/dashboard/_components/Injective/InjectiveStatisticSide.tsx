@@ -45,7 +45,7 @@ const content:
     },
     {
       title: "Become the member of the Aeroscraper Guild",
-      desc: "Earn 5 XP as a guild member and unlock early access.",
+      desc: "Begin your Aeroscraper journey by becoming an official Guild Member. Earn exclusive roles to unlock future surprises.",
       linkStr: "unlock",
       linkUrl: "https://guild.xyz/aeroscraper"
     },
