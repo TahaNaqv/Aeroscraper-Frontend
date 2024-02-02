@@ -9,14 +9,12 @@ import Image from "next/image";
 //import { seatContractAddress } from "./layout";
 import { motion } from "framer-motion";
 import { useNotification } from "@/contexts/NotificationProvider";
-import {
-  Abstraxion,
-  useAbstraxionAccount,
-  useAbstraxionSigningClient,
-} from "@burnt-labs/abstraxion";
+
 import { Button } from "@burnt-labs/ui";
 import { usePageData } from "@/contexts/DashboardProvider";
 import { useBalances } from "@/contexts/BalanceProvider";
+import { useAbstraxionAccount, useAbstraxionSigningClient } from "@/hooks/xion";
+import { Abstraxion } from "@/components/xion/Abstraxion";
 
 const XionTheme = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -78,10 +76,10 @@ const XionTheme = () => {
               setIsOpen(true);
             }}
             structure="base"
-            className={` py-2  rounded-md text-white  ${account.bech32Address ? "bg-transparent" : "confirmBtn  px-12"
+            className={` py-2  rounded-md text-white  ${account?.bech32Address ? "bg-transparent" : "confirmBtn  px-12"
               }`}
           >
-            {account.bech32Address ? (
+            {account?.bech32Address ? (
               <div className="flex items-center justify-center">
                 <ExitIcon className="" />
               </div>

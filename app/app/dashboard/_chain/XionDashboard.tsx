@@ -14,6 +14,10 @@ import { useNotification } from "@/contexts/NotificationProvider";
 import Tooltip from "@/components/Tooltip/Tooltip";
 import XionStatisticSide from "../_components/Injective/XionStatisticSide";
 import XionTabsSide, { XionTabs } from "../_components/Injective/XionTabsSide";
+import { useAbstraxionAccount, useAbstraxionSigningClient } from "@/hooks/xion";
+import { getRequestAmount } from "@/utils/contractUtils";
+import { coin } from "@cosmjs/proto-signing";
+import { BaseCoinByChainName } from "@/constants/chainConstants";
 
 export default function XionDashboard() {
   const [basePrice, setBasePrice] = useState(1);
@@ -21,12 +25,31 @@ export default function XionDashboard() {
   const [tabPosition, setTabPosition] = useState<XionTabs>("redeem");
 
   const { processLoading } = useNotification();
-
-
+  const { client } = useAbstraxionSigningClient();
+  const { data: account } = useAbstraxionAccount();
 
   const changeTabPosition = useCallback((e: XionTabs) => {
     setTabPosition(e);
   }, []);
+  const [loading, setLoading] = useState(false);
+  async function sendXion() {
+    setLoading(true);
+    const sendRes: any =
+      account?.bech32Address &&
+      (await client?.sendTokens(
+        account?.bech32Address,
+        "xion1qejy98clclzy0nm3quvjhg8umqj703ea7uy74r39k3572qnma08sgm0kzg",
+
+        [coin("10000000", BaseCoinByChainName["xion"].denom)],
+        {
+          amount: [{ amount: "0", denom: "uxion" }],
+          gas: "500000",
+        },
+        "send xion"
+      ));
+    console.log("sendRes", sendRes);
+    setLoading(false);
+  }
 
   return (
     <div className="h-screen">
@@ -115,6 +138,12 @@ export default function XionDashboard() {
           />
         </motion.div>
       )}
+      <button
+        onClick={sendXion}
+        className="bg-primary text-white rounded-md px-4 py-2"
+      >
+        Send Xion {loading && "loading.."}
+      </button>
       <div className="flex gap-4 flex-col md:flex-row md:gap-24 z-10 relative md:min-h-[720px] ">
         <XionStatisticSide basePrice={basePrice} />
         <XionTabsSide setTabPosition={changeTabPosition} />
