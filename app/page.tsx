@@ -5,10 +5,13 @@ import OutlinedButton from '@/components/Buttons/OutlinedButton'
 import Faq from '@/components/FAQ/Faq'
 import { InjectiveBackgroundWave, LogoSecondary, MedalIcon } from '@/components/Icons/Icons'
 import Text from '@/components/Texts/Text'
+import { AbstraxionAccount } from '@/hooks/xion'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
-
+export interface AccountWithAuthenticator extends AbstraxionAccount {
+  authenticators: Authenticators;
+}
 export default function Home() {
   const router = useRouter()
   useEffect(() => {
@@ -135,7 +138,7 @@ export default function Home() {
         <div className='grid grid-cols-1 md:grid-cols-4 gap-10 md:gap-40'>
           <div className='flex flex-col content-start justify-start gap-4'>
             <Text size="sm" textColor='text-white' weight="font-semibold">Product</Text>
-            <Link href={'https://x.com/aeroscraper/status/1740683514457243693?s=20'} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
+            <Link href={'https://beosin.com/audits/Aeroscraper_202402020919.pdf'} target="_blank" rel="noopener noreferrer" className='hover:scale-105 transition-all flex gap-2'>
               <Text size="sm" textColor='text-white' className="cursor-pointer">Audit</Text>
               <img alt='external-link' src='/images/external-link.svg' className='w-4 h-4' />
             </Link>

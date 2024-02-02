@@ -1,5 +1,6 @@
 import { CollateralInfo } from "@/contracts/app/types";
-import { WalletType } from "@/enums/WalletType";
+import { useAbstraxionSigningClient } from "@/hooks/xion";
+import { ChainName } from "@cosmos-kit/core";
 
 export type RiskyTrovesResponse = {
     troves: {
@@ -41,7 +42,7 @@ export type BaseCoin = {
 }
 
 export type WalletInfo = {
-    name: WalletType;
+    name: string;
     prettyName: string;
     logo: string;
 }
@@ -62,3 +63,12 @@ export type CollateralAsset = {
     priceServiceUrl: string;
     oracleContractAddress: string;
 }
+
+export type ChainInfo = {
+    name: ChainName;
+    displayName: string;
+    logo: string;
+    bech32Prefix: string;
+}
+
+export type AbstractionClient = ReturnType<typeof useAbstraxionSigningClient>['client'];

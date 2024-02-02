@@ -61,7 +61,7 @@ const RedeemTab: FC<Props> = ({ pageData, getPageData, refreshBalance, basePrice
       setProcessLoading(true);
       notifications.setProcessLoading(true);
 
-      const res = await contract.redeem(redeemAmount);
+      const res:any = await contract.redeem(redeemAmount);
 
       transactionHash = getIsInjectiveResponse(res) ? res?.txHash : res?.transactionHash;
 

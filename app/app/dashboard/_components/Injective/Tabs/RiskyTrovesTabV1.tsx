@@ -39,7 +39,7 @@ const RiskyTrovesTabV1: FC<Props> = ({ getPageData, basePrice }) => {
     try {
       setProcessLoading(true);
 
-      const res = await contract.liquidateTroves();
+      const res:any = await contract.liquidateTroves();
       addNotification({
         status: 'success',
         directLink: getIsInjectiveResponse(res) ? res?.txHash : res?.transactionHash,

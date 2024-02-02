@@ -19,7 +19,7 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
         [ChainName.ARCHWAY]: <ArchwayTheme />,
         [ChainName.NEUTRON]: <PrimaryTheme selectedChainName={ChainName.NEUTRON} />,
         [ChainName.INJECTIVE]: <InjeciveTheme />,
-        [ChainName.XION]: <XionTheme />,
+        [ChainName.XION]: <InjeciveTheme />,
     }
 
     const selectedTheme = chainTheme[selectedChainName!] || <InjeciveTheme />;
