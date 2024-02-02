@@ -15,7 +15,6 @@ import { Loading } from "@/components/xion/Loading";
 import { AbstraxionWallets } from "@/components/xion/AbstraxionWallets";
 import { ErrorDisplay } from "@/components/xion/ErrorDisplay";
 import { useSearchParams } from "next/navigation";
-import { AbstraxionGrant } from "../AbstraxionGrant";
 import Image from "next/image";
 
 export interface ModalProps {
@@ -60,8 +59,6 @@ export const Abstraxion = ({ isOpen, onClose }: ModalProps) => {
             <ErrorDisplay message={abstraxionError} onClose={onClose} />
           ) : isConnecting || isReconnecting ? (
             <Loading />
-          ) : account?.bech32Address && contracts && grantee ? (
-            <AbstraxionGrant contracts={contractsArray} grantee={grantee} />
           ) : isConnected ? (
             <AbstraxionWallets onClose={onClose} />
           ) : (
