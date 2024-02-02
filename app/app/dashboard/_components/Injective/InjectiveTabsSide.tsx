@@ -55,7 +55,9 @@ const InjectiveTabsSide: FC<Props> = ({ setTabPosition }) => {
   ];
 
   if (selectedChainName === ChainName.XION) {
-    TabList = TabList.filter((tab) => tab !== "missions" && tab !== "leaderboard");
+    TabList = TabList.filter(
+      (tab) => tab !== "missions" && tab !== "leaderboard"
+    );
   }
 
   const [selectedTab, setSelectedTab] = useState<InjectiveTabs>(
@@ -90,6 +92,7 @@ const InjectiveTabsSide: FC<Props> = ({ setTabPosition }) => {
     setSelectedTab(e);
     setTabPosition(e);
   };
+ 
 
   return (
     <div
