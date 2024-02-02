@@ -32,7 +32,9 @@ export const AbstraxionWallets = ({ onClose }: { onClose: () => void }) => {
   const session_token = stytchClient.session.getTokens()?.session_token;
 
   const { aud, sub } = decodeJwt(session_jwt || "");
-
+  /*console.log("aud", aud, "sub", sub);
+  console.log(`${Array.isArray(aud) ? aud[0] : aud}.${sub}`); */
+  
   const { disconnect } = useDisconnect();
   const { data: account } = useAbstraxionAccount();
   const { loading, error, data, startPolling, stopPolling, previousData } =
