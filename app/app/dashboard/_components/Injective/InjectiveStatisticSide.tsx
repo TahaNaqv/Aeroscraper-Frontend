@@ -21,9 +21,11 @@ const InjectiveStatisticSide: FC<Props> = ({ basePrice }) => {
   const isMobile = useIsMobile();
   const { baseCoin, walletInfo, selectedChainName } = useChainAdapter();
   const [showStatistic, setShowStatistic] = useState<boolean>(true);
-  const [content, setContent] = useState( defaultContent);
+  const [content, setContent] = useState(defaultContent);
   useEffect(() => {
-    setContent(ChainName.INJECTIVE === selectedChainName ? injContent : defaultContent);
+    setContent(
+      ChainName.INJECTIVE === selectedChainName ? injContent : defaultContent
+    );
   }, [selectedChainName]);
   const { pageData } = usePageData();
   const [showContentIdx, setShowContentIdx] = useState(0);
@@ -52,7 +54,11 @@ const InjectiveStatisticSide: FC<Props> = ({ basePrice }) => {
     setHovering(isHovering);
   };
 
-  
+  console.log(
+    "Coin Name",
+    baseCoin?.name,
+    Number(pageData.baseTotalCollateralAmount).toFixed(6) + " " + baseCoin?.name
+  );
 
   return (
     <div
@@ -125,13 +131,12 @@ const InjectiveStatisticSide: FC<Props> = ({ basePrice }) => {
             description={
               isNil(baseCoin)
                 ? "-"
-                : `${Number(pageData.baseTotalCollateralAmount).toFixed(6)} ${
-                    baseCoin.name
-                  }`
+                : `${Number(pageData.baseTotalCollateralAmount).toFixed(6)}`
             }
             className="w-[191px] h-14"
             tooltip="The Total Value Locked (TVL) is the total value of sei locked as collateral in the system."
             tooltipPlacement="bottom"
+            coinName={baseCoin?.name}
             isNumeric
           />
           <InjectiveStatisticCard

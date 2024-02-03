@@ -23,27 +23,27 @@ export default function RenderContent({
     setContent(ChainName.INJECTIVE === selectedChainName ? injContent : defaultContent);
   }, [selectedChainName]);
   const item = content[showContentIdx] as Content;
-  const parts = item.linkStr ? item.desc.split(item.linkStr) : [];
+  const parts = item?.linkStr ? item?.desc.split(item?.linkStr) : [];
   return (
     <>
       <h1 className="text-white text-2xl md:text-[39px] md:leading-[50px] font-semibold">
-        {item.title}
+        {item?.title}
       </h1>
-      {item.linkStr && item.linkUrl ? (
+      {item?.linkStr && item?.linkUrl ? (
         <h2 className="text-sm md:text-base text-ghost-white leading-6 font-medium mt-2 md:mt-4">
           {parts[0]}
           <Link
             target={"_blank"}
-            href={item.linkUrl}
+            href={item?.linkUrl}
             className="text-[#F8B810] animate-pulse"
           >
-            {item.linkStr}
+            {item?.linkStr}
           </Link>
           {parts[1]}
         </h2>
       ) : (
         <h2 className="text-sm md:text-base text-ghost-white leading-6 font-medium mt-2 md:mt-4">
-          {item.desc}
+          {item?.desc}
         </h2>
       )}
     </>

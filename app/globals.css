@@ -47,19 +47,19 @@ body::-webkit-scrollbar {
 
 @keyframes gradient-animation {
   0% {
-    stop-color: #56235C;
+    stopColor: #56235C;
   }
   25% {
-    stop-color: #D43752;
+    stopColor: #D43752;
   }
   50% {
-    stop-color: #E4462D;
+    stopColor: #E4462D;
   }
   75% {
-    stop-color: #F8B810;
+    stopColor: #F8B810;
   }
   100% {
-    stop-color: #D43752;
+    stopColor: #D43752;
   }
 }
 
