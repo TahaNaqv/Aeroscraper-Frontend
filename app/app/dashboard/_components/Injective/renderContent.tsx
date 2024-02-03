@@ -1,0 +1,43 @@
+import { Content } from "@/data/injContent";
+import Link from "next/link";
+interface Content {
+  title: string;
+  desc: string;
+  linkStr?: string;
+  linkUrl?: string;
+}
+[];
+
+export default function RenderContent({
+  showContentIdx,
+}: {
+  showContentIdx: number;
+}) {
+  const content = Content;
+  const item = content[showContentIdx] as Content;
+  const parts = item.linkStr ? item.desc.split(item.linkStr) : [];
+  return (
+    <>
+      <h1 className="text-white text-2xl md:text-[39px] md:leading-[50px] font-semibold">
+        {item.title}
+      </h1>
+      {item.linkStr && item.linkUrl ? (
+        <h2 className="text-sm md:text-base text-ghost-white leading-6 font-medium mt-2 md:mt-4">
+          {parts[0]}
+          <Link
+            target={"_blank"}
+            href={item.linkUrl}
+            className="text-[#F8B810] animate-pulse"
+          >
+            {item.linkStr}
+          </Link>
+          {parts[1]}
+        </h2>
+      ) : (
+        <h2 className="text-sm md:text-base text-ghost-white leading-6 font-medium mt-2 md:mt-4">
+          {item.desc}
+        </h2>
+      )}
+    </>
+  );
+}

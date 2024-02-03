@@ -8,74 +8,21 @@ import Link from "next/link";
 import React, { FC, useEffect, useState } from "react";
 import { usePageData } from "@/contexts/DashboardProvider";
 import { ChainName } from "@/enums/Chain";
+import RenderContent from "./renderContent";
+import { Content } from "@/data/injContent";
 
 interface Props {
   basePrice: number;
 }
 
 const INTERVAL_TIME = 8000;
-const Content: {
-  title: string;
-  desc: string;
-  linkStr?: string;
-  linkUrl?: string;
-}[] = [
-  {
-    title: "Your decentralized lending-borrowing protocol",
-    desc: "Welcome to the Aeroscraper app. Here you can open a trove to borrow AUSD, earn AUSD rewards by depositing AUSD to the Stability pool, or Liquidate Risky Troves.",
-  },
-  {
-    title: "Open your Trove and Mint AUSD",
-    desc: "Open your first trove using INJ and mint AUSD. You can add or remove collaterals to your Trove later, mint more AUSD, or pay off your debt.",
-  },
-  {
-    title: "Stake your AUSD to Stability Pool",
-    desc: "Get a right to earn rewards from liquid troves by staking your AUSD to the stability pool.",
-  },
-  {
-    title: "Rewards!",
-    desc: "Collect the rewards you earned from liquid troves.",
-  },
-  {
-    title: "The Aeroscraper audit is officially complete!",
-    desc: "Security and reliability are the top priorities for Aeroscraper. Aeroscraper has been officially audited, and all errors have been corrected.",
-    linkStr: "audited",
-    linkUrl: "https://beosin.com/audits/Aeroscraper_202402020919.pdf",
-  },
-  {
-    title: "Don't miss our latest Galxe campaign",
-    desc: "Get a chance to win exclusive rewards by participating in our current Galxe campaign.",
-    linkStr: "participating",
-    linkUrl: "https://galxe.com/aeroscraper/campaign/GCi8BtwKhx",
-  },
-  {
-    title: "Become the member of the Aeroscraper Guild",
-    desc: "Begin your Aeroscraper journey by becoming an official Guild Member. Earn exclusive roles to unlock future surprises.",
-    linkStr: "unlock",
-    linkUrl: "https://guild.xyz/aeroscraper",
-  },
-  {
-    title: "Check out the Zealy missions!",
-    desc: "Complete Zealy missions to raise your ranks in the leaderboard!",
-    linkStr: "Zealy",
-    linkUrl: "https://zealy.io/c/aeroscraper/questboard",
-  },
-  {
-    title: "Injective Faucet",
-    desc: "Get your Injective(Testnet) tokens here.",
-    linkStr: "here",
-    linkUrl: "https://testnet.faucet.injective.network/",
-  },
-];
 
 const InjectiveStatisticSide: FC<Props> = ({ basePrice }) => {
   const isMobile = useIsMobile();
   const { baseCoin, walletInfo, selectedChainName } = useChainAdapter();
   const [showStatistic, setShowStatistic] = useState<boolean>(true);
   const [content, setContent] = useState(Content);
-
   const { pageData } = usePageData();
-
   const [showContentIdx, setShowContentIdx] = useState(0);
   const [hovering, setHovering] = useState(false);
 
@@ -116,37 +63,7 @@ const InjectiveStatisticSide: FC<Props> = ({ basePrice }) => {
     setHovering(isHovering);
   };
 
-  const RenderContent = ({content, showContentIdx} :{
-    content: typeof Content;
-    showContentIdx: number;
-  }) => {
-    const item = content[showContentIdx];
-    const parts = item.linkStr ? item.desc.split(item.linkStr) : [];
-    return (
-      <>
-        <h1 className="text-white text-2xl md:text-[39px] md:leading-[50px] font-semibold">
-          {item.title}
-        </h1>
-        {item.linkStr && item.linkUrl ? (
-          <h2 className="text-sm md:text-base text-ghost-white leading-6 font-medium mt-2 md:mt-4">
-            {parts[0]}
-            <Link
-              target={"_blank"}
-              href={item.linkUrl}
-              className="text-[#F8B810] animate-pulse"
-            >
-              {item.linkStr}
-            </Link>
-            {parts[1]}
-          </h2>
-        ) : (
-          <h2 className="text-sm md:text-base text-ghost-white leading-6 font-medium mt-2 md:mt-4">
-            {item.desc}
-          </h2>
-        )}
-      </>
-    );
-  };
+  
 
   return (
     <div
@@ -162,7 +79,7 @@ const InjectiveStatisticSide: FC<Props> = ({ basePrice }) => {
         layout
         className="min-h-[172px] md:min-h-[266px] text-white"
       >
-        <RenderContent content={content} showContentIdx={showContentIdx} />
+        <RenderContent showContentIdx={showContentIdx} />
       </motion.div>
       <div className="space-x-2 md:space-x-1 group-hover:opacity-100 md:opacity-0 transition-opacity my-2">
         {content.map((i, idx) => {
