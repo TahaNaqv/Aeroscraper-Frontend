@@ -192,7 +192,6 @@ export default function Footer({}) {
             Hackathon
           </Text>
           <div className="flex flex-col content-start gap-3">
-            {selectedChainName === ChainName.INJECTIVE && (
               <Link
                 href={
                   "https://twitter.com/Injective_/status/1745933949132488934?s=20"
@@ -210,7 +209,6 @@ export default function Footer({}) {
                   className="w-4 h-4"
                 />
               </Link>
-            )}
             <Link
               href={"https://x.com/SeiNetwork/status/1705128171534717322?s=20"}
               target="_blank"
@@ -263,6 +261,7 @@ export default function Footer({}) {
                 className="w-4 h-4"
               />
             </Link>
+            {selectedChainName === ChainName.INJECTIVE && (
             <Link
               href={"https://zealy.io/c/aeroscraper/questboard"}
               target="_blank"
@@ -278,6 +277,7 @@ export default function Footer({}) {
                 className="w-4 h-4"
               />
             </Link>
+            )}
             <Link
               href={"https://medium.com/@aeroscraper"}
               target="_blank"
@@ -293,6 +293,7 @@ export default function Footer({}) {
                 className="w-4 h-4"
               />
             </Link>
+            {selectedChainName === ChainName.INJECTIVE && (
             <Link
               href={"https://guild.xyz/aeroscraper"}
               target="_blank"
@@ -308,6 +309,7 @@ export default function Footer({}) {
                 className="w-4 h-4"
               />
             </Link>
+            )}
           </div>
         </div>
       </div>
