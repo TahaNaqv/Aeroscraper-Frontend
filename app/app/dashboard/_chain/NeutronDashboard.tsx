@@ -30,7 +30,8 @@ export default function NeutronDashboard() {
   const { pageData, getPageData } = usePageData();
 
   const isTroveOpened = useMemo(() => pageData.baseCollateralAmount > 0, [pageData]);
-
+  
+  
   return (
     <div>
       <div className="grid grid-cols-[1fr_439px] gap-6 overflow-hidden">
