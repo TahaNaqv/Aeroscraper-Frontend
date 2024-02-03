@@ -34,9 +34,9 @@ const InjectiveStatisticSide: FC<Props> = ({ basePrice }) => {
     if (selectedChainName === ChainName.XION) {
       setContent(
         content.filter((item) =>
-          item.title.includes("Guild") ||
+          (item.title.includes("Guild") ||
           item.title.includes("Zealy") ||
-          item.title.includes("Faucet")
+          item.title.includes("Faucet"))
             ? false
             : true
         )
