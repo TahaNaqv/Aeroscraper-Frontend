@@ -1,4 +1,4 @@
-export const Content: {
+export const defaultContent: {
     title: string;
     desc: string;
     linkStr?: string;
@@ -25,7 +25,16 @@ export const Content: {
       desc: "Security and reliability are the top priorities for Aeroscraper. Aeroscraper has been officially audited, and all errors have been corrected.",
       linkStr: "audited",
       linkUrl: "https://beosin.com/audits/Aeroscraper_202402020919.pdf",
-    },
+    }
+  ];
+  
+export const injContent: {
+    title: string;
+    desc: string;
+    linkStr?: string;
+    linkUrl?: string;
+  }[] = [
+    ...defaultContent,
     {
       title: "Don't miss our latest Galxe campaign",
       desc: "Get a chance to win exclusive rewards by participating in our current Galxe campaign.",

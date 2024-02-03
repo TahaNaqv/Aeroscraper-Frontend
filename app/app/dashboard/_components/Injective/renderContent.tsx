@@ -1,5 +1,8 @@
-import { Content } from "@/data/injContent";
+import { useAppContext } from "@/contexts/AppProvider";
+import { defaultContent, injContent } from "@/data/injContent";
+import { ChainName } from "@/enums/Chain";
 import Link from "next/link";
+import { use, useEffect, useState } from "react";
 interface Content {
   title: string;
   desc: string;
@@ -13,7 +16,12 @@ export default function RenderContent({
 }: {
   showContentIdx: number;
 }) {
-  const content = Content;
+  const { selectedChainName } = useAppContext();
+
+  const [content, setContent] = useState( defaultContent);
+  useEffect(() => {
+    setContent(ChainName.INJECTIVE === selectedChainName ? injContent : defaultContent);
+  }, [selectedChainName]);
   const item = content[showContentIdx] as Content;
   const parts = item.linkStr ? item.desc.split(item.linkStr) : [];
   return (

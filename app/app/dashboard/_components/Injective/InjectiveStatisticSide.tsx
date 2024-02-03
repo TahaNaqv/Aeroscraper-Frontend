@@ -9,7 +9,7 @@ import React, { FC, useEffect, useState } from "react";
 import { usePageData } from "@/contexts/DashboardProvider";
 import { ChainName } from "@/enums/Chain";
 import RenderContent from "./renderContent";
-import { Content } from "@/data/injContent";
+import { defaultContent, injContent } from "@/data/injContent";
 
 interface Props {
   basePrice: number;
@@ -21,7 +21,10 @@ const InjectiveStatisticSide: FC<Props> = ({ basePrice }) => {
   const isMobile = useIsMobile();
   const { baseCoin, walletInfo, selectedChainName } = useChainAdapter();
   const [showStatistic, setShowStatistic] = useState<boolean>(true);
-  const [content, setContent] = useState(Content);
+  const [content, setContent] = useState( defaultContent);
+  useEffect(() => {
+    setContent(ChainName.INJECTIVE === selectedChainName ? injContent : defaultContent);
+  }, [selectedChainName]);
   const { pageData } = usePageData();
   const [showContentIdx, setShowContentIdx] = useState(0);
   const [hovering, setHovering] = useState(false);
@@ -29,20 +32,6 @@ const InjectiveStatisticSide: FC<Props> = ({ basePrice }) => {
   useEffect(() => {
     isMobile && setShowStatistic(false);
   }, [isMobile]);
-
-  useEffect(() => {
-    if (selectedChainName === ChainName.XION) {
-      setContent(
-        content.filter((item) =>
-          (item.title.includes("Guild") ||
-          item.title.includes("Zealy") ||
-          item.title.includes("Faucet"))
-            ? false
-            : true
-        )
-      );
-    }
-  }, [selectedChainName]);
   useEffect(() => {
     let timer: NodeJS.Timeout;
 
