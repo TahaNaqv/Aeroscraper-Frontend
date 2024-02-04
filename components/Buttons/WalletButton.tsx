@@ -24,6 +24,7 @@ import { WalletType } from "@/enums/WalletType";
 import ChainData from "@/services/data/chain.json";
 import Swal from "sweetalert2";
 import { useNotification } from "@/contexts/NotificationProvider";
+import { useProfile } from "@/contexts/ProfileProvider";
 
 type Props = {
   ausdBalance?: number;
@@ -48,6 +49,8 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
     selectedWallet,
     openXionChainModal
   } = useChainAdapter();
+
+  const { profileDetail, setProfileDetail } = useProfile();
 
   const [accountModal, setAccountModal] = useState(false);
 
@@ -264,8 +267,7 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
           <div className="secondary-gradient w-[72px] h-[72px] p-0.5 rounded flex justify-between items-center gap-2 cursor-pointer">
             <img
               alt="user-profile-image"
-              // src={wallet.profileDetail?.photoUrl ?? "/images/profile-images/profile-i-1.jpg"}
-              src={"/images/profile-images/profile-i-1.jpg"}
+              src={profileDetail?.photoUrl ?? "/images/profile-images/profile-i-1.jpg"}
               className="w-full h-full rounded-sm bg-raisin-black"
             />
             <motion.div layoutId="profile" />
