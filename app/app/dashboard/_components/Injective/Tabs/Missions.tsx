@@ -27,7 +27,6 @@ interface ZealyUser {
   connectedWallet: string;
 }
 
-
 const MissionsTab = () => {
 
   const ref = useRef<any>();
@@ -43,9 +42,7 @@ const MissionsTab = () => {
   }, []);
 
   useEffect(() => {
-    if (zealyId) {
-      getZealyMissions();
-    }
+    !isNil(zealyId) && getZealyClaimedMissions();
   }, [zealyId]);
 
   const getUserId = async () => {
@@ -60,57 +57,14 @@ const MissionsTab = () => {
 
       const data: ZealyResponseModel = await result.json();
 
-      if (data.items.length > 0) {
-        setZealyId(data.items[0].userId);
-      }
+      setZealyId(data?.items[0]?.userId ?? "null");
 
     } catch (error) {
       console.error('Error fetching data:', error);
     }
   };
 
-  const getZealyMissions = async () => {
-    try {
-      const result: any = await fetch(`/api/zealy/missions?userId=${zealyId}`,
-        {
-          next: {
-            revalidate: 0
-          },
-          cache: 'no-store',
-          method: "GET"
-        });
-
-      if (!result.ok) {
-        throw new Error('Network response was not ok.');
-      }
-
-      const data = await result.json();
-
-      if (typeof data !== "object") {
-        throw new Error('Network response was not ok.');
-      }
-
-      const missionList = data.reduce((acc: Record<string, ZealyMission>, mission: ZealyMission) => {
-        return {
-          ...acc,
-          [mission.id]: {
-            ...mission,
-            currentXP: 0,
-            status: null
-          }
-        };
-      }, {});
-
-      setMissionList(missionList);
-
-      getZealyClaimedMissions(missionList);
-
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-  };
-
-  const getZealyClaimedMissions = async (missionList: Record<string, ZealyMission>) => {
+  const getZealyClaimedMissions = async () => {
     try {
       const result: any = await fetch(`/api/zealy/claimedMissions/${zealyId}`,
         {
@@ -125,24 +79,15 @@ const MissionsTab = () => {
         throw new Error('Network response was not ok.');
       }
 
-      const data = await result.json();
+      const parseData = await result.json();
 
-      if (typeof data !== "object") {
+      if (typeof parseData !== "object") {
         throw new Error('Network response was not ok.');
       }
 
-      let tempMissionList = { ...missionList }
-
-      data.data.forEach((claim: any) => {
-        const { questId, xp, status } = claim;
-
-        if (tempMissionList[questId]) {
-          tempMissionList[questId].currentXP = xp;
-          tempMissionList[questId].status = status;
-        }
-      });
-
-      setMissionList(tempMissionList);
+      setMissionList(parseData);
+      console.log(parseData);
+      
     } catch (error) {
       console.error('Error fetching data:', error);
     }
