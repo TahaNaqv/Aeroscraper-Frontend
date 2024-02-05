@@ -33,7 +33,12 @@ type Props = {
   basePrice?: number;
 };
 
-const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePrice = 0, className = "w-[268px] h-[69px]" }) => {
+const WalletButton: FC<Props> = ({
+  ausdBalance = 0,
+  baseCoinBalance = 0,
+  basePrice = 0,
+  className = "w-[268px] h-[69px]",
+}) => {
   const ref = useRef<HTMLDivElement>(null);
   const [walletSelectionOpen, setWalletSelectionOpen] = useState(false);
   const { baseCoin } = useChainAdapter();
@@ -47,41 +52,81 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
     address,
     selectWallet,
     selectedWallet,
-    openXionChainModal
+    openXionChainModal,
   } = useChainAdapter();
 
   const { profileDetail, setProfileDetail } = useProfile();
 
   const [accountModal, setAccountModal] = useState(false);
 
-  const [walletExtensions, setWalletExtensions] = useState<{ installed: { name: WalletType }[], otherWallets: { name: WalletType, downloadLink: string }[] } | undefined>();
-  const [showDownloadExtension, setShowDownloadExtension] = useState<{ name: string, downloadLink: string } | undefined>();
+  const [walletExtensions, setWalletExtensions] = useState<
+    | {
+        installed: { name: WalletType }[];
+        otherWallets: { name: WalletType; downloadLink: string }[];
+      }
+    | undefined
+  >();
+  const [showDownloadExtension, setShowDownloadExtension] = useState<
+    { name: string; downloadLink: string } | undefined
+  >();
 
   const [onHoverChain, setOnHoverChain] = useState<ChainName | null>();
 
-  const filteredWallets = useMemo(() => walletRepo.wallets
-    .filter(wallet => selectedChainName && WalletsByChainName[selectedChainName].includes(wallet.walletInfo.name as WalletType)),
-    [walletRepo, selectedChainName])
+  const filteredWallets = useMemo(
+    () =>
+      walletRepo.wallets.filter(
+        (wallet) =>
+          selectedChainName &&
+          WalletsByChainName[selectedChainName].includes(
+            wallet.walletInfo.name as WalletType
+          )
+      ),
+    [walletRepo, selectedChainName]
+  );
 
-  const hoveredChainWallets = useMemo(() => walletRepo.wallets
-    .filter(wallet => onHoverChain && WalletsByChainName[onHoverChain].includes(wallet.walletInfo.name as WalletType))
-    , [onHoverChain, walletRepo])
+  const hoveredChainWallets = useMemo(
+    () =>
+      walletRepo.wallets.filter(
+        (wallet) =>
+          onHoverChain &&
+          WalletsByChainName[onHoverChain].includes(
+            wallet.walletInfo.name as WalletType
+          )
+      ),
+    [onHoverChain, walletRepo]
+  );
 
-  const {
-    installedWallets,
-    otherWallets
-  } = useMemo(() => ({
-    installedWallets: filteredWallets.filter(item => walletExtensions?.installed.some(extension => extension.name === item.walletInfo.name)),
-    otherWallets: filteredWallets.filter(item => walletExtensions?.otherWallets.some(extension => extension.name === item.walletInfo.name))
-  }), [filteredWallets, walletExtensions])
+  const { installedWallets, otherWallets } = useMemo(
+    () => ({
+      installedWallets: filteredWallets.filter((item) =>
+        walletExtensions?.installed.some(
+          (extension) => extension.name === item.walletInfo.name
+        )
+      ),
+      otherWallets: filteredWallets.filter((item) =>
+        walletExtensions?.otherWallets.some(
+          (extension) => extension.name === item.walletInfo.name
+        )
+      ),
+    }),
+    [filteredWallets, walletExtensions]
+  );
 
-  const {
-    installedHoveredWallets,
-    otherHoveredWallets
-  } = useMemo(() => ({
-    installedHoveredWallets: hoveredChainWallets.filter(item => walletExtensions?.installed.some(extension => extension.name === item.walletInfo.name)),
-    otherHoveredWallets: hoveredChainWallets.filter(item => walletExtensions?.otherWallets.some(extension => extension.name === item.walletInfo.name))
-  }), [hoveredChainWallets, walletExtensions])
+  const { installedHoveredWallets, otherHoveredWallets } = useMemo(
+    () => ({
+      installedHoveredWallets: hoveredChainWallets.filter((item) =>
+        walletExtensions?.installed.some(
+          (extension) => extension.name === item.walletInfo.name
+        )
+      ),
+      otherHoveredWallets: hoveredChainWallets.filter((item) =>
+        walletExtensions?.otherWallets.some(
+          (extension) => extension.name === item.walletInfo.name
+        )
+      ),
+    }),
+    [hoveredChainWallets, walletExtensions]
+  );
 
   useEffect(() => {
     checkWalletExtensions();
@@ -90,13 +135,32 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
   const checkWalletExtensions = () => {
     const anyWindow: any = window;
 
-    const walletExtensions: { installed: { name: WalletType }[], otherWallets: { name: WalletType, downloadLink: string }[] } = { installed: [], otherWallets: [] };
+    const walletExtensions: {
+      installed: { name: WalletType }[];
+      otherWallets: { name: WalletType; downloadLink: string }[];
+    } = { installed: [], otherWallets: [] };
 
-    anyWindow.keplr?.getOfflineSigner ? walletExtensions.installed.push({ name: WalletType.KEPLR }) : walletExtensions.otherWallets.push({ name: WalletType.KEPLR, downloadLink: "https://www.keplr.app/" });
-    anyWindow.leap?.getOfflineSigner ? walletExtensions.installed.push({ name: WalletType.LEAP }) : walletExtensions.otherWallets.push({ name: WalletType.LEAP, downloadLink: "https://www.leapwallet.io/" });
+    anyWindow.keplr?.getOfflineSigner
+      ? walletExtensions.installed.push({ name: WalletType.KEPLR })
+      : walletExtensions.otherWallets.push({
+          name: WalletType.KEPLR,
+          downloadLink: "https://www.keplr.app/",
+        });
+    anyWindow.leap?.getOfflineSigner
+      ? walletExtensions.installed.push({ name: WalletType.LEAP })
+      : walletExtensions.otherWallets.push({
+          name: WalletType.LEAP,
+          downloadLink: "https://www.leapwallet.io/",
+        });
     // anyWindow.fin?.getOfflineSigner ? walletExtensions.installed.push({ name: WalletType.FIN }) : walletExtensions.otherWallets.push({ name: WalletType.FIN, downloadLink: "https://chrome.google.com/webstore/detail/fin-wallet-for-sei/dbgnhckhnppddckangcjbkjnlddbjkna" });
     // anyWindow.compass?.getOfflineSigner ? walletExtensions.installed.push({ name: WalletType.COMPASS }) : walletExtensions.otherWallets.push({ name: WalletType.COMPASS, downloadLink: "https://chrome.google.com/webstore/detail/compass-wallet-for-sei/anokgmphncpekkhclmingpimjmcooifb" });
-    anyWindow.ethereum ? walletExtensions.installed.push({ name: WalletType.METAMASK }) : walletExtensions.otherWallets.push({ name: WalletType.METAMASK, downloadLink: "https://chromewebstore.google.com/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?pli=1" });
+    anyWindow.ethereum
+      ? walletExtensions.installed.push({ name: WalletType.METAMASK })
+      : walletExtensions.otherWallets.push({
+          name: WalletType.METAMASK,
+          downloadLink:
+            "https://chromewebstore.google.com/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?pli=1",
+        });
     // anyWindow.ninji ? walletExtensions.installed.push({ name: WalletType.NINJI }) : walletExtensions.otherWallets.push({ name: WalletType.NINJI, downloadLink: "https://chromewebstore.google.com/detail/ninji-wallet/kkpllbgjhchghjapjbinnoddmciocphm" });
     // anyWindow.cosmostation ? walletExtensions.installed.push({ name: WalletType.COSMOSTATION }) : walletExtensions.otherWallets.push({ name: WalletType.COSMOSTATION, downloadLink: "https://chromewebstore.google.com/detail/cosmostation-wallet/fpkhgmpbidmiogeglndfbkegfdlnajnf" });
 
@@ -107,20 +171,19 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
           { name: WalletType.LEDGER }
       ] */
     });
-  }
+  };
 
   const openAccountModal = () => {
     setAccountModal(true);
-  }
+  };
 
   const toggleWallet = () => {
     if (isWalletConnected) {
       openAccountModal();
+    } else {
+      setWalletSelectionOpen((prev) => !prev);
     }
-    else {
-      setWalletSelectionOpen(prev => !prev);
-    }
-  }
+  };
 
   const closeWalletSelection = () => {
     setWalletSelectionOpen(false);
@@ -129,11 +192,11 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
       //Reset client type selection
       selectChainName(undefined);
     }
-  }
+  };
 
   const resetChain = () => {
     selectChainName(undefined);
-  }
+  };
 
   useOutsideHandler(ref, closeWalletSelection);
 
@@ -144,7 +207,7 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
   }, [isWalletConnected]);
   const { addNotification } = useNotification();
 
-  const chainID = "5";//goerli
+  const chainID = "5"; //goerli
 
   useEffect(() => {
     if (
@@ -224,7 +287,7 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
                 "w-full md:w-[350px] py-2 px-8 h-[50px] text-base font-normal confirmBtn md:mb-8",
               htmlContainer: "!text-white/50 !text-sm md:mb-3",
               title: "!text-[32px] ",
-              popup: " lg:!p-10"
+              popup: " lg:!p-10",
             },
           }).then((result) => {
             if (result.isConfirmed) {
@@ -267,7 +330,10 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
           <div className="secondary-gradient w-[72px] h-[72px] p-0.5 rounded flex justify-between items-center gap-2 cursor-pointer">
             <img
               alt="user-profile-image"
-              src={profileDetail?.photoUrl ?? "/images/profile-images/profile-i-1.jpg"}
+              src={
+                profileDetail?.photoUrl ??
+                "/images/profile-images/profile-i-1.jpg"
+              }
               className="w-full h-full rounded-sm bg-raisin-black"
             />
             <motion.div layoutId="profile" />
@@ -357,18 +423,20 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
             </h2>
             {!isNil(selectedChainName) && (
               <div
-                className={`gap-y-4 flex flex-col mt-10 ${isNil(selectedChainName) ? "hidden" : ""
-                  }`}
+                className={`gap-y-4 flex flex-col mt-10 ${
+                  isNil(selectedChainName) ? "hidden" : ""
+                }`}
               >
                 {installedWallets.map((wallet: any, idx: any) => {
                   return (
                     <div
                       key={idx}
-                      className={`mr-auto ${wallet.walletInfo.name === WalletType.LEAP ||
+                      className={`mr-auto ${
+                        wallet.walletInfo.name === WalletType.LEAP ||
                         wallet.walletInfo.name === WalletType.KEPLR
-                        ? ""
-                        : "md:inline-block hidden"
-                        }`}
+                          ? ""
+                          : "md:inline-block hidden"
+                      }`}
                     >
                       {idx === 0 && (
                         <Text size="base" className="mb-4">
@@ -442,11 +510,12 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
                 {otherWallets.map((wallet: any, idx: any) => (
                   <div
                     key={idx}
-                    className={`mr-auto ${wallet.walletInfo.name === WalletType.LEAP ||
+                    className={`mr-auto ${
+                      wallet.walletInfo.name === WalletType.LEAP ||
                       wallet.walletInfo.name === WalletType.KEPLR
-                      ? ""
-                      : "md:inline-block hidden"
-                      }`}
+                        ? ""
+                        : "md:inline-block hidden"
+                    }`}
                   >
                     {idx === 0 && (
                       <Text size="base" className="mb-4">
@@ -665,19 +734,23 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
                         <img
                           alt={wallet.walletInfo.name}
                           key={idx}
-                          className={`w-6 h-6 object-contain ${wallet.walletInfo.name === WalletType.LEAP ||
+                          className={`w-6 h-6 object-contain ${
+                            wallet.walletInfo.name === WalletType.LEAP ||
                             wallet.walletInfo.name === WalletType.KEPLR
-                            ? ""
-                            : "md:inline-block hidden"
-                            }`}
+                              ? ""
+                              : "md:inline-block hidden"
+                          }`}
                           src={wallet.walletInfo.logo as string}
                         />
                       );
                     })}
-                    {/* {
-                                            selectedChainName === ChainName.INJECTIVE &&
-                                            <img alt={metamaskWalletInfo.name} className='w-6 h-6 object-contain md:inline-block hidden' src={metamaskWalletInfo.logo} />
-                                        } */}
+                    {selectedChainName === ChainName.INJECTIVE && (
+                      <img
+                        alt={metamaskWalletInfo.name}
+                        className="w-6 h-6 object-contain md:inline-block hidden"
+                        src={metamaskWalletInfo.logo}
+                      />
+                    )}
                   </div>
                   <Text size="base" textColor="text-[#989396]">
                     If you want to connect an installed wallet, you can log in
@@ -704,44 +777,42 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
                     Please choose your chain
                   </h3>
                   <div className="space-y-6 mt-10">
-                    {isNil(selectedChainName) &&
+                    {isNil(selectedChainName) && (
                       <>
-                        {
-
-                          availableChains.map((chain, idx) => {
-                            return (
-                              <Button
-                                key={idx}
-                                onClick={() => {
-                                  selectChainName(chain.chain_name as ChainName);
-                                }}
-                                className={`${chain.bech32_prefix !== "inj"
+                        {availableChains.map((chain, idx) => {
+                          return (
+                            <Button
+                              key={idx}
+                              onClick={() => {
+                                selectChainName(chain.chain_name as ChainName);
+                              }}
+                              className={`${
+                                chain.bech32_prefix !== "inj"
                                   ? "md:flex hidden"
                                   : ""
-                                  }`}
-                                onMouseEnter={() =>
-                                  setOnHoverChain(chain.chain_name as ChainName)
-                                }
-                                onMouseLeave={() => setOnHoverChain(null)}
-                                startIcon={
-                                  <img
-                                    alt={chain.chain_name}
-                                    src={
-                                      ChainInfoByName[
-                                        chain.chain_name as ChainName
-                                      ].logo
-                                    }
-                                    className="w-8 h-8"
-                                  />
-                                }
-                              >
-                                <span className="text-[18px] font-medium text-ghost-white uppercase">
-                                  {chain.pretty_name}
-                                </span>
-                              </Button>
-                            );
-                          })
-                        }
+                              }`}
+                              onMouseEnter={() =>
+                                setOnHoverChain(chain.chain_name as ChainName)
+                              }
+                              onMouseLeave={() => setOnHoverChain(null)}
+                              startIcon={
+                                <img
+                                  alt={chain.chain_name}
+                                  src={
+                                    ChainInfoByName[
+                                      chain.chain_name as ChainName
+                                    ].logo
+                                  }
+                                  className="w-8 h-8"
+                                />
+                              }
+                            >
+                              <span className="text-[18px] font-medium text-ghost-white uppercase">
+                                {chain.pretty_name}
+                              </span>
+                            </Button>
+                          );
+                        })}
                         <Button
                           onClick={openXionChainModal}
                           startIcon={
@@ -757,7 +828,7 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
                           </span>
                         </Button>
                       </>
-                    }
+                    )}
                   </div>
                 </div>
               ))}
@@ -775,7 +846,9 @@ const WalletButton: FC<Props> = ({ ausdBalance = 0, baseCoinBalance = 0, basePri
                   />
                 }
               >
-                {capitalizeFirstLetter(ChainInfoByName[selectedChainName].displayName)}
+                {capitalizeFirstLetter(
+                  ChainInfoByName[selectedChainName].displayName
+                )}
               </Button>
             </div>
           )}
