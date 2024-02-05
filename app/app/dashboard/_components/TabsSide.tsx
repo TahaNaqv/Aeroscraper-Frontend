@@ -31,7 +31,7 @@ export type DashboardTabs =
   | "rewards"
   | "leaderboard"
   | "missions";
-const InjectiveTabsSide: FC<Props> = ({ setTabPosition }) => {
+const TabsSide: FC<Props> = ({ setTabPosition }) => {
   const { selectedChainName } = useChainAdapter();
   const router = useRouter();
   const params = useSearchParams();
@@ -202,4 +202,4 @@ const InjectiveTabsSide: FC<Props> = ({ setTabPosition }) => {
   );
 };
 
-export default React.memo(InjectiveTabsSide);
+export default React.memo(TabsSide);

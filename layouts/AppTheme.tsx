@@ -3,9 +3,9 @@ import Text from "@/components/Texts/Text"
 import { ExitIcon, LogoSecondary } from '@/components/Icons/Icons';
 import NotificationDropdown from '@/app/app/dashboard/_components/NotificationDropdown';
 import { isNil } from 'lodash';
-import InjectiveAccountModal from '@/components/AccountModal/InjectiveAccountModal';
+import AccountModal from '@/components/AccountModal/AccountModal';
 import { convertAmount } from '@/utils/contractUtils';
-import InjectiveNotification from '@/components/Modal/InjectiveNotification';
+import NotificationModal from '@/components/Modal/NotificationModal';
 import WalletButton from '@/components/Buttons/WalletButton';
 import useChainAdapter from '@/hooks/useChainAdapter';
 import { WalletType } from '@/enums/WalletType';
@@ -149,9 +149,9 @@ const AppTheme = () => {
             />
           )}
         </div>
-        <InjectiveNotification />
+        <NotificationModal />
 
-        <InjectiveAccountModal
+        <AccountModal
           balance={{
             ausd: pageData.ausdBalance,
             base: !isNil(baseCoin)

@@ -11,7 +11,7 @@ import { getIsInjectiveResponse, convertAmount, getRatioColor } from '@/utils/co
 import { getCroppedString } from '@/utils/stringUtils';
 import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { NumericFormat } from 'react-number-format';
-import { PageData } from '../../../_types/types';
+import { PageData } from '../../_types/types';
 import Text from '@/components/Texts/Text';
 import { RocketIcon } from '@/components/Icons/Icons';
 import graphql from '@/services/graphql';

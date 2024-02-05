@@ -383,7 +383,7 @@ export const ChangeIcon: React.FC<IconProps> = ({ className }) => {
     )
 }
 
-export const InjectiveBackgroundWave: React.FC<IconProps> = ({ className, animate }) => {
+export const BackgroundWave: React.FC<IconProps> = ({ className, animate }) => {
     if (animate) {
         return <motion.svg layout width="485" height="973" viewBox="0 0 485 973" fill="none" className={className}>
             <g filter="url(#filter0_b_111_4953)">

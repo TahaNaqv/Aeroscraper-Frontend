@@ -1,16 +1,12 @@
 import GradientButton from '@/components/Buttons/GradientButton';
-import InputLayout from '@/components/Input/InputLayout';
-import { WaveModal } from '@/components/Modal/WaveModal';
 import Text from '@/components/Texts/Text';
-import Info from '@/components/Tooltip/Info';
 import React, { FC, useMemo, useState } from 'react'
-import OutlinedButton from '@/components/Buttons/OutlinedButton';
 import { NumericFormat } from 'react-number-format';
 import { motion } from 'framer-motion';
 import useAppContract from '@/contracts/app/useAppContract';
 import { useNotification } from '@/contexts/NotificationProvider';
 import { getIsInjectiveResponse } from '@/utils/contractUtils';
-import { PageData } from '../../../_types/types';
+import { PageData } from '../../_types/types';
 import Checkbox from '@/components/Checkbox';
 import BorderedNumberInput from '@/components/Input/BorderedNumberInput';
 import { useBalances } from '@/contexts/BalanceProvider';

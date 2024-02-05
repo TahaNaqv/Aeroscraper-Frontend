@@ -1,17 +1,17 @@
 "use client";
 
 import {
-  InjectiveBackgroundWave,
+  BackgroundWave,
 } from "@/components/Icons/Icons";
-import InjectiveStatisticSide from "./Injective/InjectiveStatisticSide";
-import InjectiveTabsSide, {
+import StatisticSide from "./StatisticSide";
+import TabsSide, {
   DashboardTabs,
-} from "./Injective/InjectiveTabsSide";
+} from "./TabsSide";
 import { useCallback, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useNotification } from "@/contexts/NotificationProvider";
 import useChainAdapter from "@/hooks/useChainAdapter";
-import Footer from "./Injective/footer";
+import Footer from "./footer";
 
 export default function Dashboard() {
 
@@ -34,11 +34,11 @@ export default function Dashboard() {
           transition={{ duration: 0.8, delay: 0.7 }}
           className="md:block hidden"
         >
-          <InjectiveBackgroundWave
+          <BackgroundWave
             animate={processLoading}
             className="absolute -bottom-40 -right-0 -z-10"
           />
-          <InjectiveBackgroundWave
+          <BackgroundWave
             animate={processLoading}
             className="absolute -top-[400px] left-48 -z-10 h-[584px] rotate-270"
           />
@@ -51,11 +51,11 @@ export default function Dashboard() {
           transition={{ duration: 0.8, delay: 0.7 }}
           className="md:block hidden"
         >
-          <InjectiveBackgroundWave
+          <BackgroundWave
             animate={processLoading}
             className="absolute -top-40 -right-60 -z-10"
           />
-          <InjectiveBackgroundWave
+          <BackgroundWave
             animate={processLoading}
             className="absolute -bottom-[200px] -left-20 -z-10 h-[584px] rotate-[180deg]"
           />
@@ -68,11 +68,11 @@ export default function Dashboard() {
           transition={{ duration: 0.8, delay: 0.7 }}
           className="md:block hidden"
         >
-          <InjectiveBackgroundWave
+          <BackgroundWave
             animate={processLoading}
             className="absolute -bottom-0 -right-0 -z-10"
           />
-          <InjectiveBackgroundWave
+          <BackgroundWave
             animate={processLoading}
             className="absolute -bottom-[240px] -left-10 -z-10 h-[584px] rotate-[180deg]"
           />
@@ -85,11 +85,11 @@ export default function Dashboard() {
           transition={{ duration: 0.8, delay: 0.7 }}
           className="md:block hidden"
         >
-          <InjectiveBackgroundWave
+          <BackgroundWave
             animate={processLoading}
             className="absolute -bottom-40 -right-0 -z-10"
           />
-          <InjectiveBackgroundWave
+          <BackgroundWave
             animate={processLoading}
             className="absolute -top-[240px] left-80 -z-10 h-[664px] rotate-[300deg]"
           />
@@ -102,19 +102,19 @@ export default function Dashboard() {
           transition={{ duration: 0.8, delay: 0.7 }}
           className="md:block hidden"
         >
-          <InjectiveBackgroundWave
+          <BackgroundWave
             animate={processLoading}
             className="absolute  -bottom-40 -right-0 -z-10"
           />
-          <InjectiveBackgroundWave
+          <BackgroundWave
             animate={processLoading}
             className="absolute -bottom-[200px] -left-20 -z-10 h-[584px] rotate-[180deg]"
           />
         </motion.div>
       )}
       <div className="flex gap-4 flex-col md:flex-row md:gap-24 z-10 relative md:min-h-[720px] ">
-        <InjectiveStatisticSide basePrice={basePrice} />
-        <InjectiveTabsSide setTabPosition={changeTabPosition} />
+        <StatisticSide basePrice={basePrice} />
+        <TabsSide setTabPosition={changeTabPosition} />
       </div>
      <Footer />
     </div>
