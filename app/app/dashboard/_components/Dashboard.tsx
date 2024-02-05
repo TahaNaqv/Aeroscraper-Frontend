@@ -3,25 +3,25 @@
 import {
   InjectiveBackgroundWave,
 } from "@/components/Icons/Icons";
-import InjectiveStatisticSide from "../_components/Injective/InjectiveStatisticSide";
+import InjectiveStatisticSide from "./Injective/InjectiveStatisticSide";
 import InjectiveTabsSide, {
-  InjectiveTabs,
-} from "../_components/Injective/InjectiveTabsSide";
+  DashboardTabs,
+} from "./Injective/InjectiveTabsSide";
 import { useCallback, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useNotification } from "@/contexts/NotificationProvider";
 import useChainAdapter from "@/hooks/useChainAdapter";
-import Footer from "../_components/Injective/footer";
+import Footer from "./Injective/footer";
 
-export default function InjectiveDashboard() {
+export default function Dashboard() {
 
   const { basePrice } = useChainAdapter();
-  const [tabPosition, setTabPosition] = useState<InjectiveTabs>("redeem");
+  const [tabPosition, setTabPosition] = useState<DashboardTabs>("redeem");
 
   const { processLoading } = useNotification();
 
   const changeTabPosition = useCallback(
-    (e: InjectiveTabs) => {
+    (e: DashboardTabs) => {
       setTabPosition(e)
     }, []);
 

@@ -19,10 +19,10 @@ import { useBalances } from "@/contexts/BalanceProvider";
 import { ChainName } from "@/enums/Chain";
 
 interface Props {
-  setTabPosition: Dispatch<InjectiveTabs>;
+  setTabPosition: Dispatch<DashboardTabs>;
 }
 
-export type InjectiveTabs =
+export type DashboardTabs =
   | "trove"
   | "createTrove"
   | "stabilityPool"
@@ -44,7 +44,7 @@ const InjectiveTabsSide: FC<Props> = ({ setTabPosition }) => {
 
   const [isTroveOpened, setIsTroveOpened] = useState(false);
 
-  let TabList: InjectiveTabs[] = [
+  let TabList: DashboardTabs[] = [
     isTroveOpened ? "trove" : "createTrove",
     "stabilityPool",
     "redeem",
@@ -60,7 +60,7 @@ const InjectiveTabsSide: FC<Props> = ({ setTabPosition }) => {
     );
   }
 
-  const [selectedTab, setSelectedTab] = useState<InjectiveTabs>(
+  const [selectedTab, setSelectedTab] = useState<DashboardTabs>(
     isTroveOpened ? "trove" : "createTrove"
   );
 
@@ -82,11 +82,11 @@ const InjectiveTabsSide: FC<Props> = ({ setTabPosition }) => {
 
   useEffect(() => {
     if (params.get("tab")) {
-      setSelectedTab(params.get("tab") as InjectiveTabs);
+      setSelectedTab(params.get("tab") as DashboardTabs);
     }
   }, []);
 
-  const handleChangeTab = (e: InjectiveTabs) => {
+  const handleChangeTab = (e: DashboardTabs) => {
     router.push(`/app/dashboard?tab=${e}`);
 
     setSelectedTab(e);

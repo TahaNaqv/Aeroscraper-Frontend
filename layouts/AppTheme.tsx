@@ -15,7 +15,7 @@ import { usePageData } from '@/contexts/DashboardProvider';
 import { useBalances } from '@/contexts/BalanceProvider';
 import { ChainName } from '@/enums/Chain';
 
-const InjeciveTheme = () => {
+const AppTheme = () => {
   const {
     selectedChainName,
     isWalletConnected,
@@ -202,4 +202,4 @@ const InjeciveTheme = () => {
   );
 };
 
-export default InjeciveTheme;
+export default AppTheme;
