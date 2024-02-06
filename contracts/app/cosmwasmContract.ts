@@ -6,7 +6,7 @@ import { PriceServiceConnection } from '@pythnetwork/price-service-client'
 import { AppVersion, BaseCoin, CollateralAsset } from "@/types/types";
 import { BaseCoinByChainName, priceIdByChainName } from "@/constants/chainConstants";
 import { ChainGrpcWasmApi, fromBase64, toBase64, MsgExecuteContract } from "@injectivelabs/sdk-ts";
-import { Network, getNetworkEndpoints } from "@injectivelabs/networks";
+import { Network } from "@injectivelabs/networks";
 import { MsgBroadcaster, Wallet, WalletStrategy } from '@injectivelabs/wallet-ts'
 import { ChainId } from '@injectivelabs/ts-types';
 import { isNil } from "lodash";
@@ -16,6 +16,10 @@ import { ChainName } from "@/enums/Chain";
 import { getContractAddressesByChain } from "@/constants/chainConstants";
 import { InjSdkWalletByCosmosWallet } from "@/constants/walletConstants";
 import { DefaultAssetByChainName } from "@/constants/assetConstants";
+
+const injectivePrivRpc = process.env.NEXT_PUBLIC_INJECTIVE_PRIV_RPC as string;
+const injectivePrivGrpc = process.env.NEXT_PUBLIC_INJECTIVE_PRIV_GRPC as string;
+const injectivePrivRest = process.env.NEXT_PUBLIC_INJECTIVE_PRIV_REST as string;
 
 export const getAppContract = (
     client: SigningCosmWasmClient,
@@ -28,13 +32,28 @@ export const getAppContract = (
     const { contractAddress, oraclecontractAddress, ausdContractAddress } = getContractAddressesByChain(appVersion, chainName);
 
     const injSdkWallet = walletType ? InjSdkWalletByCosmosWallet[walletType as WalletType] : Wallet.Keplr;
-    const walletStrategy = new WalletStrategy({ chainId: ChainId.Testnet, wallet: injSdkWallet });
+    const walletStrategy = new WalletStrategy({
+        chainId: ChainId.Testnet,
+        wallet: injSdkWallet,
+        endpoints: {
+            rest: injectivePrivRest,
+            rpc: injectivePrivRpc
+        }
+    });
 
     const NETWORK = Network.TestnetSentry;
-    const ENDPOINTS = getNetworkEndpoints(NETWORK);
 
-    const chainGrpcWasmApi = new ChainGrpcWasmApi(ENDPOINTS.grpc);
-    const msgBroadcastClient = new MsgBroadcaster({ walletStrategy, network: NETWORK });
+    const chainGrpcWasmApi = new ChainGrpcWasmApi(injectivePrivGrpc);
+    const msgBroadcastClient = new MsgBroadcaster({
+        walletStrategy,
+        network: NETWORK,
+        networkEndpoints: {
+            indexer: '',
+            rest: injectivePrivRest,
+            rpc: injectivePrivRpc,
+            grpc: injectivePrivGrpc
+        }
+    });
 
     //GET QUERIES
 
