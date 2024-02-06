@@ -4,6 +4,7 @@ import SkeletonLoading from '@/components/Table/SkeletonLoading';
 import MissionCard, { ZealyMission } from '@/components/MissionCard';
 import { isNil } from 'lodash';
 import useChainAdapter from '@/hooks/useChainAdapter';
+import Link from 'next/link';
 
 interface ZealyResponseModel {
   items: ZealyUser[],
@@ -87,7 +88,7 @@ const MissionsTab = () => {
 
       setMissionList(parseData);
       console.log(parseData);
-      
+
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -95,6 +96,16 @@ const MissionsTab = () => {
 
   return (
     <div ref={ref}>
+      <Text size='3xl'>Missions at
+        <Link
+          target={"_blank"}
+          href={"https://zealy.io/c/aeroscraper/questboard"}
+          className="text-[#F8B810] animate-pulse ml-2 font-medium"
+        >
+          Zealy
+        </Link>
+      </Text>
+      <Text size='base' weight='font-regular' className='mt-1'>Earn points and increase your ranking</Text>
       {
         isNil(missionList) ?
           (
@@ -127,7 +138,7 @@ const MissionsTab = () => {
           )
           :
           (
-            <div className='grid grid-cols-1 md:grid-cols-2 gap-4 mt-10'>
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-4 mt-6'>
               {Object.values(missionList)?.map((mission, idx) => {
                 return <MissionCard key={idx} mission={mission} />
               })}
