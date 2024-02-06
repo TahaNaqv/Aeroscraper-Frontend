@@ -35,7 +35,7 @@ const VARIANTS: Record<Status, any> = {
 
 type Status = "error" | "success" | "networkchange";
 
-const InjectiveNotification: FC = () => {
+const NotificationModal: FC = () => {
   const { selectedChainName } = useChainAdapter();
   const { notification, setOnHover } = useNotification();
 
@@ -78,4 +78,4 @@ const InjectiveNotification: FC = () => {
   )
 }
 
-export default InjectiveNotification
+export default NotificationModal

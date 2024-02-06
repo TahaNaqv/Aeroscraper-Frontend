@@ -4,7 +4,7 @@ import { useNotification } from '@/contexts/NotificationProvider';
 import useAppContract from '@/contracts/app/useAppContract';
 import { isNil } from 'lodash';
 import { NumericFormat } from 'react-number-format';
-import { PageData } from '../../../_types/types';
+import { PageData } from '../../_types/types';
 import TransactionButton from '@/components/Buttons/TransactionButton';
 import { getIsInjectiveResponse } from '@/utils/contractUtils';
 import useChainAdapter from '@/hooks/useChainAdapter';

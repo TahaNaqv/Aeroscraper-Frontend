@@ -1,4 +1,4 @@
-import InjectiveStatisticCard from "@/components/Cards/InjectiveStatisticCard";
+import StatisticCard from "@/components/Cards/StatisticCard";
 import { ChevronUpIcon } from "@/components/Icons/Icons";
 import useIsMobile from "@/hooks/useIsMobile";
 import useChainAdapter from "@/hooks/useChainAdapter";
@@ -17,7 +17,7 @@ interface Props {
 
 const INTERVAL_TIME = 8000;
 
-const InjectiveStatisticSide: FC<Props> = ({ basePrice }) => {
+const StatisticSide: FC<Props> = ({ basePrice }) => {
   const isMobile = useIsMobile();
   const { baseCoin, walletInfo, selectedChainName } = useChainAdapter();
   const [showStatistic, setShowStatistic] = useState<boolean>(true);
@@ -112,21 +112,21 @@ const InjectiveStatisticSide: FC<Props> = ({ basePrice }) => {
           animate={{ opacity: 1, translateY: 0 }}
           className="grid grid-cols-2 justify-center overflow-hidden gap-x-16 gap-y-4 mt-6 z-[50]"
         >
-          <InjectiveStatisticCard
+          <StatisticCard
             title="Management Fee"
             description="0.5%"
             className="w-[191px] h-14"
             tooltip="This amount is deducted from the collateral amount as a management fee. There are no recurring fees for borrowing, which is thus interest-free."
             tooltipPlacement="bottom"
           />
-          <InjectiveStatisticCard
+          <StatisticCard
             title="Liquidation Threshold"
             description="115%"
             className="w-[191px] h-14"
             tooltip="Liquidation Threshold Ratio"
             tooltipPlacement="left-bottom-corner"
           />
-          <InjectiveStatisticCard
+          <StatisticCard
             title="Total Value Locked"
             description={
               isNil(baseCoin)
@@ -139,7 +139,7 @@ const InjectiveStatisticSide: FC<Props> = ({ basePrice }) => {
             coinName={baseCoin?.name}
             isNumeric
           />
-          <InjectiveStatisticCard
+          <StatisticCard
             title="AUSD in Stability Pool"
             tooltipPlacement="left-bottom"
             description={Number(pageData.totalStakedAmount)
@@ -149,7 +149,7 @@ const InjectiveStatisticSide: FC<Props> = ({ basePrice }) => {
             tooltip="The total AUSD currently held in the Stability Pool."
             isNumeric
           />
-          <InjectiveStatisticCard
+          <StatisticCard
             title="Troves"
             description={`${
               isNil(walletInfo) ? "-" : pageData.totalTrovesAmount
@@ -158,7 +158,7 @@ const InjectiveStatisticSide: FC<Props> = ({ basePrice }) => {
             tooltip="The total number of active Troves in the system."
             tooltipPlacement="right-top"
           />
-          <InjectiveStatisticCard
+          <StatisticCard
             title="Total Collateral Ratio"
             tooltipPlacement="left-top"
             description={`${
@@ -179,7 +179,7 @@ const InjectiveStatisticSide: FC<Props> = ({ basePrice }) => {
             className="w-[191px] h-14"
             tooltip={`The ratio of the Dollar value of the entire system collateral at the current ${baseCoin?.name}:AUSD price, to the entire system debt.`}
           />
-          <InjectiveStatisticCard
+          <StatisticCard
             title="AUSD Supply"
             description={Number(pageData.totalAusdSupply).toFixed(3).toString()}
             className="w-[191px] h-14"
@@ -193,4 +193,4 @@ const InjectiveStatisticSide: FC<Props> = ({ basePrice }) => {
   );
 };
 
-export default React.memo(InjectiveStatisticSide);
+export default React.memo(StatisticSide);

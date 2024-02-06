@@ -1,5 +1,5 @@
 import React from 'react'
-import { InjectiveBackgroundWave, LogoSecondary } from './Icons/Icons'
+import { BackgroundWave, LogoSecondary } from './Icons/Icons'
 import Text from "@/components/Texts/Text"
 import Link from 'next/link'
 
@@ -19,7 +19,7 @@ const MaintenancePage = () => {
           <Text size='lg' >Aeroscraper is undergoing maintenance for an important update. We are working to provide you with a better experience. Thank you for your patience and support.</Text>
         </div>
       </div>
-      <InjectiveBackgroundWave animate className="absolute bottom-0 left-0 rotate-180 -z-10 md:w-[500px] w-[300px]" />
+      <BackgroundWave animate className="absolute bottom-0 left-0 rotate-180 -z-10 md:w-[500px] w-[300px]" />
       <footer className='flex flex-col gap-x-48 gap-y-16 items-top flex-wrap px-20 bg-transparent -mx-20 pr-16 mt-80 pb-24 relative'>
         <div className='grid grid-cols-3 gap-40'>
           <div className='flex flex-col content-start justify-start gap-4'>

@@ -51,7 +51,7 @@ const PriceProvider: FC<PropsWithChildren> = ({ children }) => {
         try {
             const denom = BaseCoinByChainName[ChainName.SEI].denom;
             const connection = new PriceServiceConnection(
-                "https://xc-mainnet.pyth.network/",
+                "https://hermes.pyth.network/",
                 {
                     priceFeedRequestConfig: {
                         binary: true,
@@ -79,7 +79,7 @@ const PriceProvider: FC<PropsWithChildren> = ({ children }) => {
         try {
             const denom = BaseCoinByChainName[ChainName.ARCHWAY].denom;
             const connection = new PriceServiceConnection(
-                "https://xc-mainnet.pyth.network/",
+                "https://hermes.pyth.network/",
                 {
                     priceFeedRequestConfig: {
                         binary: true,

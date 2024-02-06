@@ -6,8 +6,6 @@ import Text from "@/components/Texts/Text";
 import { motion } from "framer-motion";
 import useOutsideHandler from "@/hooks/useOutsideHandler";
 import Loading from "../Loading/Loading";
-import AccountModal from "../AccountModal/AccountModal";
-import { NumericFormat } from "react-number-format";
 import {
   WalletsByChainName,
   metamaskWalletInfo,
@@ -24,7 +22,6 @@ import { WalletType } from "@/enums/WalletType";
 import ChainData from "@/services/data/chain.json";
 import Swal from "sweetalert2";
 import { useNotification } from "@/contexts/NotificationProvider";
-import { useProfile } from "@/contexts/ProfileProvider";
 
 type Props = {
   ausdBalance?: number;
@@ -34,30 +31,20 @@ type Props = {
 };
 
 const WalletButton: FC<Props> = ({
-  ausdBalance = 0,
-  baseCoinBalance = 0,
-  basePrice = 0,
   className = "w-[268px] h-[69px]",
 }) => {
   const ref = useRef<HTMLDivElement>(null);
   const [walletSelectionOpen, setWalletSelectionOpen] = useState(false);
-  const { baseCoin } = useChainAdapter();
   const {
     selectedChainName,
     selectChainName,
     walletRepo,
     isWalletConnected,
     isWalletConnecting,
-    walletInfo,
-    address,
     selectWallet,
     selectedWallet,
     openXionChainModal,
   } = useChainAdapter();
-
-  const { profileDetail, setProfileDetail } = useProfile();
-
-  const [accountModal, setAccountModal] = useState(false);
 
   const [walletExtensions, setWalletExtensions] = useState<
     | {
@@ -173,16 +160,8 @@ const WalletButton: FC<Props> = ({
     });
   };
 
-  const openAccountModal = () => {
-    setAccountModal(true);
-  };
-
   const toggleWallet = () => {
-    if (isWalletConnected) {
-      openAccountModal();
-    } else {
       setWalletSelectionOpen((prev) => !prev);
-    }
   };
 
   const closeWalletSelection = () => {
@@ -319,92 +298,6 @@ const WalletButton: FC<Props> = ({
       console.log("CheckChain error:", error);
     }
   };
-
-  if (isWalletConnected) {
-    return (
-      <>
-        <div
-          className="w-fit h-fit cursor-pointer active:scale-95 transition-all z-[50] flex items-center gap-4"
-          onClick={openAccountModal}
-        >
-          <div className="secondary-gradient w-[72px] h-[72px] p-0.5 rounded flex justify-between items-center gap-2 cursor-pointer">
-            <img
-              alt="user-profile-image"
-              src={
-                profileDetail?.photoUrl ??
-                "/images/profile-images/profile-i-1.jpg"
-              }
-              className="w-full h-full rounded-sm bg-raisin-black"
-            />
-            <motion.div layoutId="profile" />
-          </div>
-          <div className="max-w-[300px]">
-            <div className="flex gap-4  items-center">
-              <img
-                alt={walletInfo?.name}
-                className="w-8 h-8 object-contain"
-                src={walletInfo?.logo as string}
-              />
-              <div className="w-[75%] flex flex-col">
-                <Text size="base" weight="font-semibold" className="truncate">
-                  {walletInfo?.prettyName}
-                </Text>
-                <Text size="sm" className="truncate">
-                  {address}
-                </Text>
-              </div>
-            </div>
-            <div className="flex items-center mt-2">
-              <img
-                alt="aero"
-                className="w-6 h-6"
-                src="/images/token-images/ausd.svg"
-              />
-              <NumericFormat
-                value={ausdBalance}
-                thousandsGroupStyle="thousand"
-                thousandSeparator=","
-                fixedDecimalScale
-                decimalScale={2}
-                displayType="text"
-                renderText={(value) => (
-                  <Text size="base" className="flex ml-2 gap-2">
-                    AUSD: {value}
-                  </Text>
-                )}
-              />
-              <img
-                alt={baseCoin?.name}
-                className="w-6 h-6 ml-4"
-                src={baseCoin?.tokenImage}
-              />
-              <NumericFormat
-                value={baseCoinBalance}
-                thousandsGroupStyle="thousand"
-                thousandSeparator=","
-                fixedDecimalScale
-                decimalScale={2}
-                displayType="text"
-                renderText={(value) => (
-                  <Text size="base" className="flex ml-2 gap-2">
-                    {baseCoin?.name}: {value}
-                  </Text>
-                )}
-              />
-            </div>
-          </div>
-        </div>
-        <AccountModal
-          balance={{ ausd: ausdBalance, base: baseCoinBalance }}
-          showModal={accountModal}
-          basePrice={basePrice}
-          onClose={() => {
-            setAccountModal(false);
-          }}
-        />
-      </>
-    );
-  }
 
   return (
     <div className="relative">

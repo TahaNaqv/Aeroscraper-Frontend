@@ -5,7 +5,7 @@ import useAppContract from '@/contracts/app/useAppContract';
 import { getValueByRatio, getIsInjectiveResponse } from '@/utils/contractUtils';
 import { isNil } from 'lodash';
 import { NumberFormatValues, NumericFormat } from 'react-number-format';
-import { PageData } from '../../../_types/types';
+import { PageData } from '../../_types/types';
 import OutlinedButton from '@/components/Buttons/OutlinedButton';
 import TransactionButton from '@/components/Buttons/TransactionButton';
 import { ArrowDownIcon, ArrowLeftIcon, Logo, LogoSecondary, RedeemIcon } from '@/components/Icons/Icons';
