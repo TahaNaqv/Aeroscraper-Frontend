@@ -203,7 +203,7 @@ const WalletButton: FC<Props> = ({
         //goerli
         console.log("chainIdMetamask", chainIdMetamask);
 
-        if (chainIdMetamask.toString() !== chainID) {
+        if (chainIdMetamask?.toString() !== chainID) {
           CheckChain(chainIdMetamask);
         }
       };
