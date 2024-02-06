@@ -21,7 +21,7 @@ const seiAsset: CollateralAsset = {
     ausdDecimal: 6,
     imageURL: "/images/token-images/sei.png",
     priceId: "53614f1cb0c031d4af66c04cb9c756234adad0e1cee85303795091499a4084eb",
-    priceServiceUrl: "https://xc-mainnet.pyth.network/",
+    priceServiceUrl: "https://hermes.pyth.network/",
     oracleContractAddress: process.env.NEXT_PUBLIC_ORACLE_CONTRACT_ADDRESS as string
 }
 
@@ -33,7 +33,7 @@ const archAsset: CollateralAsset = {
     ausdDecimal: 6,
     imageURL: "/images/token-images/archway-coin.png",
     priceId: "b00b60f88b03a6a625a8d1c048c3f66653edf217439983d037e7222c4e612819",
-    priceServiceUrl: "https://xc-mainnet.pyth.network/",
+    priceServiceUrl: "https://hermes.pyth.network/",
     oracleContractAddress: ''
 }
 

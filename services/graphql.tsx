@@ -26,6 +26,8 @@ export default function graphql({
           return process.env.NEXT_PUBLIC_INDEXER_INJ_V1 as string;
         }
         return process.env.NEXT_PUBLIC_INDEXER_INJ_V2 as string;
+      case ChainName.XION:
+        return process.env.NEXT_PUBLIC_INDEXER_XION as string;
       default:
         return process.env.NEXT_PUBLIC_INDEXER_DOMAIN as string;
     }
