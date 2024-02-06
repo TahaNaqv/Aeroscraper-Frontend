@@ -271,21 +271,21 @@ const WalletButton: FC<Props> = ({
             if (result.isConfirmed) {
               window.ethereum?.request({
                 method: "wallet_switchEthereumChain",
-                params: [{ chainId: chainData[chainID].chainId }],
+                params: [{ chainId: chainData[chainID.toString()].chainId }],
               }) ||
                 window.ethereum.request({
                   method: "wallet_addEthereumChain",
                   params: [
                     {
-                      chainId: chainData[chainID].chainId,
-                      chainName: chainData[chainID].name,
+                      chainId: chainData[chainID.toString()].chainId,
+                      chainName: chainData[chainID.toString()].name,
                       nativeCurrency: {
-                        name: chainData[chainID].nativeCurrency.name,
-                        symbol: chainData[chainID].nativeCurrency.symbol,
+                        name: chainData[chainID.toString()].nativeCurrency.name,
+                        symbol: chainData[chainID.toString()].nativeCurrency.symbol,
                         decimals: 18,
                       },
-                      rpcUrls: chainData[chainID].rpcUrls,
-                      blockExplorerUrls: chainData[chainID].blockExplorerUrls,
+                      rpcUrls: chainData[chainID.toString()].rpcUrls,
+                      blockExplorerUrls: chainData[chainID.toString()].blockExplorerUrls,
                     },
                   ],
                 });
