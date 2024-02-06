@@ -230,9 +230,9 @@ const WalletButton: FC<Props> = ({
     try {
       id = Number(id);
       if (id !== chainID) {
-        const { name } = chainData[id] || { name: "UNKNOW" };
+        const { name } = chainData[id.toString()] || { name: "UNKNOW" };
         const fromNetwork = name || "Unknown Network";
-        const toNetwork = chainData[chainID]?.name || "GOERLI NETWORK ";
+        const toNetwork = chainData[chainID.toString()]?.name || "GOERLI NETWORK ";
         const alert = async () =>
           await Swal.fire({
             title: "Please Change Network",
