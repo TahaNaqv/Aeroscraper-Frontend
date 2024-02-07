@@ -9,10 +9,11 @@ import { request, gql } from "graphql-request";
 
 export default function graphql({
   selectedChainName = ChainName.INJECTIVE,
-  selectedAppVersion = AppVersion.V1
-}: { selectedChainName?: ChainName, selectedAppVersion: AppVersion }) {
-
-
+  selectedAppVersion = AppVersion.V1,
+}: {
+  selectedChainName?: ChainName;
+  selectedAppVersion: AppVersion;
+}) {
   const URL = (): string => {
     switch (selectedChainName) {
       case ChainName.ARCHWAY:
@@ -40,6 +41,17 @@ export default function graphql({
             troves {
               nodes {
                 owner
+              }
+            }
+          }
+        `
+      : selectedChainName === ChainName.XION
+      ? gql`
+          query {
+            troves {
+              nodes {
+                owner
+                ratio
               }
             }
           }

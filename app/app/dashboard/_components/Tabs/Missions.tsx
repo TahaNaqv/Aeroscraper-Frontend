@@ -104,8 +104,7 @@ const MissionsTab = () => {
         >
           Zealy
         </Link>
-      </Text>
-      <Text size='base' weight='font-regular' className='mt-1'>Earn points and increase your ranking</Text>
+      </Text>      
       {
         isNil(missionList) ?
           (
