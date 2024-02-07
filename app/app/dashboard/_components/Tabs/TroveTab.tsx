@@ -133,6 +133,8 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
           pageData.debtAmount,
     [borrowingAmount, selectedCollateral]
   );
+  console.log("pageData.debtAmount", pageData.debtAmount);
+  
   const repayDisabled = useMemo(
     () =>
       borrowingAmount <= 0 ||
@@ -427,7 +429,7 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
                     </div>
                   </div>
                 </div>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-20 md:gap-6 gap-y-4 mt-4 md:mt-0 md:p-4">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-20 md:gap-6 gap-y-4 mt-4 md:mt-0 md:p-4">
                   <NumericFormat
                     value={Number(collateralAmount * 0.005)}
                     thousandsGroupStyle="thousand"
@@ -447,12 +449,12 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
                   />
 
                   <StatisticCard
-                    isNumeric
+                    
                     title="Total Debt"
-                    description={`${pageData.debtAmount} AUSD`}
+                    description={`${pageData.debtAmount < 0.001 ? '< 0.000':pageData.debtAmount  } AUSD`}
                     tooltip="The total amount of AUSD you have borrowed"
                   />
-                  <StatisticCard
+                  {/* <StatisticCard
                     isNumeric
                     title="Liquidation Price"
                     description={Number(
@@ -460,7 +462,7 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
                         ((selectedCollateral.amount || 1) * 100)
                     ).toString()}
                     tooltip="The dollar value per unit of collateral at which your Trove will drop below a 115% Collateral Ratio and be liquidated. You should ensure you are comfortable with managing your position so that the price of your collateral never reaches this level."
-                  />
+                  /> */}
                   <StatisticCard
                     title="Collateral Ratio"
                     description={`${(selectedMinCollateral * 100).toFixed(
@@ -542,7 +544,6 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
                       <label className="font-regular text-[10px] md:text-base text-gray-300">
                         In Wallet:
                       </label>
-                      n
                       <NumericFormat
                         value={pageData.ausdBalance}
                         thousandsGroupStyle="thousand"
@@ -599,8 +600,8 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
                     </div>
                   </div>
                 </div>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-6 gap-y-4 p-4">
-                  <div className="md:col-start-3">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-6 gap-y-4 p-4">
+                  {/* <div className="md:col-start-3">
                     <StatisticCard
                       title="Liquidation Price"
                       isNumeric
@@ -610,7 +611,9 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
                       ).toString()}
                       tooltip="The dollar value per unit of collateral at which your Trove will drop below a 115% Collateral Ratio and be liquidated. You should ensure you are comfortable with managing your position so that the price of your collateral never reaches this level."
                     />
-                  </div>
+                  </div> */}
+                  <div></div>
+                  <div></div>
                   <StatisticCard
                     title="Collateral Ratio"
                     description={`${(

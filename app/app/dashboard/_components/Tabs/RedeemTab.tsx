@@ -196,7 +196,6 @@ const RedeemTab: FC<Props> = ({
             onClick={redeem}
             text="Redeem"
             disabled={redeemDisabled}
-            tooltipPlacement="bottom-center"
             disabledText={
               "Enter the AUSD amount. 999 AUSD is the upper limit for now."
             }
