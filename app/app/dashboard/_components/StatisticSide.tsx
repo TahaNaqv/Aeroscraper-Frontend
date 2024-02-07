@@ -142,7 +142,8 @@ const StatisticSide: FC<Props> = ({ basePrice }) => {
           <StatisticCard
             title="AUSD in Stability Pool"
             tooltipPlacement="left-bottom"
-            description={Number(pageData.totalStakedAmount)
+            description={isNil(baseCoin)
+              ? "-" :Number(pageData.totalStakedAmount)
               .toFixed(3)
               .toString()}
             className="w-[191px] h-14"
@@ -161,7 +162,8 @@ const StatisticSide: FC<Props> = ({ basePrice }) => {
           <StatisticCard
             title="Total Collateral Ratio"
             tooltipPlacement="left-top"
-            description={`${
+            description={`${isNil(baseCoin)
+              ? "-" :
               isFinite(
                 Number(
                   ((pageData.baseTotalCollateralAmount * basePrice) /
@@ -181,7 +183,8 @@ const StatisticSide: FC<Props> = ({ basePrice }) => {
           />
           <StatisticCard
             title="AUSD Supply"
-            description={Number(pageData.totalAusdSupply).toFixed(3).toString()}
+            description={isNil(baseCoin)
+              ? "-" : Number(pageData.totalAusdSupply).toFixed(3).toString()}
             className="w-[191px] h-14"
             tooltip="The total AUSD minted by the Aeroscraper Protocol."
             tooltipPlacement="top"
