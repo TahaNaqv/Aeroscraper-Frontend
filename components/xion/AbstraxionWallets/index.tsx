@@ -10,10 +10,12 @@ import {
 } from "../AbstraxionContext";
 import { AllSmartWalletQuery } from "@/utils/xion/queries";
 import { truncateAddress } from "@/utils/xion";
-import { useAbstraxionAccount } from "@/hooks/xion";
+import { useAbstraxionAccount, useAbstraxionSigningClient } from "@/hooks/xion";
 import { Loading } from "../Loading";
 import { WalletIcon } from "../Icons";
 import useChainAdapter from "@/hooks/useChainAdapter";
+import { BaseCoinByChainName } from "@/constants/chainConstants";
+import { coin } from "@cosmjs/proto-signing";
 
 export const AbstraxionWallets = ({ onClose }: { onClose: () => void }) => {
   const {
@@ -37,6 +39,7 @@ export const AbstraxionWallets = ({ onClose }: { onClose: () => void }) => {
   
   const { disconnect } = useDisconnect();
   const { data: account } = useAbstraxionAccount();
+  /* const { client } = useAbstraxionSigningClient(); */
   const { loading, error, data, startPolling, stopPolling, previousData } =
     useQuery(AllSmartWalletQuery, {
       variables: {
@@ -133,6 +136,23 @@ export const AbstraxionWallets = ({ onClose }: { onClose: () => void }) => {
     return null;
   }
 
+  /* async function sendXion() {
+    const to = "xion1d35h0gjmc3tw922mulsquzh032eq4mnc7ztnul";
+    const sendRes: any =
+      account?.bech32Address &&
+      (await client?.sendTokens(
+        account?.bech32Address,
+        to,
+
+        [coin("10000000", BaseCoinByChainName["xion"].denom)],
+        {
+          amount: [{ amount: "0", denom: "uxion" }],
+          gas: "500000",
+        },
+        "send xion"
+      ));
+    console.log("sendRes", sendRes);
+  } */
   return (
     <>
       {isGeneratingNewWallet ? (
@@ -204,6 +224,7 @@ export const AbstraxionWallets = ({ onClose }: { onClose: () => void }) => {
                   Create a new account
                 </Button>
               </div>
+              {/* <button onClick={sendXion}>Send Xion</button> */}
             </div>
           )}
           <div className="ui-flex ui-w-full ui-flex-col ui-items-center ui-gap-4">

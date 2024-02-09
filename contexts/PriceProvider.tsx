@@ -51,7 +51,7 @@ const PriceProvider: FC<PropsWithChildren> = ({ children }) => {
         try {
             const denom = BaseCoinByChainName[ChainName.SEI].denom;
             const connection = new PriceServiceConnection(
-                "https://xc-mainnet.pyth.network/",
+                "https://hermes.pyth.network/",
                 {
                     priceFeedRequestConfig: {
                         binary: true,
@@ -79,7 +79,7 @@ const PriceProvider: FC<PropsWithChildren> = ({ children }) => {
         try {
             const denom = BaseCoinByChainName[ChainName.ARCHWAY].denom;
             const connection = new PriceServiceConnection(
-                "https://xc-mainnet.pyth.network/",
+                "https://hermes.pyth.network/",
                 {
                     priceFeedRequestConfig: {
                         binary: true,
@@ -105,7 +105,7 @@ const PriceProvider: FC<PropsWithChildren> = ({ children }) => {
 
     const getNeutronPrice = useCallback(async () => {
         try {
-            const denom = BaseCoinByChainName[ChainName.SEI].denom;
+            const denom = BaseCoinByChainName[ChainName.NEUTRON].denom;
             const connection = new PriceServiceConnection(
                 "https://hermes-beta.pyth.network/",
                 {

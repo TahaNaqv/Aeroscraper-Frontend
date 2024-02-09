@@ -3,7 +3,7 @@
 import GradientButton from '@/components/Buttons/GradientButton'
 import OutlinedButton from '@/components/Buttons/OutlinedButton'
 import Faq from '@/components/FAQ/Faq'
-import { InjectiveBackgroundWave, LogoSecondary, MedalIcon } from '@/components/Icons/Icons'
+import { BackgroundWave, LogoSecondary, MedalIcon } from '@/components/Icons/Icons'
 import Text from '@/components/Texts/Text'
 import { AbstraxionAccount } from '@/hooks/xion'
 import Link from 'next/link'
@@ -128,7 +128,7 @@ export default function Home() {
             <img alt={"pyth"} src={"/images/pyth2.svg"} className='px-8 w-[148px] h-[60px] mt-4 border border-white/10 rounded-md' />
           </Link>
         </div>
-        <InjectiveBackgroundWave animate className="absolute top-40 md:-top-3 right-0 -z-10 md:w-[1200px] w-[300px]" />
+        <BackgroundWave animate className="absolute top-40 md:-top-3 right-0 -z-10 md:w-[1200px] w-[300px]" />
       </main>
       <footer className='flex flex-col gap-x-48 gap-y-16 items-top flex-wrap px-6 mx-auto pr-16 mt-40 pb-24 relative md:px-[64px] container w-full'>
         <div className='flex items-center gap-6 lg:mt-20'>

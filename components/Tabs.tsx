@@ -90,7 +90,7 @@ function Tabs({
 
       <ul
         ref={tabsRef}
-        className="flex-auto gap-2 border border-white/10 rounded-lg md:flex hidden overflow-y-hidden overflow-x-scroll scrollbar-hidden"
+        className="flex-auto gap-3 border border-white/10 rounded-lg md:flex hidden overflow-y-hidden overflow-x-scroll scrollbar-hidden"
       >
         {tabs.length > 5 && (
           <motion.button

@@ -3,14 +3,10 @@ import { coin } from "@cosmjs/proto-signing";
 import { CW20BalanceResponse, CW20TokenInfoResponse, GetStakeResponse, GetTroveResponseV1, GetTroveResponseV2 } from "./types";
 import { PriceServiceConnection } from '@pythnetwork/price-service-client'
 import { AppVersion, BaseCoin, CollateralAsset } from "@/types/types";
-import { MsgExecuteContract, ChainRestAuthApi, BaseAccount, ChainRestTendermintApi, getEip712TypedData, getEthereumAddress, MsgExecuteContractCompat, ChainGrpcWasmApi, toBase64, fromBase64, getInjectiveAddress } from "@injectivelabs/sdk-ts";
-import { Network, getNetworkEndpoints } from "@injectivelabs/networks";
+import { MsgExecuteContractCompat, ChainGrpcWasmApi, toBase64, fromBase64 } from "@injectivelabs/sdk-ts";
+import { Network } from "@injectivelabs/networks";
 import { EthereumChainId, ChainId } from "@injectivelabs/ts-types";
 import { isNil } from "lodash";
-import {
-  DEFAULT_BLOCK_TIMEOUT_HEIGHT,
-  BigNumberInBase,
-} from "@injectivelabs/utils";
 import {
   MsgBroadcaster,
   Wallet,
@@ -24,6 +20,10 @@ import { BaseCoinByChainName, getContractAddressesByChain, priceIdByChainName } 
 import { InjSdkWalletByCosmosWallet } from "@/constants/walletConstants";
 import { DefaultAssetByChainName } from "@/constants/assetConstants";
 
+const injectivePrivRpc = process.env.NEXT_PUBLIC_INJECTIVE_PRIV_RPC as string;
+const injectivePrivGrpc = process.env.NEXT_PUBLIC_INJECTIVE_PRIV_GRPC as string;
+const injectivePrivRest = process.env.NEXT_PUBLIC_INJECTIVE_PRIV_REST as string;
+
 export const getAppEthContract = (
   chain: Chain,
   baseCoin: BaseCoin,
@@ -34,9 +34,7 @@ export const getAppEthContract = (
   const defaultAsset = DefaultAssetByChainName[chainName];
   const { contractAddress, oraclecontractAddress, ausdContractAddress } =
     getContractAddressesByChain(appVersion, chainName);
-  const ENDPOINTS = getNetworkEndpoints(Network.TestnetSentry);
-  const rpcUrl = chain.apis?.rpc?.[0].address ?? "";
-  const httpUrl = chain.apis?.rest?.[0].address ?? "";
+  const rpcUrl = injectivePrivRpc;
   const injSdkWallet = walletType
     ? InjSdkWalletByCosmosWallet[walletType as WalletType]
     : Wallet.Keplr;
@@ -46,70 +44,24 @@ export const getAppEthContract = (
       ethereumChainId: EthereumChainId.Goerli,
       rpcUrl: rpcUrl,
     },
+    endpoints: {
+      rest: injectivePrivRest,
+      rpc: injectivePrivRpc
+    },
     wallet: injSdkWallet,
   });
-  const chainGrpcWasmApi = new ChainGrpcWasmApi(ENDPOINTS.grpc);
+  const chainGrpcWasmApi = new ChainGrpcWasmApi(injectivePrivGrpc);
 
   const msgBroadcastClient = new MsgBroadcaster({
     walletStrategy,
-    network: Network.TestnetSentry,
-  });
-
-  const msgBroadcastClientWithEth = async (
-    senderAddress: string,
-    msg:
-      | MsgExecuteContract
-      | MsgExecuteContract[]
-      | MsgExecuteContractCompat
-      | MsgExecuteContractCompat[]
-  ) => {
-    let anyWindow: any = window;
-
-    try {
-      if (!anyWindow.ethereum) return;
-
-      const chainRestAuthApi = new ChainRestAuthApi(httpUrl);
-      const accountDetailsResponse = await chainRestAuthApi.fetchAccount(
-        senderAddress
-      );
-      const baseAccount = BaseAccount.fromRestApi(accountDetailsResponse);
-      const accountDetails = baseAccount.toAccountDetails();
-      const chainRestTendermintApi = new ChainRestTendermintApi(httpUrl);
-      const latestBlock = await chainRestTendermintApi.fetchLatestBlock();
-      const latestHeight = latestBlock.header.height;
-      const timeoutHeight = new BigNumberInBase(latestHeight).plus(
-        DEFAULT_BLOCK_TIMEOUT_HEIGHT
-      );
-
-      const eip712TypedData = getEip712TypedData({
-        msgs: msg,
-        tx: {
-          memo: "",
-          accountNumber: accountDetails.accountNumber.toString(),
-          sequence: accountDetails.sequence.toString(),
-          timeoutHeight: timeoutHeight.toFixed(),
-          chainId: chain.chain_id,
-        },
-        ethereumChainId: EthereumChainId.Goerli,
-      });
-
-      await walletStrategy.signEip712TypedData(
-        JSON.stringify(eip712TypedData),
-        getEthereumAddress(senderAddress)
-      );
-
-      const response = await msgBroadcastClient.broadcast({
-        msgs: msg,
-        injectiveAddress: senderAddress,
-        gas: { gas: 60000000 },
-      });
-
-      return response;
-    } catch (error) {
-      console.log(error);
-      throw new Error("Transaction Failed");
+    network: Network.Testnet,
+    networkEndpoints: {
+      indexer: '',
+      rest: injectivePrivRest,
+      rpc: injectivePrivRpc,
+      grpc: injectivePrivGrpc
     }
-  };
+  });
 
   //GET QUERIES
   const getVAA = async (asset?: CollateralAsset): Promise<any> => {
@@ -275,7 +227,7 @@ export const getAppEthContract = (
             ]
           }
         },
-        funds: [coin("14", asset.denom)]
+        funds: [coin("1", asset.denom)]
       })
 
       const msg1 = MsgExecuteContractCompat.fromJSON({
@@ -289,7 +241,11 @@ export const getAppEthContract = (
         funds: [coin(getRequestAmount(amount, asset.decimal), asset.denom)]
       })
 
-      return await msgBroadcastClientWithEth(senderAddress, [msg, msg1])
+      return await msgBroadcastClient.broadcast({
+        msgs: [msg, msg1],
+        injectiveAddress: senderAddress,
+        gas: { gas: 40000000 }
+      });
     }
   }
 
@@ -308,7 +264,7 @@ export const getAppEthContract = (
             ]
           }
         },
-        funds: [coin("14", asset.denom)]
+        funds: [coin("1", asset.denom)]
       })
 
       const msg1 = MsgExecuteContractCompat.fromJSON({
@@ -318,7 +274,11 @@ export const getAppEthContract = (
         funds: [coin(getRequestAmount(amount, asset.decimal), asset.denom)]
       })
 
-      return await msgBroadcastClientWithEth(senderAddress, [msg, msg1])
+      return await msgBroadcastClient.broadcast({
+        msgs: [msg, msg1],
+        injectiveAddress: senderAddress,
+        gas: { gas: 40000000 }
+      })
     }
   }
 
@@ -350,7 +310,11 @@ export const getAppEthContract = (
         }
       })
 
-      return await msgBroadcastClientWithEth(senderAddress, msg1);
+      return await msgBroadcastClient.broadcast({
+        msgs: [msg, msg1],
+        injectiveAddress: senderAddress,
+        gas: { gas: 40000000 }
+      })
     }
   };
 
@@ -369,7 +333,7 @@ export const getAppEthContract = (
             ]
           }
         },
-        funds: [coin("14", BaseCoinByChainName[chainName].denom)]
+        funds: [coin("1", BaseCoinByChainName[chainName].denom)]
       })
 
       const msg1 = MsgExecuteContractCompat.fromJSON({
@@ -378,7 +342,11 @@ export const getAppEthContract = (
         msg: { borrow_loan: { loan_amount: getRequestAmount(amount, baseCoin.ausdDecimal) } }
       })
 
-      return await msgBroadcastClientWithEth(senderAddress, msg1);
+      return await msgBroadcastClient.broadcast({
+        msgs: [msg, msg1],
+        injectiveAddress: senderAddress,
+        gas: { gas: 40000000 }
+      })
     }
   }
 
@@ -411,7 +379,11 @@ export const getAppEthContract = (
         msg,
       });
 
-      return await msgBroadcastClientWithEth(senderAddress, [msgVAA, msg1]);
+      return await msgBroadcastClient.broadcast({
+        msgs: [msgVAA, msg1],
+        injectiveAddress: senderAddress,
+        gas: { gas: 40000000 }
+      })
     }
   };
 
@@ -431,7 +403,11 @@ export const getAppEthContract = (
         msg,
       });
 
-      return await msgBroadcastClientWithEth(senderAddress, msg1);
+      return await msgBroadcastClient.broadcast({
+        msgs: msg1,
+        injectiveAddress: senderAddress,
+        gas: { gas: 40000000 }
+      })
     }
   };
 
@@ -445,7 +421,11 @@ export const getAppEthContract = (
         },
       });
 
-      return await msgBroadcastClientWithEth(senderAddress, msg1);
+      return await msgBroadcastClient.broadcast({
+        msgs: msg1,
+        injectiveAddress: senderAddress,
+        gas: { gas: 40000000 }
+      })
     }
   };
 
@@ -469,7 +449,7 @@ export const getAppEthContract = (
             data: [vaa],
           },
         },
-        funds: [coin("14", BaseCoinByChainName[chainName].denom)],
+        funds: [coin("1", BaseCoinByChainName[chainName].denom)],
       });
 
       const msg1 = MsgExecuteContractCompat.fromJSON({
@@ -478,7 +458,11 @@ export const getAppEthContract = (
         msg,
       });
 
-      return await msgBroadcastClientWithEth(senderAddress, [msg0, msg1]);
+      return await msgBroadcastClient.broadcast({
+        msgs: [msg0, msg1],
+        injectiveAddress: senderAddress,
+        gas: { gas: 40000000 }
+      })
     }
   };
 
@@ -494,7 +478,7 @@ export const getAppEthContract = (
             data: [vaa],
           },
         },
-        funds: [coin("14", BaseCoinByChainName[chainName].denom)],
+        funds: [coin("1", BaseCoinByChainName[chainName].denom)],
       });
 
       const msg1 = MsgExecuteContractCompat.fromJSON({
@@ -503,7 +487,11 @@ export const getAppEthContract = (
         msg: { liquidate_troves: {} },
       });
 
-      return await msgBroadcastClientWithEth(senderAddress, [msg0, msg1]);
+      return await msgBroadcastClient.broadcast({
+        msgs: [msg0, msg1],
+        injectiveAddress: senderAddress,
+        gas: { gas: 40000000 }
+      })
     }
   };
 
@@ -522,7 +510,7 @@ export const getAppEthContract = (
             ]
           }
         },
-        funds: [coin("14", BaseCoinByChainName[chainName].denom)]
+        funds: [coin("1", BaseCoinByChainName[chainName].denom)]
       })
 
       const msg1 = MsgExecuteContractCompat.fromJSON({
@@ -536,7 +524,11 @@ export const getAppEthContract = (
         }
       })
 
-      return await msgBroadcastClientWithEth(senderAddress, [msg0, msg1])
+      return await msgBroadcastClient.broadcast({
+        msgs: [msg0, msg1],
+        injectiveAddress: senderAddress,
+        gas: { gas: 40000000 }
+      })
     }
 
   }
@@ -549,7 +541,11 @@ export const getAppEthContract = (
         msg: { withdraw_liquidation_gains: {} }
       })
 
-      return await msgBroadcastClientWithEth(senderAddress, msg)
+      return await msgBroadcastClient.broadcast({
+        msgs: msg,
+        injectiveAddress: senderAddress,
+        gas: { gas: 40000000 }
+      })
     }
   }
 
