@@ -5,9 +5,14 @@ import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 import { getAppEthContract } from "./ethereumContract";
 import useChainAdapter from "@/hooks/useChainAdapter";
 import { WalletType } from "@/enums/WalletType";
+import { ChainName } from "@/enums/Chain";
+import { CollateralAsset } from "@/types/types";
+import { useAbstraxionSigningClient } from "@/hooks/xion";
+import { getXionContract } from "./getXionContract";
 
 const useAppContract = () => {
     const {
+        selectedAppVersion,
         isWalletConnected,
         baseCoin,
         walletInfo,
@@ -17,17 +22,25 @@ const useAppContract = () => {
         getSigningCosmWasmClient
     } = useChainAdapter();
     const [client, setClient] = useState<SigningCosmWasmClient>();
+    const { client: abstraxionClient } = useAbstraxionSigningClient();
 
-    const contract = useMemo(() => (isWalletConnected && !isNil(baseCoin) && !isNil(walletInfo) && !isNil(chain)) ?
-        walletInfo.name === WalletType.METAMASK ?
-            getAppEthContract(chain, baseCoin, selectedChainName, walletInfo.name as WalletType)
-            :
-            !isNil(client) ?
-                getAppContract(client, baseCoin, selectedChainName, walletInfo.name as WalletType)
+    const contract = useMemo(() => (isWalletConnected && !isNil(baseCoin) && !isNil(walletInfo) && !isNil(selectedChainName)) ?
+        selectedChainName === ChainName.XION ?
+            !isNil(abstraxionClient) ?
+                getXionContract(abstraxionClient, baseCoin) :
+                undefined :
+            walletInfo.name === WalletType.METAMASK ?
+                !isNil(chain) ?
+                    getAppEthContract(chain, baseCoin, selectedAppVersion, selectedChainName ?? ChainName.INJECTIVE, walletInfo.name as WalletType)
+                    :
+                    undefined
                 :
-                undefined
+                !isNil(client) ?
+                    getAppContract(client, baseCoin, selectedAppVersion, selectedChainName ?? ChainName.INJECTIVE, walletInfo.name as WalletType)
+                    :
+                    undefined
         : undefined,
-        [isWalletConnected, baseCoin, walletInfo, selectedChainName, chain, client]);
+        [isWalletConnected, baseCoin, walletInfo, selectedChainName, chain, client, selectedAppVersion, abstraxionClient]);
 
     const getTotalCollateralAmounts = useCallback(async () => {
         if (isNil(contract)) return;
@@ -80,19 +93,19 @@ const useAppContract = () => {
         return await contract.getReward(address);
     }, [address, contract])
 
-    const openTrove = useCallback(async (amount: number, loan_amount: number) => {
+    const openTrove = useCallback(async (amount: number, loan_amount: number, asset?: CollateralAsset) => {
         if (isNil(contract) || isNil(address)) return;
-        return await contract.openTrove(address, amount, loan_amount);
+        return await contract.openTrove(address, amount, loan_amount, asset);
     }, [address, contract])
 
-    const addCollateral = useCallback(async (amount: number) => {
+    const addCollateral = useCallback(async (amount: number, asset?: CollateralAsset) => {
         if (isNil(contract) || isNil(address)) return;
-        return await contract.addCollateral(address, amount);
+        return await contract.addCollateral(address, amount, asset);
     }, [address, contract])
 
-    const removeCollateral = useCallback(async (amount: number) => {
+    const removeCollateral = useCallback(async (amount: number, asset?: CollateralAsset) => {
         if (isNil(contract) || isNil(address)) return;
-        return await contract.removeCollateral(address, amount);
+        return await contract.removeCollateral(address, amount, asset);
     }, [address, contract])
 
     const borrowLoan = useCallback(async (amount: number) => {
@@ -125,6 +138,11 @@ const useAppContract = () => {
         return await contract.liquidateTroves(address);
     }, [address, contract])
 
+    const liquidateTrovesV2 = useCallback(async (owner: string) => {
+        if (isNil(contract) || isNil(address)) return;
+        return await contract.liquidateTrovesV2(address, owner);
+    }, [address, contract])
+
     const withdrawLiquidationGains = useCallback(async () => {
         if (isNil(contract) || isNil(address)) return;
         return await contract.withdrawLiquidationGains(address);
@@ -150,6 +168,7 @@ const useAppContract = () => {
         unstake,
         redeem,
         liquidateTroves,
+        liquidateTrovesV2,
         withdrawLiquidationGains
     }), [
         getTotalCollateralAmounts,
@@ -171,6 +190,7 @@ const useAppContract = () => {
         unstake,
         redeem,
         liquidateTroves,
+        liquidateTrovesV2,
         withdrawLiquidationGains
     ])
 

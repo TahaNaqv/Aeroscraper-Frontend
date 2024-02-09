@@ -1,8 +1,6 @@
 import useOutsideHandler from "@/hooks/useOutsideHandler";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { FC, useMemo, useRef, useState } from "react";
-import { WaveModal } from "../Modal/WaveModal";
-import TooltipWrapper from "./TooltipWrapper";
 import QRCode from 'react-qr-code';
 import { NumericFormat } from "react-number-format";
 import { CounterUp } from "../CounterUp";
@@ -12,323 +10,331 @@ import Loading from "../Loading/Loading";
 import GradientButton from "../Buttons/GradientButton";
 import ProfilePhotoSlider from "./ProfilePhotosSlider";
 import { AUSD_PRICE } from "@/utils/contractUtils";
+import { Modal } from "../Modal/Modal";
+import Button from "../Buttons/Button";
+import { ArrowLeftIcon, ExitIcon } from "../Icons/Icons";
+import { capitalizeFirstLetter } from "@/utils/stringUtils";
+import { isNil } from "lodash";
 import useChainAdapter from "@/hooks/useChainAdapter";
-import { useProfile } from "@/contexts/ProfileProvider";
 import { TransactionDomainByChainName } from "@/constants/chainConstants";
 import { ChainName } from "@/enums/Chain";
+import { useProfile } from "@/contexts/ProfileProvider";
 import { WalletType } from "@/enums/WalletType";
 
 interface Props {
-    showModal: boolean,
-    onClose: () => void,
-    balance: { ausd: number, base: number }
-    basePrice: number
+  showModal: boolean,
+  onClose: () => void,
+  balance: { ausd: number, base: number }
+  basePrice: number
 }
 
+type Tabs = "avatar-select" | "wallet-details"
+
 const AccountModal: FC<Props> = (props: Props) => {
-    const avatarSelectRef = useRef<HTMLDivElement>(null);
-    const qrCodeViewRef = useRef<HTMLDivElement>(null);
+  const avatarSelectRef = useRef<HTMLDivElement>(null);
+  const qrCodeViewRef = useRef<HTMLDivElement>(null);
 
-    const { walletInfo, username, address, baseCoin, selectedChainName, selectWallet, disconnect, disconnectMetamask } = useChainAdapter();
-    const { profileDetail, setProfileDetail } = useProfile();
+  const { selectedChainName, username, address, baseCoin, walletInfo, chainInfo, disconnect, disconnectMetamask, disconnectXion } = useChainAdapter();
+  const { profileDetail, setProfileDetail } = useProfile();
 
-    const [avatarSelectionOpen, setAvatarSelectionOpen] = useState(false);
-    const [qrCodeViewOpen, setQrCodeViewOpen] = useState(false);
-    const [isClipped, setIsClipped] = useState<"QR" | "WALLET" | null>(null);
+  const [selectedTab, setSelectedTab] = useState<Tabs | null>(null);
 
-    const [photoUrlInput, setPhotoUrlInput] = useState<string>("");
-    const [processLoading, setProcessLoading] = useState<{ status: boolean, idx?: number }>({ status: false, idx: -1 });
+  const [isClipped, setIsClipped] = useState<"QR" | "WALLET" | null>(null);
 
-    const totalDollarBalance = useMemo(() => (props.balance.ausd * AUSD_PRICE) + (props.balance.base * props.basePrice), [props.balance, props.basePrice]);
+  const [photoUrlInput, setPhotoUrlInput] = useState<string>("");
+  const [processLoading, setProcessLoading] = useState<{ status: boolean, idx?: number }>({ status: false, idx: -1 });
 
-    const [errorLargeSize, setErrorLargeSize] = useState<boolean>(false);
+  const totalDollarBalance = useMemo(() => (props.balance.ausd * AUSD_PRICE) + (props.balance.base * props.basePrice), [props.balance, props.basePrice]);
 
-    const openAvatarSelection = () => {
-        setAvatarSelectionOpen(true);
+  const [errorLargeSize, setErrorLargeSize] = useState<boolean>(false);
+
+  const openAvatarSelection = () => {
+    setSelectedTab("avatar-select");
+  }
+
+  const closeAvatarSelection = () => {
+    setSelectedTab(null);
+  }
+
+  const openQrCodeView = () => {
+    setSelectedTab("wallet-details");
+  }
+
+  const closeQrCodeview = () => {
+    setSelectedTab("wallet-details");
+    setIsClipped(null);
+  }
+
+  const closeModal = () => {
+    setIsClipped(null);
+    props.onClose();
+  }
+
+  const logout = () => {
+    if (selectedChainName === ChainName.XION) {
+      disconnectXion();
     }
-
-    const closeAvatarSelection = () => {
-        setAvatarSelectionOpen(false);
+    else if (walletInfo?.name === WalletType.METAMASK) {
+      disconnectMetamask();
     }
-
-    const openQrCodeView = () => {
-        setQrCodeViewOpen(true);
+    else {
+      disconnect();
     }
+    setProfileDetail(undefined);
+    localStorage.removeItem("profile-detail");
+    localStorage.removeItem("selectedWallet");
+    closeModal();
+  }
 
-    const closeQrCodeview = () => {
-        setQrCodeViewOpen(false);
-        setIsClipped(null);
-    }
+  const updateProfilePhoto = async (photoUrl: string, idx?: number) => {
 
-    const closeModal = () => {
-        setIsClipped(null);
-        props.onClose();
-    }
+    const previousPhotos = JSON.parse(localStorage.getItem("previous-photos")!) ?? []
+    if (address) {
+      setProcessLoading({ status: true, idx });
 
-    const logout = () => {
-        if (walletInfo?.name === WalletType.METAMASK) {
-            disconnectMetamask();
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_PROFILE_API}/api/users/update-profile-detail`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            walletAddress: address,
+            photoUrl: photoUrl,
+            appType: 999
+          })
+        });
+        if (response.status === 200) {
+          const data = await response.json();
+
+          localStorage.setItem(
+            "previous-photos",
+            JSON.stringify([photoUrl, ...previousPhotos])
+          );
+
+          localStorage.setItem("profile-detail", JSON.stringify(data.user));
+
+          setPhotoUrlInput("");
+
+          setProfileDetail({
+            walletAddress: address,
+            photoUrl: photoUrl,
+            appType: 999
+          });
+
+          closeAvatarSelection();
+
+          setErrorLargeSize(false);
         }
-        else {
-            disconnect();
+
+        if (response.status === 413) {
+          setErrorLargeSize(true);
         }
-        selectWallet(undefined);
-        setProfileDetail(undefined);
-        localStorage.removeItem("profile-detail");
-        localStorage.removeItem("selectedChainName");
-        localStorage.removeItem("selectedWallet")
-        closeModal();
+      }
+      catch (error) {
+        console.error(error);
+      }
     }
+    setProcessLoading({ status: false, idx: -1 });
+  }
 
-    const updateProfilePhoto = async (photoUrl: string, idx?: number) => {
+  useOutsideHandler(avatarSelectRef, closeAvatarSelection);
+  useOutsideHandler(qrCodeViewRef, closeQrCodeview);
 
-        const walletAddress = localStorage.getItem("wallet_address");
+  let scanDomain = TransactionDomainByChainName[chainInfo.name as ChainName]?.accountUrl
 
-        const previousPhotos = JSON.parse(localStorage.getItem("previous-photos")!) ?? []
-
-        if (walletAddress) {
-            setProcessLoading({ status: true, idx });
-
-            try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_PROFILE_API}/api/users/update-profile-detail`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        walletAddress,
-                        photoUrl: photoUrl,
-                        appType: 999
-                    })
-                });
-                if (response.status === 200) {
-                    const data = await response.json();
-
-                    localStorage.setItem(
-                        "previous-photos",
-                        JSON.stringify([photoUrl, ...previousPhotos])
-                    );
-
-                    localStorage.setItem("profile-detail", JSON.stringify(data.user));
-
-                    setPhotoUrlInput("");
-
-                    setProfileDetail({
-                        walletAddress,
-                        photoUrl: photoUrl,
-                        appType: 999
-                    });
-
-                    closeAvatarSelection();
-
-                    setErrorLargeSize(false);
-                }
-
-                if (response.status === 413) {
-                    setErrorLargeSize(true);
-                }
-            }
-            catch (error) {
-                console.error(error);
-            }
-        }
-        setProcessLoading({ status: false, idx: -1 });
-    }
-
-    useOutsideHandler(avatarSelectRef, closeAvatarSelection);
-    useOutsideHandler(qrCodeViewRef, closeQrCodeview);
-
-    let scanDomain = TransactionDomainByChainName[selectedChainName ?? ChainName.INJECTIVE]?.accountUrl
-
-    return (
-        <WaveModal layoutId="profile" title="Profile" showModal={props.showModal} onClose={closeModal}>
-            <div>
-                <div className="flex items-center gap-14 mb-4">
-                    <div onClick={openAvatarSelection} className="secondary-gradient w-[148px] h-[148px] p-0.5 rounded-lg flex justify-between items-center gap-2 cursor-pointer">
-                        <img
-                            alt="user-profile-image"
-                            src={profileDetail?.photoUrl ?? profilePhotos[0]}
-                            className='w-full h-full rounded-md bg-raisin-black'
-                        />
-                    </div>
-                    <Text size='3xl' textColor='text-white'>{username}</Text>
+  return (
+    <Modal title="Profile" modalSize='lg' showModal={props.showModal} onClose={closeModal}>
+      <div className='flex md:flex-row flex-col md:h-[644px]'>
+        <button className='md:flex hidden items-center justify-center absolute bottom-10 left-12 z-[10]' onClick={logout}>
+          <span className="text-[#ED0E00] text-sm md:text-base font-medium mr-2">Log out</span>
+          <ExitIcon className="text-[#ED0E00]" />
+        </button>
+        <div className='pt-8 md:pt-10 pr-0 pb-6 md:pb-0 md:pr-24 shrink-0 px-8 border-b md:border-r border-white/10 h-full relative'>
+          <h2 className='text-[#F7F7FF] text-2xl font-medium'>Profile</h2>
+          <div className="flex flex-row md:flex-col mt-6 gap-0 -ml-8 md:ml-0 md:gap-6">
+            <Button active={selectedTab === "avatar-select"} onClick={() => { setSelectedTab("avatar-select"); }}>Set an avatar</Button>
+            <Button active={selectedTab === "wallet-details"} onClick={() => { setSelectedTab("wallet-details"); }}>Wallet details</Button>
+          </div>
+        </div>
+        <div className={`flex-1 flex flex-col items-center justify-center text-center rounded-3xl md:mt-0 mt-6 relative`}>
+          {selectedTab !== null && (
+            <button className="absolute left-3 md:left-8 -top-4 md:top-8" onClick={() => { setSelectedTab(null); }}>
+              <ArrowLeftIcon className="text-white" />
+            </button>
+          )}
+          {selectedTab === null && (
+            <div className="px-4 md:px-40 w-full">
+              <div className="space-y-8">
+                <div onClick={openAvatarSelection} className="secondary-gradient w-[148px] h-[148px] p-0.5 rounded-lg gap-2 mx-auto cursor-pointer">
+                  <img
+                    alt="user-profile-image"
+                    src={profileDetail?.photoUrl ?? profilePhotos[0]}
+                    className='w-full h-full rounded-md bg-raisin-black'
+                  />
                 </div>
-                <div className='col-span-6 lg:col-span-4 row-span-s flex flex-col gap-3 w-full '>
-                    <div className="bg-raisin-black px-6 py-4 rounded-lg flex gap-16">
-                        <div>
-                            <Text size='2xl' textColor='text-dark-silver'>Balance</Text>
-                            <Text size='2xl' className='mt-4'>${totalDollarBalance.toFixed(2)}</Text>
-                            <div className='flex items-center justify-around'>
-                                <NumericFormat
-                                    value={props.balance.ausd}
-                                    thousandsGroupStyle="thousand"
-                                    thousandSeparator=","
-                                    fixedDecimalScale
-                                    decimalScale={2}
-                                    displayType="text"
-                                    renderText={(value) =>
-                                        <Text size='3xl' className='mt-2 flex gap-2'>
-                                            <CounterUp from={"0"} to={value} duration={0.5} /> AUSD
-                                        </Text>
-                                    }
-                                />
-                            </div>
-                        </div>
-                        <div>
-                            <div className='flex items-end justify-between h-full'>
-                                <NumericFormat
-                                    value={props.balance.base}
-                                    thousandsGroupStyle="thousand"
-                                    thousandSeparator=","
-                                    fixedDecimalScale
-                                    decimalScale={2}
-                                    displayType="text"
-                                    renderText={(value) =>
-                                        <Text size='3xl' className='mt-2 flex gap-2'>
-                                            <CounterUp from={"0"} to={value} duration={0.5} /> {baseCoin?.name}
-                                        </Text>
-                                    }
-                                />
-                            </div>
-                        </div>
-                    </div>
-                    <div className="bg-raisin-black px-6 py-4 rounded-lg">
-                        <div className='flex items-center justify-between'>
-                            <Text size='2xl' textColor='text-dark-silver'>Wallet</Text>
-                            <div className='flex items-center gap-6'>
-                                <TooltipWrapper title={ChainName.ARCHWAY === selectedChainName ? "MintScan" : "SeiScan"}>
-                                    <a href={`${scanDomain}${address}`} target='_blank' rel="noreferrer" className='w-6 h-6'>
-                                        <img alt='link' src="/images/external-link.svg" className='w-full h-full object-contain' />
-                                    </a>
-                                </TooltipWrapper>
-                                <TooltipWrapper title='QR Code'>
-                                    <button className='w-6 h-6' onClick={openQrCodeView}>
-                                        <img alt='scan' src="/images/scan.svg" className='w-full h-full object-contain' />
-                                    </button>
-                                </TooltipWrapper>
-                                <TooltipWrapper title='Log Out'>
-                                    <button className='w-6 h-6' onClick={logout}>
-                                        <img alt='exit' src="/images/exit.svg" className='w-full h-full object-contain' />
-                                    </button>
-                                </TooltipWrapper>
-                            </div>
-                        </div>
-                        <div className='flex flex-col lg:flex-row items-start lg:items-center gap-5 mt-6'>
-                            {walletInfo && <img alt={`walletType-${walletInfo.prettyName}`} className='w-16 h-16 object-contain' src={walletInfo.logo as string} />}
-                            <div className='w-full flex flex-col justify-between'>
-                                <Text size='2xl'>{baseCoin?.name}</Text>
-                                <div className='w-full flex items-center gap-2'>
-                                    <Text size='xl' responsive className='lg:w-[352px] truncate'>{address}</Text>
-                                    {isClipped === "WALLET" ?
-                                        <Text size='base' textColor="text-[#37D489]">Copied!</Text>
-                                        :
-                                        <button className='w-6 h-6' onClick={() => { setIsClipped("WALLET"); navigator.clipboard.writeText(address ?? ''); }}>
-                                            <img
-                                                alt="copy-to-clipboard"
-                                                src='/images/copy-to-clipboard.svg'
-                                                className='w-full h-full'
-                                            />
-                                        </button>
-                                    }
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <Text size='3xl' textColor='text-white'>{username}</Text>
+              </div>
+              <div className='flex justify-center gap-4 mt-6'>
+                <Text size='xl'>{address?.slice(0, 24)}...{address?.slice(-6)}</Text>
+                {isClipped === "WALLET" ?
+                  <Text size='xs' textColor="text-[#37D489]">Copied!</Text>
+                  :
+                  <button className='w-6 h-6 active:scale-90' onClick={() => { setIsClipped("WALLET"); navigator.clipboard.writeText(address ?? ''); }}>
+                    <img
+                      alt="copy-to-clipboard"
+                      src='/images/copy-to-clipboard.svg'
+                      className='w-full h-full'
+                    />
+                  </button>
+                }
+              </div>
+              <div className="grid grid-cols-3 gap-y-4 gap-x-20  w-full md:items-end justify-between mt-10">
+                <div className="md:col-span-1 col-span-3">
+                  <Text size='sm' textColor='text-dark-silver'>Balance</Text>
+                  <Text size='lg' className='mt-2'>${totalDollarBalance.toFixed(2)}</Text>
                 </div>
-
-                <AnimatePresence>
-                    {
-                        qrCodeViewOpen &&
-                        <motion.div
-                            ref={qrCodeViewRef}
-                            initial={{ opacity: 0, y: -20 }}
-                            animate={{ opacity: 1, y: 20 }}
-                            exit={{ scale: 0, y: -80, x: 100 }}
-                            transition={{ bounce: true }}
-                            className='absolute w-[352px] top-1/2 right-0'
-                        >
-                            <div className='relative w-full h-full flex flex-col gap-6 items-center bg-english-violet rounded-lg p-6'>
-                                <div className='w-[182px] h-[182px] lg:w-[132px] lg:h-[132px] bg-white rounded-lg p-3'>
-                                    <QRCode className='w-full h-full' value={address ?? ''} />
-                                </div>
-                                <div className='w-full max-w-[305px] flex justify-between items-center gap-2 rounded-lg px-2 py-1 bg-[#74517A]'>
-                                    <Text textColor='text-white' size="lg" className='w-[228px] truncate'>{address}</Text>
-                                    {isClipped === "QR" ?
-                                        <Text size='base' textColor="text-[#37D489]">Copied!</Text>
-                                        :
-                                        <button className='w-6 h-6' onClick={() => { setIsClipped("QR"); navigator.clipboard.writeText(address ?? ''); }}>
-                                            <img
-                                                alt="copy-to-clipboard"
-                                                src='/images/copy-to-clipboard.svg'
-                                                className='w-full h-full'
-                                            />
-                                        </button>
-                                    }
-                                </div>
-                                <button onClick={closeQrCodeview}>
-                                    <img alt="close-qr-view" src="/images/close.svg" className='absolute top-5 right-5' />
-                                </button>
-                            </div>
-                        </motion.div>
+                <div className="col-span-1 md:ml-0 ml-4">
+                  <NumericFormat
+                    value={props.balance.ausd}
+                    thousandsGroupStyle="thousand"
+                    thousandSeparator=","
+                    fixedDecimalScale
+                    decimalScale={2}
+                    displayType="text"
+                    renderText={(value) =>
+                      <Text size='lg' className='mt-2 whitespace-nowrap flex gap-2 items-center'>
+                        <img alt="ausd" className="w-5 h-5" src="/images/token-images/ausd-blue.svg" />
+                        {value}&nbsp;
+                        AUSD
+                      </Text>
                     }
-                </AnimatePresence>
-
-                <AnimatePresence>
-                    {
-                        avatarSelectionOpen &&
-                        <motion.div
-                            ref={qrCodeViewRef}
-                            initial={{ opacity: 0, translateY: "0%" }}
-                            animate={{ opacity: 1, translateY: "-60%" }}
-                            exit={{ scale: 0, y: -80, x: 100 }}
-                            transition={{ bounce: true }}
-                            className='absolute w-full top-1/2 right-0'
-                        >
-                            <div className='relative w-full h-full flex flex-col gap-6 items-center bg-english-violet rounded-lg p-6'>
-                                <Text size='xl' className="mr-auto">Select Avatar</Text>
-                                <ProfilePhotoSlider processLoading={processLoading} updateProfilePhoto={updateProfilePhoto} slider={profilePhotos} />
-                                <Text size='xl' className="mr-auto">Uplod an Avatar</Text>
-                                <div className="relative bg-[#74517A] w-full px-2 py-2.5 rounded flex items-center">
-                                    <Text size='base' className="mr-auto">Upload with URL:</Text>
-                                    <input value={photoUrlInput} onChange={(e) => { setPhotoUrlInput(e.target.value); }} placeholder="https://" className="focus:outline-none text-white bg-transparent flex-1 ml-3" />
-                                    {photoUrlInput.includes("http") &&
-                                        <GradientButton onClick={() => { updateProfilePhoto(photoUrlInput); }} className="w-[64px] h-0 absolute right-1" rounded="rounded-lg">
-                                            {processLoading.status ?
-                                                <Loading width={20} height={20} />
-                                                :
-                                                <Text>Save</Text>
-                                            }
-                                        </GradientButton>
-                                    }
-                                </div>
-                                <Text size='sm' className="mx-auto" >or</Text>
-                                <ImageUpload processLoading={processLoading.status} onImageUpload={(e) => { updateProfilePhoto(e); }} />
-                                {errorLargeSize &&
-                                    <motion.div
-                                        onClick={() => { setErrorLargeSize(false); }}
-                                        initial={{ scale: 0.6 }}
-                                        animate={{ scale: 1 }}
-                                        transition={{ duration: 0.5 }}
-                                        className='text-orange-600 p-2 bg-orange-200 rounded text-sm w-full cursor-pointer'>
-                                        Payload too Large (max. 75kb)
-                                    </motion.div>
-                                }
-                                <button onClick={closeAvatarSelection}>
-                                    <img alt="close-qr-view" src="/images/close.svg" className='absolute top-5 right-5' />
-                                </button>
-                            </div>
-                        </motion.div>
+                  />
+                </div>
+                <div className="col-span-1">
+                  <NumericFormat
+                    className="col-span-1"
+                    value={props.balance.base}
+                    thousandsGroupStyle="thousand"
+                    thousandSeparator=","
+                    fixedDecimalScale
+                    decimalScale={2}
+                    displayType="text"
+                    renderText={(value) =>
+                      <Text size='lg' className='mt-2 whitespace-nowrap flex gap-2 items-center ml-6'>
+                        {baseCoin && <img alt={baseCoin.name} className="w-5 h-5" src={baseCoin.tokenImage} />}
+                        {value}&nbsp;
+                        {baseCoin?.name}
+                      </Text>
                     }
-                </AnimatePresence>
+                  />
+                </div>
+              </div>
+              <button className='flex md:hidden mt-10 mb-6' onClick={logout}>
+                <span className="text-[#ED0E00] text-sm md:text-base font-medium mr-2">Log out</span>
+                <ExitIcon className="text-[#ED0E00]" />
+              </button>
             </div>
-        </WaveModal>
-    )
+          )}
+          {selectedTab === "avatar-select" && (
+            <div className='md:px-24 px-6 mt-4 md:mt-0 w-full text-start relative z-[999]'>
+              <Text size='lg' textColor="text-dark-silver" className="mb-6">Select an avatar</Text>
+              <ProfilePhotoSlider processLoading={processLoading} updateProfilePhoto={updateProfilePhoto} slider={profilePhotos} />
+              <div className="mt-2 md:mt-6 pt-2 md:pt-6 border-t-2 border-white/10">
+                <Text size='lg' textColor="text-dark-silver" className="mb-6">Uplod an Avatar</Text>
+                <div className="flex md:flex-row flex-col items-center gap-6">
+                  <div className="w-2/3 md:w-[148px]">
+                    <ImageUpload type={2} processLoading={processLoading.status} onImageUpload={(e) => { updateProfilePhoto(e); }} />
+                  </div>
+                  <div className="flex-1">
+                    <div className="relative bg-[#211021] w-full px-4 py-3 rounded-lg flex items-center whitespace-nowrap">
+                      <Text size='base' className="mr-auto" textColor="text-white">Upload with URL:</Text>
+                      <input value={photoUrlInput} onChange={(e) => { setPhotoUrlInput(e.target.value); }} className="focus:outline-none text-white bg-transparent flex-1 ml-3" />
+                    </div>
+                    <GradientButton onClick={() => { updateProfilePhoto(photoUrlInput); }} className="w-full md:w-[200px] h-10 ml-auto mt-4 md:mt-10" rounded="rounded-lg">
+                      {processLoading.status ?
+                        <Loading width={20} height={20} />
+                        :
+                        <Text>Save</Text>
+                      }
+                    </GradientButton>
+                  </div>
+                </div>
+                {errorLargeSize &&
+                  <motion.div
+                    onClick={() => { setErrorLargeSize(false); }}
+                    initial={{ scale: 0.6 }}
+                    animate={{ scale: 1 }}
+                    transition={{ duration: 0.5 }}
+                    className='text-orange-600 p-2 bg-orange-200 rounded text-sm w-full cursor-pointer mt-4'>
+                    Payload too Large (max. 75kb)
+                  </motion.div>
+                }
+              </div>
+              <button className='flex md:hidden my-6' onClick={logout}>
+                <span className="text-[#ED0E00] text-sm md:text-base font-medium mr-2">Log out</span>
+                <ExitIcon className="text-[#ED0E00]" />
+              </button>
+            </div>
+          )}
+          {selectedTab === "wallet-details" && (
+            <div className='md:px-8 w-full'>
+              <div className="flex items-center ml-[10%] gap-4 md:gap-0 md:mb-16 md:mt-12">
+                {selectedChainName && <div>
+                  <Text size='sm' className="text-center mb-3" textColor='text-dark-silver'>Selected chain</Text>
+                  <Button
+                    startIcon={<img alt={selectedChainName} src={baseCoin?.image} className='w-6 h-6' />}
+                  >
+                    {capitalizeFirstLetter(chainInfo.displayName.toLocaleLowerCase())}
+                  </Button>
+                </div>}
+                <div className="md:ml-14">
+                  <Text size='sm' className="text-center mb-3" textColor='text-dark-silver'>Selected wallet</Text>
+                  <Button
+                    startIcon={!isNil(walletInfo) && <img alt={walletInfo.name} src={walletInfo.logo as string} className='w-6 h-6' />}
+                  >
+                    {capitalizeFirstLetter(walletInfo?.prettyName?.toLocaleLowerCase() ?? "")}
+                  </Button>
+                </div>
+                <a href={`${scanDomain}${address}`} target='_blank' rel="noreferrer" className='ml-auto underline text-white mt-6 hidden md:flex'>
+                  Scan
+                  <img alt='link' src="/images/external-link.svg" className='w-full h-full object-contain ml-1.5' />
+                </a>
+              </div>
+              <Text size='lg' textColor='text-white' className="mb-3 md:mt-0 mt-4">{username}</Text>
+              <div className='md:w-[309px] w-[220px] h-[220px] md:h-[309px] bg-white rounded-lg p-3 mx-auto'>
+                <QRCode className='w-full h-full' value={address ?? ''} />
+              </div>
+              <div className='flex gap-4 mt-6 justify-center'>
+                <Text size='xl'>{address?.slice(0, 24)}...{address?.slice(-6)}</Text>
+                {isClipped === "WALLET" ?
+                  <Text size='xs' textColor="text-[#37D489]">Copied!</Text>
+                  :
+                  <button className='w-6 h-6 active:scale-90' onClick={() => { setIsClipped("WALLET"); navigator.clipboard.writeText(address ?? ''); }}>
+                    <img
+                      alt="copy-to-clipboard"
+                      src='/images/copy-to-clipboard.svg'
+                      className='w-full h-full'
+                    />
+                  </button>
+                }
+              </div>
+              <button className='flex md:hidden m-6' onClick={logout}>
+                <span className="text-[#ED0E00] text-sm md:text-base font-medium mr-2">Log out</span>
+                <ExitIcon className="text-[#ED0E00]" />
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    </Modal >
+  )
 }
 
 export default AccountModal;
 
 const profilePhotos = [
-    "/images/profile-images/profile-i-1.jpg",
-    "/images/profile-images/profile-i-2.jpg",
-    "/images/profile-images/profile-i-3.jpg",
-    "/images/profile-images/profile-i-4.jpg",
-    "/images/profile-images/profile-i-5.jpg"
+  "/images/profile-images/profile-i-1.jpg",
+  "/images/profile-images/profile-i-2.jpg",
+  "/images/profile-images/profile-i-3.jpg",
+  "/images/profile-images/profile-i-4.jpg",
+  "/images/profile-images/profile-i-5.jpg"
 ]

@@ -9,7 +9,8 @@ import { isNil } from 'lodash';
 const bgColor = {
   'success': 'success-gradient',
   'error': 'error-gradient',
-  'default': 'main-gradient'
+  'default': 'main-gradient',
+  "networkchange": 'success-gradient'
 }
 
 type Props = {

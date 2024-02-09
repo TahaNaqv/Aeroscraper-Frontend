@@ -35,23 +35,31 @@ body::-webkit-scrollbar {
   .gradient-background {
     @apply  tertiary-gradient transition-all delay-300
   }
+  .xion .ui-backdrop-blur-lg {
+    
+    @apply  !bg-black/10 !backdrop-blur-sm
+  }
+  .xion .ui-bg-modal-overlay {
+    background-image: none !important;
+    @apply  !bg-black/10 
+  }
 }
 
 @keyframes gradient-animation {
   0% {
-    stop-color: #56235C;
+    stopColor: #56235C;
   }
   25% {
-    stop-color: #D43752;
+    stopColor: #D43752;
   }
   50% {
-    stop-color: #E4462D;
+    stopColor: #E4462D;
   }
   75% {
-    stop-color: #F8B810;
+    stopColor: #F8B810;
   }
   100% {
-    stop-color: #D43752;
+    stopColor: #D43752;
   }
 }
 
@@ -182,3 +190,8 @@ background-blend-mode: multiply, normal, normal;
   border-radius: 0.375rem;
   margin-right: 0.5rem;
 }
+
+.confirmBtn {
+  background: var(--Gadient, linear-gradient(90deg, #D43752 0%, #E4462D 43.78%, #F8B810 150.15%)) !important;
+} 
+
