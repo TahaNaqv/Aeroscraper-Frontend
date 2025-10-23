@@ -32,6 +32,8 @@
     "@injectivelabs/utils": "^1.14.4",
     "@injectivelabs/wallet-ts": "^1.14.4",
     "@pythnetwork/price-service-client": "^1.6.2",
+    "@reown/appkit": "^1.8.11",
+    "@reown/appkit-adapter-solana": "^1.8.11",
     "@stytch/nextjs": "^17.0.0",
     "@stytch/vanilla-js": "^4.4.1",
     "@types/node": "20.4.0",
