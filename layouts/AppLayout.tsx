@@ -3,8 +3,7 @@
 import MaintenancePage from "@/components/MaintenancePage";
 import { useState } from "react";
 // import AppTheme from "./AppTheme";
-import WalletConnectButton from "@/components/Buttons/WalletButton";
-import AppThemeReown from "./AppTheme Reown";
+import AppTheme from "./AppTheme";
 
 const AppLayout = ({ children }: { children: React.ReactNode }) => {
   const [isProjectMaintenance] = useState(false); // manage the project's maintenance status here
@@ -15,7 +14,7 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <>
-      <AppThemeReown />
+      <AppTheme />
 
       {/* <WalletConnectButton /> */}
       <div className="container mx-auto px-3 md:px-[64px]">{children}</div>

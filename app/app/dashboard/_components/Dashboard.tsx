@@ -1,29 +1,26 @@
 "use client";
 
-import {
-  BackgroundWave,
-} from "@/components/Icons/Icons";
+import { BackgroundWave } from "@/components/Icons/Icons";
 import StatisticSide from "./StatisticSide";
-import TabsSide, {
+import {
+  // TabsSide,
   DashboardTabs,
 } from "./TabsSide";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { motion } from "framer-motion";
-import { useNotification } from "@/contexts/NotificationProvider";
-import useChainAdapter from "@/hooks/useChainAdapter";
+// import { useNotification } from "@/contexts/NotificationProvider";
+// import useChainAdapter from "@/hooks/useChainAdapter";
 import Footer from "./footer";
 
 export default function Dashboard() {
-
-  const { basePrice } = useChainAdapter();
+  // const { basePrice } = useChainAdapter();
   const [tabPosition, setTabPosition] = useState<DashboardTabs>("redeem");
 
-  const { processLoading } = useNotification();
+  // const { processLoading } = useNotification();
 
-  const changeTabPosition = useCallback(
-    (e: DashboardTabs) => {
-      setTabPosition(e)
-    }, []);
+  const changeTabPosition = useCallback((e: DashboardTabs) => {
+    setTabPosition(e);
+  }, []);
 
   return (
     <div className="h-screen">
@@ -35,11 +32,11 @@ export default function Dashboard() {
           className="md:block hidden"
         >
           <BackgroundWave
-            animate={processLoading}
+            // animate={processLoading}
             className="absolute -bottom-40 -right-0 -z-10"
           />
           <BackgroundWave
-            animate={processLoading}
+            // animate={processLoading}
             className="absolute -top-[400px] left-48 -z-10 h-[584px] rotate-270"
           />
         </motion.div>
@@ -52,11 +49,11 @@ export default function Dashboard() {
           className="md:block hidden"
         >
           <BackgroundWave
-            animate={processLoading}
+            // animate={processLoading}
             className="absolute -top-40 -right-60 -z-10"
           />
           <BackgroundWave
-            animate={processLoading}
+            // animate={processLoading}
             className="absolute -bottom-[200px] -left-20 -z-10 h-[584px] rotate-[180deg]"
           />
         </motion.div>
@@ -69,11 +66,11 @@ export default function Dashboard() {
           className="md:block hidden"
         >
           <BackgroundWave
-            animate={processLoading}
+            // animate={processLoading}
             className="absolute -bottom-0 -right-0 -z-10"
           />
           <BackgroundWave
-            animate={processLoading}
+            // animate={processLoading}
             className="absolute -bottom-[240px] -left-10 -z-10 h-[584px] rotate-[180deg]"
           />
         </motion.div>
@@ -86,11 +83,11 @@ export default function Dashboard() {
           className="md:block hidden"
         >
           <BackgroundWave
-            animate={processLoading}
+            // animate={processLoading}
             className="absolute -bottom-40 -right-0 -z-10"
           />
           <BackgroundWave
-            animate={processLoading}
+            // animate={processLoading}
             className="absolute -top-[240px] left-80 -z-10 h-[664px] rotate-[300deg]"
           />
         </motion.div>
@@ -103,20 +100,20 @@ export default function Dashboard() {
           className="md:block hidden"
         >
           <BackgroundWave
-            animate={processLoading}
+            // animate={processLoading}
             className="absolute  -bottom-40 -right-0 -z-10"
           />
           <BackgroundWave
-            animate={processLoading}
+            // animate={processLoading}
             className="absolute -bottom-[200px] -left-20 -z-10 h-[584px] rotate-[180deg]"
           />
         </motion.div>
       )}
       <div className="flex gap-4 flex-col md:flex-row md:gap-24 z-10 relative md:min-h-[720px] ">
-        <StatisticSide basePrice={basePrice} />
-        <TabsSide setTabPosition={changeTabPosition} />
+        {/* <StatisticSide basePrice={1} /> */}
+        {/* <TabsSide setTabPosition={changeTabPosition} /> */}
       </div>
-     <Footer />
+      <Footer />
     </div>
   );
 }

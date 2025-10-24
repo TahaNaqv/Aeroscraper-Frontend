@@ -1,4 +1,4 @@
-// import Providers from "@/contexts/Providers"
+// import Providers from "@/contexts/Providers";
 import AppLayout from "@/layouts/AppLayout";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
