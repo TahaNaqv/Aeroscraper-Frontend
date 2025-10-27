@@ -178,3 +178,185 @@ export async function buildOpenTroveInstruction(
   return { instruction, accountMetas };
 }
 
+export async function buildAddCollateralInstruction(
+  userPublicKey: PublicKey,
+  collateralMint: PublicKey,
+  oracleProgramId: PublicKey,
+  oracleState: PublicKey,
+  collateralAmount: number, // in lamports
+  collateralDenom: string = 'SOL',
+  neighborHints: PublicKey[] = []
+): Promise<{ instruction: TransactionInstruction }> {
+  console.log('🔨 Building add_collateral instruction...');
+  
+  // 1. Derive PDAs
+  const pdas = deriveProtocolPDAs(userPublicKey, collateralDenom);
+  
+  // 2. Get token accounts
+  const userCollateralTokenAccount = await getAssociatedTokenAddress(collateralMint, userPublicKey);
+  
+  // 3. Build instruction data (discriminator from IDL: [127, 82, 121, 42, 161, 176, 249, 206])
+  const discriminator = new Uint8Array([127, 82, 121, 42, 161, 176, 249, 206]);
+  
+  // Serialize params manually
+  const collateralAmountBigInt = BigInt(collateralAmount);
+  
+  // u64 serialization
+  const amountBuffer = new Uint8Array(8);
+  new DataView(amountBuffer.buffer).setBigUint64(0, collateralAmountBigInt, true);
+  
+  // String serialization
+  const denomBytes = new TextEncoder().encode(collateralDenom);
+  const denomLengthBuffer = new Uint8Array(4);
+  new DataView(denomLengthBuffer.buffer).setUint32(0, denomBytes.length, true);
+  
+  // Option<Pubkey> for prev_node_id (None = 0x00)
+  const prevNodeIdBuffer = new Uint8Array(1);
+  prevNodeIdBuffer[0] = 0; // None
+  
+  // Option<Pubkey> for next_node_id (None = 0x00)
+  const nextNodeIdBuffer = new Uint8Array(1);
+  nextNodeIdBuffer[0] = 0; // None
+  
+  // Combine all data
+  const totalLength = discriminator.length + amountBuffer.length + 
+    denomLengthBuffer.length + denomBytes.length + 
+    prevNodeIdBuffer.length + nextNodeIdBuffer.length;
+  const data = new Uint8Array(totalLength);
+  let offset = 0;
+  data.set(discriminator, offset); offset += discriminator.length;
+  data.set(amountBuffer, offset); offset += amountBuffer.length;
+  data.set(denomLengthBuffer, offset); offset += denomLengthBuffer.length;
+  data.set(denomBytes, offset); offset += denomBytes.length;
+  data.set(prevNodeIdBuffer, offset); offset += prevNodeIdBuffer.length;
+  data.set(nextNodeIdBuffer, offset);
+  
+  // 4. Build account metas (15 required accounts from IDL)
+  const accountMetas: AccountMeta[] = [
+    { pubkey: userPublicKey, isSigner: true, isWritable: true }, // user
+    { pubkey: pdas.userDebtAmount, isSigner: false, isWritable: true }, // user_debt_amount
+    { pubkey: pdas.userCollateralAmount, isSigner: false, isWritable: true }, // user_collateral_amount
+    { pubkey: pdas.liquidityThreshold, isSigner: false, isWritable: true }, // liquidity_threshold
+    { pubkey: pdas.protocolState, isSigner: false, isWritable: true }, // state
+    { pubkey: userCollateralTokenAccount, isSigner: false, isWritable: true }, // user_collateral_account
+    { pubkey: collateralMint, isSigner: false, isWritable: false }, // collateral_mint
+    { pubkey: pdas.protocolCollateralAccount, isSigner: false, isWritable: true }, // protocol_collateral_account
+    { pubkey: pdas.totalCollateralAmount, isSigner: false, isWritable: true }, // total_collateral_amount
+    { pubkey: oracleProgramId, isSigner: false, isWritable: false }, // oracle_program
+    { pubkey: oracleState, isSigner: false, isWritable: true }, // oracle_state
+    { pubkey: SOL_PYTH_PRICE_FEED, isSigner: false, isWritable: false }, // pyth_price_account
+    { pubkey: SYSVAR_CLOCK_PUBKEY, isSigner: false, isWritable: false }, // clock
+    { pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false }, // token_program
+    { pubkey: SystemProgram.programId, isSigner: false, isWritable: false }, // system_program
+  ];
+  
+  // Add remaining accounts for neighbor validation
+  const remainingAccounts: AccountMeta[] = neighborHints.map(pubkey => ({
+    pubkey,
+    isSigner: false,
+    isWritable: false,
+  }));
+  
+  const instruction = new TransactionInstruction({
+    keys: [...accountMetas, ...remainingAccounts],
+    programId: PROTOCOL_PROGRAM_ID,
+    data: Buffer.from(data),
+  });
+  
+  console.log('✅ add_collateral instruction built');
+  console.log('📊 Total accounts:', accountMetas.length + remainingAccounts.length);
+  
+  return { instruction };
+}
+
+export async function buildRemoveCollateralInstruction(
+  userPublicKey: PublicKey,
+  collateralMint: PublicKey,
+  oracleProgramId: PublicKey,
+  oracleState: PublicKey,
+  collateralAmount: number, // in lamports
+  collateralDenom: string = 'SOL',
+  neighborHints: PublicKey[] = []
+): Promise<{ instruction: TransactionInstruction }> {
+  console.log('🔨 Building remove_collateral instruction...');
+  
+  // 1. Derive PDAs
+  const pdas = deriveProtocolPDAs(userPublicKey, collateralDenom);
+  
+  // 2. Get token accounts
+  const userCollateralTokenAccount = await getAssociatedTokenAddress(collateralMint, userPublicKey);
+  
+  // 3. Build instruction data (discriminator from IDL: [86, 222, 130, 86, 92, 20, 72, 65])
+  const discriminator = new Uint8Array([86, 222, 130, 86, 92, 20, 72, 65]);
+  
+  // Serialize params manually
+  const collateralAmountBigInt = BigInt(collateralAmount);
+  
+  // u64 serialization
+  const amountBuffer = new Uint8Array(8);
+  new DataView(amountBuffer.buffer).setBigUint64(0, collateralAmountBigInt, true);
+  
+  // String serialization
+  const denomBytes = new TextEncoder().encode(collateralDenom);
+  const denomLengthBuffer = new Uint8Array(4);
+  new DataView(denomLengthBuffer.buffer).setUint32(0, denomBytes.length, true);
+  
+  // Option<Pubkey> for prev_node_id (None = 0x00)
+  const prevNodeIdBuffer = new Uint8Array(1);
+  prevNodeIdBuffer[0] = 0; // None
+  
+  // Option<Pubkey> for next_node_id (None = 0x00)
+  const nextNodeIdBuffer = new Uint8Array(1);
+  nextNodeIdBuffer[0] = 0; // None
+  
+  // Combine all data
+  const totalLength = discriminator.length + amountBuffer.length + 
+    denomLengthBuffer.length + denomBytes.length + 
+    prevNodeIdBuffer.length + nextNodeIdBuffer.length;
+  const data = new Uint8Array(totalLength);
+  let offset = 0;
+  data.set(discriminator, offset); offset += discriminator.length;
+  data.set(amountBuffer, offset); offset += amountBuffer.length;
+  data.set(denomLengthBuffer, offset); offset += denomLengthBuffer.length;
+  data.set(denomBytes, offset); offset += denomBytes.length;
+  data.set(prevNodeIdBuffer, offset); offset += prevNodeIdBuffer.length;
+  data.set(nextNodeIdBuffer, offset);
+  
+  // 4. Build account metas (15 required accounts from IDL)
+  const accountMetas: AccountMeta[] = [
+    { pubkey: userPublicKey, isSigner: true, isWritable: true }, // user
+    { pubkey: pdas.userDebtAmount, isSigner: false, isWritable: true }, // user_debt_amount
+    { pubkey: pdas.userCollateralAmount, isSigner: false, isWritable: true }, // user_collateral_amount
+    { pubkey: pdas.liquidityThreshold, isSigner: false, isWritable: true }, // liquidity_threshold
+    { pubkey: pdas.protocolState, isSigner: false, isWritable: true }, // state
+    { pubkey: userCollateralTokenAccount, isSigner: false, isWritable: true }, // user_collateral_account
+    { pubkey: collateralMint, isSigner: false, isWritable: false }, // collateral_mint
+    { pubkey: pdas.protocolCollateralAccount, isSigner: false, isWritable: true }, // protocol_collateral_account
+    { pubkey: pdas.totalCollateralAmount, isSigner: false, isWritable: true }, // total_collateral_amount
+    { pubkey: oracleProgramId, isSigner: false, isWritable: false }, // oracle_program
+    { pubkey: oracleState, isSigner: false, isWritable: true }, // oracle_state
+    { pubkey: SOL_PYTH_PRICE_FEED, isSigner: false, isWritable: false }, // pyth_price_account
+    { pubkey: SYSVAR_CLOCK_PUBKEY, isSigner: false, isWritable: false }, // clock
+    { pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false }, // token_program
+    { pubkey: SystemProgram.programId, isSigner: false, isWritable: false }, // system_program
+  ];
+  
+  // Add remaining accounts for neighbor validation
+  const remainingAccounts: AccountMeta[] = neighborHints.map(pubkey => ({
+    pubkey,
+    isSigner: false,
+    isWritable: false,
+  }));
+  
+  const instruction = new TransactionInstruction({
+    keys: [...accountMetas, ...remainingAccounts],
+    programId: PROTOCOL_PROGRAM_ID,
+    data: Buffer.from(data),
+  });
+  
+  console.log('✅ remove_collateral instruction built');
+  console.log('📊 Total accounts:', accountMetas.length + remainingAccounts.length);
+  
+  return { instruction };
+}
+

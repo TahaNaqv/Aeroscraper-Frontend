@@ -25,8 +25,10 @@ import { DefaultAssetByChainName } from "@/constants/assetConstants";
 import { ChainName } from "@/enums/Chain";
 import { useBalances } from "@/contexts/BalanceProvider";
 import { useAppKitAccount, useAppKitBalance } from "@reown/appkit/react";
+import { useAppKitConnection } from '@reown/appkit-adapter-solana/react';
 import { SolanaIcon } from "@/components/Icons/Icons";
 import { useSolanaProtocol } from "@/hooks/useSolanaProtocol";
+import { PublicKey } from "@solana/web3.js";
 
 enum TABS {
   COLLATERAL = 0,
@@ -46,6 +48,7 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
   const selectedChainName = ChainName.SOLANA;
   const { fetchBalance } = useAppKitBalance();
   const { address, isConnected } = useAppKitAccount();
+  const { connection } = useAppKitConnection();
 
   const [balance, setBalance] = useState<any | null>(null);
 
@@ -65,25 +68,57 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
   const [selectedAsset, setSelectedAsset] = useState<CollateralAsset>(
     DefaultAssetByChainName[selectedChainName ?? ChainName.INJECTIVE]
   );
-
+  const [userTroveState, setUserTroveState] = useState<{
+    collateralAmount: bigint;
+    debt: bigint;
+    icr: bigint;
+  } | null>(null);
   const [selectedTab, setSelectedTab] = useState<TABS>(TABS.COLLATERAL);
 
   const { addNotification } = useNotification();
-  const { openTrove, loading: processLoading } = useSolanaProtocol();
+  const { openTrove, addCollateral, removeCollateral, loading: processLoading } = useSolanaProtocol();
 
-  const selectedCollateral = {
-    amount: 1,
+  const selectedCollateral = userTroveState ? {
+    amount: Number(userTroveState.collateralAmount) / 1e9, // Convert from lamports to SOL
     denom: selectedAsset.denom,
-  };
+  } : { amount: 0, denom: selectedAsset.denom };
+
   // const selectedMinCollateral = useMemo(
   //   () => pageData?.minCollateralRatioByDenom[selectedAsset.denom] ?? 0,
   //   [selectedAsset, pageData?.minCollateralRatioByDenom]
   // );
 
   const isTroveOpened = useMemo(
-    () => selectedCollateral.amount > 0,
-    [pageData]
+    () => userTroveState !== null && userTroveState.collateralAmount > 0 && userTroveState.debt > 0,
+    [userTroveState]
   );
+
+
+  // Add useEffect to fetch trove state
+  useEffect(() => {
+    const fetchTroveState = async () => {
+      if (!address || !connection) {
+        setUserTroveState(null);
+        return;
+      }
+
+      try {
+        const { fetchUserTroveState } = await import('@/lib/solana/fetchTroveState');
+        const userPublicKey = new PublicKey(address);
+        const trove = await fetchUserTroveState(connection, userPublicKey, 'SOL');
+        setUserTroveState(trove);
+      } catch (err) {
+        console.error('Error fetching trove state:', err);
+        setUserTroveState(null);
+      }
+    };
+
+    fetchTroveState();
+
+    // Refresh every 5 seconds
+    const interval = setInterval(fetchTroveState, 5000);
+    return () => clearInterval(interval);
+  }, [address, connection]);
 
   // const collacteralRatioCalculate = useMemo(
   //   () =>
@@ -131,7 +166,7 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
       collateralAmount <= 0 ||
       collateralAmount > 999 ||
       Number(convertAmount(balance ?? 0, selectedAsset.decimal)) <
-        collateralAmount,
+      collateralAmount,
     [collateralAmount, selectedAsset]
   );
   // const borrowDisabled = useMemo(
@@ -338,6 +373,66 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
     }
   };
 
+  const handleAddCollateral = async () => {
+    try {
+      // Convert SOL to lamports (9 decimals)
+      const collateralInLamports = collateralAmount * 1_000_000_000;
+
+      const signature = await addCollateral({
+        collateralAmount: collateralInLamports,
+      });
+
+      addNotification({
+        status: "success",
+        directLink: `https://solscan.io/tx/${signature}?cluster=devnet`,
+        message: `${collateralAmount} SOL Collateral Added`,
+      });
+
+      // Reset form
+      setCollateralAmount(0);
+
+      // Refresh data if available
+      getPageData?.();
+    } catch (err: any) {
+      addNotification({
+        status: "error",
+        message: err.message || "Failed to add collateral",
+        directLink: "",
+      });
+      console.error(err);
+    }
+  };
+
+  const handleRemoveCollateral = async () => {
+    try {
+      // Convert SOL to lamports (9 decimals)
+      const collateralInLamports = collateralAmount * 1_000_000_000;
+      
+      const signature = await removeCollateral({
+        collateralAmount: collateralInLamports,
+      });
+      
+      addNotification({
+        status: "success",
+        directLink: `https://solscan.io/tx/${signature}?cluster=devnet`,
+        message: `${collateralAmount} SOL Collateral Removed`,
+      });
+      
+      // Reset form
+      setCollateralAmount(0);
+      
+      // Refresh data if available
+      getPageData?.();
+    } catch (err: any) {
+      addNotification({
+        status: "error",
+        message: err.message || "Failed to remove collateral",
+        directLink: "",
+      });
+      console.error(err);
+    }
+  };
+
   // useEffect(() => {
   //   if (selectedChainName) {
   //     setSelectedAsset(DefaultAssetByChainName[selectedChainName]);
@@ -346,7 +441,7 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
 
   return (
     <div className="overflow-hidden md:overflow-visible">
-      {false ? (
+      {isTroveOpened ? (
         <>
           <Text size="3xl">Manage your collateral</Text>
           <Text size="base" weight="font-regular" className="mt-1">
@@ -452,9 +547,8 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
                     renderText={(value) => (
                       <StatisticCard
                         title="Management Fee"
-                        description={`${value} ${
-                          selectedAsset?.shortName ?? ""
-                        } (0.5%)`}
+                        description={`${value} ${selectedAsset?.shortName ?? ""
+                          } (0.5%)`}
                         tooltip="This amount is deducted from the collateral amount as a management fee. There are no recurring fees for borrowing, which is thus interest-free."
                       />
                     )}
@@ -462,11 +556,10 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
 
                   <StatisticCard
                     title="Total Debt"
-                    description={`${
-                      (pageData?.debtAmount ?? 0) < 0.001
-                        ? "< 0.000"
-                        : pageData?.debtAmount ?? 0
-                    } AUSD`}
+                    description={`${(pageData?.debtAmount ?? 0) < 0.001
+                      ? "< 0.000"
+                      : pageData?.debtAmount ?? 0
+                      } AUSD`}
                     tooltip="The total amount of AUSD you have borrowed"
                   />
                   {/* <StatisticCard
@@ -495,10 +588,10 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
                   <OutlinedButton
                     disabled={withdrawDisabled}
                     disabledText={
-                      "Enter the INJ amount. 999 INJ is the upper limit for now."
+                      "Enter the SOL amount. Cannot withdraw below minimum collateral ratio (115%)."
                     }
-                    // loading={processLoading}
-                    // onClick={queryWithdraw}
+                    loading={processLoading}
+                    onClick={handleRemoveCollateral}
                     className="min-w-[136px] md:min-w-[201px] h-11"
                   >
                     <Text>Withdraw</Text>
@@ -506,10 +599,10 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
                   <GradientButton
                     disabled={depositDisabled}
                     disabledText={
-                      "Enter the INJ amount. 999 INJ is the upper limit for now."
+                      "Enter the SOL amount. Ensure you have sufficient collateral tokens in your wallet."
                     }
-                    // loading={processLoading}
-                    // onClick={queryAddColletral}
+                    loading={processLoading}
+                    onClick={handleAddCollateral}
                     className="min-w-[176px] md:min-w-[374px] h-11"
                     rounded="rounded-lg"
                   >
@@ -584,7 +677,7 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
                           ((selectedCollateral.amount ?? 0) *
                             (basePrice ?? 0) *
                             100) /
-                            115 -
+                          115 -
                           (pageData?.debtAmount ?? 0)
                         }
                         thousandsGroupStyle="thousand"
@@ -794,9 +887,8 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
             <StatisticCard
               title="Management Fee"
               isNumeric
-              description={`${Number(openTroveAmount * 0.005)} ${
-                selectedAsset?.shortName ?? ""
-              } (0.5%)`}
+              description={`${Number(openTroveAmount * 0.005)} ${selectedAsset?.shortName ?? ""
+                } (0.5%)`}
               className="w-full h-14"
               tooltip="This amount is deducted from the collateral amount as a management fee. There are no recurring fees for borrowing, which is thus interest-free."
             />

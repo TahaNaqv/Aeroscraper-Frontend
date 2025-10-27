@@ -27,3 +27,68 @@ export const OpenTroveParamsSchema = new Map([
   ],
 ]);
 
+// AddCollateralParams schema (matches Rust struct from IDL)
+export class AddCollateralParams {
+  amount: bigint;
+  collateral_denom: string;
+  prev_node_id: bigint | null;
+  next_node_id: bigint | null;
+
+  constructor(fields: { 
+    amount: bigint; 
+    collateral_denom: string;
+  }) {
+    this.amount = fields.amount;
+    this.collateral_denom = fields.collateral_denom;
+    this.prev_node_id = null;
+    this.next_node_id = null;
+  }
+}
+
+export const AddCollateralParamsSchema = new Map([
+  [
+    AddCollateralParams,
+    {
+      kind: 'struct',
+      fields: [
+        ['amount', 'u64'],
+        ['collateral_denom', 'string'],
+        ['prev_node_id', { option: 'pubkey' }],
+        ['next_node_id', { option: 'pubkey' }],
+      ],
+    },
+  ],
+]);
+
+// RemoveCollateralParams schema (matches Rust struct from IDL)
+export class RemoveCollateralParams {
+  collateral_amount: bigint;
+  collateral_denom: string;
+  prev_node_id: bigint | null;
+  next_node_id: bigint | null;
+
+  constructor(fields: { 
+    collateral_amount: bigint; 
+    collateral_denom: string;
+  }) {
+    this.collateral_amount = fields.collateral_amount;
+    this.collateral_denom = fields.collateral_denom;
+    this.prev_node_id = null;
+    this.next_node_id = null;
+  }
+}
+
+export const RemoveCollateralParamsSchema = new Map([
+  [
+    RemoveCollateralParams,
+    {
+      kind: 'struct',
+      fields: [
+        ['collateral_amount', 'u64'],
+        ['collateral_denom', 'string'],
+        ['prev_node_id', { option: 'pubkey' }],
+        ['next_node_id', { option: 'pubkey' }],
+      ],
+    },
+  ],
+]);

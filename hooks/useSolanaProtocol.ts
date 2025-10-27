@@ -244,8 +244,269 @@ export function useSolanaProtocol() {
         }
     };
 
+    const addCollateral = async (params: {
+        collateralAmount: number; // SOL in lamports
+    }) => {
+        if (!isConnected || !walletProvider || !address) {
+            throw new Error('Wallet not connected');
+        }
+
+        if (!connection) {
+            throw new Error('Connection not available');
+        }
+
+        if (!protocolState) {
+            throw new Error('Protocol state not loaded');
+        }
+
+        try {
+            setLoading(true);
+            setError(null);
+
+            const userPublicKey = new PublicKey(address);
+            const { collateralMint, oracleProgramId, oracleState } = protocolState;
+
+            // 1. Fetch current trove state
+            const { fetchUserTroveState } = await import('@/lib/solana/fetchTroveState');
+            const currentTrove = await fetchUserTroveState(connection, userPublicKey, 'SOL');
+
+            if (!currentTrove) {
+                throw new Error('Trove does not exist. Please open a trove first.');
+            }
+
+            // 2. Calculate new total collateral
+            const newTotalCollateral = Number(currentTrove.collateralAmount) + params.collateralAmount;
+            const currentDebt = currentTrove.debt.toString();
+
+            // 3. Get neighbor hints with new collateral amount
+            const neighborHints = await getNeighborHints(
+                connection,
+                userPublicKey,
+                newTotalCollateral,
+                currentDebt,
+                'SOL'
+            );
+
+            console.log('📊 Add Collateral Parameters:');
+            console.log('  - Current Collateral:', currentTrove.collateralAmount.toString());
+            console.log('  - Adding:', params.collateralAmount);
+            console.log('  - New Total:', newTotalCollateral);
+            console.log('  - Current Debt:', currentDebt);
+            console.log('  - Neighbor Hints:', neighborHints.length);
+
+            // 4. Validate collateral token account and balance
+            const { getAssociatedTokenAddress, getAccount } = await import('@solana/spl-token');
+            const userCollateralATA = await getAssociatedTokenAddress(collateralMint, userPublicKey);
+
+            const userCollateralAccount = await getAccount(connection, userCollateralATA);
+            if (userCollateralAccount.amount < BigInt(params.collateralAmount)) {
+                throw new Error(`Insufficient collateral tokens. Required: ${params.collateralAmount / 1e9}, Available: ${userCollateralAccount.amount.toString()}`);
+            }
+
+            // 5. Build instruction
+            const { buildAddCollateralInstruction } = await import('@/lib/solana/buildInstructions');
+            const { instruction } = await buildAddCollateralInstruction(
+                userPublicKey,
+                collateralMint,
+                oracleProgramId,
+                oracleState,
+                params.collateralAmount,
+                'SOL',
+                neighborHints
+            );
+
+            console.log('✅ Instruction built, creating transaction...');
+
+            // 6. Build and send transaction
+            const tx = new Transaction();
+            tx.add(instruction);
+            tx.feePayer = walletProvider.publicKey;
+
+            console.log('📝 Fee payer:', walletProvider.publicKey.toBase58());
+            console.log('📦 Transaction details:');
+            console.log('  - Instruction count:', tx.instructions.length);
+            console.log('  - First instruction data length:', tx.instructions[0]?.data.length || 0);
+            console.log('  - First instruction accounts:', tx.instructions[0]?.keys.length || 0);
+
+            const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash('confirmed');
+            tx.recentBlockhash = blockhash;
+
+            console.log('🔄 Getting latest blockhash...');
+            console.log('✅ Got blockhash:', blockhash);
+
+            // Simulate first
+            console.log('🔍 Simulating add_collateral transaction...');
+            const simulationResult = await connection.simulateTransaction(tx);
+            console.log('📊 Simulation result:');
+            console.log('  - Error:', simulationResult.value.err);
+            console.log('  - Logs:', simulationResult.value.logs || 'No logs');
+            console.log('  - Units consumed:', simulationResult.value.unitsConsumed);
+
+            if (simulationResult.value.err) {
+                console.error('❌ Simulation failed with error:', simulationResult.value.err);
+                throw new Error(`Transaction simulation failed: ${JSON.stringify(simulationResult.value.err)}`);
+            }
+
+            console.log('✅ Simulation passed - transaction is valid');
+
+            // Sign and send
+            console.log('✍️  Sending transaction to wallet for signing...');
+            const signature = await walletProvider.signAndSendTransaction(tx);
+            console.log('✅ Transaction sent, signature:', signature);
+
+            // Wait for confirmation
+            console.log('⏳ Waiting for confirmation...');
+            await connection.confirmTransaction({
+                signature,
+                blockhash,
+                lastValidBlockHeight,
+            });
+            console.log('✅ Transaction confirmed!');
+
+            return signature;
+        } catch (err: any) {
+            console.error('❌ Add collateral error:', err);
+            setError(err.message || 'Failed to add collateral');
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const removeCollateral = async (params: {
+        collateralAmount: number; // SOL in lamports
+    }) => {
+        if (!isConnected || !walletProvider || !address) {
+            throw new Error('Wallet not connected');
+        }
+
+        if (!connection) {
+            throw new Error('Connection not available');
+        }
+
+        if (!protocolState) {
+            throw new Error('Protocol state not loaded');
+        }
+
+        try {
+            setLoading(true);
+            setError(null);
+
+            const userPublicKey = new PublicKey(address);
+            const { collateralMint, oracleProgramId, oracleState } = protocolState;
+
+            // 1. Fetch current trove state
+            const { fetchUserTroveState } = await import('@/lib/solana/fetchTroveState');
+            const currentTrove = await fetchUserTroveState(connection, userPublicKey, 'SOL');
+
+            if (!currentTrove) {
+                throw new Error('Trove does not exist. Please open a trove first.');
+            }
+
+            // 2. Validate sufficient collateral
+            if (currentTrove.collateralAmount < BigInt(params.collateralAmount)) {
+                throw new Error(`Insufficient collateral in trove. Available: ${Number(currentTrove.collateralAmount) / 1e9} SOL`);
+            }
+
+            // 3. Calculate new collateral amount after removal
+            const newTotalCollateral = Number(currentTrove.collateralAmount) - params.collateralAmount;
+            const currentDebt = currentTrove.debt.toString();
+
+            // 4. Validate new ICR won't drop below minimum (115%)
+            const MINIMUM_ICR = 115; // 115%
+            const estimatedPrice = 140; // Conservative SOL price estimate in USD
+            const collateralValueUSD = (newTotalCollateral / 1e9) * estimatedPrice;
+            const debtValueUSD = Number(currentDebt) / 1e18;
+            const newICR = (collateralValueUSD / debtValueUSD) * 100;
+
+            console.log('📊 Remove Collateral Validation:');
+            console.log('  - Current Collateral:', currentTrove.collateralAmount.toString());
+            console.log('  - Removing:', params.collateralAmount);
+            console.log('  - New Total:', newTotalCollateral);
+            console.log('  - Current Debt:', currentDebt);
+            console.log('  - Estimated New ICR:', newICR.toFixed(2), '%');
+            console.log('  - Minimum ICR Required:', MINIMUM_ICR, '%');
+
+            if (newICR < MINIMUM_ICR) {
+                throw new Error(`Removing this collateral would drop ICR below minimum (${MINIMUM_ICR}%). New ICR would be ${newICR.toFixed(2)}%. Risk of liquidation.`);
+            }
+
+            // 5. Get neighbor hints with new collateral amount
+            const neighborHints = await getNeighborHints(
+                connection,
+                userPublicKey,
+                newTotalCollateral,
+                currentDebt,
+                'SOL'
+            );
+
+            console.log('  - Neighbor Hints:', neighborHints.length);
+
+            // 6. Build instruction
+            const { buildRemoveCollateralInstruction } = await import('@/lib/solana/buildInstructions');
+            const { instruction } = await buildRemoveCollateralInstruction(
+                userPublicKey,
+                collateralMint,
+                oracleProgramId,
+                oracleState,
+                params.collateralAmount,
+                'SOL',
+                neighborHints
+            );
+
+            console.log('✅ Instruction built, creating transaction...');
+
+            // 7. Build and send transaction
+            const tx = new Transaction();
+            tx.add(instruction);
+            tx.feePayer = walletProvider.publicKey;
+
+            const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash('confirmed');
+            tx.recentBlockhash = blockhash;
+
+            // Simulate first
+            console.log('🔍 Simulating remove_collateral transaction...');
+            const simulationResult = await connection.simulateTransaction(tx);
+            console.log('📊 Simulation result:');
+            console.log('  - Error:', simulationResult.value.err);
+            console.log('  - Logs:', simulationResult.value.logs || 'No logs');
+            console.log('  - Units consumed:', simulationResult.value.unitsConsumed);
+
+            if (simulationResult.value.err) {
+                console.error('❌ Simulation failed:', simulationResult.value.err);
+                throw new Error(`Transaction simulation failed: ${JSON.stringify(simulationResult.value.err)}`);
+            }
+
+            console.log('✅ Simulation passed - transaction is valid');
+
+            // Sign and send
+            console.log('✍️  Sending transaction to wallet for signing...');
+            const signature = await walletProvider.signAndSendTransaction(tx);
+            console.log('✅ Transaction sent, signature:', signature);
+
+            // Wait for confirmation
+            console.log('⏳ Waiting for confirmation...');
+            await connection.confirmTransaction({
+                signature,
+                blockhash,
+                lastValidBlockHeight,
+            });
+            console.log('✅ Transaction confirmed!');
+
+            return signature;
+        } catch (err: any) {
+            console.error('❌ Remove collateral error:', err);
+            setError(err.message || 'Failed to remove collateral');
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return {
         openTrove,
+        addCollateral,
+        removeCollateral,
         loading,
         error,
     };
