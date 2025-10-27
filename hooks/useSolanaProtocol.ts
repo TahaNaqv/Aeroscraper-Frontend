@@ -503,10 +503,307 @@ export function useSolanaProtocol() {
         }
     };
 
+    const borrowLoan = async (params: {
+        loanAmount: number; // aUSD amount in smallest unit (1e18)
+    }) => {
+        if (!isConnected || !walletProvider || !address) {
+            throw new Error('Wallet not connected');
+        }
+
+        if (!connection) {
+            throw new Error('Connection not available');
+        }
+
+        if (!protocolState) {
+            throw new Error('Protocol state not loaded');
+        }
+
+        try {
+            setLoading(true);
+            setError(null);
+
+            const userPublicKey = new PublicKey(address);
+            const { collateralMint, stablecoinMint, oracleProgramId, oracleState, feesProgramId, feesState } = protocolState;
+
+            // 1. Fetch current trove state
+            const { fetchUserTroveState } = await import('@/lib/solana/fetchTroveState');
+            const currentTrove = await fetchUserTroveState(connection, userPublicKey, 'SOL');
+
+            if (!currentTrove) {
+                throw new Error('Trove does not exist. Please open a trove first.');
+            }
+
+            // 2. Validate loan amount is above minimum
+            const MINIMUM_LOAN_AMOUNT = 1_000_000_000_000_000; // 0.001 aUSD in smallest unit
+            if (params.loanAmount < MINIMUM_LOAN_AMOUNT) {
+                throw new Error(`Loan amount must be at least ${MINIMUM_LOAN_AMOUNT / 1e18} aUSD`);
+            }
+
+            // 3. Calculate new debt after borrowing (including fee)
+            const PROTOCOL_FEE = 0.05; // 5%
+            const feeAmount = Math.floor(params.loanAmount * PROTOCOL_FEE);
+            const netLoanAmount = params.loanAmount - feeAmount;
+            const newTotalDebt = Number(currentTrove.debt) + params.loanAmount;
+            const currentCollateral = Number(currentTrove.collateralAmount);
+
+            // 4. Validate new ICR stays above minimum (115%)
+            const MINIMUM_ICR = 115; // 115%
+            const estimatedPrice = 140; // Conservative SOL price estimate in USD
+            const collateralValueUSD = (currentCollateral / 1e9) * estimatedPrice;
+            const newDebtValueUSD = newTotalDebt / 1e18;
+            const newICR = (collateralValueUSD / newDebtValueUSD) * 100;
+
+            console.log('📊 Borrow Loan Validation:');
+            console.log('  - Current Collateral:', currentCollateral);
+            console.log('  - Current Debt:', currentTrove.debt.toString());
+            console.log('  - Borrowing Amount:', params.loanAmount);
+            console.log('  - Fee Amount:', feeAmount);
+            console.log('  - Net Loan Amount:', netLoanAmount);
+            console.log('  - New Total Debt:', newTotalDebt);
+            console.log('  - Estimated New ICR:', newICR.toFixed(2), '%');
+            console.log('  - Minimum ICR Required:', MINIMUM_ICR, '%');
+
+            if (newICR < MINIMUM_ICR) {
+                throw new Error(`Borrowing this amount would drop ICR below minimum (${MINIMUM_ICR}%). New ICR would be ${newICR.toFixed(2)}%. Cannot borrow.`);
+            }
+
+            // 5. Get neighbor hints with new debt
+            const neighborHints = await getNeighborHints(
+                connection,
+                userPublicKey,
+                currentCollateral,
+                newTotalDebt.toString(),
+                'SOL'
+            );
+
+            console.log('  - Neighbor Hints:', neighborHints.length);
+
+            // 6. Build instruction
+            const { buildBorrowLoanInstruction } = await import('@/lib/solana/buildInstructions');
+            const { instruction } = await buildBorrowLoanInstruction(
+                userPublicKey,
+                collateralMint,
+                stablecoinMint,
+                oracleProgramId,
+                oracleState,
+                feesProgramId,
+                feesState,
+                params.loanAmount,
+                'SOL',
+                neighborHints
+            );
+
+            console.log('✅ Instruction built, creating transaction...');
+
+            // 7. Build and send transaction
+            const tx = new Transaction();
+            tx.add(instruction);
+            tx.feePayer = walletProvider.publicKey;
+
+            const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash('confirmed');
+            tx.recentBlockhash = blockhash;
+
+            // Simulate first
+            console.log('🔍 Simulating borrow_loan transaction...');
+            const simulationResult = await connection.simulateTransaction(tx);
+            console.log('📊 Simulation result:');
+            console.log('  - Error:', simulationResult.value.err);
+            console.log('  - Logs:', simulationResult.value.logs || 'No logs');
+            console.log('  - Units consumed:', simulationResult.value.unitsConsumed);
+
+            if (simulationResult.value.err) {
+                console.error('❌ Simulation failed:', simulationResult.value.err);
+                throw new Error(`Transaction simulation failed: ${JSON.stringify(simulationResult.value.err)}`);
+            }
+
+            console.log('✅ Simulation passed - transaction is valid');
+
+            // Sign and send
+            console.log('✍️  Sending transaction to wallet for signing...');
+            const signature = await walletProvider.signAndSendTransaction(tx);
+            console.log('✅ Transaction sent, signature:', signature);
+
+            // Wait for confirmation
+            console.log('⏳ Waiting for confirmation...');
+            await connection.confirmTransaction({
+                signature,
+                blockhash,
+                lastValidBlockHeight,
+            });
+            console.log('✅ Transaction confirmed!');
+
+            return signature;
+        } catch (err: any) {
+            console.error('❌ Borrow loan error:', err);
+            setError(err.message || 'Failed to borrow loan');
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const repayLoan = async (params: {
+        repayAmount: number; // aUSD amount in smallest unit (1e18)
+    }) => {
+        if (!isConnected || !walletProvider || !address) {
+            throw new Error('Wallet not connected');
+        }
+
+        if (!connection) {
+            throw new Error('Connection not available');
+        }
+
+        if (!protocolState) {
+            throw new Error('Protocol state not loaded');
+        }
+
+        try {
+            setLoading(true);
+            setError(null);
+
+            const userPublicKey = new PublicKey(address);
+            const { collateralMint, stablecoinMint, oracleProgramId, oracleState } = protocolState;
+
+            // 1. Fetch current trove state
+            const { fetchUserTroveState } = await import('@/lib/solana/fetchTroveState');
+            const currentTrove = await fetchUserTroveState(connection, userPublicKey, 'SOL');
+
+            if (!currentTrove) {
+                throw new Error('Trove does not exist. Please open a trove first.');
+            }
+
+            // 2. Validate repayment amount
+            if (params.repayAmount <= 0) {
+                throw new Error('Repayment amount must be greater than zero');
+            }
+
+            const currentDebt = Number(currentTrove.debt);
+
+            if (params.repayAmount > currentDebt) {
+                throw new Error(`Repayment amount (${params.repayAmount / 1e18} aUSD) exceeds current debt (${currentDebt / 1e18} aUSD)`);
+            }
+
+            // 3. Check user stablecoin balance
+            const { getAccount, getAssociatedTokenAddress } = await import('@solana/spl-token');
+            const userStablecoinAccount = await getAssociatedTokenAddress(stablecoinMint, userPublicKey);
+
+            try {
+                const stablecoinAccountInfo = await getAccount(connection, userStablecoinAccount);
+                const userBalance = Number(stablecoinAccountInfo.amount);
+
+                if (params.repayAmount > userBalance) {
+                    throw new Error(`Insufficient aUSD balance. You have ${userBalance / 1e18} aUSD but need ${params.repayAmount / 1e18} aUSD`);
+                }
+            } catch (err: any) {
+                if (err.message?.includes('could not find account')) {
+                    throw new Error('You do not have any aUSD tokens to repay');
+                }
+                throw err;
+            }
+
+            // 4. Calculate new debt after repayment
+            const newDebt = currentDebt - params.repayAmount;
+            const currentCollateral = Number(currentTrove.collateralAmount);
+
+            // 5. Validate partial repayment leaves debt above minimum
+            const MINIMUM_LOAN_AMOUNT = 1_000_000_000_000_000; // 0.001 aUSD
+            if (newDebt > 0 && newDebt < MINIMUM_LOAN_AMOUNT) {
+                throw new Error(
+                    `Partial repayment would leave debt (${newDebt / 1e18} aUSD) below minimum (${MINIMUM_LOAN_AMOUNT / 1e18} aUSD). ` +
+                    `Either repay less to stay above minimum, or repay full amount (${currentDebt / 1e18} aUSD) to close the trove.`
+                );
+            }
+
+            console.log('📊 Repay Loan Validation:');
+            console.log('  - Current Collateral:', currentCollateral);
+            console.log('  - Current Debt:', currentDebt);
+            console.log('  - Repaying Amount:', params.repayAmount);
+            console.log('  - New Debt:', newDebt);
+            console.log('  - Full Repayment:', newDebt === 0 ? 'Yes' : 'No');
+
+            // 6. Get neighbor hints with new debt (if not fully repaying)
+            let neighborHints: PublicKey[] = [];
+            if (newDebt > 0) {
+                neighborHints = await getNeighborHints(
+                    connection,
+                    userPublicKey,
+                    currentCollateral,
+                    newDebt.toString(),
+                    'SOL'
+                );
+                console.log('  - Neighbor Hints:', neighborHints.length, '(partial repayment)');
+            } else {
+                console.log('  - Neighbor Hints: 0 (full repayment - trove will be removed from list)');
+            }
+
+            // 7. Build instruction
+            const { buildRepayLoanInstruction } = await import('@/lib/solana/buildInstructions');
+            const { instruction } = await buildRepayLoanInstruction(
+                userPublicKey,
+                collateralMint,
+                stablecoinMint,
+                oracleProgramId,
+                oracleState,
+                params.repayAmount,
+                'SOL',
+                neighborHints
+            );
+
+            console.log('✅ Instruction built, creating transaction...');
+
+            // 8. Build and send transaction
+            const tx = new Transaction();
+            tx.add(instruction);
+            tx.feePayer = walletProvider.publicKey;
+
+            const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash('confirmed');
+            tx.recentBlockhash = blockhash;
+
+            // Simulate first
+            console.log('🔍 Simulating repay_loan transaction...');
+            const simulationResult = await connection.simulateTransaction(tx);
+            console.log('📊 Simulation result:');
+            console.log('  - Error:', simulationResult.value.err);
+            console.log('  - Logs:', simulationResult.value.logs || 'No logs');
+            console.log('  - Units consumed:', simulationResult.value.unitsConsumed);
+
+            if (simulationResult.value.err) {
+                console.error('❌ Simulation failed:', simulationResult.value.err);
+                throw new Error(`Transaction simulation failed: ${JSON.stringify(simulationResult.value.err)}`);
+            }
+
+            console.log('✅ Simulation passed - transaction is valid');
+
+            // Sign and send
+            console.log('✍️  Sending transaction to wallet for signing...');
+            const signature = await walletProvider.signAndSendTransaction(tx);
+            console.log('✅ Transaction sent, signature:', signature);
+
+            // Wait for confirmation
+            console.log('⏳ Waiting for confirmation...');
+            await connection.confirmTransaction({
+                signature,
+                blockhash,
+                lastValidBlockHeight,
+            });
+            console.log('✅ Transaction confirmed!');
+
+            return signature;
+        } catch (err: any) {
+            console.error('❌ Repay loan error:', err);
+            setError(err.message || 'Failed to repay loan');
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return {
         openTrove,
         addCollateral,
         removeCollateral,
+        borrowLoan,
+        repayLoan,
         loading,
         error,
     };

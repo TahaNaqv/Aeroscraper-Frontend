@@ -48,7 +48,7 @@ export async function fetchAllTroves(
       try {
         // Deserialize UserDebtAmount account
         const data = account.data;
-        
+
         // Check discriminator
         const discriminator = data.slice(0, 8);
         const discriminatorBuffer = Uint8Array.from(discriminator);
@@ -59,11 +59,11 @@ export async function fetchAllTroves(
 
         // Skip 8-byte discriminator
         let offset = 8;
-        
+
         // owner: Pubkey (32 bytes)
         const owner = new PublicKey(data.slice(offset, offset + 32));
         offset += 32;
-        
+
         // amount: u64 (8 bytes, little-endian)
         const amountBuffer = data.slice(offset, offset + 8);
         const amountView = new DataView(amountBuffer.buffer, amountBuffer.byteOffset);
@@ -90,7 +90,7 @@ export async function fetchAllTroves(
         const thresholdDiscriminator = thresholdData.slice(0, 8);
         const thresholdDiscriminatorBuffer = Uint8Array.from(thresholdDiscriminator);
         const expectedThresholdDiscriminator = Uint8Array.from(LIQUIDITY_THRESHOLD_DISCRIMINATOR);
-        
+
         if (!thresholdDiscriminatorBuffer.every((val, idx) => val === expectedThresholdDiscriminator[idx])) {
           console.warn(`Invalid discriminator for LiquidityThreshold: ${owner.toBase58()}`);
           continue;
@@ -98,7 +98,7 @@ export async function fetchAllTroves(
 
         // Skip discriminator and read owner (32 bytes)
         offset = 8 + 32;
-        
+
         // ratio: u64 (8 bytes, little-endian)
         const ratioBuffer = thresholdData.slice(offset, offset + 8);
         const ratioView = new DataView(ratioBuffer.buffer, ratioBuffer.byteOffset);
@@ -107,51 +107,51 @@ export async function fetchAllTroves(
         // Fetch UserCollateralAmount for this user
         // We'll fetch all collateral accounts for this user and filter by denom
         const collateralAccounts = await connection.getProgramAccounts(PROTOCOL_PROGRAM_ID, {
-      filters: [
-        {
-          dataSize: 8 + 32 + 32 + 8, // discriminator + owner + denom (string, variable length) + amount
-        },
-        {
-          memcmp: {
-            offset: 8, // Skip discriminator
-            bytes: owner.toBase58(),
-          },
-        },
-      ],
-    });
+          filters: [
+            {
+              dataSize: 8 + 32 + 32 + 8, // discriminator + owner + denom (string, variable length) + amount
+            },
+            {
+              memcmp: {
+                offset: 8, // Skip discriminator
+                bytes: owner.toBase58(),
+              },
+            },
+          ],
+        });
 
         for (const { account: collateralAccount } of collateralAccounts) {
           const collateralData = collateralAccount.data;
           const collateralDiscriminator = collateralData.slice(0, 8);
           const collateralDiscriminatorBuffer = Uint8Array.from(collateralDiscriminator);
           const expectedCollateralDiscriminator = Uint8Array.from(USER_COLLATERAL_AMOUNT_DISCRIMINATOR);
-          
+
           if (!collateralDiscriminatorBuffer.every((val, idx) => val === expectedCollateralDiscriminator[idx])) {
             continue;
           }
 
           try {
             offset = 8 + 32; // Skip discriminator and owner
-            
+
             // Read denom string (length + bytes)
             const denomLengthView = new DataView(collateralData.buffer, collateralData.byteOffset + offset);
             const denomLength = denomLengthView.getUint32(0, true);
             offset += 4;
-            
+
             const denomBytes = collateralData.slice(offset, offset + denomLength);
             const denom = new TextDecoder().decode(denomBytes);
             offset += denomLength;
-            
+
             // Apply collateral filter if specified
             if (collateralDenom && denom !== collateralDenom) {
               continue;
             }
-            
+
             // amount: u64 (8 bytes)
             const collateralAmountBuffer = collateralData.slice(offset, offset + 8);
             const collateralAmountView = new DataView(collateralAmountBuffer.buffer);
             const collateralAmount = BigInt(collateralAmountView.getBigUint64(0, true));
-            
+
             // Skip if no collateral
             if (collateralAmount === BigInt(0)) {
               continue;

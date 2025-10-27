@@ -65,6 +65,7 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
   const [borrowAmount, setBorrowAmount] = useState<number>(0);
   const [collateralAmount, setCollateralAmount] = useState<number>(0);
   const [borrowingAmount, setBorrowingAmount] = useState<number>(0);
+  const [repaymentAmount, setRepaymentAmount] = useState<number>(0);
   const [selectedAsset, setSelectedAsset] = useState<CollateralAsset>(
     DefaultAssetByChainName[selectedChainName ?? ChainName.INJECTIVE]
   );
@@ -76,7 +77,7 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
   const [selectedTab, setSelectedTab] = useState<TABS>(TABS.COLLATERAL);
 
   const { addNotification } = useNotification();
-  const { openTrove, addCollateral, removeCollateral, loading: processLoading } = useSolanaProtocol();
+  const { openTrove, addCollateral, removeCollateral, borrowLoan, repayLoan, loading: processLoading } = useSolanaProtocol();
 
   const selectedCollateral = userTroveState ? {
     amount: Number(userTroveState.collateralAmount) / 1e9, // Convert from lamports to SOL
@@ -169,24 +170,21 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
       collateralAmount,
     [collateralAmount, selectedAsset]
   );
-  // const borrowDisabled = useMemo(
-  //   () =>
-  //     (borrowingAmount <= 0 ||
-  //       borrowingAmount > 999 ||
-  //       borrowingAmount >
-  //         (selectedCollateral.amount * (basePrice ?? 0) * 100) / 115 -
-  //           (pageData?.debtAmount ?? 0)) ??
-  //     0,
-  //   [borrowingAmount, selectedCollateral]
-  // );
-  // console.log("pageData.debtAmount", pageData?.debtAmount);
+  const borrowDisabled = useMemo(
+    () =>
+      borrowingAmount <= 0 ||
+      borrowingAmount > 999 ||
+      !userTroveState,
+    [borrowingAmount, userTroveState]
+  );
 
-  // const repayDisabled = useMemo(
-  //   () =>
-  //     (borrowingAmount <= 0 ||
-  //       borrowingAmount > 999 ||
-  //       borrowingAmount > (pageData?.debtAmount ?? 0)) ??
-  //     (0 || borrowingAmount > pageData?.ausdBalance) ??
+  const repayDisabled = useMemo(
+    () =>
+      borrowingAmount <= 0 ||  // Changed from repaymentAmount
+      borrowingAmount > 999 ||  // Changed from repaymentAmount
+      !userTroveState,
+    [borrowingAmount, userTroveState]  // Changed from repaymentAmount
+  );
   //     0,
   //   [borrowingAmount]
   // );
@@ -407,26 +405,94 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
     try {
       // Convert SOL to lamports (9 decimals)
       const collateralInLamports = collateralAmount * 1_000_000_000;
-      
+
       const signature = await removeCollateral({
         collateralAmount: collateralInLamports,
       });
-      
+
       addNotification({
         status: "success",
         directLink: `https://solscan.io/tx/${signature}?cluster=devnet`,
         message: `${collateralAmount} SOL Collateral Removed`,
       });
-      
+
       // Reset form
       setCollateralAmount(0);
-      
+
       // Refresh data if available
       getPageData?.();
     } catch (err: any) {
       addNotification({
         status: "error",
         message: err.message || "Failed to remove collateral",
+        directLink: "",
+      });
+      console.error(err);
+    }
+  };
+
+  const handleBorrowLoan = async () => {
+    try {
+      // Convert AUSD to smallest unit (18 decimals)
+      const loanInSmallestUnit = Math.floor(borrowingAmount * 1e18);
+
+      const signature = await borrowLoan({
+        loanAmount: loanInSmallestUnit,
+      });
+
+      addNotification({
+        status: "success",
+        directLink: `https://solscan.io/tx/${signature}?cluster=devnet`,
+        message: `${borrowingAmount} AUSD Borrowed Successfully`,
+      });
+
+      // Reset form
+      setBorrowingAmount(0);
+
+      // Refresh trove state
+      if (connection && address) {
+        const { fetchUserTroveState } = await import('@/lib/solana/fetchTroveState');
+        const updatedTrove = await fetchUserTroveState(connection, new PublicKey(address), 'SOL');
+        setUserTroveState(updatedTrove);
+      }
+    } catch (err: any) {
+      addNotification({
+        status: "error",
+        message: err.message || "Failed to borrow loan",
+        directLink: "",
+      });
+      console.error(err);
+    }
+  };
+
+  const handleRepayLoan = async () => {
+    try {
+      // Convert AUSD to smallest unit (18 decimals)
+      const repayInSmallestUnit = Math.floor(borrowingAmount * 1e18);
+
+      const signature = await repayLoan({
+        repayAmount: repayInSmallestUnit,
+      });
+
+      addNotification({
+        status: "success",
+        directLink: `https://solscan.io/tx/${signature}?cluster=devnet`,
+        message: `${repaymentAmount} AUSD Repaid Successfully`,
+      });
+
+      // Reset form
+      setRepaymentAmount(0);
+
+      // Refresh trove state
+      if (connection && address) {
+        const { fetchUserTroveState } = await import('@/lib/solana/fetchTroveState');
+        const updatedTrove = await fetchUserTroveState(connection, new PublicKey(address), 'SOL');
+        setUserTroveState(updatedTrove);
+      }
+    } catch (err: any) {
+      addNotification({
+        status: "error",
+        message: err.message || "Failed to repay loan",
         directLink: "",
       });
       console.error(err);
@@ -739,23 +805,24 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
                 </div>
                 <div className="flex items-center justify-end pr-4 gap-4 mt-6">
                   <OutlinedButton
-                    // disabled={repayDisabled}
+                    disabled={repayDisabled}
                     disabledText={
-                      "Enter the AUSD amount. 999 AUSD is the upper limit for now."
+                      "Enter the AUSD amount to repay."
                     }
-                    // loading={processLoading}
-                    // onClick={queryRepay}
+                    loading={processLoading}
+                    onClick={handleRepayLoan}
                     className="min-w-[142px] md:min-w-[201px] h-11"
+                    rounded="lg"
                   >
                     <Text>Repay</Text>
                   </OutlinedButton>
                   <GradientButton
-                    // disabled={borrowD isabled}
+                    disabled={borrowDisabled}
                     disabledText={
-                      "Enter the AUSD amount. 999 AUSD is the upper limit for now."
+                      "Enter the AUSD amount. Borrowing must keep ICR above 115%."
                     }
-                    // loading={processLoading}
-                    // onClick={queryBorrow}
+                    loading={processLoading}
+                    onClick={handleBorrowLoan}
                     className="min-w-[176px] md:min-w-[375px] h-11"
                     rounded="rounded-lg"
                   >

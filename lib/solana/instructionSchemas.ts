@@ -34,8 +34,8 @@ export class AddCollateralParams {
   prev_node_id: bigint | null;
   next_node_id: bigint | null;
 
-  constructor(fields: { 
-    amount: bigint; 
+  constructor(fields: {
+    amount: bigint;
     collateral_denom: string;
   }) {
     this.amount = fields.amount;
@@ -67,8 +67,8 @@ export class RemoveCollateralParams {
   prev_node_id: bigint | null;
   next_node_id: bigint | null;
 
-  constructor(fields: { 
-    collateral_amount: bigint; 
+  constructor(fields: {
+    collateral_amount: bigint;
     collateral_denom: string;
   }) {
     this.collateral_amount = fields.collateral_amount;
@@ -85,6 +85,72 @@ export const RemoveCollateralParamsSchema = new Map([
       kind: 'struct',
       fields: [
         ['collateral_amount', 'u64'],
+        ['collateral_denom', 'string'],
+        ['prev_node_id', { option: 'pubkey' }],
+        ['next_node_id', { option: 'pubkey' }],
+      ],
+    },
+  ],
+]);
+
+// BorrowLoanParams schema (matches Rust struct from IDL)
+export class BorrowLoanParams {
+  loan_amount: bigint;
+  collateral_denom: string;
+  prev_node_id: bigint | null;
+  next_node_id: bigint | null;
+
+  constructor(fields: {
+    loan_amount: bigint;
+    collateral_denom: string;
+  }) {
+    this.loan_amount = fields.loan_amount;
+    this.collateral_denom = fields.collateral_denom;
+    this.prev_node_id = null;
+    this.next_node_id = null;
+  }
+}
+
+export const BorrowLoanParamsSchema = new Map([
+  [
+    BorrowLoanParams,
+    {
+      kind: 'struct',
+      fields: [
+        ['loan_amount', 'u64'],
+        ['collateral_denom', 'string'],
+        ['prev_node_id', { option: 'pubkey' }],
+        ['next_node_id', { option: 'pubkey' }],
+      ],
+    },
+  ],
+]);
+
+// RepayLoanParams schema (matches Rust struct from IDL)
+export class RepayLoanParams {
+  amount: bigint;
+  collateral_denom: string;
+  prev_node_id: bigint | null;
+  next_node_id: bigint | null;
+
+  constructor(fields: {
+    amount: bigint;
+    collateral_denom: string;
+  }) {
+    this.amount = fields.amount;
+    this.collateral_denom = fields.collateral_denom;
+    this.prev_node_id = null;
+    this.next_node_id = null;
+  }
+}
+
+export const RepayLoanParamsSchema = new Map([
+  [
+    RepayLoanParams,
+    {
+      kind: 'struct',
+      fields: [
+        ['amount', 'u64'],
         ['collateral_denom', 'string'],
         ['prev_node_id', { option: 'pubkey' }],
         ['next_node_id', { option: 'pubkey' }],

@@ -17,11 +17,11 @@ export function calculateICR(
   if (loanAmount === BigInt(0)) {
     return BigInt(Number.MAX_SAFE_INTEGER); // Infinite ICR (no debt)
   }
-  
+
   // ICR = (collateral * price / debt) * 100
   const collateralValue = collateralAmount * estimatedSolPrice;
   const icr = (collateralValue * BigInt(100)) / loanAmount;
-  
+
   return icr;
 }
 
