@@ -25,7 +25,7 @@ export function useSolanaBalance() {
     getBalance();
   }, [isConnected, fetchBalance]);
 
-  const formattedBalance = balance?.data?.formatted ?? "0.00";
+  const formattedBalance = balance?.data?.balance ?? "0.00";
   const symbol = balance?.data?.symbol ?? "SOL";
 
   return { balance, formattedBalance, symbol };

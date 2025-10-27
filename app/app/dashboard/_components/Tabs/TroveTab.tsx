@@ -26,6 +26,7 @@ import { ChainName } from "@/enums/Chain";
 import { useBalances } from "@/contexts/BalanceProvider";
 import { useAppKitAccount, useAppKitBalance } from "@reown/appkit/react";
 import { SolanaIcon } from "@/components/Icons/Icons";
+import { useSolanaProtocol } from "@/hooks/useSolanaProtocol";
 
 enum TABS {
   COLLATERAL = 0,
@@ -67,8 +68,8 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
 
   const [selectedTab, setSelectedTab] = useState<TABS>(TABS.COLLATERAL);
 
-  // const { addNotification, processLoading, setProcessLoading } =
-  //   useNotification();
+  const { addNotification } = useNotification();
+  const { openTrove, loading: processLoading } = useSolanaProtocol();
 
   const selectedCollateral = {
     amount: 1,
@@ -303,36 +304,39 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
   //   setProcessLoading(false);
   // };
 
-  // const openTrove = async () => {
-  //   try {
-  //     setProcessLoading(true);
+  const handleOpenTrove = async () => {
+    try {
+      // Convert SOL to lamports (9 decimals)
+      const collateralInLamports = openTroveAmount * 1_000_000_000;
+      // Convert aUSD to base units (18 decimals)
+      const loanAmountStr = (borrowAmount * Math.pow(10, 18)).toString();
 
-  //     const res: any = await contract.openTrove(
-  //       openTroveAmount,
-  //       borrowAmount,
-  //       selectedAsset
-  //     );
+      const signature = await openTrove({
+        collateralAmount: collateralInLamports,
+        loanAmount: loanAmountStr,
+      });
 
-  //     addNotification({
-  //       status: "success",
-  //       directLink: getIsInjectiveResponse(res)
-  //         ? res?.txHash
-  //         : res?.transactionHash,
-  //       message: "Trove Opened",
-  //     });
-  //     getPageData?.();
-  //     refreshBalance();
-  //   } catch (err) {
-  //     addNotification({
-  //       message: "",
-  //       status: "error",
-  //       directLink: "",
-  //     });
-  //     console.error(err);
-  //   } finally {
-  //     setProcessLoading(false);
-  //   }
-  // };
+      addNotification({
+        status: "success",
+        directLink: `https://solscan.io/tx/${signature}?cluster=devnet`,
+        message: "Trove Opened Successfully",
+      });
+
+      // Reset form
+      setOpenTroveAmount(0);
+      setBorrowAmount(0);
+
+      // Refresh data if available
+      getPageData?.();
+    } catch (err: any) {
+      addNotification({
+        status: "error",
+        message: err.message || "Failed to open trove",
+        directLink: "",
+      });
+      console.error(err);
+    }
+  };
 
   // useEffect(() => {
   //   if (selectedChainName) {
@@ -824,13 +828,13 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
           </motion.div>
           <div className="flex items-center justify-end pr-4 gap-4 mt-10 md:mt-4">
             <GradientButton
-              // loading={processLoading}
-              // onClick={openTrove}
+              loading={processLoading}
+              onClick={handleOpenTrove}
               className="min-w-full md:min-w-[375px] h-11 "
               rounded="rounded-lg"
-              // disabled={confirmDisabled}
+              disabled={openTroveAmount <= 0 || borrowAmount <= 0}
               disabledText={
-                "Fill in both INJ and AUSD amounts. 999 INJ & AUSD is the upper limit, and 1 AUSD is the lower limit for now."
+                "Fill in both SOL and AUSD amounts. 999 SOL & AUSD is the upper limit, and 0.0011 AUSD is the lower limit for now."
               }
             >
               <Text>Confirm</Text>
