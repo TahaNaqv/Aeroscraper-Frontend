@@ -1,40 +1,32 @@
-import { useEffect, useState, useCallback } from "react";
-import { Connection, PublicKey, LAMPORTS_PER_SOL } from "@solana/web3.js";
+// useSolanaBalance.ts
+"use client";
 
-interface UseSolanaBalanceOptions {
-  address?: string | null;
-  connection: Connection | undefined;
-}
+import { useEffect, useState } from "react";
+import { useAppKitBalance, useAppKitAccount } from "@reown/appkit/react";
 
-export function useSolanaBalance({
-  address,
-  connection,
-}: UseSolanaBalanceOptions) {
-  const [balance, setBalance] = useState<number | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+export function useSolanaBalance() {
+  const { isConnected } = useAppKitAccount();
+  const { fetchBalance } = useAppKitBalance();
 
-  const fetchBalance = useCallback(async () => {
-    if (!connection || !address) return;
-
-    try {
-      setLoading(true);
-      setError(null);
-
-      const wallet = new PublicKey(address);
-      const lamports = await connection.getBalance(wallet);
-      setBalance(lamports / LAMPORTS_PER_SOL);
-    } catch (err: any) {
-      console.error("Error fetching balance:", err);
-      setError(err.message || "Failed to fetch balance");
-    } finally {
-      setLoading(false);
-    }
-  }, [address, connection]);
+  const [balance, setBalance] = useState<any | null>(null);
 
   useEffect(() => {
-    fetchBalance();
-  }, [fetchBalance]);
+    if (!isConnected) return;
 
-  return { balance, loading, error, refreshBalance: fetchBalance };
+    const getBalance = async () => {
+      try {
+        const res = await fetchBalance();
+        setBalance(res);
+      } catch (error) {
+        console.error("Error fetching balance:", error);
+      }
+    };
+
+    getBalance();
+  }, [isConnected, fetchBalance]);
+
+  const formattedBalance = balance?.data?.formatted ?? "0.00";
+  const symbol = balance?.data?.symbol ?? "SOL";
+
+  return { balance, formattedBalance, symbol };
 }

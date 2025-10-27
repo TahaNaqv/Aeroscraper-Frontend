@@ -4,4 +4,5 @@ export enum ChainName {
     INJECTIVE = "injectivetestnet",
     NEUTRON = "neutron",
     XION = "xion"
+    SOLANA="solana"
 }

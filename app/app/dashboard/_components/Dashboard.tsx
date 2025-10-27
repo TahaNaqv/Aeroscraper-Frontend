@@ -2,10 +2,7 @@
 
 import { BackgroundWave } from "@/components/Icons/Icons";
 import StatisticSide from "./StatisticSide";
-import {
-  // TabsSide,
-  DashboardTabs,
-} from "./TabsSide";
+import TabsSide, { DashboardTabs } from "./TabsSide";
 import { useCallback, useState } from "react";
 import { motion } from "framer-motion";
 // import { useNotification } from "@/contexts/NotificationProvider";
@@ -14,7 +11,7 @@ import Footer from "./footer";
 
 export default function Dashboard() {
   // const { basePrice } = useChainAdapter();
-  const [tabPosition, setTabPosition] = useState<DashboardTabs>("redeem");
+  const [tabPosition, setTabPosition] = useState<DashboardTabs>("trove");
 
   // const { processLoading } = useNotification();
 
@@ -110,8 +107,8 @@ export default function Dashboard() {
         </motion.div>
       )}
       <div className="flex gap-4 flex-col md:flex-row md:gap-24 z-10 relative md:min-h-[720px] ">
-        {/* <StatisticSide basePrice={1} /> */}
-        {/* <TabsSide setTabPosition={changeTabPosition} /> */}
+        <StatisticSide basePrice={1} />
+        <TabsSide setTabPosition={changeTabPosition} />
       </div>
       <Footer />
     </div>
