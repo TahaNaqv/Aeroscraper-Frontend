@@ -29,6 +29,8 @@ const StabilityPoolTab: FC = () => {
   const [stakeAmount, setStakeAmount] = useState<number>(0);
   const [unstakeAmount, setUnstakeAmount] = useState<number>(0);
 
+  const [totalStakeAmount, setTotalStakeAmount] = useState<bigint>(BigInt(0));
+
   const [ausdBalance, setAusdBalance] = useState<bigint>(BigInt(0));
   const [compoundedStake, setCompoundedStake] = useState<bigint>(BigInt(0));
 
@@ -38,6 +40,7 @@ const StabilityPoolTab: FC = () => {
       if (!address || !connection || !protocolState) {
         setAusdBalance(BigInt(0));
         setCompoundedStake(BigInt(0));
+        setTotalStakeAmount(BigInt(0));
         return;
       }
 
@@ -53,6 +56,9 @@ const StabilityPoolTab: FC = () => {
           setCompoundedStake(BigInt(0));
         }
 
+        // Get total stake amount from protocol state
+        setTotalStakeAmount(protocolState.totalStakeAmount || BigInt(0));
+
         // Fetch aUSD balance
         const { getAccount, getAssociatedTokenAddress } = await import("@solana/spl-token");
         const userATA = await getAssociatedTokenAddress(protocolState.stablecoinMint, userPublicKey);
@@ -67,6 +73,7 @@ const StabilityPoolTab: FC = () => {
         console.error("Error fetching stake state:", err);
         setAusdBalance(BigInt(0));
         setCompoundedStake(BigInt(0));
+        setTotalStakeAmount(BigInt(0));
       }
     };
 
@@ -90,6 +97,13 @@ const StabilityPoolTab: FC = () => {
       BigInt(Math.floor(unstakeAmount * 1e18)) > compoundedStake,
     [unstakeAmount, compoundedStake]
   );
+
+  const poolShare = useMemo(() => {
+    if (totalStakeAmount === BigInt(0) || compoundedStake === BigInt(0)) {
+      return 0;
+    }
+    return (Number(compoundedStake) / Number(totalStakeAmount)) * 100;
+  }, [compoundedStake, totalStakeAmount]);
 
   const stakePool = async () => {
     try {
@@ -217,7 +231,7 @@ const StabilityPoolTab: FC = () => {
                     Pool Share:
                   </label>
                   <p className="font-regular text-sm md:text-base ml-3">
-                    0%
+                    {poolShare.toFixed(2)}%
                   </p>
                 </div>
                 <NumericFormat
@@ -296,7 +310,7 @@ const StabilityPoolTab: FC = () => {
                     Pool Share:
                   </label>
                   <p className="font-regular text-sm md:text-base ml-3">
-                    0%
+                    {poolShare.toFixed(2)}%
                   </p>
                 </div>
                 <NumericFormat

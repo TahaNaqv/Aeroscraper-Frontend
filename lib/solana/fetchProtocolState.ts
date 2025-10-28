@@ -9,6 +9,7 @@ export interface ProtocolStateData {
   oracleState: PublicKey;
   feesProgramId: PublicKey;
   feesState: PublicKey;
+  totalStakeAmount: bigint;
 }
 
 /**
@@ -71,6 +72,14 @@ export async function fetchProtocolState(connection: Connection): Promise<Protoc
 
   // Read stable_coin_addr (stablecoin mint)
   const stablecoinMint = new PublicKey(data.slice(offset, offset + 32));
+  offset += 32;
+
+  // Read total_debt_amount (u64, 8 bytes)
+  const totalDebtAmount = new DataView(data.buffer, offset, 8).getBigUint64(0, true);
+  offset += 8;
+
+  // Read total_stake_amount (u64, 8 bytes)
+  const totalStakeAmount = new DataView(data.buffer, offset, 8).getBigUint64(0, true);
 
   // Fetch collateral mint from devnet vault (same as tests in protocol-core.ts)
   const [protocolCollateralVaultPDA] = PublicKey.findProgramAddressSync(
@@ -102,6 +111,7 @@ export async function fetchProtocolState(connection: Connection): Promise<Protoc
     oracleState,
     feesProgramId,
     feesState,
+    totalStakeAmount,
   };
 }
 
