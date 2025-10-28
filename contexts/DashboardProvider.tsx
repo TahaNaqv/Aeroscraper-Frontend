@@ -19,7 +19,8 @@ const FilterParamByChainName: Record<ChainName, string> = {
     [ChainName.SEI]: 'SEI',
     [ChainName.ARCHWAY]: 'ARCH',
     [ChainName.NEUTRON]: 'NEUTRON',
-    [ChainName.XION]: 'XION'
+    [ChainName.XION]: 'XION',
+    [ChainName.SOLANA]: 'SOLANA'
 }
 
 type DashboardContextValue = {

@@ -1,8 +1,11 @@
 import "./globals.css";
 import { Exo } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
-import "@burnt-labs/abstraxion/styles.css";
-import "@burnt-labs/ui/styles.css";
+// import "@burnt-labs/abstraxion/styles.css";
+// import "@burnt-labs/ui/styles.css";
+
+import ClientAppKitProvider from "@/lib/ClientAppKitProvider";
+
 const exo = Exo({ subsets: ["latin"] });
 
 export const metadata = {
@@ -16,8 +19,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${exo.className} relative min-h-screen flex flex-col xion`}>
-        {children}
+      <body
+        className={`${exo.className} relative min-h-screen flex flex-col xion`}
+      >
+        {/* ✅ Wrap app in AppKitProvider with client */}
+        <ClientAppKitProvider>{children}</ClientAppKitProvider>
+
         <NextTopLoader
           color="#E4462D"
           initialPosition={0.08}

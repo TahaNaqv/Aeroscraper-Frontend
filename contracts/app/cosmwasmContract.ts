@@ -35,10 +35,6 @@ export const getAppContract = (
     const walletStrategy = new WalletStrategy({
         chainId: ChainId.Testnet,
         wallet: injSdkWallet,
-        endpoints: {
-            rest: injectivePrivRest,
-            rpc: injectivePrivRpc
-        }
     });
 
     const NETWORK = Network.TestnetSentry;
@@ -48,10 +44,9 @@ export const getAppContract = (
         walletStrategy,
         network: NETWORK,
         networkEndpoints: {
-            indexer: '',
-            rest: injectivePrivRest,
-            rpc: injectivePrivRpc,
-            grpc: injectivePrivGrpc
+            indexerApi: '',
+            sentryHttpApi: injectivePrivRest,
+            sentryGrpcApi: injectivePrivGrpc
         }
     });
 

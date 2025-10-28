@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { isNil } from "lodash";
 import Link from "next/link";
 import React, { FC, useEffect, useState } from "react";
-import { usePageData } from "@/contexts/DashboardProvider";
+// import { usePageData } from "@/contexts/DashboardProvider";
 import { ChainName } from "@/enums/Chain";
 import RenderContent from "./renderContent";
 import { defaultContent, injContent } from "@/data/injContent";
@@ -19,15 +19,16 @@ const INTERVAL_TIME = 8000;
 
 const StatisticSide: FC<Props> = ({ basePrice }) => {
   const isMobile = useIsMobile();
-  const { baseCoin, walletInfo, selectedChainName } = useChainAdapter();
+  const selectedChainName = ChainName.SOLANA;
+  // const { baseCoin, walletInfo, selectedChainName } = useChainAdapter();
   const [showStatistic, setShowStatistic] = useState<boolean>(true);
   const [content, setContent] = useState(defaultContent);
-  useEffect(() => {
-    setContent(
-      ChainName.INJECTIVE === selectedChainName ? injContent : defaultContent
-    );
-  }, [selectedChainName]);
-  const { pageData } = usePageData();
+  // useEffect(() => {
+  //   setContent(
+  //     ChainName.SOLANA === selectedChainName ? injContent : defaultContent
+  //   );
+  // }, [selectedChainName]);
+  // const { pageData } = usePageData();
   const [showContentIdx, setShowContentIdx] = useState(0);
   const [hovering, setHovering] = useState(false);
 
@@ -54,11 +55,11 @@ const StatisticSide: FC<Props> = ({ basePrice }) => {
     setHovering(isHovering);
   };
 
-  console.log(
-    "Coin Name",
-    baseCoin?.name,
-    Number(pageData.baseTotalCollateralAmount).toFixed(6) + " " + baseCoin?.name
-  );
+  // console.log(
+  //   "Coin Name",
+  //   baseCoin?.name,
+  //   Number(pageData.baseTotalCollateralAmount).toFixed(6) + " " + baseCoin?.name
+  // );
 
   return (
     <div
@@ -128,33 +129,34 @@ const StatisticSide: FC<Props> = ({ basePrice }) => {
           />
           <StatisticCard
             title="Total Value Locked"
-            description={
-              isNil(baseCoin)
-                ? "-"
-                : `${Number(pageData.baseTotalCollateralAmount).toFixed(6)}`
-            }
+            // description={
+            //   isNil(baseCoin)
+            //     ? "-"
+            //     : `${Number(pageData.baseTotalCollateralAmount).toFixed(6)}`
+            // }
             className="w-[191px] h-14"
             tooltip="The Total Value Locked (TVL) is the total value of sei locked as collateral in the system."
             tooltipPlacement="bottom"
-            coinName={baseCoin?.name}
+            coinName={"Solana"}
             isNumeric
           />
           <StatisticCard
             title="AUSD in Stability Pool"
             tooltipPlacement="left-bottom"
-            description={isNil(baseCoin)
-              ? "-" :Number(pageData.totalStakedAmount)
-              .toFixed(3)
-              .toString()}
+            // description={
+            //   isNil(baseCoin)
+            //     ? "-"
+            //     : Number(pageData.totalStakedAmount).toFixed(3).toString()
+            // }
             className="w-[191px] h-14"
             tooltip="The total AUSD currently held in the Stability Pool."
             isNumeric
           />
           <StatisticCard
             title="Troves"
-            description={`${
-              isNil(walletInfo) ? "-" : pageData.totalTrovesAmount
-            }`}
+            // description={`${
+            //   isNil(walletInfo) ? "-" : pageData.totalTrovesAmount
+            // }`}
             className="w-[191px] h-14"
             tooltip="The total number of active Troves in the system."
             tooltipPlacement="right-top"
@@ -162,29 +164,33 @@ const StatisticSide: FC<Props> = ({ basePrice }) => {
           <StatisticCard
             title="Total Collateral Ratio"
             tooltipPlacement="left-top"
-            description={`${isNil(baseCoin)
-              ? "-" :
-              isFinite(
-                Number(
-                  ((pageData.baseTotalCollateralAmount * basePrice) /
-                    pageData.totalDebtAmount) *
-                    100
-                )
-              )
-                ? Number(
-                    ((pageData.baseTotalCollateralAmount * basePrice) /
-                      pageData.totalDebtAmount) *
-                      100
-                  ).toFixed(3)
-                : 0
-            } %`}
+            // description={`${
+            //   isNil(baseCoin)
+            //     ? "-"
+            //     : isFinite(
+            //         Number(
+            //           ((pageData.baseTotalCollateralAmount * basePrice) /
+            //             pageData.totalDebtAmount) *
+            //             100
+            //         )
+            //       )
+            //     ? Number(
+            //         ((pageData.baseTotalCollateralAmount * basePrice) /
+            //           pageData.totalDebtAmount) *
+            //           100
+            //       ).toFixed(3)
+            //     : 0
+            // } %`}
             className="w-[191px] h-14"
-            tooltip={`The ratio of the Dollar value of the entire system collateral at the current ${baseCoin?.name}:AUSD price, to the entire system debt.`}
+            tooltip={`The ratio of the Dollar value of the entire system collateral at the current Solana:AUSD price, to the entire system debt.`}
           />
           <StatisticCard
             title="AUSD Supply"
-            description={isNil(baseCoin)
-              ? "-" : Number(pageData.totalAusdSupply).toFixed(3).toString()}
+            // description={
+            //   isNil(baseCoin)
+            //     ? "-"
+            //     : Number(pageData.totalAusdSupply).toFixed(3).toString()
+            // }
             className="w-[191px] h-14"
             tooltip="The total AUSD minted by the Aeroscraper Protocol."
             tooltipPlacement="top"

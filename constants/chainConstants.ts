@@ -49,6 +49,14 @@ export const BaseCoinByChainName: Record<ChainName, BaseCoin> = {
         tokenImage: "/images/token-images/xion.png",
         decimal: 6,
         ausdDecimal: 6
+    },
+    [ChainName.SOLANA]: {
+        name: "SOL",
+        denom: "SOL",
+        image: "/images/token-images/sol.svg",
+        tokenImage: "/images/token-images/sol.svg",
+        decimal: 9,
+        ausdDecimal: 18
     }
 }
 
@@ -77,6 +85,10 @@ export const TransactionDomainByChainName: Record<ChainName, { accountUrl: strin
     [ChainName.XION]: {
         txDetailUrl: "https://explorer.burnt.com/xion-testnet-1/tx/",
         accountUrl: "https://explorer.burnt.com/xion-testnet-1/account/"
+    },
+    [ChainName.SOLANA]: {
+        txDetailUrl: "https://solscan.io/tx/",
+        accountUrl: "https://solscan.io/address/"
     }
 }
 
@@ -159,6 +171,12 @@ export const ChainInfoByName: Record<ChainName, ChainInfo> = {
         displayName: "XION",
         logo: "/images/token-images/xion.png",
         bech32Prefix: "xion"
+    },
+    [ChainName.SOLANA]: {
+        name: ChainName.SOLANA,
+        displayName: "SOL",
+        logo: "/images/token-images/sol.svg",
+        bech32Prefix: ""
     }
 }
 
@@ -167,7 +185,8 @@ export const priceIdByChainName: Record<ChainName, { priceId: string, serviceUrl
     [ChainName.ARCHWAY]: { priceId: "b00b60f88b03a6a625a8d1c048c3f66653edf217439983d037e7222c4e612819", serviceUrl: "https://hermes.pyth.network/" },
     [ChainName.NEUTRON]: { priceId: "8112fed370f3d9751e513f7696472eab61b7f4e2487fd9f46c93de00a338631c", serviceUrl: "https://hermes-beta.pyth.network/" },
     [ChainName.INJECTIVE]: { priceId: "2d9315a88f3019f8efa88dfe9c0f0843712da0bac814461e27733f6b83eb51b3", serviceUrl: "https://hermes-beta.pyth.network/" },
-    [ChainName.XION]: { priceId: "", serviceUrl: "" }
+    [ChainName.XION]: { priceId: "", serviceUrl: "" },
+    [ChainName.SOLANA]: { priceId: "0e9a9d9b1e6e1e3a1f1b7f1e1a1e1a1e1a1e1a1e1a1e1a1e1a1e1a1e1a", serviceUrl: "https://pyth.network/" }
 }
 
 export const XION_STATIC_PRICE = 3;

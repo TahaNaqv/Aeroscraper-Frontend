@@ -5,7 +5,7 @@ import { PriceServiceConnection } from '@pythnetwork/price-service-client'
 import { AppVersion, BaseCoin, CollateralAsset } from "@/types/types";
 import { MsgExecuteContractCompat, ChainGrpcWasmApi, toBase64, fromBase64 } from "@injectivelabs/sdk-ts";
 import { Network } from "@injectivelabs/networks";
-import { EthereumChainId, ChainId } from "@injectivelabs/ts-types";
+import { ChainId } from "@injectivelabs/ts-types";
 import { isNil } from "lodash";
 import {
   MsgBroadcaster,
@@ -23,6 +23,7 @@ import { DefaultAssetByChainName } from "@/constants/assetConstants";
 const injectivePrivRpc = process.env.NEXT_PUBLIC_INJECTIVE_PRIV_RPC as string;
 const injectivePrivGrpc = process.env.NEXT_PUBLIC_INJECTIVE_PRIV_GRPC as string;
 const injectivePrivRest = process.env.NEXT_PUBLIC_INJECTIVE_PRIV_REST as string;
+const ethereumChainId = 5; // Goerli chain ID
 
 export const getAppEthContract = (
   chain: Chain,
@@ -41,12 +42,8 @@ export const getAppEthContract = (
   const walletStrategy = new WalletStrategy({
     chainId: chain.chain_id as ChainId,
     ethereumOptions: {
-      ethereumChainId: EthereumChainId.Goerli,
+      ethereumChainId: ethereumChainId,
       rpcUrl: rpcUrl,
-    },
-    endpoints: {
-      rest: injectivePrivRest,
-      rpc: injectivePrivRpc
     },
     wallet: injSdkWallet,
   });
@@ -56,10 +53,9 @@ export const getAppEthContract = (
     walletStrategy,
     network: Network.Testnet,
     networkEndpoints: {
-      indexer: '',
-      rest: injectivePrivRest,
-      rpc: injectivePrivRpc,
-      grpc: injectivePrivGrpc
+      indexerApi: '',
+      sentryHttpApi: injectivePrivRest,
+      sentryGrpcApi: injectivePrivGrpc
     }
   });
 
