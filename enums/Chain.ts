@@ -3,6 +3,6 @@ export enum ChainName {
     ARCHWAY = "archway",
     INJECTIVE = "injectivetestnet",
     NEUTRON = "neutron",
-    XION = "xion"
-    SOLANA="solana"
+    XION = "xion",
+    SOLANA = "solana"
 }

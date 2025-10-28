@@ -31,6 +31,7 @@ const Providers: FC<PropsWithChildren> = ({ children }) => {
           cosmostationWallets[0],
           ledgerWallets[0],
         ]}
+        throwErrors={true}
         signerOptions={{
           signingCosmwasm: (chain) => {
             switch (typeof chain === "string" ? chain : chain.chain_name) {
