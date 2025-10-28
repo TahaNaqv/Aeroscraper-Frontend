@@ -1,107 +1,169 @@
 import GradientButton from "@/components/Buttons/GradientButton";
 import Text from "@/components/Texts/Text";
-import React, { FC, useMemo, useState } from "react";
+import React, { FC, useEffect, useMemo, useState } from "react";
 import { NumericFormat } from "react-number-format";
 import { motion } from "framer-motion";
-import useAppContract from "@/contracts/app/useAppContract";
-import { useNotification } from "@/contexts/NotificationProvider";
-import { getIsInjectiveResponse } from "@/utils/contractUtils";
-import { PageData } from "../../_types/types";
 import Checkbox from "@/components/Checkbox";
 import BorderedNumberInput from "@/components/Input/BorderedNumberInput";
-import { useBalances } from "@/contexts/BalanceProvider";
+import { useNotification } from "@/contexts/NotificationProvider";
+import { useAppKitAccount } from "@reown/appkit/react";
+import { useAppKitConnection } from "@reown/appkit-adapter-solana/react";
+import { PublicKey } from "@solana/web3.js";
+import { useSolanaProtocol } from "@/hooks/useSolanaProtocol";
+import { useProtocolState } from "@/hooks/useProtocolState";
 
 enum TABS {
   DEPOSIT = 0,
   WITHDRAW,
 }
 
-type Props = {
-  pageData: PageData;
-  getPageData: () => void;
-};
-
-const StabilityPoolTab: FC<Props> = ({ pageData, getPageData }) => {
-  const { refreshBalance } = useBalances();
-  const contract = useAppContract();
-  const { addNotification, processLoading, setProcessLoading } =
-    useNotification();
+const StabilityPoolTab: FC = () => {
+  const { addNotification } = useNotification();
+  const { address, isConnected } = useAppKitAccount();
+  const { connection } = useAppKitConnection();
+  const { stake, unstake, loading: protocolLoading } = useSolanaProtocol();
+  const { protocolState } = useProtocolState();
 
   const [selectedTab, setSelectedTab] = useState<TABS>(TABS.DEPOSIT);
 
   const [stakeAmount, setStakeAmount] = useState<number>(0);
   const [unstakeAmount, setUnstakeAmount] = useState<number>(0);
 
+  const [ausdBalance, setAusdBalance] = useState<bigint>(BigInt(0));
+  const [compoundedStake, setCompoundedStake] = useState<bigint>(BigInt(0));
+
+  // Fetch stake state and balance
+  useEffect(() => {
+    const fetchStakeData = async () => {
+      if (!address || !connection || !protocolState) {
+        setAusdBalance(BigInt(0));
+        setCompoundedStake(BigInt(0));
+        return;
+      }
+
+      try {
+        // Fetch user stake state
+        const { fetchUserStakeState } = await import("@/lib/solana/fetchStakeState");
+        const userPublicKey = new PublicKey(address);
+        const stakeState = await fetchUserStakeState(connection, userPublicKey);
+
+        if (stakeState) {
+          setCompoundedStake(stakeState.compounded_stake);
+        } else {
+          setCompoundedStake(BigInt(0));
+        }
+
+        // Fetch aUSD balance
+        const { getAccount, getAssociatedTokenAddress } = await import("@solana/spl-token");
+        const userATA = await getAssociatedTokenAddress(protocolState.stablecoinMint, userPublicKey);
+
+        try {
+          const accountInfo = await getAccount(connection, userATA);
+          setAusdBalance(accountInfo.amount);
+        } catch (err) {
+          setAusdBalance(BigInt(0));
+        }
+      } catch (err) {
+        console.error("Error fetching stake state:", err);
+        setAusdBalance(BigInt(0));
+        setCompoundedStake(BigInt(0));
+      }
+    };
+
+    fetchStakeData();
+    const interval = setInterval(fetchStakeData, 5000);
+    return () => clearInterval(interval);
+  }, [address, connection, protocolState]);
+
   const stakeDisabled = useMemo(
     () =>
       stakeAmount <= 0 ||
       stakeAmount > 999 ||
-      stakeAmount > pageData.ausdBalance,
-    [stakeAmount]
+      BigInt(Math.floor(stakeAmount * 1e18)) > ausdBalance,
+    [stakeAmount, ausdBalance]
   );
+
   const unstakeDisabled = useMemo(
     () =>
       unstakeAmount <= 0 ||
       unstakeAmount > 999 ||
-      unstakeAmount > pageData.stakedAmount,
-    [unstakeAmount]
+      BigInt(Math.floor(unstakeAmount * 1e18)) > compoundedStake,
+    [unstakeAmount, compoundedStake]
   );
 
   const stakePool = async () => {
-    setProcessLoading(true);
-
     try {
-      const res: any = await contract.stake(stakeAmount);
-      setStakeAmount(0);
+      // Convert stakeAmount to smallest unit (1e18)
+      const stakeInSmallestUnit = Math.floor(stakeAmount * 1e18);
+
+      const signature = await stake({
+        stakeAmount: stakeInSmallestUnit,
+      });
+
       addNotification({
         status: "success",
-        directLink: getIsInjectiveResponse(res)
-          ? res?.txHash
-          : res?.transactionHash,
+        directLink: `https://solscan.io/tx/${signature}?cluster=devnet`,
         message: `${stakeAmount} AUSD Staked to Stability Pool`,
       });
-      getPageData();
-      refreshBalance();
-    } catch (err) {
-      console.log(err);
+
+      setStakeAmount(0);
+    } catch (err: any) {
       addNotification({
-        message: "",
         status: "error",
+        message: err.message || "Failed to stake",
         directLink: "",
       });
+      console.error(err);
     }
-    setProcessLoading(false);
   };
 
   const unStakePool = async () => {
-    setProcessLoading(true);
-
     try {
-      const res: any = await contract.unstake(unstakeAmount);
+      // Convert unstakeAmount to smallest unit (1e18)
+      const unstakeInSmallestUnit = Math.floor(unstakeAmount * 1e18);
 
-      setUnstakeAmount(0);
+      const signature = await unstake({
+        unstakeAmount: unstakeInSmallestUnit,
+      });
+
       addNotification({
         status: "success",
-        directLink: getIsInjectiveResponse(res)
-          ? res?.txHash
-          : res?.transactionHash,
-        message: `${unstakeAmount} AUSD Unstaked from Stability Pool`,
+        directLink: `https://solscan.io/tx/${signature}?cluster=devnet`,
+        message: `${unstakeAmount} AUSD Withdrawn from Stability Pool`,
       });
-      getPageData();
-      refreshBalance();
 
-      if (unstakeAmount >= pageData.stakedAmount) {
-        setSelectedTab(TABS.DEPOSIT);
+      setUnstakeAmount(0);
+
+      // Refresh state immediately
+      if (connection && address && protocolState) {
+        const { fetchUserStakeState } = await import("@/lib/solana/fetchStakeState");
+        const userPublicKey = new PublicKey(address);
+        const updatedStake = await fetchUserStakeState(connection, userPublicKey);
+
+        if (updatedStake) {
+          setCompoundedStake(updatedStake.compounded_stake);
+        } else {
+          setCompoundedStake(BigInt(0));
+        }
+
+        // Refresh aUSD balance
+        const { getAccount, getAssociatedTokenAddress } = await import("@solana/spl-token");
+        const userATA = await getAssociatedTokenAddress(protocolState.stablecoinMint, userPublicKey);
+        try {
+          const accountInfo = await getAccount(connection, userATA);
+          setAusdBalance(accountInfo.amount);
+        } catch (err) {
+          setAusdBalance(BigInt(0));
+        }
       }
-    } catch (err) {
-      console.log(err);
+    } catch (err: any) {
       addNotification({
-        message: "",
         status: "error",
+        message: err.message || "Failed to unstake",
         directLink: "",
       });
+      console.error(err);
     }
-    setProcessLoading(false);
   };
 
   return (
@@ -112,15 +174,14 @@ const StabilityPoolTab: FC<Props> = ({ pageData, getPageData }) => {
         earn rewards.{" "}
       </Text>
       <div className="flex flex-col">
-        {pageData.stakedAmount > 0 && (
-          <Checkbox
-            label={"Deposit"}
-            checked={selectedTab === TABS.DEPOSIT}
-            onChange={() => {
-              setSelectedTab(TABS.DEPOSIT);
-            }}
-          />
-        )}
+        {/* Always show deposit tab */}
+        <Checkbox
+          label={"Deposit"}
+          checked={selectedTab === TABS.DEPOSIT}
+          onChange={() => {
+            setSelectedTab(TABS.DEPOSIT);
+          }}
+        />
         {selectedTab === TABS.DEPOSIT && (
           <motion.div
             initial={{ opacity: 0, x: 30 }}
@@ -156,11 +217,11 @@ const StabilityPoolTab: FC<Props> = ({ pageData, getPageData }) => {
                     Pool Share:
                   </label>
                   <p className="font-regular text-sm md:text-base ml-3">
-                    {pageData.poolShare || "0"}%
+                    0%
                   </p>
                 </div>
                 <NumericFormat
-                  value={pageData.ausdBalance}
+                  value={Number(ausdBalance) / 1e18}
                   thousandsGroupStyle="thousand"
                   thousandSeparator=","
                   fixedDecimalScale
@@ -180,7 +241,7 @@ const StabilityPoolTab: FC<Props> = ({ pageData, getPageData }) => {
                 disabledText={
                   "Enter the AUSD amount. 999 AUSD is the upper limit for now."
                 }
-                loading={processLoading}
+                loading={protocolLoading}
                 onClick={stakePool}
                 className="w-[240px] md:w-[374px] h-11 "
                 rounded="rounded-lg"
@@ -190,7 +251,7 @@ const StabilityPoolTab: FC<Props> = ({ pageData, getPageData }) => {
             </div>
           </motion.div>
         )}
-        {pageData.stakedAmount > 0 && (
+        {compoundedStake > BigInt(0) && (
           <Checkbox
             label={"Withdraw"}
             checked={selectedTab === TABS.WITHDRAW}
@@ -199,7 +260,7 @@ const StabilityPoolTab: FC<Props> = ({ pageData, getPageData }) => {
             }}
             className="mt-8"
           />
-        )}{" "}
+        )}
         {selectedTab === TABS.WITHDRAW && (
           <motion.div
             initial={{ opacity: 0, x: -30 }}
@@ -235,11 +296,11 @@ const StabilityPoolTab: FC<Props> = ({ pageData, getPageData }) => {
                     Pool Share:
                   </label>
                   <p className="font-regular text-sm md:text-base ml-3">
-                    {pageData.poolShare || "0"}%
+                    0%
                   </p>
                 </div>
                 <NumericFormat
-                  value={pageData.stakedAmount}
+                  value={Number(compoundedStake) / 1e18}
                   thousandsGroupStyle="thousand"
                   thousandSeparator=","
                   fixedDecimalScale
@@ -259,7 +320,7 @@ const StabilityPoolTab: FC<Props> = ({ pageData, getPageData }) => {
                 disabledText={
                   "Enter the AUSD amount. 999 AUSD is the upper limit for now."
                 }
-                loading={processLoading}
+                loading={protocolLoading}
                 onClick={unStakePool}
                 className="min-w-[240px] md:w-[374px] h-11 "
                 rounded="rounded-lg"

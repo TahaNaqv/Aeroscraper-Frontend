@@ -563,3 +563,174 @@ export async function buildRepayLoanInstruction(
   return { instruction };
 }
 
+export async function buildStakeInstruction(
+  userPublicKey: PublicKey,
+  stablecoinMint: PublicKey,
+  stakeAmount: number, // in smallest unit (1e18 for aUSD)
+): Promise<{ instruction: TransactionInstruction }> {
+  console.log('🔨 Building stake instruction...');
+  console.log('User:', userPublicKey.toBase58());
+  console.log('Stake amount:', stakeAmount);
+
+  // 1. Derive PDAs
+  const [userStakeAmountPDA] = PublicKey.findProgramAddressSync(
+    [Buffer.from('user_stake_amount'), userPublicKey.toBuffer()],
+    PROTOCOL_PROGRAM_ID
+  );
+
+  const [protocolStablecoinVaultPDA] = PublicKey.findProgramAddressSync(
+    [Buffer.from('protocol_stablecoin_vault')],
+    PROTOCOL_PROGRAM_ID
+  );
+
+  const [protocolStatePDA] = PublicKey.findProgramAddressSync(
+    [Buffer.from('state')],
+    PROTOCOL_PROGRAM_ID
+  );
+
+  console.log('✅ Derived PDAs');
+  console.log('📍 PDA addresses:');
+  console.log('  - userStakeAmount:', userStakeAmountPDA.toBase58());
+  console.log('  - protocolStablecoinVault:', protocolStablecoinVaultPDA.toBase58());
+  console.log('  - protocolState:', protocolStatePDA.toBase58());
+
+  // 2. Get token accounts
+  const userStablecoinAccount = await getAssociatedTokenAddress(stablecoinMint, userPublicKey);
+  console.log('📝 User stablecoin ATA:', userStablecoinAccount.toBase58());
+
+  // 3. Build instruction data (discriminator from IDL: [206, 176, 202, 18, 200, 209, 179, 108])
+  const discriminator = new Uint8Array([206, 176, 202, 18, 200, 209, 179, 108]);
+
+  // Serialize params
+  const stakeAmountBigInt = BigInt(stakeAmount);
+
+  // u64 serialization for amount
+  const amountBuffer = new Uint8Array(8);
+  new DataView(amountBuffer.buffer).setBigUint64(0, stakeAmountBigInt, true);
+
+  // Combine all data
+  const totalLength = discriminator.length + amountBuffer.length;
+  const data = new Uint8Array(totalLength);
+  let offset = 0;
+  data.set(discriminator, offset);
+  offset += discriminator.length;
+  data.set(amountBuffer, offset);
+
+  console.log('✅ Instruction data serialized, length:', totalLength);
+
+  // 4. Build account metas (8 accounts from IDL lines 2269-2366)
+  const accountMetas: AccountMeta[] = [
+    { pubkey: userPublicKey, isSigner: true, isWritable: true }, // user
+    { pubkey: userStakeAmountPDA, isSigner: false, isWritable: true }, // user_stake_amount
+    { pubkey: protocolStatePDA, isSigner: false, isWritable: true }, // state
+    { pubkey: userStablecoinAccount, isSigner: false, isWritable: true }, // user_stablecoin_account
+    { pubkey: protocolStablecoinVaultPDA, isSigner: false, isWritable: true }, // protocol_stablecoin_vault
+    { pubkey: stablecoinMint, isSigner: false, isWritable: false }, // stable_coin_mint
+    { pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false }, // token_program
+    { pubkey: SystemProgram.programId, isSigner: false, isWritable: false }, // system_program
+  ];
+
+  console.log('📋 Account metas list:');
+  accountMetas.forEach((meta, idx) => {
+    const flags = `${meta.isSigner ? 'S' : '-'}${meta.isWritable ? 'W' : '-'}`;
+    console.log(`  [${idx}] ${meta.pubkey.toBase58()} ${flags}`);
+  });
+
+  const instruction = new TransactionInstruction({
+    keys: accountMetas,
+    programId: PROTOCOL_PROGRAM_ID,
+    data: Buffer.from(data),
+  });
+
+  console.log('✅ stake instruction built');
+  console.log('📊 Total accounts:', accountMetas.length);
+  console.log('🔗 Program ID:', PROTOCOL_PROGRAM_ID.toBase58());
+
+  return { instruction };
+}
+
+export async function buildUnstakeInstruction(
+  userPublicKey: PublicKey,
+  stablecoinMint: PublicKey,
+  unstakeAmount: number, // in smallest unit (1e18 for aUSD)
+): Promise<{ instruction: TransactionInstruction }> {
+  console.log('🔨 Building unstake instruction...');
+  console.log('User:', userPublicKey.toBase58());
+  console.log('Unstake amount:', unstakeAmount);
+
+  // 1. Derive PDAs
+  const [userStakeAmountPDA] = PublicKey.findProgramAddressSync(
+    [Buffer.from('user_stake_amount'), userPublicKey.toBuffer()],
+    PROTOCOL_PROGRAM_ID
+  );
+
+  const [protocolStablecoinVaultPDA] = PublicKey.findProgramAddressSync(
+    [Buffer.from('protocol_stablecoin_vault')],
+    PROTOCOL_PROGRAM_ID
+  );
+
+  const [protocolStatePDA] = PublicKey.findProgramAddressSync(
+    [Buffer.from('state')],
+    PROTOCOL_PROGRAM_ID
+  );
+
+  console.log('✅ Derived PDAs');
+  console.log('📍 PDA addresses:');
+  console.log('  - userStakeAmount:', userStakeAmountPDA.toBase58());
+  console.log('  - protocolStablecoinVault:', protocolStablecoinVaultPDA.toBase58());
+  console.log('  - protocolState:', protocolStatePDA.toBase58());
+
+  // 2. Get token accounts
+  const userStablecoinAccount = await getAssociatedTokenAddress(stablecoinMint, userPublicKey);
+  console.log('📝 User stablecoin ATA:', userStablecoinAccount.toBase58());
+
+  // 3. Build instruction data (discriminator from IDL line 2439: [90, 95, 107, 42, 205, 124, 50, 225])
+  const discriminator = new Uint8Array([90, 95, 107, 42, 205, 124, 50, 225]);
+
+  // Serialize params
+  const unstakeAmountBigInt = BigInt(unstakeAmount);
+
+  // u64 serialization for amount
+  const amountBuffer = new Uint8Array(8);
+  new DataView(amountBuffer.buffer).setBigUint64(0, unstakeAmountBigInt, true);
+
+  // Combine all data
+  const totalLength = discriminator.length + amountBuffer.length;
+  const data = new Uint8Array(totalLength);
+  let offset = 0;
+  data.set(discriminator, offset);
+  offset += discriminator.length;
+  data.set(amountBuffer, offset);
+
+  console.log('✅ Instruction data serialized, length:', totalLength);
+
+  // 4. Build account metas (7 accounts from IDL lines 2449-2542)
+  const accountMetas: AccountMeta[] = [
+    { pubkey: userPublicKey, isSigner: true, isWritable: true }, // user
+    { pubkey: userStakeAmountPDA, isSigner: false, isWritable: true }, // user_stake_amount
+    { pubkey: protocolStatePDA, isSigner: false, isWritable: true }, // state
+    { pubkey: userStablecoinAccount, isSigner: false, isWritable: true }, // user_stablecoin_account
+    { pubkey: protocolStablecoinVaultPDA, isSigner: false, isWritable: true }, // protocol_stablecoin_vault
+    { pubkey: stablecoinMint, isSigner: false, isWritable: false }, // stable_coin_mint
+    { pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false }, // token_program
+  ];
+
+  console.log('📋 Account metas list:');
+  accountMetas.forEach((meta, idx) => {
+    const flags = `${meta.isSigner ? 'S' : '-'}${meta.isWritable ? 'W' : '-'}`;
+    console.log(`  [${idx}] ${meta.pubkey.toBase58()} ${flags}`);
+  });
+
+  const instruction = new TransactionInstruction({
+    keys: accountMetas,
+    programId: PROTOCOL_PROGRAM_ID,
+    data: Buffer.from(data),
+  });
+
+  console.log('✅ unstake instruction built');
+  console.log('📊 Total accounts:', accountMetas.length);
+  console.log('🔗 Program ID:', PROTOCOL_PROGRAM_ID.toBase58());
+
+  return { instruction };
+}
+

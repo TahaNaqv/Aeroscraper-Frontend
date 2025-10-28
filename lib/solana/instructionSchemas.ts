@@ -158,3 +158,41 @@ export const RepayLoanParamsSchema = new Map([
     },
   ],
 ]);
+
+// StakeParams schema (matches Rust struct from IDL)
+export class StakeParams {
+  amount: bigint;
+
+  constructor(fields: { amount: bigint }) {
+    this.amount = fields.amount;
+  }
+}
+
+export const StakeParamsSchema = new Map([
+  [
+    StakeParams,
+    {
+      kind: 'struct',
+      fields: [['amount', 'u64']],
+    },
+  ],
+]);
+
+// UnstakeParams schema (matches Rust struct from IDL)
+export class UnstakeParams {
+  amount: bigint;
+
+  constructor(fields: { amount: bigint }) {
+    this.amount = fields.amount;
+  }
+}
+
+export const UnstakeParamsSchema = new Map([
+  [
+    UnstakeParams,
+    {
+      kind: 'struct',
+      fields: [['amount', 'u64']],
+    },
+  ],
+]);

@@ -798,12 +798,217 @@ export function useSolanaProtocol() {
         }
     };
 
+    const stake = async (params: {
+        stakeAmount: number; // aUSD in smallest unit (1e18)
+    }) => {
+        if (!isConnected || !walletProvider || !address) {
+            throw new Error('Wallet not connected');
+        }
+
+        if (!connection) {
+            throw new Error('Connection not available');
+        }
+
+        if (!protocolState) {
+            throw new Error('Protocol state not loaded');
+        }
+
+        try {
+            setLoading(true);
+            setError(null);
+
+            const userPublicKey = new PublicKey(address);
+            const { stablecoinMint } = protocolState;
+
+            console.log('🚀 Starting stake transaction...');
+            console.log('📊 Stake amount:', params.stakeAmount);
+
+            // Check if user has sufficient stablecoins
+            console.log('🔍 Validating user stablecoin balance...');
+            const { getAccount, getAssociatedTokenAddress } = await import('@solana/spl-token');
+            const userStablecoinATA = await getAssociatedTokenAddress(stablecoinMint, userPublicKey);
+
+            try {
+                const userStablecoinAccount = await getAccount(connection, userStablecoinATA);
+                console.log('✅ User stablecoin account exists');
+                console.log('💰 Balance:', userStablecoinAccount.amount.toString());
+
+                if (userStablecoinAccount.amount < BigInt(params.stakeAmount)) {
+                    throw new Error(`Insufficient stablecoins. Required: ${params.stakeAmount}, Available: ${userStablecoinAccount.amount.toString()}`);
+                }
+            } catch (error: any) {
+                if (error.code === 2002) { // TokenAccountNotFoundError
+                    throw new Error('Stablecoin token account does not exist. Please receive some aUSD tokens first.');
+                }
+                throw error;
+            }
+
+            // Build instruction
+            console.log('🔨 Building stake instruction...');
+            const { buildStakeInstruction } = await import('@/lib/solana/buildInstructions');
+            const { instruction } = await buildStakeInstruction(
+                userPublicKey,
+                stablecoinMint,
+                params.stakeAmount
+            );
+
+            console.log('✅ Instruction built, creating transaction...');
+
+            // Create transaction
+            const tx = new Transaction();
+            tx.add(instruction);
+
+            // Set fee payer
+            console.log('💳 Setting fee payer...');
+            tx.feePayer = walletProvider.publicKey;
+
+            // Get recent blockhash
+            console.log('📡 Getting recent blockhash...');
+            const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash('finalized');
+            tx.recentBlockhash = blockhash;
+
+            console.log('🔍 Simulating stake transaction...');
+            const simulation = await connection.simulateTransaction(tx);
+            console.log('📊 Simulation result:');
+            console.log('  - Error:', simulation.value.err);
+            console.log('  - Logs:', simulation.value.logs);
+            console.log('  - Units consumed:', simulation.value.unitsConsumed);
+
+            if (simulation.value.err) {
+                console.error('❌ Simulation failed:', simulation.value.err);
+                throw new Error('Transaction simulation failed');
+            }
+
+            console.log('✅ Simulation passed - transaction is valid');
+
+            // Sign and send transaction
+            console.log('✍️ Sending transaction to wallet for signing...');
+            const signature = await walletProvider.signAndSendTransaction(tx);
+            console.log('✅ Transaction sent, signature:', signature);
+
+            // Wait for confirmation
+            console.log('⏳ Waiting for confirmation...');
+            await connection.confirmTransaction({
+                signature,
+                blockhash,
+                lastValidBlockHeight,
+            });
+            console.log('✅ Transaction confirmed!');
+
+            return signature;
+        } catch (err: any) {
+            console.error('❌ Stake error:', err);
+            setError(err.message || 'Failed to stake');
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const unstake = async (params: {
+        unstakeAmount: number; // aUSD in smallest unit
+    }) => {
+        if (!isConnected || !walletProvider || !address) {
+            throw new Error('Wallet not connected');
+        }
+
+        if (!connection) {
+            throw new Error('Connection not available');
+        }
+
+        if (!protocolState) {
+            throw new Error('Protocol state not loaded');
+        }
+
+        try {
+            setLoading(true);
+            setError(null);
+
+            const userPublicKey = new PublicKey(address);
+            const { stablecoinMint } = protocolState;
+
+            console.log('🔓 Starting unstake...');
+            console.log('📊 Unstake amount:', params.unstakeAmount, 'aUSD (smallest unit)');
+
+            // Fetch current compounded stake to validate
+            const { fetchUserStakeState } = await import('@/lib/solana/fetchStakeState');
+            const stakeState = await fetchUserStakeState(connection, userPublicKey);
+
+            if (!stakeState) {
+                throw new Error('No stake found');
+            }
+
+            console.log('📊 Current compounded stake:', stakeState.compounded_stake.toString());
+
+            // Validate unstake amount
+            if (params.unstakeAmount <= 0) {
+                throw new Error('Unstake amount must be greater than 0');
+            }
+
+            const MINIMUM_LOAN_AMOUNT = 10_000_000_000_000_000; // 0.01 aUSD (from contract)
+            if (params.unstakeAmount < MINIMUM_LOAN_AMOUNT) {
+                throw new Error('Unstake amount below minimum (0.01 aUSD)');
+            }
+
+            // Check sufficient compounded stake
+            if (BigInt(params.unstakeAmount) > stakeState.compounded_stake) {
+                throw new Error(`Insufficient compounded stake. Available: ${stakeState.compounded_stake}, Requested: ${params.unstakeAmount}`);
+            }
+
+            console.log('✅ Validation passed');
+
+            // Build unstake instruction
+            const { buildUnstakeInstruction } = await import('@/lib/solana/buildInstructions');
+            const { instruction } = await buildUnstakeInstruction(
+                userPublicKey,
+                stablecoinMint,
+                params.unstakeAmount
+            );
+
+            console.log('✅ Instruction built, creating transaction...');
+
+            // Create and send transaction
+            const tx = new Transaction().add(instruction);
+            tx.feePayer = walletProvider.publicKey;
+            tx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
+
+            console.log('🔍 Simulating unstake transaction...');
+            const simulation = await connection.simulateTransaction(tx);
+            console.log('📊 Simulation result:');
+            console.log('- Error:', simulation.value.err);
+            console.log('- Logs:', simulation.value.logs);
+            console.log('- Units consumed:', simulation.value.unitsConsumed);
+
+            if (simulation.value.err) {
+                throw new Error(`Simulation failed: ${JSON.stringify(simulation.value.err)}`);
+            }
+
+            console.log('✅ Simulation passed - transaction is valid');
+            console.log('✍️ Sending transaction to wallet for signing...');
+
+            const signature = await walletProvider.signAndSendTransaction(tx);
+
+            console.log('✅ Unstake transaction sent!');
+            console.log('📝 Signature:', signature);
+
+            setLoading(false);
+            return signature;
+        } catch (err: any) {
+            console.error('❌ Unstake error:', err);
+            setLoading(false);
+            setError(err.message || 'Failed to unstake');
+            throw err;
+        }
+    };
+
     return {
         openTrove,
         addCollateral,
         removeCollateral,
         borrowLoan,
         repayLoan,
+        stake,
+        unstake,
         loading,
         error,
     };
