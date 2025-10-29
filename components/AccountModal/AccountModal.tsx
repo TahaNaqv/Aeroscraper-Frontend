@@ -419,11 +419,12 @@ const AccountModal: FC<Props> = (props: Props) => {
                     </Text>
                     <Button
                       startIcon={
-                        <img
-                          alt={selectedChainName}
-                          src={baseCoin?.image}
-                          className="w-6 h-6"
-                        />
+                        // <img
+                        //   alt={selectedChainName}
+                        //   src={baseCoin?.image}
+                        //   className="w-6 h-6"
+                        // />
+                        <SolanaIcon />
                       }
                     >
                       {capitalizeFirstLetter(
