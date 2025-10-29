@@ -774,33 +774,103 @@ export async function buildLiquidateTrovesInstruction(
   const discriminator = new Uint8Array([151, 204, 230, 0, 127, 203, 57, 28]);
 
   // Serialize Vec<Pubkey>
-  // First, serialize the length of the vector as u32 (4 bytes)
+  // First, serialize the length of the vector as u32 (4 bytes, little-endian)
   const vecLength = liquidationList.length;
-  const vecLengthBuffer = new Uint8Array(4);
+  const vecLengthBuffer = new Uint8Array(new ArrayBuffer(4));
   new DataView(vecLengthBuffer.buffer).setUint32(0, vecLength, true);
 
   // Serialize each Pubkey (32 bytes each)
   const liquidationListBytes: Uint8Array[] = [];
   liquidationList.forEach(pubkey => {
-    liquidationListBytes.push(new Uint8Array(pubkey.toBuffer()));
+    const pkBytes = pubkey.toBytes();
+    // Verify pubkey is exactly 32 bytes
+    if (pkBytes.length !== 32) {
+      throw new Error(`Invalid pubkey length: ${pkBytes.length}, expected 32 bytes`);
+    }
+    // Create a proper copy (not a view) to ensure data integrity
+    liquidationListBytes.push(new Uint8Array(pkBytes));
   });
 
-  // String serialization for collateral_denom
+  // String serialization for collateral_denom (length u32 + bytes)
   const denomBytes = new TextEncoder().encode(collateralDenom);
-  const denomLengthBuffer = new Uint8Array(4);
+  const denomLengthBuffer = new Uint8Array(new ArrayBuffer(4));
   new DataView(denomLengthBuffer.buffer).setUint32(0, denomBytes.length, true);
 
-  // Combine all data
-  const liquidationListData = Buffer.concat([vecLengthBuffer, ...liquidationListBytes]);
+  // Combine all data using Uint8Array only
+  // Calculate actual length using reduce to sum all byte lengths
+  const totalPubkeyBytes = liquidationListBytes.reduce((sum, bytes) => sum + bytes.length, 0);
+  const liquidationListDataLength = vecLengthBuffer.length + totalPubkeyBytes;
+
+  // Create a contiguous buffer for liquidation list data
+  const liquidationListData = new Uint8Array(liquidationListDataLength);
+  let listOffset = 0;
+
+  // Copy vec length (u32, 4 bytes)
+  liquidationListData.set(vecLengthBuffer, listOffset);
+  listOffset += vecLengthBuffer.length;
+
+  // Copy each pubkey (32 bytes each)
+  for (const pkBytes of liquidationListBytes) {
+    liquidationListData.set(pkBytes, listOffset);
+    listOffset += pkBytes.length;
+  }
+
+  // Verify we filled the buffer correctly
+  if (listOffset !== liquidationListDataLength) {
+    throw new Error(`Liquidation list data offset mismatch: expected ${liquidationListDataLength}, got ${listOffset}`);
+  }
+
   const totalLength = discriminator.length + liquidationListData.length + denomLengthBuffer.length + denomBytes.length;
+
+  // Validate expected length matches calculated length
+  const expectedLength = 8 + // discriminator
+    4 + // vec length (u32)
+    (vecLength * 32) + // pubkeys (32 bytes each)
+    4 + // string length (u32)
+    denomBytes.length; // string bytes
+
+  if (totalLength !== expectedLength) {
+    console.error('❌ Length mismatch!');
+    console.error(`  Expected: ${expectedLength} bytes`);
+    console.error(`  Calculated: ${totalLength} bytes`);
+    console.error(`  Breakdown:`);
+    console.error(`    Discriminator: 8`);
+    console.error(`    Vec length: 4`);
+    console.error(`    Pubkeys: ${vecLength} * 32 = ${vecLength * 32}`);
+    console.error(`    String length: 4`);
+    console.error(`    String bytes: ${denomBytes.length}`);
+    throw new Error(`Serialization length mismatch: expected ${expectedLength}, got ${totalLength}`);
+  }
+
+  // Build final data array with proper copying
   const data = new Uint8Array(totalLength);
   let offset = 0;
-  data.set(discriminator, offset); offset += discriminator.length;
-  data.set(liquidationListData, offset); offset += liquidationListData.length;
-  data.set(denomLengthBuffer, offset); offset += denomLengthBuffer.length;
+
+  // Copy discriminator
+  data.set(discriminator, offset);
+  offset += discriminator.length;
+
+  // Copy liquidation list data (vec length + pubkeys)
+  data.set(liquidationListData, offset);
+  offset += liquidationListData.length;
+
+  // Copy string length
+  data.set(denomLengthBuffer, offset);
+  offset += denomLengthBuffer.length;
+
+  // Copy string bytes
   data.set(denomBytes, offset);
 
+  // Verify final length
+  if (offset + denomBytes.length !== totalLength) {
+    throw new Error(`Final offset mismatch: expected ${totalLength}, got ${offset + denomBytes.length}`);
+  }
+
   console.log('✅ Instruction data serialized, length:', totalLength);
+  console.log('📊 Serialization details:');
+  console.log(`  - Vec length: ${vecLength}`);
+  console.log(`  - Pubkeys: ${vecLength} × 32 = ${vecLength * 32} bytes`);
+  console.log(`  - Collateral denom: "${collateralDenom}" (${denomBytes.length} bytes)`);
 
   // 3. Build account metas for main accounts (11 accounts from IDL)
   const accountMetas: AccountMeta[] = [
