@@ -49,6 +49,7 @@ const AppTheme = () => {
   const { protocolState } = useProtocolState();
   const [accountModal, setAccountModal] = useState(false);
   const { profileDetail } = useProfile();
+  const [chainData, setChainData] = useState<any>(ChainData);
 
   useEffect(() => {
     const fetchAusdBalance = async () => {
@@ -184,8 +185,6 @@ const AppTheme = () => {
   //     });
   //   }
   // }, [selectedWallet, isWalletConnected]);
-
-  const [chainData, setChainData] = useState<any>(ChainData);
 
   // const CheckChain = (id: number) => {
   //   try {
