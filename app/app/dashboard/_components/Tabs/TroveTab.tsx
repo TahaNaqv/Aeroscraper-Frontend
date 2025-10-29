@@ -1,14 +1,18 @@
 import GradientButton from "@/components/Buttons/GradientButton";
 import Text from "@/components/Texts/Text";
 import { motion } from "framer-motion";
-import React, { FC, useEffect, useMemo, useState, useCallback, useRef } from "react";
+import React, {
+  FC,
+  useEffect,
+  useMemo,
+  useState,
+  useCallback,
+  useRef,
+} from "react";
 import { NumberFormatValues } from "react-number-format/types/types";
 import OutlinedButton from "@/components/Buttons/OutlinedButton";
 import { useNotification } from "@/contexts/NotificationProvider";
-import {
-  convertAmount,
-  getRatioColor,
-} from "@/utils/contractUtils";
+import { convertAmount, getRatioColor } from "@/utils/contractUtils";
 import { isNil } from "lodash";
 import { PageData } from "../../_types/types";
 import StatisticCard from "@/components/Cards/StatisticCard";
@@ -28,11 +32,11 @@ import { useProtocolState } from "@/hooks/useProtocolState";
 // Preload dynamic imports for better performance
 let splTokenLoaded = false;
 const preloadSplToken = () => {
-  if (!splTokenLoaded && typeof window !== 'undefined') {
+  if (!splTokenLoaded && typeof window !== "undefined") {
     import("@solana/spl-token").then(() => {
       splTokenLoaded = true;
     });
-    import('@/lib/solana/fetchTroveState').then(() => { });
+    import("@/lib/solana/fetchTroveState").then(() => {});
   }
 };
 
@@ -68,8 +72,9 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
     const handleVisibilityChange = () => {
       isVisibleRef.current = !document.hidden;
     };
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () =>
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
   }, []);
 
   // Memoize fetchBalance to prevent unnecessary re-renders
@@ -79,7 +84,7 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
         const res = await fetchBalance();
         setBalance(res);
       } catch (err) {
-        console.error('Error fetching balance:', err);
+        console.error("Error fetching balance:", err);
       }
     }
   }, [isConnected, fetchBalance]);
@@ -126,9 +131,9 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
     () =>
       userTroveState
         ? {
-          amount: Number(userTroveState.collateralAmount) / 1e9, // Convert from lamports to SOL
-          denom: selectedAsset.denom,
-        }
+            amount: Number(userTroveState.collateralAmount) / 1e9, // Convert from lamports to SOL
+            denom: selectedAsset.denom,
+          }
         : { amount: 0, denom: selectedAsset.denom },
     [userTroveState, selectedAsset.denom]
   );
@@ -147,12 +152,17 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
   }, [ausdBalance]);
 
   const formattedDebtAmount = useMemo(() => {
-    return userTroveState ? (Number(userTroveState.debt) / 1e18).toFixed(2) : "0";
+    return userTroveState
+      ? (Number(userTroveState.debt) / 1e18).toFixed(2)
+      : "0";
   }, [userTroveState]);
 
   const borrowingCapacity = useMemo(() => {
     if (!userTroveState || !basePrice) return 0;
-    return ((selectedCollateral.amount ?? 0) * basePrice * 100) / 115 - (Number(userTroveState.debt) / 1e18);
+    return (
+      ((selectedCollateral.amount ?? 0) * basePrice * 100) / 115 -
+      Number(userTroveState.debt) / 1e18
+    );
   }, [selectedCollateral.amount, basePrice, userTroveState]);
 
   // Memoize management fee calculation
@@ -169,21 +179,28 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
   const refreshTroveState = useCallback(async () => {
     if (!address || !connection) return;
     try {
-      const { fetchUserTroveState } = await import('@/lib/solana/fetchTroveState');
+      const { fetchUserTroveState } = await import(
+        "@/lib/solana/fetchTroveState"
+      );
       const userPublicKey = new PublicKey(address);
-      const trove = await fetchUserTroveState(connection, userPublicKey, 'SOL');
+      const trove = await fetchUserTroveState(connection, userPublicKey, "SOL");
       setUserTroveState(trove);
     } catch (err) {
-      console.error('Error refreshing trove state:', err);
+      console.error("Error refreshing trove state:", err);
     }
   }, [address, connection]);
 
   const refreshAusdBalance = useCallback(async () => {
     if (!address || !connection || !protocolState) return;
     try {
-      const { getAccount, getAssociatedTokenAddress } = await import("@solana/spl-token");
+      const { getAccount, getAssociatedTokenAddress } = await import(
+        "@solana/spl-token"
+      );
       const userPublicKey = new PublicKey(address);
-      const userATA = await getAssociatedTokenAddress(protocolState.stablecoinMint, userPublicKey);
+      const userATA = await getAssociatedTokenAddress(
+        protocolState.stablecoinMint,
+        userPublicKey
+      );
       const accountInfo = await getAccount(connection, userATA);
       setAusdBalance(accountInfo.amount);
     } catch (err) {
@@ -214,7 +231,12 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
 
   // Calculate current ICR from trove state (ICR stored in micro-percent format: 115000000 = 115%)
   const currentICR = useMemo(() => {
-    if (!userTroveState || !userTroveState.icr || userTroveState.debt === BigInt(0)) return 0;
+    if (
+      !userTroveState ||
+      !userTroveState.icr ||
+      userTroveState.debt === BigInt(0)
+    )
+      return 0;
     // ICR is stored in micro-percent format (115000000 = 115%)
     const icrValue = Number(userTroveState.icr);
     return icrValue / 1_000_000;
@@ -230,16 +252,34 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
       collateralRatio < baseMinCollateralRatio ||
       openTroveAmount > solBalance
     );
-  }, [openTroveAmount, borrowAmount, collateralRatio, solBalance, baseMinCollateralRatio]);
+  }, [
+    openTroveAmount,
+    borrowAmount,
+    collateralRatio,
+    solBalance,
+    baseMinCollateralRatio,
+  ]);
 
   // Memoize confirm button disabled text to prevent recalculation
   const confirmDisabledText = useMemo(() => {
     if (!confirmDisabled) return "";
-    if (collateralRatio < baseMinCollateralRatio && openTroveAmount > 0 && borrowAmount > 0) {
-      return `Collateral ratio (${collateralRatio.toFixed(2)}%) must be at least ${baseMinCollateralRatio}%`;
+    if (
+      collateralRatio < baseMinCollateralRatio &&
+      openTroveAmount > 0 &&
+      borrowAmount > 0
+    ) {
+      return `Collateral ratio (${collateralRatio.toFixed(
+        2
+      )}%) must be at least ${baseMinCollateralRatio}%`;
     }
     return "Fill in both SOL and AUSD amounts. Ensure you have sufficient SOL balance and maintain at least 115% collateral ratio.";
-  }, [confirmDisabled, collateralRatio, openTroveAmount, borrowAmount, baseMinCollateralRatio]);
+  }, [
+    confirmDisabled,
+    collateralRatio,
+    openTroveAmount,
+    borrowAmount,
+    baseMinCollateralRatio,
+  ]);
 
   // Fetch aUSD balance - optimized with longer interval and visibility check
   useEffect(() => {
@@ -252,12 +292,23 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
       if (!isVisibleRef.current) return; // Skip if tab is hidden
 
       try {
-        const { getAccount, getAssociatedTokenAddress } = await import("@solana/spl-token");
+        const { getAccount, getAssociatedTokenAddress } = await import(
+          "@solana/spl-token"
+        );
         const userPublicKey = new PublicKey(address);
-        const userATA = await getAssociatedTokenAddress(protocolState.stablecoinMint, userPublicKey);
-        const accountInfo = await getAccount(connection, userATA);
-        setAusdBalance(accountInfo.amount);
+        const userATA = await getAssociatedTokenAddress(
+          protocolState.stablecoinMint,
+          userPublicKey
+        );
+
+        try {
+          const accountInfo = await getAccount(connection, userATA);
+          setAusdBalance(accountInfo.amount);
+        } catch (err) {
+          setAusdBalance(BigInt(0));
+        }
       } catch (err) {
+        console.error("Error fetching aUSD balance:", err);
         setAusdBalance(BigInt(0));
       }
     };
@@ -624,8 +675,9 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-20 md:gap-6 gap-y-4 mt-4 md:mt-0 md:p-4">
                   <StatisticCard
                     title="Management Fee"
-                    description={`${managementFee} ${selectedAsset?.shortName ?? ""
-                      } (0.5%)`}
+                    description={`${managementFee} ${
+                      selectedAsset?.shortName ?? ""
+                    } (0.5%)`}
                     tooltip="This amount is deducted from the collateral amount as a management fee. There are no recurring fees for borrowing, which is thus interest-free."
                   />
 
@@ -638,9 +690,7 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
                     title="Collateral Ratio"
                     description={`${currentICR.toFixed(2)} %`}
                     descriptionColor={
-                      currentICR > 0
-                        ? getRatioColor(currentICR)
-                        : undefined
+                      currentICR > 0 ? getRatioColor(currentICR) : undefined
                     }
                     tooltip="The ratio between the dollar value of the collateral and the debt (in AUSD). Must be above 115% to avoid liquidation."
                   />
@@ -769,9 +819,7 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
                     title="Collateral Ratio"
                     description={`${currentICR.toFixed(2)} %`}
                     descriptionColor={
-                      currentICR > 0
-                        ? getRatioColor(currentICR)
-                        : undefined
+                      currentICR > 0 ? getRatioColor(currentICR) : undefined
                     }
                     tooltip="The ratio between the dollar value of the collateral and the debt (in AUSD). Must be above 115% to avoid liquidation."
                   />
@@ -918,8 +966,9 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
             <StatisticCard
               title="Management Fee"
               isNumeric
-              description={`${openTroveManagementFee} ${selectedAsset?.shortName ?? ""
-                } (0.5%)`}
+              description={`${openTroveManagementFee} ${
+                selectedAsset?.shortName ?? ""
+              } (0.5%)`}
               className="w-full h-14"
               tooltip="This amount is deducted from the collateral amount as a management fee. There are no recurring fees for borrowing, which is thus interest-free."
             />
@@ -934,9 +983,7 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
               title="Collateral Ratio"
               description={`${collateralRatio.toFixed(2)} %`}
               descriptionColor={
-                collateralRatio > 0
-                  ? getRatioColor(collateralRatio)
-                  : undefined
+                collateralRatio > 0 ? getRatioColor(collateralRatio) : undefined
               }
               className="w-full h-14"
               tooltip="The ratio between the dollar value of the collateral and the debt (in AUSD). Must be above 115% to open a trove."
