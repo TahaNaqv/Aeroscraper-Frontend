@@ -1,4 +1,4 @@
-import { ApolloClient, InMemoryCache } from "@apollo/client";
+import { ApolloClient, InMemoryCache, HttpLink } from "@apollo/client";
 import { createStytchHeadlessClient } from "@stytch/nextjs/headless";
 import { StytchHeadlessClient } from "@stytch/vanilla-js/dist/index.headless";
 
@@ -9,7 +9,9 @@ export const stytchClient: StytchHeadlessClient = createStytchHeadlessClient(
 
 // TODO: Refactor to be dynamic. Local dev uri must be device IP.
 export const apolloClient = new ApolloClient({
-  uri: "https://api.subquery.network/sq/burnt-labs/xion-indexer",
+  link: new HttpLink({
+    uri: "https://api.subquery.network/sq/burnt-labs/xion-indexer",
+  }),
   cache: new InMemoryCache(),
   assumeImmutableResults: true,
 });
