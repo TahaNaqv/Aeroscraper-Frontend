@@ -1,35 +1,45 @@
 import GradientButton from "@/components/Buttons/GradientButton";
 import Text from "@/components/Texts/Text";
-import useAppContract from "@/contracts/app/useAppContract";
 import { motion } from "framer-motion";
-import React, { FC, useEffect, useMemo, useState, useCallback } from "react";
+import React, {
+  FC,
+  useEffect,
+  useMemo,
+  useState,
+  useCallback,
+  useCallback,
+  useRef,
+} from "react";
 import { NumberFormatValues } from "react-number-format/types/types";
 import OutlinedButton from "@/components/Buttons/OutlinedButton";
 import { useNotification } from "@/contexts/NotificationProvider";
-import {
-  AUSD_PRICE,
-  convertAmount,
-  getIsInjectiveResponse,
-  getRatioColor,
-  getRatioText,
-} from "@/utils/contractUtils";
+import { convertAmount, getRatioColor } from "@/utils/contractUtils";
 import { isNil } from "lodash";
 import { PageData } from "../../_types/types";
 import StatisticCard from "@/components/Cards/StatisticCard";
 import BorderedNumberInput from "@/components/Input/BorderedNumberInput";
 import Checkbox from "@/components/Checkbox";
 import { NumericFormat } from "react-number-format";
-import useChainAdapter from "@/hooks/useChainAdapter";
 import { CollateralAsset } from "@/types/types";
 import { DefaultAssetByChainName } from "@/constants/assetConstants";
 import { ChainName } from "@/enums/Chain";
-import { useBalances } from "@/contexts/BalanceProvider";
 import { useAppKitAccount, useAppKitBalance } from "@reown/appkit/react";
 import { useAppKitConnection } from "@reown/appkit-adapter-solana/react";
 import { SolanaIcon } from "@/components/Icons/Icons";
 import { useSolanaProtocol } from "@/hooks/useSolanaProtocol";
 import { PublicKey } from "@solana/web3.js";
 import { useProtocolState } from "@/hooks/useProtocolState";
+
+// Preload dynamic imports for better performance
+let splTokenLoaded = false;
+const preloadSplToken = () => {
+  if (!splTokenLoaded && typeof window !== "undefined") {
+    import("@solana/spl-token").then(() => {
+      splTokenLoaded = true;
+    });
+    import("@/lib/solana/fetchTroveState").then(() => {});
+  }
+};
 
 enum TABS {
   COLLATERAL = 0,
@@ -43,27 +53,48 @@ type Props = {
 };
 
 const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
-  // const contract = useAppContract();
-
-  // const { balanceByDenom, refreshBalance } = useBalances();
   const selectedChainName = ChainName.SOLANA;
   const { fetchBalance } = useAppKitBalance();
   const { address, isConnected } = useAppKitAccount();
   const { connection } = useAppKitConnection();
 
   const [balance, setBalance] = useState<any | null>(null);
+  const isVisibleRef = useRef(true);
+  const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const trovePollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Preload modules on mount
+  useEffect(() => {
+    preloadSplToken();
+  }, []);
+
+  // Track visibility to pause polling when tab is hidden
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      isVisibleRef.current = !document.hidden;
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () =>
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, []);
+
+  // Memoize fetchBalance to prevent unnecessary re-renders
+  const fetchBalanceMemoized = useCallback(async () => {
+    if (isConnected) {
+      try {
+        const res = await fetchBalance();
+        setBalance(res);
+      } catch (err) {
+        console.error("Error fetching balance:", err);
+      }
+    }
+  }, [isConnected, fetchBalance]);
 
   useEffect(() => {
-    if (!isConnected) return;
-
-    const loadBalance = async () => {
-      const res = await fetchBalance();
-      setBalance(res);
-    };
-    loadBalance();
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isConnected]);
+    if (isConnected) {
+      fetchBalanceMemoized();
+    }
+  }, [isConnected, fetchBalanceMemoized]);
 
   const baseMinCollateralRatio = 115;
 
@@ -73,7 +104,7 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
   const [borrowAmount, setBorrowAmount] = useState<number>(0);
   const [collateralAmount, setCollateralAmount] = useState<number>(0);
   const [borrowingAmount, setBorrowingAmount] = useState<number>(0);
-  const [selectedAsset, setSelectedAsset] = useState<CollateralAsset>(
+  const [selectedAsset] = useState<CollateralAsset>(
     DefaultAssetByChainName[selectedChainName ?? ChainName.INJECTIVE]
   );
   const [userTroveState, setUserTroveState] = useState<{
@@ -96,37 +127,70 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
 
   const [ausdBalance, setAusdBalance] = useState<bigint>(BigInt(0));
 
-  const selectedCollateral = useMemo(
-    () =>
-      userTroveState
-        ? {
-            amount: Number(userTroveState.collateralAmount) / 1e9, // Convert from lamports to SOL
-            denom: selectedAsset.denom,
-          }
-        : { amount: 0, denom: selectedAsset.denom },
-    [userTroveState, selectedAsset.denom]
-  );
+  // Memoize selectedCollateral to prevent unnecessary re-renders (must be before borrowingCapacity)
+  const selectedCollateral = useMemo(() => {
+    return userTroveState
+      ? {
+          amount: Number(userTroveState.collateralAmount) / 1e9, // Convert from lamports to SOL
+          denom: selectedAsset.denom,
+        }
+      : { amount: 0, denom: selectedAsset.denom };
+  }, [userTroveState, selectedAsset.denom]);
 
-  // const selectedMinCollateral = useMemo(
-  //   () => pageData?.minCollateralRatioByDenom[selectedAsset.denom] ?? 0,
-  //   [selectedAsset, pageData?.minCollateralRatioByDenom]
-  // );
+  // Memoize expensive convertAmount calculations to prevent recalculation on every render
+  const solBalance = useMemo(() => {
+    return Number(convertAmount(balance ?? 0, selectedAsset.decimal));
+  }, [balance, selectedAsset.decimal]);
 
-  const isTroveOpened = useMemo(
-    () =>
-      userTroveState !== null &&
-      userTroveState.collateralAmount > 0 &&
-      userTroveState.debt > 0,
-    [userTroveState]
-  );
+  const formattedSolBalance = useMemo(() => {
+    return solBalance.toFixed(6);
+  }, [solBalance]);
 
-  const fetchAusdBalance = useCallback(async () => {
-    if (!address || !connection || !protocolState) {
-      setAusdBalance(BigInt(0));
+  const formattedAusdBalance = useMemo(() => {
+    return (Number(ausdBalance) / 1e18).toFixed(2);
+  }, [ausdBalance]);
 
-      return;
+  const formattedDebtAmount = useMemo(() => {
+    return userTroveState
+      ? (Number(userTroveState.debt) / 1e18).toFixed(2)
+      : "0";
+  }, [userTroveState]);
+
+  const borrowingCapacity = useMemo(() => {
+    if (!userTroveState || !basePrice) return 0;
+    return (
+      ((selectedCollateral.amount ?? 0) * basePrice * 100) / 115 -
+      Number(userTroveState.debt) / 1e18
+    );
+  }, [selectedCollateral.amount, basePrice, userTroveState]);
+
+  // Memoize management fee calculation
+  const managementFee = useMemo(() => {
+    return (collateralAmount * 0.005).toFixed(3);
+  }, [collateralAmount]);
+
+  // Memoize management fee for open trove
+  const openTroveManagementFee = useMemo(() => {
+    return (openTroveAmount * 0.005).toFixed(3);
+  }, [openTroveAmount]);
+
+  // Optimized refresh functions that can be called after transactions
+  const refreshTroveState = useCallback(async () => {
+    if (!address || !connection) return;
+    try {
+      const { fetchUserTroveState } = await import(
+        "@/lib/solana/fetchTroveState"
+      );
+      const userPublicKey = new PublicKey(address);
+      const trove = await fetchUserTroveState(connection, userPublicKey, "SOL");
+      setUserTroveState(trove);
+    } catch (err) {
+      console.error("Error refreshing trove state:", err);
     }
+  }, [address, connection]);
 
+  const refreshAusdBalance = useCallback(async () => {
+    if (!address || !connection || !protocolState) return;
     try {
       const { getAccount, getAssociatedTokenAddress } = await import(
         "@solana/spl-token"
@@ -136,34 +200,140 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
         protocolState.stablecoinMint,
         userPublicKey
       );
-
-      try {
-        const accountInfo = await getAccount(connection, userATA);
-        setAusdBalance(accountInfo.amount);
-      } catch (err) {
-        setAusdBalance(BigInt(0));
-      }
+      const accountInfo = await getAccount(connection, userATA);
+      setAusdBalance(accountInfo.amount);
     } catch (err) {
-      console.error("Error fetching aUSD balance:", err);
       setAusdBalance(BigInt(0));
     }
   }, [address, connection, protocolState]);
-  // Fetch aUSD balance
-  useEffect(() => {
-    fetchAusdBalance();
-    const interval = setInterval(() => {
-      fetchAusdBalance();
-    }, 5000);
-    return () => clearInterval(interval);
-  }, [fetchAusdBalance]);
 
-  // Add useEffect to fetch trove state
+  const isTroveOpened = useMemo(
+    () =>
+      userTroveState !== null &&
+      userTroveState.collateralAmount > 0 &&
+      userTroveState.debt > 0,
+    [userTroveState]
+  );
+
+  // Calculate collateral ratio for new troves (when opening trove)
+  const collateralRatioCalculate = useMemo(() => {
+    if (!borrowAmount || borrowAmount <= 0) return 0;
+    // Estimate SOL price (use basePrice if available, otherwise use conservative estimate)
+    const estimatedSolPrice = basePrice ?? 140; // Default ~$140/SOL
+    const collateralValueUSD = (openTroveAmount || 0) * estimatedSolPrice;
+    const debtValueUSD = borrowAmount;
+    const ratio = (collateralValueUSD / debtValueUSD) * 100;
+    return isFinite(ratio) ? ratio : 0;
+  }, [openTroveAmount, borrowAmount, basePrice]);
+
+  const collateralRatio = collateralRatioCalculate;
+
+  // Calculate current ICR from trove state (ICR stored in micro-percent format: 115000000 = 115%)
+  const currentICR = useMemo(() => {
+    if (
+      !userTroveState ||
+      !userTroveState.icr ||
+      userTroveState.debt === BigInt(0)
+    )
+      return 0;
+    // ICR is stored in micro-percent format (115000000 = 115%)
+    const icrValue = Number(userTroveState.icr);
+    return icrValue / 1_000_000;
+  }, [userTroveState]);
+
+  // Validation for opening new trove - using memoized solBalance
+  const confirmDisabled = useMemo(() => {
+    return (
+      borrowAmount <= 0 ||
+      openTroveAmount <= 0 ||
+      borrowAmount > 999 ||
+      openTroveAmount > 999 ||
+      collateralRatio < baseMinCollateralRatio ||
+      openTroveAmount > solBalance
+    );
+  }, [
+    openTroveAmount,
+    borrowAmount,
+    collateralRatio,
+    solBalance,
+    baseMinCollateralRatio,
+  ]);
+
+  // Memoize confirm button disabled text to prevent recalculation
+  const confirmDisabledText = useMemo(() => {
+    if (!confirmDisabled) return "";
+    if (
+      collateralRatio < baseMinCollateralRatio &&
+      openTroveAmount > 0 &&
+      borrowAmount > 0
+    ) {
+      return `Collateral ratio (${collateralRatio.toFixed(
+        2
+      )}%) must be at least ${baseMinCollateralRatio}%`;
+    }
+    return "Fill in both SOL and AUSD amounts. Ensure you have sufficient SOL balance and maintain at least 115% collateral ratio.";
+  }, [
+    confirmDisabled,
+    collateralRatio,
+    openTroveAmount,
+    borrowAmount,
+    baseMinCollateralRatio,
+  ]);
+
+  // Fetch aUSD balance - optimized with longer interval and visibility check
   useEffect(() => {
-    const fetchTroveState = async () => {
-      if (!address || !connection) {
-        setUserTroveState(null);
-        return;
+    if (!address || !connection || !protocolState) {
+      setAusdBalance(BigInt(0));
+      return;
+    }
+
+    const fetchAusdBalance = async () => {
+      if (!isVisibleRef.current) return; // Skip if tab is hidden
+
+      try {
+        const { getAccount, getAssociatedTokenAddress } = await import(
+          "@solana/spl-token"
+        );
+        const userPublicKey = new PublicKey(address);
+        const userATA = await getAssociatedTokenAddress(
+          protocolState.stablecoinMint,
+          userPublicKey
+        );
+
+        try {
+          const accountInfo = await getAccount(connection, userATA);
+          setAusdBalance(accountInfo.amount);
+        } catch (err) {
+          setAusdBalance(BigInt(0));
+        }
+      } catch (err) {
+        console.error("Error fetching aUSD balance:", err);
+        setAusdBalance(BigInt(0));
       }
+    };
+
+    // Initial fetch
+    fetchAusdBalance();
+
+    // Poll every 15 seconds instead of 5 (less aggressive)
+    pollingIntervalRef.current = setInterval(fetchAusdBalance, 15000);
+
+    return () => {
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current);
+      }
+    };
+  }, [address, connection, protocolState?.stablecoinMint]);
+
+  // Fetch trove state - optimized with longer interval and visibility check
+  useEffect(() => {
+    if (!address || !connection) {
+      setUserTroveState(null);
+      return;
+    }
+
+    const fetchTroveState = async () => {
+      if (!isVisibleRef.current) return; // Skip if tab is hidden
 
       try {
         const { fetchUserTroveState } = await import(
@@ -182,46 +352,18 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
       }
     };
 
+    // Initial fetch
     fetchTroveState();
 
-    // Refresh every 5 seconds
-    const interval = setInterval(fetchTroveState, 5000);
-    return () => clearInterval(interval);
+    // Refresh every 15 seconds instead of 5 (less aggressive)
+    trovePollingIntervalRef.current = setInterval(fetchTroveState, 15000);
+
+    return () => {
+      if (trovePollingIntervalRef.current) {
+        clearInterval(trovePollingIntervalRef.current);
+      }
+    };
   }, [address, connection]);
-
-  // const collacteralRatioCalculate = useMemo(
-  //   () =>
-  //     Number((openTroveAmount || 0) * (basePrice ?? 0)) / (borrowAmount || 0),
-  //   [openTroveAmount, borrowAmount, basePrice]
-  // );
-
-  // const collacteralRatio = isFinite(collacteralRatioCalculate)
-  //   ? collacteralRatioCalculate
-  //   : 0;
-
-  // const confirmDisabled = useMemo(
-  //   () =>
-  //     borrowAmount <= 0 ||
-  //     openTroveAmount <= 0 ||
-  //     borrowAmount > 999 ||
-  //     openTroveAmount > 999 ||
-  //     collacteralRatio < 1.15 ||
-  //     openTroveAmount >
-  //       convertAmount(
-  //         balanceByDenom[selectedAsset!.denom]?.amount ?? 0,
-  //         selectedAsset!.decimal
-  //       ) ||
-  //     collacteralRatio < selectedMinCollateral - 0.00001,
-  //   [
-  //     openTroveAmount,
-  //     borrowAmount,
-  //     collacteralRatio,
-  //     pageData,
-  //     selectedMinCollateral,
-  //     selectedAsset,
-  //     balanceByDenom,
-  //   ]
-  // );
 
   const withdrawDisabled = useMemo(
     () =>
@@ -234,9 +376,8 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
     () =>
       collateralAmount <= 0 ||
       collateralAmount > 999 ||
-      Number(convertAmount(balance ?? 0, selectedAsset.decimal)) <
-        collateralAmount,
-    [collateralAmount, selectedAsset, balance]
+      solBalance < collateralAmount,
+    [collateralAmount, solBalance]
   );
   const borrowDisabled = useMemo(
     () => borrowingAmount <= 0 || borrowingAmount > 999 || !userTroveState,
@@ -251,20 +392,34 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
     [borrowingAmount, userTroveState] // Changed from repaymentAmount
   );
 
+  // Optimized handlers with useCallback to prevent recreation on every render
   const changeOpenTroveAmount = useCallback((values: NumberFormatValues) => {
-    setOpenTroveAmount(Number(values.value));
+    const newValue = Number(values.value || 0);
+    setOpenTroveAmount(newValue);
   }, []);
 
   const changeBorrowAmount = useCallback((values: NumberFormatValues) => {
-    setBorrowAmount(Number(values.value));
+    const newValue = Number(values.value || 0);
+    setBorrowAmount(newValue);
   }, []);
 
   const changeCollateralAmount = useCallback((values: NumberFormatValues) => {
-    setCollateralAmount(Number(values.value));
+    const newValue = Number(values.value || 0);
+    setCollateralAmount(newValue);
   }, []);
 
   const changeBorrowingAmount = useCallback((values: NumberFormatValues) => {
-    setBorrowingAmount(Number(values.value));
+    const newValue = Number(values.value || 0);
+    setBorrowingAmount(newValue);
+  }, []);
+
+  // Handlers for tab changes - must be at top level, not inline in JSX
+  const handleCollateralTabChange = useCallback(() => {
+    setSelectedTab(TABS.COLLATERAL);
+  }, []);
+
+  const handleBorrowingTabChange = useCallback(() => {
+    setSelectedTab(TABS.BORROWING);
   }, []);
 
   const handleOpenTrove = async () => {
@@ -289,7 +444,8 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
       setOpenTroveAmount(0);
       setBorrowAmount(0);
 
-      // Refresh data if available
+      // Refresh data immediately after success
+      await Promise.all([refreshTroveState(), refreshAusdBalance()]);
       getPageData?.();
     } catch (err: any) {
       addNotification({
@@ -319,18 +475,8 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
       // Reset form
       setCollateralAmount(0);
 
-      // Refresh trove state
-      if (connection && address) {
-        const { fetchUserTroveState } = await import(
-          "@/lib/solana/fetchTroveState"
-        );
-        const updatedTrove = await fetchUserTroveState(
-          connection,
-          new PublicKey(address),
-          "SOL"
-        );
-        setUserTroveState(updatedTrove);
-      }
+      // Refresh data immediately after success
+      await Promise.all([refreshTroveState(), refreshAusdBalance()]);
     } catch (err: any) {
       addNotification({
         status: "error",
@@ -359,18 +505,8 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
       // Reset form
       setCollateralAmount(0);
 
-      // Refresh trove state
-      if (connection && address) {
-        const { fetchUserTroveState } = await import(
-          "@/lib/solana/fetchTroveState"
-        );
-        const updatedTrove = await fetchUserTroveState(
-          connection,
-          new PublicKey(address),
-          "SOL"
-        );
-        setUserTroveState(updatedTrove);
-      }
+      // Refresh data immediately after success
+      await Promise.all([refreshTroveState(), refreshAusdBalance()]);
     } catch (err: any) {
       addNotification({
         status: "error",
@@ -399,18 +535,8 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
       // Reset form
       setBorrowingAmount(0);
 
-      // Refresh trove state
-      if (connection && address) {
-        const { fetchUserTroveState } = await import(
-          "@/lib/solana/fetchTroveState"
-        );
-        const updatedTrove = await fetchUserTroveState(
-          connection,
-          new PublicKey(address),
-          "SOL"
-        );
-        setUserTroveState(updatedTrove);
-      }
+      // Refresh data immediately after success
+      await Promise.all([refreshTroveState(), refreshAusdBalance()]);
     } catch (err: any) {
       addNotification({
         status: "error",
@@ -439,18 +565,8 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
       // Reset form
       setBorrowingAmount(0);
 
-      // Refresh trove state
-      if (connection && address) {
-        const { fetchUserTroveState } = await import(
-          "@/lib/solana/fetchTroveState"
-        );
-        const updatedTrove = await fetchUserTroveState(
-          connection,
-          new PublicKey(address),
-          "SOL"
-        );
-        setUserTroveState(updatedTrove);
-      }
+      // Refresh data immediately after success
+      await Promise.all([refreshTroveState(), refreshAusdBalance()]);
     } catch (err: any) {
       addNotification({
         status: "error",
@@ -460,12 +576,6 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
       console.error(err);
     }
   };
-
-  // useEffect(() => {
-  //   if (selectedChainName) {
-  //     setSelectedAsset(DefaultAssetByChainName[selectedChainName]);
-  //   }
-  // }, [selectedChainName, selectedTab, selectedAppVersion]);
 
   return (
     <div className="overflow-hidden md:overflow-visible">
@@ -479,9 +589,7 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
             <Checkbox
               label={"Collateral"}
               checked={selectedTab === TABS.COLLATERAL}
-              onChange={() => {
-                setSelectedTab(TABS.COLLATERAL);
-              }}
+              onChange={handleCollateralTabChange}
             />
             {selectedTab === TABS.COLLATERAL && (
               <motion.div
@@ -530,9 +638,7 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
                         In Wallet:
                       </label>
                       <NumericFormat
-                        value={Number(
-                          convertAmount(balance ?? 0, selectedAsset.decimal)
-                        ).toFixed(6)}
+                        value={formattedSolBalance}
                         thousandsGroupStyle="thousand"
                         thousandSeparator=","
                         fixedDecimalScale
@@ -566,53 +672,26 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
                   </div>
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-20 md:gap-6 gap-y-4 mt-4 md:mt-0 md:p-4">
-                  <NumericFormat
-                    value={Number(collateralAmount * 0.005)}
-                    thousandsGroupStyle="thousand"
-                    thousandSeparator=","
-                    fixedDecimalScale
-                    decimalScale={3}
-                    displayType="text"
-                    renderText={(value) => (
-                      <StatisticCard
-                        title="Management Fee"
-                        description={`${value} ${
-                          selectedAsset?.shortName ?? ""
-                        } (0.5%)`}
-                        tooltip="This amount is deducted from the collateral amount as a management fee. There are no recurring fees for borrowing, which is thus interest-free."
-                      />
-                    )}
+                  <StatisticCard
+                    title="Management Fee"
+                    description={`${managementFee} ${
+                      selectedAsset?.shortName ?? ""
+                    } (0.5%)`}
+                    tooltip="This amount is deducted from the collateral amount as a management fee. There are no recurring fees for borrowing, which is thus interest-free."
                   />
 
                   <StatisticCard
                     title="Total Debt"
-                    description={`${
-                      userTroveState
-                        ? (Number(userTroveState.debt) / 1e18).toFixed(2)
-                        : 0
-                    } AUSD`}
+                    description={`${formattedDebtAmount} AUSD`}
                     tooltip="The total amount of AUSD you have borrowed"
                   />
-                  {/* <StatisticCard
-                    isNumeric
-                    title="Liquidation Price"
-                    description={Number(
-                      ((pageData?.debtAmount ?? 0) * 115) /
-                        ((selectedCollateral.amount || 1) * 100)
-                    ).toString()}
-                    tooltip="The dollar value per unit of collateral at which your Trove will drop below a 115% Collateral Ratio and be liquidated. You should ensure you are comfortable with managing your position so that the price of your collateral never reaches this level."
-                  /> */}
                   <StatisticCard
                     title="Collateral Ratio"
-                    // description={`${(selectedMinCollateral * 100).toFixed(
-                    //   3
-                    // )} %`}
-                    // descriptionColor={
-                    //   selectedMinCollateral > 0
-                    //     ? getRatioColor(selectedMinCollateral * 100)
-                    //     : undefined
-                    // }
-                    tooltip="The ratio between the dollar value of the collateral and the debt (in AUSD) you are depositing."
+                    description={`${currentICR.toFixed(2)} %`}
+                    descriptionColor={
+                      currentICR > 0 ? getRatioColor(currentICR) : undefined
+                    }
+                    tooltip="The ratio between the dollar value of the collateral and the debt (in AUSD). Must be above 115% to avoid liquidation."
                   />
                 </div>
                 <div className="flex items-center justify-end pr-4 gap-4 mt-10 md:mt-4">
@@ -645,9 +724,7 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
             <Checkbox
               label={"Borrow/Repay"}
               checked={selectedTab === TABS.BORROWING}
-              onChange={() => {
-                setSelectedTab(TABS.BORROWING);
-              }}
+              onChange={handleBorrowingTabChange}
               className="mt-8"
             />
             {selectedTab === TABS.BORROWING && (
@@ -684,7 +761,7 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
                         In Wallet:
                       </label>
                       <NumericFormat
-                        value={Number(ausdBalance) / 1e18}
+                        value={formattedAusdBalance}
                         thousandsGroupStyle="thousand"
                         thousandSeparator=","
                         fixedDecimalScale
@@ -703,15 +780,7 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
                         Borrowing Capacity:
                       </label>
                       <NumericFormat
-                        value={
-                          ((selectedCollateral.amount ?? 0) *
-                            (basePrice ?? 0) *
-                            100) /
-                            115 -
-                          (userTroveState
-                            ? Number(userTroveState.debt) / 1e18
-                            : 0)
-                        }
+                        value={borrowingCapacity}
                         thousandsGroupStyle="thousand"
                         thousandSeparator=","
                         fixedDecimalScale
@@ -729,11 +798,7 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
                         Debt:
                       </label>
                       <NumericFormat
-                        value={
-                          userTroveState
-                            ? Number(userTroveState.debt) / 1e18
-                            : 0
-                        }
+                        value={formattedDebtAmount}
                         thousandsGroupStyle="thousand"
                         thousandSeparator=","
                         fixedDecimalScale
@@ -747,30 +812,15 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
                   </div>
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-6 gap-y-4 p-4">
-                  {/* <div className="md:col-start-3">
-                    <StatisticCard
-                      title="Liquidation Price"
-                      isNumeric
-                      description={Number(
-                        (pageData.debtAmount * 115) /
-                          ((selectedCollateral.amount || 1) * 100)
-                      ).toString()}
-                      tooltip="The dollar value per unit of collateral at which your Trove will drop below a 115% Collateral Ratio and be liquidated. You should ensure you are comfortable with managing your position so that the price of your collateral never reaches this level."
-                    />
-                  </div> */}
                   <div></div>
                   <div></div>
                   <StatisticCard
                     title="Collateral Ratio"
-                    description={`${(
-                      (baseMinCollateralRatio ?? 0) * 100
-                    ).toFixed(6)} %`}
+                    description={`${currentICR.toFixed(2)} %`}
                     descriptionColor={
-                      baseMinCollateralRatio > 0
-                        ? getRatioColor((baseMinCollateralRatio ?? 0) * 100)
-                        : undefined
+                      currentICR > 0 ? getRatioColor(currentICR) : undefined
                     }
-                    tooltip="The ratio between the dollar value of the collateral and the debt (in AUSD) you are depositing."
+                    tooltip="The ratio between the dollar value of the collateral and the debt (in AUSD). Must be above 115% to avoid liquidation."
                   />
                 </div>
                 <div className="flex items-center justify-end pr-4 gap-4 mt-6">
@@ -815,11 +865,6 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
                 </Text>
                 {!isNil(selectedAsset) ? (
                   <div className="flex items-center gap-2">
-                    {/* <img
-                      alt="token"
-                      src={selectedAsset.imageURL}
-                      className="w-6 h-6"
-                    /> */}
                     <SolanaIcon />
                     <Text size="base" weight="font-medium">
                       {selectedAsset.shortName}
@@ -848,9 +893,7 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
                 In Wallet:
               </label>
               <NumericFormat
-                value={Number(
-                  convertAmount(balance ?? 0, selectedAsset.decimal)
-                ).toFixed(6)}
+                value={formattedSolBalance}
                 thousandsGroupStyle="thousand"
                 thousandSeparator=","
                 fixedDecimalScale
@@ -894,7 +937,7 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
                 In Wallet:
               </label>
               <NumericFormat
-                value={Number(ausdBalance) / 1e18}
+                value={formattedAusdBalance}
                 thousandsGroupStyle="thousand"
                 thousandSeparator=","
                 fixedDecimalScale
@@ -922,7 +965,7 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
             <StatisticCard
               title="Management Fee"
               isNumeric
-              description={`${Number(openTroveAmount * 0.005)} ${
+              description={`${openTroveManagementFee} ${
                 selectedAsset?.shortName ?? ""
               } (0.5%)`}
               className="w-full h-14"
@@ -935,23 +978,14 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
               className="w-full h-14"
               tooltip="The total amount of AUSD you have borrowed"
             />
-            {/* <StatisticCard
-                isNumeric
-                title="Liquidation Price"
-                description={Number((borrowAmount * 115) / ((openTroveAmount || 1) * 100)).toString()}
-                className="w-full h-14"
-                tooltip="The dollar value per unit of collateral at which your Trove will drop below a 115% Collateral Ratio and be liquidated. You should ensure you are comfortable with managing your position so that the price of your collateral never reaches this level.."
-              /> */}
             <StatisticCard
               title="Collateral Ratio"
-              // description={`${(collacteralRatio * 100).toFixed(6)} %`}
-              // descriptionColor={
-              //   collacteralRatio > 0
-              //     ? getRatioColor(collacteralRatio * 100)
-              //     : undefined
-              // }
+              description={`${collateralRatio.toFixed(2)} %`}
+              descriptionColor={
+                collateralRatio > 0 ? getRatioColor(collateralRatio) : undefined
+              }
               className="w-full h-14"
-              tooltip="The ratio between the dollar value of the collateral and the debt (in AUSD) you are depositing."
+              tooltip="The ratio between the dollar value of the collateral and the debt (in AUSD). Must be above 115% to open a trove."
             />
           </motion.div>
           <div className="flex items-center justify-end pr-4 gap-4 mt-10 md:mt-4">
@@ -960,10 +994,8 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
               onClick={handleOpenTrove}
               className="min-w-full md:min-w-[375px] h-11 "
               rounded="rounded-lg"
-              disabled={openTroveAmount <= 0 || borrowAmount <= 0}
-              disabledText={
-                "Fill in both SOL and AUSD amounts. 999 SOL & AUSD is the upper limit, and 0.0011 AUSD is the lower limit for now."
-              }
+              disabled={confirmDisabled}
+              disabledText={confirmDisabledText}
             >
               <Text>Confirm</Text>
             </GradientButton>
