@@ -196,3 +196,51 @@ export const UnstakeParamsSchema = new Map([
     },
   ],
 ]);
+
+// LiquidateTrovesParams schema (matches Rust struct from IDL)
+export class LiquidateTrovesParams {
+  liquidation_list: string[]; // Vec<String> in Rust, but we'll pass Pubkey addresses as strings
+  collateral_denom: string;
+
+  constructor(fields: { liquidation_list: string[]; collateral_denom: string }) {
+    this.liquidation_list = fields.liquidation_list;
+    this.collateral_denom = fields.collateral_denom;
+  }
+}
+
+export const LiquidateTrovesParamsSchema = new Map([
+  [
+    LiquidateTrovesParams,
+    {
+      kind: 'struct',
+      fields: [
+        ['liquidation_list', ['u8']], // Vec<Pubkey> serialized as bytes
+        ['collateral_denom', 'string'],
+      ],
+    },
+  ],
+]);
+
+// RedeemParams schema (matches Rust struct from IDL)
+export class RedeemParams {
+  amount: bigint;
+  collateral_denom: string;
+
+  constructor(fields: { amount: bigint; collateral_denom: string }) {
+    this.amount = fields.amount;
+    this.collateral_denom = fields.collateral_denom;
+  }
+}
+
+export const RedeemParamsSchema = new Map([
+  [
+    RedeemParams,
+    {
+      kind: 'struct',
+      fields: [
+        ['amount', 'u64'],
+        ['collateral_denom', 'string'],
+      ],
+    },
+  ],
+]);

@@ -29,6 +29,7 @@ import { useAppKitConnection } from '@reown/appkit-adapter-solana/react';
 import { SolanaIcon } from "@/components/Icons/Icons";
 import { useSolanaProtocol } from "@/hooks/useSolanaProtocol";
 import { PublicKey } from "@solana/web3.js";
+import { useProtocolState } from "@/hooks/useProtocolState";
 
 enum TABS {
   COLLATERAL = 0,
@@ -65,7 +66,6 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
   const [borrowAmount, setBorrowAmount] = useState<number>(0);
   const [collateralAmount, setCollateralAmount] = useState<number>(0);
   const [borrowingAmount, setBorrowingAmount] = useState<number>(0);
-  const [repaymentAmount, setRepaymentAmount] = useState<number>(0);
   const [selectedAsset, setSelectedAsset] = useState<CollateralAsset>(
     DefaultAssetByChainName[selectedChainName ?? ChainName.INJECTIVE]
   );
@@ -78,6 +78,9 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
 
   const { addNotification } = useNotification();
   const { openTrove, addCollateral, removeCollateral, borrowLoan, repayLoan, loading: processLoading } = useSolanaProtocol();
+  const { protocolState } = useProtocolState();
+
+  const [ausdBalance, setAusdBalance] = useState<bigint>(BigInt(0));
 
   const selectedCollateral = userTroveState ? {
     amount: Number(userTroveState.collateralAmount) / 1e9, // Convert from lamports to SOL
@@ -94,6 +97,36 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
     [userTroveState]
   );
 
+
+  // Fetch aUSD balance
+  useEffect(() => {
+    const fetchAusdBalance = async () => {
+      if (!address || !connection || !protocolState) {
+        setAusdBalance(BigInt(0));
+        return;
+      }
+
+      try {
+        const { getAccount, getAssociatedTokenAddress } = await import("@solana/spl-token");
+        const userPublicKey = new PublicKey(address);
+        const userATA = await getAssociatedTokenAddress(protocolState.stablecoinMint, userPublicKey);
+
+        try {
+          const accountInfo = await getAccount(connection, userATA);
+          setAusdBalance(accountInfo.amount);
+        } catch (err) {
+          setAusdBalance(BigInt(0));
+        }
+      } catch (err) {
+        console.error("Error fetching aUSD balance:", err);
+        setAusdBalance(BigInt(0));
+      }
+    };
+
+    fetchAusdBalance();
+    const interval = setInterval(fetchAusdBalance, 5000);
+    return () => clearInterval(interval);
+  }, [address, connection, protocolState]);
 
   // Add useEffect to fetch trove state
   useEffect(() => {
@@ -185,9 +218,6 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
       !userTroveState,
     [borrowingAmount, userTroveState]  // Changed from repaymentAmount
   );
-  //     0,
-  //   [borrowingAmount]
-  // );
 
   const changeOpenTroveAmount = (values: NumberFormatValues) => {
     setOpenTroveAmount(Number(values.value));
@@ -204,138 +234,6 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
   const changeBorrowingAmount = (values: NumberFormatValues) => {
     setBorrowingAmount(Number(values.value));
   };
-
-  // const queryAddColletral = async () => {
-  //   setProcessLoading(true);
-
-  //   try {
-  //     const res: any = await contract.addCollateral(
-  //       collateralAmount,
-  //       selectedAsset
-  //     );
-
-  //     addNotification({
-  //       status: "success",
-  //       directLink: getIsInjectiveResponse(res)
-  //         ? res?.txHash
-  //         : res?.transactionHash,
-  //       message: `${collateralAmount} ${selectedAsset?.shortName} Collateral Added`,
-  //     });
-  //     getPageData?.();
-  //     refreshBalance();
-  //     setCollateralAmount(0);
-  //   } catch (err) {
-  //     console.error(err);
-
-  //     addNotification({
-  //       message: "",
-  //       status: "error",
-  //       directLink: "",
-  //     });
-  //   }
-
-  //   setProcessLoading(false);
-  // };
-
-  // const queryWithdraw = async () => {
-  //   setProcessLoading(true);
-
-  //   try {
-  //     const res: any = await contract.removeCollateral(
-  //       collateralAmount,
-  //       selectedAsset
-  //     );
-
-  //     addNotification({
-  //       status: "success",
-  //       directLink: getIsInjectiveResponse(res)
-  //         ? res?.txHash
-  //         : res?.transactionHash,
-  //       message: `${collateralAmount} ${selectedAsset?.shortName} Collateral Removed`,
-  //     });
-  //     getPageData?.();
-  //     refreshBalance();
-  //     setCollateralAmount(0);
-  //   } catch (err) {
-  //     console.error(err);
-
-  //     addNotification({
-  //       message: "",
-  //       status: "error",
-  //       directLink: "",
-  //     });
-  //   }
-
-  //   setProcessLoading(false);
-  // };
-
-  // const queryBorrow = async () => {
-  //   setProcessLoading(true);
-
-  //   try {
-  //     const res: any = await contract.borrowLoan(borrowingAmount);
-
-  //     addNotification({
-  //       status: "success",
-  //       directLink: getIsInjectiveResponse(res)
-  //         ? res?.txHash
-  //         : res?.transactionHash,
-  //       message: `${borrowingAmount} AUSD Borrowed`,
-  //     });
-  //     getPageData?.();
-  //     refreshBalance();
-  //     setBorrowingAmount(0);
-  //   } catch (err) {
-  //     console.error(err);
-
-  //     addNotification({
-  //       message: "",
-  //       status: "error",
-  //       directLink: "",
-  //     });
-  //   }
-
-  //   setProcessLoading(false);
-  // };
-
-  // const queryRepay = async () => {
-  //   setProcessLoading(true);
-
-  //   try {
-  //     const res: any = await contract.repayLoan(borrowingAmount);
-
-  //     addNotification({
-  //       status: "success",
-  //       directLink: getIsInjectiveResponse(res)
-  //         ? res?.txHash
-  //         : res?.transactionHash,
-  //       message: `${borrowingAmount} AUSD Repayed`,
-  //     });
-
-  //     if (borrowingAmount >= pageData?.debtAmount ?? 0) {
-  //       setTimeout(() => {
-  //         addNotification({
-  //           status: "success",
-  //           message: `Trove Closed`,
-  //         });
-  //       }, 1000);
-  //     }
-
-  //     getPageData?.();
-  //     refreshBalance();
-  //     setBorrowAmount(0);
-  //   } catch (err) {
-  //     console.error(err);
-
-  //     addNotification({
-  //       message: "",
-  //       status: "error",
-  //       directLink: "",
-  //     });
-  //   }
-
-  //   setProcessLoading(false);
-  // };
 
   const handleOpenTrove = async () => {
     try {
@@ -389,8 +287,12 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
       // Reset form
       setCollateralAmount(0);
 
-      // Refresh data if available
-      getPageData?.();
+      // Refresh trove state
+      if (connection && address) {
+        const { fetchUserTroveState } = await import('@/lib/solana/fetchTroveState');
+        const updatedTrove = await fetchUserTroveState(connection, new PublicKey(address), 'SOL');
+        setUserTroveState(updatedTrove);
+      }
     } catch (err: any) {
       addNotification({
         status: "error",
@@ -419,8 +321,12 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
       // Reset form
       setCollateralAmount(0);
 
-      // Refresh data if available
-      getPageData?.();
+      // Refresh trove state
+      if (connection && address) {
+        const { fetchUserTroveState } = await import('@/lib/solana/fetchTroveState');
+        const updatedTrove = await fetchUserTroveState(connection, new PublicKey(address), 'SOL');
+        setUserTroveState(updatedTrove);
+      }
     } catch (err: any) {
       addNotification({
         status: "error",
@@ -477,11 +383,11 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
       addNotification({
         status: "success",
         directLink: `https://solscan.io/tx/${signature}?cluster=devnet`,
-        message: `${repaymentAmount} AUSD Repaid Successfully`,
+        message: `${borrowingAmount} AUSD Repaid Successfully`,
       });
 
       // Reset form
-      setRepaymentAmount(0);
+      setBorrowingAmount(0);
 
       // Refresh trove state
       if (connection && address) {
@@ -622,10 +528,7 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
 
                   <StatisticCard
                     title="Total Debt"
-                    description={`${(pageData?.debtAmount ?? 0) < 0.001
-                      ? "< 0.000"
-                      : pageData?.debtAmount ?? 0
-                      } AUSD`}
+                    description={`${userTroveState ? (Number(userTroveState.debt) / 1e18).toFixed(2) : 0} AUSD`}
                     tooltip="The total amount of AUSD you have borrowed"
                   />
                   {/* <StatisticCard
@@ -719,7 +622,7 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
                         In Wallet:
                       </label>
                       <NumericFormat
-                        value={pageData?.ausdBalance ?? 0}
+                        value={Number(ausdBalance) / 1e18}
                         thousandsGroupStyle="thousand"
                         thousandSeparator=","
                         fixedDecimalScale
@@ -737,14 +640,13 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
                       <label className="font-regular text-[10px] md:text-base text-gray-300">
                         Borrowing Capacity:
                       </label>
-                      n
                       <NumericFormat
                         value={
                           ((selectedCollateral.amount ?? 0) *
                             (basePrice ?? 0) *
                             100) /
                           115 -
-                          (pageData?.debtAmount ?? 0)
+                          (userTroveState ? Number(userTroveState.debt) / 1e18 : 0)
                         }
                         thousandsGroupStyle="thousand"
                         thousandSeparator=","
@@ -763,7 +665,7 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
                         Debt:
                       </label>
                       <NumericFormat
-                        value={pageData?.debtAmount ?? 0}
+                        value={userTroveState ? Number(userTroveState.debt) / 1e18 : 0}
                         thousandsGroupStyle="thousand"
                         thousandSeparator=","
                         fixedDecimalScale
@@ -926,7 +828,7 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
                 In Wallet:
               </label>
               <NumericFormat
-                value={Number((pageData?.ausdBalance ?? 0) * AUSD_PRICE)}
+                value={Number(ausdBalance) / 1e18}
                 thousandsGroupStyle="thousand"
                 thousandSeparator=","
                 fixedDecimalScale

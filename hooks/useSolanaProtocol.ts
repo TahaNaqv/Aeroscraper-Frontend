@@ -52,18 +52,15 @@ export function useSolanaProtocol() {
                 feesState,
             } = protocolState;
 
-            // TEMPORARY: Skip neighbor hints for initial testing
-            // TODO: Re-enable after basic flow works
-            // const neighborHints = await getNeighborHints(
-            //   connection,
-            //   userPublicKey,
-            //   params.collateralAmount,
-            //   params.loanAmount,
-            //   'SOL' // collateral denom
-            // );
+            const neighborHints = await getNeighborHints(
+                connection,
+                userPublicKey,
+                params.collateralAmount,
+                params.loanAmount,
+                'SOL' // collateral denom
+            );
 
-            const neighborHints: PublicKey[] = []; // Empty for testing
-            console.log('🧪 Using empty neighbor hints for testing');
+            console.log('📊 Neighbor hints:', neighborHints.length, 'accounts');
 
             // Validate token accounts exist (for collateral SPL token, not native SOL)
             console.log('🔍 Validating collateral token account exists...');
@@ -1001,6 +998,260 @@ export function useSolanaProtocol() {
         }
     };
 
+    const liquidateTroves = async (params: {
+        troveOwners: PublicKey[];
+    }) => {
+        if (!isConnected || !walletProvider || !address) {
+            throw new Error('Wallet not connected');
+        }
+
+        if (!connection) {
+            throw new Error('Connection not available');
+        }
+
+        if (!protocolState) {
+            throw new Error('Protocol state not loaded');
+        }
+
+        try {
+            setLoading(true);
+            setError(null);
+
+            // Validate input
+            if (!params.troveOwners || params.troveOwners.length === 0) {
+                throw new Error('At least one trove must be specified for liquidation');
+            }
+
+            const MAX_LIQUIDATION_BATCH_SIZE = 50;
+            if (params.troveOwners.length > MAX_LIQUIDATION_BATCH_SIZE) {
+                throw new Error(`Maximum ${MAX_LIQUIDATION_BATCH_SIZE} troves can be liquidated in a single transaction`);
+            }
+
+            const userPublicKey = new PublicKey(address);
+            const { collateralMint, stablecoinMint, oracleProgramId, oracleState } = protocolState;
+
+            console.log('🔨 Starting liquidation transaction...');
+            console.log('Trove owners to liquidate:', params.troveOwners.map(p => p.toBase58()));
+
+            // Build instruction
+            const { buildLiquidateTrovesInstruction } = await import('@/lib/solana/buildInstructions');
+            const { instruction } = await buildLiquidateTrovesInstruction(
+                userPublicKey,
+                params.troveOwners,
+                'SOL', // collateral denom
+                collateralMint,
+                stablecoinMint,
+                oracleProgramId,
+                oracleState
+            );
+
+            console.log('✅ Instruction built, creating transaction...');
+
+            // Create and send transaction
+            const tx = new Transaction().add(instruction);
+            tx.feePayer = walletProvider.publicKey;
+            tx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
+
+            console.log('🔍 Simulating liquidation transaction...');
+            const simulation = await connection.simulateTransaction(tx);
+            console.log('📊 Simulation result:');
+            console.log('- Error:', simulation.value.err);
+            console.log('- Logs:', simulation.value.logs);
+            console.log('- Units consumed:', simulation.value.unitsConsumed);
+
+            if (simulation.value.err) {
+                throw new Error(`Simulation failed: ${JSON.stringify(simulation.value.err)}`);
+            }
+
+            console.log('✅ Simulation passed - transaction is valid');
+            console.log('✍️ Sending transaction to wallet for signing...');
+
+            const signature = await walletProvider.signAndSendTransaction(tx);
+
+            console.log('✅ Liquidation transaction sent!');
+            console.log('📝 Signature:', signature);
+
+            return signature;
+        } catch (err: any) {
+            console.error('❌ Liquidate troves error:', err);
+            setLoading(false);
+            setError(err.message || 'Failed to liquidate troves');
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const redeem = async (params: {
+        redeemAmount: number;
+    }) => {
+        if (!isConnected || !walletProvider || !address) {
+            throw new Error('Wallet not connected');
+        }
+
+        if (!connection) {
+            throw new Error('Connection not available');
+        }
+
+        if (!protocolState) {
+            throw new Error('Protocol state not loaded');
+        }
+
+        try {
+            setLoading(true);
+            setError(null);
+
+            // Validate input
+            if (!params.redeemAmount || params.redeemAmount <= 0) {
+                throw new Error('Redemption amount must be greater than 0');
+            }
+
+            if (params.redeemAmount > 999) {
+                throw new Error('Redemption amount cannot exceed 999 aUSD');
+            }
+
+            const userPublicKey = new PublicKey(address);
+            const { collateralMint, stablecoinMint, oracleProgramId, oracleState, feesProgramId, feesState } = protocolState;
+
+            console.log('🔨 Starting redemption transaction...');
+            console.log('Redeem amount:', params.redeemAmount, 'aUSD');
+
+            // Convert aUSD to smallest unit (18 decimals)
+            const redeemAmountInSmallestUnit = BigInt(Math.floor(params.redeemAmount * 1e18));
+
+            // 1. Fetch all troves from devnet
+            console.log('📋 Fetching all troves from devnet...');
+            const { fetchAllTroves } = await import('@/lib/solana/fetchTroves');
+            const allTroves = await fetchAllTroves(connection, 'SOL');
+            console.log(`Found ${allTroves.length} total troves`);
+
+            // 2. Sort troves by ICR (ascending - lowest first)
+            const sortedTroves = allTroves.sort((a, b) => {
+                if (a.icr < b.icr) return -1;
+                if (a.icr > b.icr) return 1;
+                return 0;
+            });
+
+            console.log('📊 Sorted troves by ICR (ascending):');
+            sortedTroves.slice(0, 5).forEach((trove, idx) => {
+                const icrDisplay = Number(trove.icr) / 1_000_000;
+                console.log(`  ${idx + 1}. ${trove.owner.toBase58()} - ICR: ${icrDisplay.toFixed(2)}%, Debt: ${Number(trove.debt) / 1e18} aUSD`);
+            });
+
+            // 3. Select troves to redeem from (maximum 3 troves)
+            const MAX_TROVES_PER_REDEMPTION = 3;
+            const selectedTroves: PublicKey[] = [];
+            let cumulativeDebt = BigInt(0);
+            let remainingAmount = redeemAmountInSmallestUnit;
+
+            for (const trove of sortedTroves) {
+                if (selectedTroves.length >= MAX_TROVES_PER_REDEMPTION) {
+                    break;
+                }
+
+                if (trove.debt > 0) {
+                    selectedTroves.push(trove.owner);
+                    const troveDebt = trove.debt;
+                    const redeemFromTrove = remainingAmount < troveDebt ? remainingAmount : troveDebt;
+
+                    cumulativeDebt += troveDebt;
+                    remainingAmount -= redeemFromTrove;
+
+                    console.log(`Selected trove: ${trove.owner.toBase58()}, Debt: ${Number(troveDebt) / 1e18} aUSD`);
+
+                    if (remainingAmount <= 0) {
+                        break;
+                    }
+                }
+            }
+
+            // 4. Validate we have enough liquidity
+            if (cumulativeDebt < redeemAmountInSmallestUnit) {
+                throw new Error(`Insufficient liquidity. Available: ${Number(cumulativeDebt) / 1e18} aUSD, Requested: ${params.redeemAmount} aUSD`);
+            }
+
+            console.log(`Selected ${selectedTroves.length} troves for redemption`);
+
+            // 5. Validate user has enough aUSD balance
+            const { getAccount, getAssociatedTokenAddress: getATA } = await import('@solana/spl-token');
+            const userStablecoinATA = await getATA(stablecoinMint, userPublicKey);
+
+            try {
+                const userStablecoinAccount = await getAccount(connection, userStablecoinATA);
+                const userBalance = userStablecoinAccount.amount;
+
+                if (userBalance < redeemAmountInSmallestUnit) {
+                    throw new Error(`Insufficient aUSD balance. Available: ${Number(userBalance) / 1e18} aUSD, Required: ${params.redeemAmount} aUSD`);
+                }
+
+                console.log(`User aUSD balance: ${Number(userBalance) / 1e18} aUSD`);
+            } catch (err) {
+                throw new Error('User aUSD account not found or has insufficient balance');
+            }
+
+            // 6. Derive required token accounts
+            const { getAssociatedTokenAddress: getATA2 } = await import('@solana/spl-token');
+            const { STABILITY_POOL_OWNER, FEE_ADDRESS_1, FEE_ADDRESS_2 } = await import('@/lib/constants/solana');
+
+            const stabilityPoolTokenAccount = await getATA2(stablecoinMint, STABILITY_POOL_OWNER);
+            const feeAddress1TokenAccount = await getATA2(stablecoinMint, FEE_ADDRESS_1);
+            const feeAddress2TokenAccount = await getATA2(stablecoinMint, FEE_ADDRESS_2);
+
+            // 7. Build instruction
+            const { buildRedeemInstruction } = await import('@/lib/solana/buildInstructions');
+            const { instruction } = await buildRedeemInstruction(
+                userPublicKey,
+                redeemAmountInSmallestUnit,
+                'SOL',
+                collateralMint,
+                stablecoinMint,
+                oracleProgramId,
+                oracleState,
+                feesProgramId,
+                feesState,
+                stabilityPoolTokenAccount,
+                feeAddress1TokenAccount,
+                feeAddress2TokenAccount,
+                selectedTroves
+            );
+
+            console.log('✅ Instruction built, creating transaction...');
+
+            // 7. Create and send transaction
+            const tx = new Transaction().add(instruction);
+            tx.feePayer = walletProvider.publicKey;
+            tx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
+
+            console.log('🔍 Simulating redemption transaction...');
+            const simulation = await connection.simulateTransaction(tx);
+            console.log('📊 Simulation result:');
+            console.log('- Error:', simulation.value.err);
+            console.log('- Logs:', simulation.value.logs);
+            console.log('- Units consumed:', simulation.value.unitsConsumed);
+
+            if (simulation.value.err) {
+                throw new Error(`Simulation failed: ${JSON.stringify(simulation.value.err)}`);
+            }
+
+            console.log('✅ Simulation passed - transaction is valid');
+            console.log('✍️ Sending transaction to wallet for signing...');
+
+            const signature = await walletProvider.signAndSendTransaction(tx);
+
+            console.log('✅ Redemption transaction sent!');
+            console.log('📝 Signature:', signature);
+
+            return signature;
+        } catch (err: any) {
+            console.error('❌ Redeem error:', err);
+            setLoading(false);
+            setError(err.message || 'Failed to redeem aUSD');
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return {
         openTrove,
         addCollateral,
@@ -1009,6 +1260,8 @@ export function useSolanaProtocol() {
         repayLoan,
         stake,
         unstake,
+        liquidateTroves,
+        redeem,
         loading,
         error,
     };

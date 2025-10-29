@@ -1,59 +1,130 @@
+'use client';
+
 import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
 import Text from "@/components/Texts/Text";
-import {
-  INotification,
-  useNotification,
-} from "@/contexts/NotificationProvider";
-import useAppContract from "@/contracts/app/useAppContract";
-import { getValueByRatio, getIsInjectiveResponse } from "@/utils/contractUtils";
+import { useNotification } from "@/contexts/NotificationProvider";
 import { isNil } from "lodash";
 import { NumberFormatValues, NumericFormat } from "react-number-format";
-import { PageData } from "../../_types/types";
 import OutlinedButton from "@/components/Buttons/OutlinedButton";
 import TransactionButton from "@/components/Buttons/TransactionButton";
 import {
   ArrowDownIcon,
-  ArrowLeftIcon,
   Logo,
   LogoSecondary,
   RedeemIcon,
 } from "@/components/Icons/Icons";
 import BorderedNumberInput from "@/components/Input/BorderedNumberInput";
 import BorderedContainer from "@/components/Containers/BorderedContainer";
-import useChainAdapter from "@/hooks/useChainAdapter";
+import { useAppKitAccount } from '@reown/appkit/react';
+import { useAppKitConnection } from '@reown/appkit-adapter-solana/react';
+import { useSolanaProtocol } from "@/hooks/useSolanaProtocol";
+import { useProtocolState } from "@/hooks/useProtocolState";
+import { PublicKey, Connection } from "@solana/web3.js";
+import { fetchAllTroves } from "@/lib/solana/fetchTroves";
 
-interface Props {
-  pageData: PageData;
-  getPageData: () => void;
-  refreshBalance: () => void;
-  basePrice: number;
-}
+const RedeemTab: FC = () => {
+  const { address, isConnected } = useAppKitAccount();
+  const { connection } = useAppKitConnection();
+  const { redeem, loading: processLoading } = useSolanaProtocol();
+  const { protocolState } = useProtocolState();
+  const { addNotification } = useNotification();
 
-const RedeemTab: FC<Props> = ({
-  pageData,
-  getPageData,
-  refreshBalance,
-  basePrice,
-}) => {
-  const { baseCoin } = useChainAdapter();
   const [redeemAmount, setRedeemAmount] = useState(0);
-  const [injAmount, setInjAmount] = useState(0);
-  const [processLoading, setProcessLoading] = useState<boolean>(false);
+  const [ausdBalance, setAusdBalance] = useState<bigint>(BigInt(0));
+  const [estimatedSOL, setEstimatedSOL] = useState(0);
+  const [loading, setLoading] = useState(false);
 
-  const [notification, setNotification] = useState<INotification | undefined>(
-    undefined
-  );
+  // Fetch user's aUSD balance
+  useEffect(() => {
+    const fetchAusdBalance = async () => {
+      if (!address || !connection || !protocolState) {
+        setAusdBalance(BigInt(0));
+        return;
+      }
 
-  const notifications = useNotification();
+      try {
+        const { getAccount, getAssociatedTokenAddress } = await import("@solana/spl-token");
+        const userPublicKey = new PublicKey(address);
+        const userATA = await getAssociatedTokenAddress(protocolState.stablecoinMint, userPublicKey);
 
-  const contract = useAppContract();
+        try {
+          const accountInfo = await getAccount(connection as unknown as Connection, userATA);
+          setAusdBalance(accountInfo.amount);
+        } catch (err) {
+          setAusdBalance(BigInt(0));
+        }
+      } catch (err) {
+        console.error("Error fetching aUSD balance:", err);
+        setAusdBalance(BigInt(0));
+      }
+    };
+
+    fetchAusdBalance();
+    const interval = setInterval(fetchAusdBalance, 5000);
+    return () => clearInterval(interval);
+  }, [address, connection, protocolState]);
+
+  // Calculate estimated SOL to receive
+  useEffect(() => {
+    const calculateEstimatedSOL = async () => {
+      if (!redeemAmount || !connection || redeemAmount <= 0) {
+        setEstimatedSOL(0);
+        return;
+      }
+
+      try {
+        setLoading(true);
+
+        // Fetch all troves
+        const allTroves = await fetchAllTroves(connection as unknown as Connection, 'SOL');
+
+        // Sort by ICR (ascending - lowest first)
+        const sortedTroves = allTroves.sort((a, b) => {
+          if (a.icr < b.icr) return -1;
+          if (a.icr > b.icr) return 1;
+          return 0;
+        });
+
+        // Select troves to redeem from (max 3)
+        const MAX_TROVES = 3;
+        const redeemAmountInSmallestUnit = BigInt(Math.floor(redeemAmount * 1e18));
+        let remainingAmount = redeemAmountInSmallestUnit;
+        let totalCollateralToReceive = BigInt(0);
+
+        for (const trove of sortedTroves) {
+          if (remainingAmount <= 0) break;
+          if (trove.debt <= 0) continue;
+
+          const redeemFromTrove = remainingAmount < trove.debt ? remainingAmount : trove.debt;
+
+          // Calculate proportional collateral
+          const collateralRatio = Number(redeemFromTrove) / Number(trove.debt);
+          const collateralToReceive = BigInt(Math.floor(Number(trove.collateralAmount) * collateralRatio));
+
+          totalCollateralToReceive += collateralToReceive;
+          remainingAmount -= redeemFromTrove;
+        }
+
+        // Convert to SOL (divide by 1e9)
+        const solAmount = Number(totalCollateralToReceive) / 1e9;
+        setEstimatedSOL(solAmount);
+
+      } catch (err) {
+        console.error("Error calculating estimated SOL:", err);
+        setEstimatedSOL(0);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    calculateEstimatedSOL();
+  }, [redeemAmount, connection]);
 
   const changeRedeemAmount = useCallback(
     (values: NumberFormatValues) => {
       setRedeemAmount(Number(values.value));
-      setInjAmount(getValueByRatio(values.value, pageData.baseMinRedeemAmount));
     },
-    [pageData]
+    []
   );
 
   const redeemDisabled = useMemo(
@@ -61,60 +132,37 @@ const RedeemTab: FC<Props> = ({
       isNil(redeemAmount) ||
       redeemAmount <= 0 ||
       redeemAmount > 999 ||
-      redeemAmount > pageData.ausdBalance,
-    [redeemAmount, pageData]
+      redeemAmount > Number(ausdBalance) / 1e18 ||
+      processLoading ||
+      loading,
+    [redeemAmount, ausdBalance, processLoading, loading]
   );
 
-  useEffect(() => {
-    if (notification) {
-      setTimeout(() => {
-        setNotification(undefined);
-      }, 2000);
-    }
-  }, [notification]);
-
-  const redeem = async () => {
-    let transactionHash;
-
+  const handleRedeem = async () => {
     try {
-      setProcessLoading(true);
-      notifications.setProcessLoading(true);
+      const signature = await redeem({ redeemAmount });
 
-      const res: any = await contract.redeem(redeemAmount);
-
-      transactionHash = getIsInjectiveResponse(res)
-        ? res?.txHash
-        : res?.transactionHash;
-
-      setNotification({
+      addNotification({
         status: "success",
-        directLink: transactionHash,
-      });
-      notifications.addNotification({
-        status: "success",
-        directLink: transactionHash,
-        message: `${redeemAmount} AUSD has Redeemed, Received ${injAmount.toFixed(
-          6
-        )} ${baseCoin?.name}`,
+        directLink: `https://solscan.io/tx/${signature}?cluster=devnet`,
+        message: `${redeemAmount} AUSD has been redeemed, Received ${estimatedSOL.toFixed(6)} SOL`,
       });
 
-      getPageData();
-      refreshBalance();
+      // Reset form
       setRedeemAmount(0);
-    } catch (err) {
-      setNotification({
+      setEstimatedSOL(0);
+    } catch (err: any) {
+      addNotification({
         status: "error",
-        directLink: transactionHash,
+        message: err.message || "Failed to redeem aUSD",
+        directLink: "",
       });
     }
-
-    setProcessLoading(false);
-    notifications.setProcessLoading(false);
   };
 
   return (
     <section>
-      <Text size="3xl">Convert your AUSD directly to INJ</Text>
+      <Text size="3xl">Convert your AUSD directly to SOL</Text>
       <div className="mt-6">
         <div className="relative w-full bg-cetacean-dark-blue border backdrop-blur-[37px] border-white/10 rounded-xl md:rounded-2xl px-3 pt-4 pb-3 md:px-6 md:py-8 flex flex-col gap-4">
           <div className="flex items-center justify-between">
@@ -137,7 +185,7 @@ const RedeemTab: FC<Props> = ({
             />
           </div>
           <NumericFormat
-            value={pageData.ausdBalance}
+            value={Number(ausdBalance) / 1e18}
             thousandsGroupStyle="thousand"
             thousandSeparator=","
             fixedDecimalScale
@@ -159,24 +207,18 @@ const RedeemTab: FC<Props> = ({
           </div>
         </div>
         <div className="w-full bg-cetacean-dark-blue border border-white/10 rounded-xl md:rounded-2xl px-3 pt-6 pb-3 md:px-6 md:py-8 flex items-center justify-between mt-6">
-          {!isNil(baseCoin) ? (
-            <div className="flex items-center gap-2">
-              <img alt="token" src={baseCoin.tokenImage} className="w-6 h-6" />
-              <Text size="base" weight="font-medium">
-                {baseCoin.name}
-              </Text>
-            </div>
-          ) : (
-            <Text
-              size="2xl"
-              weight="font-medium"
-              className="flex-1 text-center"
-            >
-              -
+          <div className="flex items-center gap-2">
+            <img
+              alt="sol"
+              src="/images/token-images/sol.svg"
+              className="w-6 h-6"
+            />
+            <Text size="base" weight="font-medium">
+              SOL
             </Text>
-          )}
+          </div>
           <NumericFormat
-            value={injAmount}
+            value={estimatedSOL}
             thousandsGroupStyle="thousand"
             thousandSeparator=","
             fixedDecimalScale
@@ -184,7 +226,7 @@ const RedeemTab: FC<Props> = ({
             displayType="text"
             renderText={(value) => (
               <Text size="5xl" textColor="text-gradient" weight="font-normal">
-                {value}
+                {loading ? "..." : value}
               </Text>
             )}
           />
@@ -193,11 +235,17 @@ const RedeemTab: FC<Props> = ({
           <TransactionButton
             loading={processLoading}
             className="w-full md:w-[375px] h-11"
-            onClick={redeem}
+            onClick={handleRedeem}
             text="Redeem"
             disabled={redeemDisabled}
             disabledText={
-              "Enter the AUSD amount. 999 AUSD is the upper limit for now."
+              redeemAmount <= 0
+                ? "Enter the AUSD amount to redeem"
+                : redeemAmount > Number(ausdBalance) / 1e18
+                  ? "Insufficient aUSD balance"
+                  : redeemAmount > 999
+                    ? "Maximum 999 AUSD per redemption"
+                    : "Calculating estimated SOL..."
             }
           />
         </div>

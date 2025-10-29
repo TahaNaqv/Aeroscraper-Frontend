@@ -18,6 +18,7 @@ interface BorshSchema {
   struct: { kind: string; fields: any[] };
 }
 import { OpenTroveParams, OpenTroveParamsSchema } from './instructionSchemas';
+import { RedeemParams, RedeemParamsSchema } from './instructionSchemas';
 import { deriveProtocolPDAs } from './derivePDAs';
 import {
   PROTOCOL_PROGRAM_ID,
@@ -729,6 +730,296 @@ export async function buildUnstakeInstruction(
 
   console.log('✅ unstake instruction built');
   console.log('📊 Total accounts:', accountMetas.length);
+  console.log('🔗 Program ID:', PROTOCOL_PROGRAM_ID.toBase58());
+
+  return { instruction };
+}
+
+export async function buildLiquidateTrovesInstruction(
+  liquidator: PublicKey,
+  liquidationList: PublicKey[],
+  collateralDenom: string,
+  collateralMint: PublicKey,
+  stablecoinMint: PublicKey,
+  oracleProgramId: PublicKey,
+  oracleState: PublicKey
+): Promise<{ instruction: TransactionInstruction }> {
+  console.log('🔨 Building liquidate_troves instruction...');
+  console.log('Liquidator:', liquidator.toBase58());
+  console.log('Troves to liquidate:', liquidationList.length);
+  console.log('Collateral denom:', collateralDenom);
+
+  // 1. Derive PDAs
+  const [protocolStatePDA] = PublicKey.findProgramAddressSync(
+    [Buffer.from('state')],
+    PROTOCOL_PROGRAM_ID
+  );
+
+  const [protocolStablecoinVaultPDA] = PublicKey.findProgramAddressSync(
+    [Buffer.from('protocol_stablecoin_vault')],
+    PROTOCOL_PROGRAM_ID
+  );
+
+  const [protocolCollateralVaultPDA] = PublicKey.findProgramAddressSync(
+    [Buffer.from('protocol_collateral_vault'), Buffer.from(collateralDenom)],
+    PROTOCOL_PROGRAM_ID
+  );
+
+  const [totalCollateralAmountPDA] = PublicKey.findProgramAddressSync(
+    [Buffer.from('total_collateral_amount'), Buffer.from(collateralDenom)],
+    PROTOCOL_PROGRAM_ID
+  );
+
+  // 2. Build instruction data (discriminator from IDL: [151, 204, 230, 0, 127, 203, 57, 28])
+  const discriminator = new Uint8Array([151, 204, 230, 0, 127, 203, 57, 28]);
+
+  // Serialize Vec<Pubkey>
+  // First, serialize the length of the vector as u32 (4 bytes)
+  const vecLength = liquidationList.length;
+  const vecLengthBuffer = new Uint8Array(4);
+  new DataView(vecLengthBuffer.buffer).setUint32(0, vecLength, true);
+
+  // Serialize each Pubkey (32 bytes each)
+  const liquidationListBytes: Uint8Array[] = [];
+  liquidationList.forEach(pubkey => {
+    liquidationListBytes.push(new Uint8Array(pubkey.toBuffer()));
+  });
+
+  // String serialization for collateral_denom
+  const denomBytes = new TextEncoder().encode(collateralDenom);
+  const denomLengthBuffer = new Uint8Array(4);
+  new DataView(denomLengthBuffer.buffer).setUint32(0, denomBytes.length, true);
+
+  // Combine all data
+  const liquidationListData = Buffer.concat([vecLengthBuffer, ...liquidationListBytes]);
+  const totalLength = discriminator.length + liquidationListData.length + denomLengthBuffer.length + denomBytes.length;
+  const data = new Uint8Array(totalLength);
+  let offset = 0;
+  data.set(discriminator, offset); offset += discriminator.length;
+  data.set(liquidationListData, offset); offset += liquidationListData.length;
+  data.set(denomLengthBuffer, offset); offset += denomLengthBuffer.length;
+  data.set(denomBytes, offset);
+
+  console.log('✅ Instruction data serialized, length:', totalLength);
+
+  // 3. Build account metas for main accounts (11 accounts from IDL)
+  const accountMetas: AccountMeta[] = [
+    { pubkey: liquidator, isSigner: true, isWritable: true }, // liquidator
+    { pubkey: protocolStatePDA, isSigner: false, isWritable: true }, // state
+    { pubkey: stablecoinMint, isSigner: false, isWritable: true }, // stable_coin_mint
+    { pubkey: protocolStablecoinVaultPDA, isSigner: false, isWritable: true }, // protocol_stablecoin_vault
+    { pubkey: protocolCollateralVaultPDA, isSigner: false, isWritable: true }, // protocol_collateral_vault
+    { pubkey: totalCollateralAmountPDA, isSigner: false, isWritable: true }, // total_collateral_amount
+    { pubkey: oracleProgramId, isSigner: false, isWritable: true }, // oracle_program
+    { pubkey: oracleState, isSigner: false, isWritable: true }, // oracle_state
+    { pubkey: SOL_PYTH_PRICE_FEED, isSigner: false, isWritable: false }, // pyth_price_account
+    { pubkey: SYSVAR_CLOCK_PUBKEY, isSigner: false, isWritable: false }, // clock
+    { pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false }, // token_program
+    { pubkey: SystemProgram.programId, isSigner: false, isWritable: false }, // system_program
+  ];
+
+  // 4. Build remaining accounts for each trove (4 accounts per trove)
+  const remainingAccounts: AccountMeta[] = [];
+
+  for (const troveOwner of liquidationList) {
+    // UserDebtAmount PDA
+    const [userDebtAmountPDA] = PublicKey.findProgramAddressSync(
+      [Buffer.from('user_debt_amount'), troveOwner.toBuffer()],
+      PROTOCOL_PROGRAM_ID
+    );
+    remainingAccounts.push({ pubkey: userDebtAmountPDA, isSigner: false, isWritable: true });
+
+    // UserCollateralAmount PDA
+    const [userCollateralAmountPDA] = PublicKey.findProgramAddressSync(
+      [Buffer.from('user_collateral_amount'), troveOwner.toBuffer(), Buffer.from(collateralDenom)],
+      PROTOCOL_PROGRAM_ID
+    );
+    remainingAccounts.push({ pubkey: userCollateralAmountPDA, isSigner: false, isWritable: true });
+
+    // LiquidityThreshold PDA
+    const [liquidityThresholdPDA] = PublicKey.findProgramAddressSync(
+      [Buffer.from('liquidity_threshold'), troveOwner.toBuffer()],
+      PROTOCOL_PROGRAM_ID
+    );
+    remainingAccounts.push({ pubkey: liquidityThresholdPDA, isSigner: false, isWritable: true });
+
+    // User's collateral token account ATA
+    const userCollateralTokenAccount = await getAssociatedTokenAddress(collateralMint, troveOwner);
+    remainingAccounts.push({ pubkey: userCollateralTokenAccount, isSigner: false, isWritable: true });
+  }
+
+  console.log('📋 Account metas list:');
+  accountMetas.forEach((meta, idx) => {
+    const flags = `${meta.isSigner ? 'S' : '-'}${meta.isWritable ? 'W' : '-'}`;
+    console.log(`  [${idx}] ${meta.pubkey.toBase58()} ${flags}`);
+  });
+  console.log(`  ...${remainingAccounts.length} remaining accounts (${liquidationList.length} troves * 4 accounts)`);
+
+  const instruction = new TransactionInstruction({
+    keys: [...accountMetas, ...remainingAccounts],
+    programId: PROTOCOL_PROGRAM_ID,
+    data: Buffer.from(data),
+  });
+
+  console.log('✅ liquidate_troves instruction built');
+  console.log('📊 Total accounts:', accountMetas.length + remainingAccounts.length);
+  console.log('🔗 Program ID:', PROTOCOL_PROGRAM_ID.toBase58());
+
+  return { instruction };
+}
+
+export async function buildRedeemInstruction(
+  userPublicKey: PublicKey,
+  redeemAmount: bigint,
+  collateralDenom: string,
+  collateralMint: PublicKey,
+  stablecoinMint: PublicKey,
+  oracleProgramId: PublicKey,
+  oracleState: PublicKey,
+  feesProgramId: PublicKey,
+  feesState: PublicKey,
+  stabilityPoolTokenAccount: PublicKey,
+  feeAddress1TokenAccount: PublicKey,
+  feeAddress2TokenAccount: PublicKey,
+  targetTroves: PublicKey[] // Array of trove owners to redeem from
+): Promise<{ instruction: TransactionInstruction }> {
+  console.log('🔨 Building redeem instruction...');
+  console.log('User:', userPublicKey.toBase58());
+  console.log('Redeem amount:', redeemAmount.toString());
+  console.log('Collateral denom:', collateralDenom);
+  console.log('Target troves:', targetTroves.length);
+
+  // 1. Derive PDAs
+  const [protocolStatePDA] = PublicKey.findProgramAddressSync(
+    [Buffer.from('state')],
+    PROTOCOL_PROGRAM_ID
+  );
+
+  const [userDebtAmountPDA] = PublicKey.findProgramAddressSync(
+    [Buffer.from('user_debt_amount'), userPublicKey.toBuffer()],
+    PROTOCOL_PROGRAM_ID
+  );
+
+  const [liquidityThresholdPDA] = PublicKey.findProgramAddressSync(
+    [Buffer.from('liquidity_threshold'), userPublicKey.toBuffer()],
+    PROTOCOL_PROGRAM_ID
+  );
+
+  const [userCollateralAmountPDA] = PublicKey.findProgramAddressSync(
+    [Buffer.from('user_collateral_amount'), userPublicKey.toBuffer(), Buffer.from(collateralDenom)],
+    PROTOCOL_PROGRAM_ID
+  );
+
+  const [protocolStablecoinVaultPDA] = PublicKey.findProgramAddressSync(
+    [Buffer.from('protocol_stablecoin_vault')],
+    PROTOCOL_PROGRAM_ID
+  );
+
+  const [protocolCollateralVaultPDA] = PublicKey.findProgramAddressSync(
+    [Buffer.from('protocol_collateral_vault'), Buffer.from(collateralDenom)],
+    PROTOCOL_PROGRAM_ID
+  );
+
+  const [totalCollateralAmountPDA] = PublicKey.findProgramAddressSync(
+    [Buffer.from('total_collateral_amount'), Buffer.from(collateralDenom)],
+    PROTOCOL_PROGRAM_ID
+  );
+
+  // 2. Get user's token accounts
+  const userStablecoinATA = await getAssociatedTokenAddress(stablecoinMint, userPublicKey);
+  const userCollateralATA = await getAssociatedTokenAddress(collateralMint, userPublicKey);
+
+  // 3. Build instruction data (discriminator from IDL: [184, 12, 86, 149, 70, 196, 97, 225])
+  const discriminator = new Uint8Array([184, 12, 86, 149, 70, 196, 97, 225]);
+
+  // Serialize amount (u64)
+  const amountBuffer = new Uint8Array(8);
+  new DataView(amountBuffer.buffer).setBigUint64(0, redeemAmount, true);
+
+  // Serialize collateral_denom (string)
+  const denomBytes = new TextEncoder().encode(collateralDenom);
+  const denomLengthBuffer = new Uint8Array(4);
+  new DataView(denomLengthBuffer.buffer).setUint32(0, denomBytes.length, true);
+
+  // Combine all data
+  const totalLength = discriminator.length + amountBuffer.length + denomLengthBuffer.length + denomBytes.length;
+  const data = new Uint8Array(totalLength);
+  let offset = 0;
+  data.set(discriminator, offset); offset += discriminator.length;
+  data.set(amountBuffer, offset); offset += amountBuffer.length;
+  data.set(denomLengthBuffer, offset); offset += denomLengthBuffer.length;
+  data.set(denomBytes, offset);
+
+  console.log('✅ Instruction data serialized, length:', data.length);
+
+  // 4. Build main account metas (19 accounts from IDL)
+  const accountMetas: AccountMeta[] = [
+    { pubkey: userPublicKey, isSigner: true, isWritable: true }, // user
+    { pubkey: protocolStatePDA, isSigner: false, isWritable: true }, // state
+    { pubkey: userDebtAmountPDA, isSigner: false, isWritable: true }, // user_debt_amount
+    { pubkey: liquidityThresholdPDA, isSigner: false, isWritable: true }, // liquidity_threshold
+    { pubkey: userStablecoinATA, isSigner: false, isWritable: true }, // user_stablecoin_account
+    { pubkey: userCollateralAmountPDA, isSigner: false, isWritable: true }, // user_collateral_amount
+    { pubkey: userCollateralATA, isSigner: false, isWritable: true }, // user_collateral_account
+    { pubkey: protocolStablecoinVaultPDA, isSigner: false, isWritable: true }, // protocol_stablecoin_vault
+    { pubkey: protocolCollateralVaultPDA, isSigner: false, isWritable: true }, // protocol_collateral_vault
+    { pubkey: stablecoinMint, isSigner: false, isWritable: true }, // stable_coin_mint
+    { pubkey: totalCollateralAmountPDA, isSigner: false, isWritable: true }, // total_collateral_amount
+    { pubkey: oracleProgramId, isSigner: false, isWritable: true }, // oracle_program
+    { pubkey: oracleState, isSigner: false, isWritable: true }, // oracle_state
+    { pubkey: feesProgramId, isSigner: false, isWritable: false }, // fees_program
+    { pubkey: feesState, isSigner: false, isWritable: true }, // fees_state
+    { pubkey: stabilityPoolTokenAccount, isSigner: false, isWritable: true }, // stability_pool_token_account
+    { pubkey: feeAddress1TokenAccount, isSigner: false, isWritable: true }, // fee_address_1_token_account
+    { pubkey: feeAddress2TokenAccount, isSigner: false, isWritable: true }, // fee_address_2_token_account
+    { pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false }, // token_program
+  ];
+
+  // 5. Build remaining accounts for each target trove (4 accounts per trove)
+  const remainingAccounts: AccountMeta[] = [];
+
+  for (const troveOwner of targetTroves) {
+    // UserDebtAmount PDA
+    const [troveUserDebtAmountPDA] = PublicKey.findProgramAddressSync(
+      [Buffer.from('user_debt_amount'), troveOwner.toBuffer()],
+      PROTOCOL_PROGRAM_ID
+    );
+    remainingAccounts.push({ pubkey: troveUserDebtAmountPDA, isSigner: false, isWritable: true });
+
+    // UserCollateralAmount PDA
+    const [troveUserCollateralAmountPDA] = PublicKey.findProgramAddressSync(
+      [Buffer.from('user_collateral_amount'), troveOwner.toBuffer(), Buffer.from(collateralDenom)],
+      PROTOCOL_PROGRAM_ID
+    );
+    remainingAccounts.push({ pubkey: troveUserCollateralAmountPDA, isSigner: false, isWritable: true });
+
+    // LiquidityThreshold PDA
+    const [troveLiquidityThresholdPDA] = PublicKey.findProgramAddressSync(
+      [Buffer.from('liquidity_threshold'), troveOwner.toBuffer()],
+      PROTOCOL_PROGRAM_ID
+    );
+    remainingAccounts.push({ pubkey: troveLiquidityThresholdPDA, isSigner: false, isWritable: true });
+
+    // User's collateral token account ATA
+    const troveUserCollateralTokenAccount = await getAssociatedTokenAddress(collateralMint, troveOwner);
+    remainingAccounts.push({ pubkey: troveUserCollateralTokenAccount, isSigner: false, isWritable: true });
+  }
+
+  console.log('📋 Account metas list:');
+  accountMetas.forEach((meta, idx) => {
+    const flags = `${meta.isSigner ? 'S' : '-'}${meta.isWritable ? 'W' : '-'}`;
+    console.log(`  [${idx}] ${meta.pubkey.toBase58()} ${flags}`);
+  });
+  console.log(`  ...${remainingAccounts.length} remaining accounts (${targetTroves.length} troves * 4 accounts)`);
+
+  const instruction = new TransactionInstruction({
+    keys: [...accountMetas, ...remainingAccounts],
+    programId: PROTOCOL_PROGRAM_ID,
+    data: Buffer.from(data),
+  });
+
+  console.log('✅ redeem instruction built');
+  console.log('📊 Total accounts:', accountMetas.length + remainingAccounts.length);
   console.log('🔗 Program ID:', PROTOCOL_PROGRAM_ID.toBase58());
 
   return { instruction };

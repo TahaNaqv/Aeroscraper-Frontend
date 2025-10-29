@@ -7,12 +7,13 @@ import ClaimRewardTab from "./Tabs/ClaimRewardTab";
 import LeaderboardTab from "./Tabs/LeaderboardTab";
 import RedeemTab from "./Tabs/RedeemTab";
 import RiskyTrovesTabV1 from "./Tabs/RiskyTrovesTabV1";
+import RiskyTrovesTabV2 from "./Tabs/RiskyTrovesTabV2";
+import RiskyTrovesTabV3 from "./Tabs/RiskyTrovesTabV3";
 import StabilityPoolTab from "./Tabs/StabilityPoolTab";
 import TroveTab from "./Tabs/TroveTab";
 import useChainAdapter from "@/hooks/useChainAdapter";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AppVersion } from "@/types/types";
-import RiskyTrovesTabV2 from "./Tabs/RiskyTrovesTabV2";
 import Missions from "./Tabs/Missions";
 import { usePageData } from "@/contexts/DashboardProvider";
 import { useBalances } from "@/contexts/BalanceProvider";
@@ -162,21 +163,13 @@ const TabsSide: FC<Props> = ({ setTabPosition }) => {
         {selectedTab === "stabilityPool" && (
           <StabilityPoolTab />
         )}
-        {/*{selectedTab === "redeem" && (
-          <RedeemTab
-            pageData={pageData}
-            getPageData={getPageData}
-            refreshBalance={refreshBalance}
-            basePrice={basePrice}
-          />
+        {selectedTab === "riskyTroves" && (
+          <RiskyTrovesTabV3 />
         )}
-        {selectedTab === "riskyTroves" &&
-          (selectedAppVersion === AppVersion.V1 ? (
-            <RiskyTrovesTabV1 getPageData={getPageData} basePrice={basePrice} />
-          ) : (
-            <RiskyTrovesTabV2 getPageData={getPageData} basePrice={basePrice} />
-          ))}
-        {selectedTab === "rewards" && (
+        {selectedTab === "redeem" && (
+          <RedeemTab />
+        )}
+        {/*{selectedTab === "rewards" && (
           <ClaimRewardTab
             pageData={pageData}
             getPageData={getPageData}
