@@ -1,34 +1,29 @@
-// useSolanaBalance.ts
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useAppKitBalance, useAppKitAccount } from "@reown/appkit/react";
 import { Dictionary } from "lodash";
 
 export function useSolanaBalance() {
   const { isConnected } = useAppKitAccount();
   const { fetchBalance } = useAppKitBalance();
-
   const [balance, setBalance] = useState<any | null>(null);
+  const [balanceByDenom, setBalanceByDenom] = useState<Dictionary<any>>({});
 
-  const [balanceByDenom, setBalanceByDenom] = useState<
-    Dictionary<any | undefined>
-  >({});
+  // ✅ prevent infinite re-run by keeping a stable reference
+  const fetchedOnce = useRef(false);
 
   useEffect(() => {
-    if (!isConnected) return;
+    if (!isConnected || fetchedOnce.current) return;
+    fetchedOnce.current = true; // run only once per connection
 
     const getBalance = async () => {
       try {
         const res = await fetchBalance();
-        const balance = res?.data?.balance ?? "0";
+        const bal = res?.data?.balance ?? "0";
         const symbol = res?.data?.symbol ?? "SOL";
-        // keep the same dictionary shape used in your other balance provider
         setBalanceByDenom({
-          [symbol]: {
-            denom: symbol,
-            amount: balance.toString(),
-          },
+          [symbol]: { denom: symbol, amount: bal.toString() },
         });
         setBalance(res);
       } catch (error) {
@@ -37,7 +32,8 @@ export function useSolanaBalance() {
     };
 
     getBalance();
-  }, [isConnected, fetchBalance]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isConnected]); // 👈 removed fetchBalance from deps
 
   const formattedBalance = balance?.data?.balance ?? "0.00";
   const symbol = balance?.data?.symbol ?? "SOL";
