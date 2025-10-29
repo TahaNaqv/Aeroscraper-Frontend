@@ -41,7 +41,7 @@ const getRatioColor = (icr: string): string => {
   return 'text-green-500';
 };
 
-interface RiskyTrovesTabV3Props {}
+interface RiskyTrovesTabV3Props { }
 
 const RiskyTrovesTabV3: FC<RiskyTrovesTabV3Props> = () => {
   const { connection } = useAppKitConnection();
@@ -67,14 +67,49 @@ const RiskyTrovesTabV3: FC<RiskyTrovesTabV3Props> = () => {
       const allTroves = await fetchAllTroves(connection, 'SOL');
       console.log(`Found ${allTroves.length} total troves`);
 
+      // 🐛 DEBUG: Log all troves with their ICR values
+      if (allTroves.length > 0) {
+        console.log('📊 All troves ICR values:');
+        allTroves.forEach((trove, idx) => {
+          const icrPercent = Number(trove.icr) / 1_000_000;
+          console.log(`  Trove ${idx + 1}: Owner=${trove.owner.toBase58().slice(0, 8)}..., ICR=${icrPercent.toFixed(2)}%, Debt=${Number(trove.debt) / 1e18} aUSD, Collateral=${Number(trove.collateralAmount) / 1e9} SOL`);
+        });
+      } else {
+        console.warn('⚠️ No troves found at all!');
+      }
+
       // Filter for troves with ICR < 115% (115000000 in micro-percent format)
       const RISKY_THRESHOLD = BigInt(115000000);
-      const risky = allTroves.filter(trove => trove.icr < RISKY_THRESHOLD);
+      console.log(`🔍 Filtering troves with ICR < ${RISKY_THRESHOLD} (${Number(RISKY_THRESHOLD) / 1_000_000}%)`);
 
-      console.log(`Found ${risky.length} risky troves (ICR < 115%)`);
-      setRiskyTroves(risky);
+      const risky = allTroves.filter(trove => {
+        const isRisky = trove.icr < RISKY_THRESHOLD;
+        if (isRisky) {
+          console.log(`  ✅ Risky trove found: ICR=${Number(trove.icr) / 1_000_000}%, Owner=${trove.owner.toBase58()}`);
+        }
+        return isRisky;
+      });
+
+      // Sort by ICR ascending (lowest ICR = riskiest = first)
+      // Lower ICR means higher risk, so riskiest troves appear at the top
+      const sortedRisky = [...risky].sort((a, b) => {
+        // Compare BigInt ICR values - lower ICR = riskier = should come first
+        if (a.icr < b.icr) return -1;
+        if (a.icr > b.icr) return 1;
+        return 0;
+      });
+
+      console.log(`Found ${sortedRisky.length} risky troves (ICR < 115%)`);
+      console.log('📊 Sorted by riskiness (lowest ICR first):');
+      sortedRisky.forEach((trove, idx) => {
+        const icrPercent = Number(trove.icr) / 1_000_000;
+        console.log(`  Rank ${idx + 1}: ICR=${icrPercent.toFixed(2)}%, Owner=${trove.owner.toBase58().slice(0, 8)}...`);
+      });
+
+      setRiskyTroves(sortedRisky);
     } catch (err) {
-      console.error('Error fetching risky troves:', err);
+      console.error('❌ Error fetching risky troves:', err);
+      console.error('Error details:', err);
     } finally {
       setLoading(false);
     }
@@ -86,7 +121,7 @@ const RiskyTrovesTabV3: FC<RiskyTrovesTabV3Props> = () => {
 
   const handleLiquidate = async (owner: PublicKey) => {
     const ownerKey = owner.toBase58();
-    
+
     if (liquidationPending.has(ownerKey)) {
       return; // Already liquidating
     }
