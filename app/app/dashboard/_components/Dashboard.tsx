@@ -5,7 +5,7 @@ import StatisticSide from "./StatisticSide";
 import TabsSide, { DashboardTabs } from "./TabsSide";
 import { useCallback, useState } from "react";
 import { motion } from "framer-motion";
-// import { useNotification } from "@/contexts/NotificationProvider";
+import { useNotification } from "@/contexts/NotificationProvider";
 // import useChainAdapter from "@/hooks/useChainAdapter";
 import Footer from "./footer";
 
@@ -13,7 +13,7 @@ export default function Dashboard() {
   // const { basePrice } = useChainAdapter();
   const [tabPosition, setTabPosition] = useState<DashboardTabs>("trove");
 
-  // const { processLoading } = useNotification();
+  const { processLoading } = useNotification();
 
   const changeTabPosition = useCallback((e: DashboardTabs) => {
     setTabPosition(e);
@@ -29,11 +29,11 @@ export default function Dashboard() {
           className="md:block hidden"
         >
           <BackgroundWave
-            // animate={processLoading}
+            animate={processLoading}
             className="absolute -bottom-40 -right-0 -z-10"
           />
           <BackgroundWave
-            // animate={processLoading}
+            animate={processLoading}
             className="absolute -top-[400px] left-48 -z-10 h-[584px] rotate-270"
           />
         </motion.div>
@@ -46,11 +46,11 @@ export default function Dashboard() {
           className="md:block hidden"
         >
           <BackgroundWave
-            // animate={processLoading}
+            animate={processLoading}
             className="absolute -top-40 -right-60 -z-10"
           />
           <BackgroundWave
-            // animate={processLoading}
+            animate={processLoading}
             className="absolute -bottom-[200px] -left-20 -z-10 h-[584px] rotate-[180deg]"
           />
         </motion.div>
@@ -63,11 +63,11 @@ export default function Dashboard() {
           className="md:block hidden"
         >
           <BackgroundWave
-            // animate={processLoading}
+            animate={processLoading}
             className="absolute -bottom-0 -right-0 -z-10"
           />
           <BackgroundWave
-            // animate={processLoading}
+            animate={processLoading}
             className="absolute -bottom-[240px] -left-10 -z-10 h-[584px] rotate-[180deg]"
           />
         </motion.div>
@@ -80,11 +80,11 @@ export default function Dashboard() {
           className="md:block hidden"
         >
           <BackgroundWave
-            // animate={processLoading}
+            animate={processLoading}
             className="absolute -bottom-40 -right-0 -z-10"
           />
           <BackgroundWave
-            // animate={processLoading}
+            animate={processLoading}
             className="absolute -top-[240px] left-80 -z-10 h-[664px] rotate-[300deg]"
           />
         </motion.div>
@@ -97,11 +97,11 @@ export default function Dashboard() {
           className="md:block hidden"
         >
           <BackgroundWave
-            // animate={processLoading}
+            animate={processLoading}
             className="absolute  -bottom-40 -right-0 -z-10"
           />
           <BackgroundWave
-            // animate={processLoading}
+            animate={processLoading}
             className="absolute -bottom-[200px] -left-20 -z-10 h-[584px] rotate-[180deg]"
           />
         </motion.div>

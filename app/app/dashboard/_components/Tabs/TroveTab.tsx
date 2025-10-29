@@ -19,7 +19,7 @@ import { CollateralAsset } from "@/types/types";
 import { DefaultAssetByChainName } from "@/constants/assetConstants";
 import { ChainName } from "@/enums/Chain";
 import { useAppKitAccount, useAppKitBalance } from "@reown/appkit/react";
-import { useAppKitConnection } from '@reown/appkit-adapter-solana/react';
+import { useAppKitConnection } from "@reown/appkit-adapter-solana/react";
 import { SolanaIcon } from "@/components/Icons/Icons";
 import { useSolanaProtocol } from "@/hooks/useSolanaProtocol";
 import { PublicKey } from "@solana/web3.js";
@@ -109,18 +109,29 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
   const [selectedTab, setSelectedTab] = useState<TABS>(TABS.COLLATERAL);
 
   const { addNotification } = useNotification();
-  const { openTrove, addCollateral, removeCollateral, borrowLoan, repayLoan, loading: processLoading } = useSolanaProtocol();
+  const {
+    openTrove,
+    addCollateral,
+    removeCollateral,
+    borrowLoan,
+    repayLoan,
+    loading: processLoading,
+  } = useSolanaProtocol();
   const { protocolState } = useProtocolState();
 
   const [ausdBalance, setAusdBalance] = useState<bigint>(BigInt(0));
 
   // Memoize selectedCollateral to prevent unnecessary re-renders (must be before borrowingCapacity)
-  const selectedCollateral = useMemo(() => {
-    return userTroveState ? {
-      amount: Number(userTroveState.collateralAmount) / 1e9, // Convert from lamports to SOL
-      denom: selectedAsset.denom,
-    } : { amount: 0, denom: selectedAsset.denom };
-  }, [userTroveState, selectedAsset.denom]);
+  const selectedCollateral = useMemo(
+    () =>
+      userTroveState
+        ? {
+          amount: Number(userTroveState.collateralAmount) / 1e9, // Convert from lamports to SOL
+          denom: selectedAsset.denom,
+        }
+        : { amount: 0, denom: selectedAsset.denom },
+    [userTroveState, selectedAsset.denom]
+  );
 
   // Memoize expensive convertAmount calculations to prevent recalculation on every render
   const solBalance = useMemo(() => {
@@ -181,7 +192,10 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
   }, [address, connection, protocolState]);
 
   const isTroveOpened = useMemo(
-    () => userTroveState !== null && userTroveState.collateralAmount > 0 && userTroveState.debt > 0,
+    () =>
+      userTroveState !== null &&
+      userTroveState.collateralAmount > 0 &&
+      userTroveState.debt > 0,
     [userTroveState]
   );
 
@@ -241,15 +255,9 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
         const { getAccount, getAssociatedTokenAddress } = await import("@solana/spl-token");
         const userPublicKey = new PublicKey(address);
         const userATA = await getAssociatedTokenAddress(protocolState.stablecoinMint, userPublicKey);
-
-        try {
-          const accountInfo = await getAccount(connection, userATA);
-          setAusdBalance(accountInfo.amount);
-        } catch (err) {
-          setAusdBalance(BigInt(0));
-        }
+        const accountInfo = await getAccount(connection, userATA);
+        setAusdBalance(accountInfo.amount);
       } catch (err) {
-        console.error("Error fetching aUSD balance:", err);
         setAusdBalance(BigInt(0));
       }
     };
@@ -278,12 +286,18 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
       if (!isVisibleRef.current) return; // Skip if tab is hidden
 
       try {
-        const { fetchUserTroveState } = await import('@/lib/solana/fetchTroveState');
+        const { fetchUserTroveState } = await import(
+          "@/lib/solana/fetchTroveState"
+        );
         const userPublicKey = new PublicKey(address);
-        const trove = await fetchUserTroveState(connection, userPublicKey, 'SOL');
+        const trove = await fetchUserTroveState(
+          connection,
+          userPublicKey,
+          "SOL"
+        );
         setUserTroveState(trove);
       } catch (err) {
-        console.error('Error fetching trove state:', err);
+        console.error("Error fetching trove state:", err);
         setUserTroveState(null);
       }
     };
@@ -316,19 +330,16 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
     [collateralAmount, solBalance]
   );
   const borrowDisabled = useMemo(
-    () =>
-      borrowingAmount <= 0 ||
-      borrowingAmount > 999 ||
-      !userTroveState,
+    () => borrowingAmount <= 0 || borrowingAmount > 999 || !userTroveState,
     [borrowingAmount, userTroveState]
   );
 
   const repayDisabled = useMemo(
     () =>
-      borrowingAmount <= 0 ||  // Changed from repaymentAmount
-      borrowingAmount > 999 ||  // Changed from repaymentAmount
+      borrowingAmount <= 0 || // Changed from repaymentAmount
+      borrowingAmount > 999 || // Changed from repaymentAmount
       !userTroveState,
-    [borrowingAmount, userTroveState]  // Changed from repaymentAmount
+    [borrowingAmount, userTroveState] // Changed from repaymentAmount
   );
 
   // Optimized handlers with useCallback to prevent recreation on every render
@@ -543,11 +554,12 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
                     <div>
                       {!isNil(selectedAsset) ? (
                         <div className="flex items-center gap-2">
-                          <img
+                          {/* <img
                             alt="token"
                             src={selectedAsset.imageURL}
                             className="w-6 h-6"
-                          />
+                          /> */}
+                          <SolanaIcon />
                           <Text size="base" weight="font-medium">
                             {selectedAsset.shortName}
                           </Text>
@@ -767,9 +779,7 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
                 <div className="flex items-center justify-end pr-4 gap-4 mt-6">
                   <OutlinedButton
                     disabled={repayDisabled}
-                    disabledText={
-                      "Enter the AUSD amount to repay."
-                    }
+                    disabledText={"Enter the AUSD amount to repay."}
                     loading={processLoading}
                     onClick={handleRepayLoan}
                     className="min-w-[142px] md:min-w-[201px] h-11"

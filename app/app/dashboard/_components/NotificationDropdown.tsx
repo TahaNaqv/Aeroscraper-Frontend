@@ -22,7 +22,7 @@ type ItemProps = {
 };
 
 const NotificationDropdown: FC = () => {
-  const { selectedChainName } = useChainAdapter();
+  const selectedChainName = ChainName.SOLANA;
   const listenNotification = useNotification();
   const [notifications, setNotifications] = useState<INotification[]>([]);
 
