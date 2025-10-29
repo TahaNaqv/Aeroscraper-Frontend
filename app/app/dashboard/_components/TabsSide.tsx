@@ -169,15 +169,8 @@ const TabsSide: FC<Props> = ({ setTabPosition }) => {
         {selectedTab === "redeem" && (
           <RedeemTab />
         )}
-        {/*{selectedTab === "rewards" && (
-          <ClaimRewardTab
-            pageData={pageData}
-            getPageData={getPageData}
-            refreshBalance={refreshBalance}
-            basePrice={basePrice}
-          />
-        )}
-        {selectedTab === "leaderboard" && <LeaderboardTab />}
+        {selectedTab === "rewards" && <ClaimRewardTab />}
+        {/*{selectedTab === "leaderboard" && <LeaderboardTab />}
         {selectedTab === "missions" && <Missions />} */}
       </motion.main>
       {/* )} */}

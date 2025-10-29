@@ -1252,6 +1252,97 @@ export function useSolanaProtocol() {
         }
     };
 
+    const withdrawLiquidationGains = async (params: {
+        collateralDenom?: string; // Default: "SOL"
+    }) => {
+        if (!isConnected || !walletProvider || !address) {
+            throw new Error('Wallet not connected');
+        }
+
+        if (!connection) {
+            throw new Error('Connection not available');
+        }
+
+        if (!protocolState) {
+            throw new Error('Protocol state not loaded');
+        }
+
+        try {
+            setLoading(true);
+            setError(null);
+
+            const userPublicKey = new PublicKey(address);
+            const { collateralMint, stablecoinMint } = protocolState;
+            const collateralDenom = params.collateralDenom || 'SOL';
+
+            console.log('💰 Starting withdraw_liquidation_gains...');
+            console.log('📊 Collateral denom:', collateralDenom);
+
+            // Check user has stake (required for withdrawal)
+            const { fetchUserStakeState } = await import('@/lib/solana/fetchStakeState');
+            const stakeState = await fetchUserStakeState(connection, userPublicKey);
+
+            if (!stakeState || stakeState.amount === BigInt(0)) {
+                throw new Error('No stake found. You must have staked aUSD in the stability pool to claim liquidation gains.');
+            }
+
+            console.log('✅ User has stake:', stakeState.amount.toString());
+
+            // Build instruction
+            const { buildWithdrawLiquidationGainsInstruction } = await import('@/lib/solana/buildInstructions');
+            const { instruction } = await buildWithdrawLiquidationGainsInstruction(
+                userPublicKey,
+                collateralDenom,
+                collateralMint,
+                stablecoinMint
+            );
+
+            console.log('✅ Instruction built, creating transaction...');
+
+            // Create and send transaction
+            const tx = new Transaction().add(instruction);
+            tx.feePayer = walletProvider.publicKey;
+
+            const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash('confirmed');
+            tx.recentBlockhash = blockhash;
+
+            console.log('🔍 Simulating withdraw_liquidation_gains transaction...');
+            const simulation = await connection.simulateTransaction(tx);
+            console.log('📊 Simulation result:');
+            console.log('- Error:', simulation.value.err);
+            console.log('- Logs:', simulation.value.logs);
+            console.log('- Units consumed:', simulation.value.unitsConsumed);
+
+            if (simulation.value.err) {
+                throw new Error(`Simulation failed: ${JSON.stringify(simulation.value.err)}`);
+            }
+
+            console.log('✅ Simulation passed - transaction is valid');
+            console.log('✍️ Sending transaction to wallet for signing...');
+
+            const signature = await walletProvider.signAndSendTransaction(tx);
+
+            console.log('✅ Withdraw liquidation gains transaction sent!');
+            console.log('📝 Signature:', signature);
+
+            // Wait for confirmation
+            await connection.confirmTransaction({
+                signature,
+                blockhash,
+                lastValidBlockHeight,
+            });
+            console.log('✅ Transaction confirmed!');
+
+            return signature;
+        } catch (err: any) {
+            console.error('❌ Withdraw liquidation gains error:', err);
+            setError(err.message || 'Failed to withdraw liquidation gains');
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return {
         openTrove,
         addCollateral,
@@ -1262,6 +1353,7 @@ export function useSolanaProtocol() {
         unstake,
         liquidateTroves,
         redeem,
+        withdrawLiquidationGains,
         loading,
         error,
     };

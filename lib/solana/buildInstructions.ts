@@ -1025,3 +1025,110 @@ export async function buildRedeemInstruction(
   return { instruction };
 }
 
+export async function buildWithdrawLiquidationGainsInstruction(
+  userPublicKey: PublicKey,
+  collateralDenom: string,
+  collateralMint: PublicKey,
+  stablecoinMint: PublicKey,
+): Promise<{ instruction: TransactionInstruction }> {
+  console.log('🔨 Building withdraw_liquidation_gains instruction...');
+  console.log('User:', userPublicKey.toBase58());
+  console.log('Collateral denom:', collateralDenom);
+
+  // 1. Derive PDAs
+  const [userStakeAmountPDA] = PublicKey.findProgramAddressSync(
+    [Buffer.from('user_stake_amount'), userPublicKey.toBuffer()],
+    PROTOCOL_PROGRAM_ID
+  );
+
+  const [userCollateralSnapshotPDA] = PublicKey.findProgramAddressSync(
+    [Buffer.from('user_collateral_snapshot'), userPublicKey.toBuffer(), Buffer.from(collateralDenom)],
+    PROTOCOL_PROGRAM_ID
+  );
+
+  const [stabilityPoolSnapshotPDA] = PublicKey.findProgramAddressSync(
+    [Buffer.from('stability_pool_snapshot'), Buffer.from(collateralDenom)],
+    PROTOCOL_PROGRAM_ID
+  );
+
+  const [protocolStatePDA] = PublicKey.findProgramAddressSync(
+    [Buffer.from('state')],
+    PROTOCOL_PROGRAM_ID
+  );
+
+  const [protocolCollateralVaultPDA] = PublicKey.findProgramAddressSync(
+    [Buffer.from('protocol_collateral_vault'), Buffer.from(collateralDenom)],
+    PROTOCOL_PROGRAM_ID
+  );
+
+  const [totalCollateralAmountPDA] = PublicKey.findProgramAddressSync(
+    [Buffer.from('total_collateral_amount'), Buffer.from(collateralDenom)],
+    PROTOCOL_PROGRAM_ID
+  );
+
+  console.log('✅ Derived PDAs');
+  console.log('📍 PDA addresses:');
+  console.log('  - userStakeAmount:', userStakeAmountPDA.toBase58());
+  console.log('  - userCollateralSnapshot:', userCollateralSnapshotPDA.toBase58());
+  console.log('  - stabilityPoolSnapshot:', stabilityPoolSnapshotPDA.toBase58());
+  console.log('  - protocolState:', protocolStatePDA.toBase58());
+  console.log('  - protocolCollateralVault:', protocolCollateralVaultPDA.toBase58());
+  console.log('  - totalCollateralAmount:', totalCollateralAmountPDA.toBase58());
+
+  // 2. Get user collateral token account (ATA)
+  const userCollateralAccount = await getAssociatedTokenAddress(collateralMint, userPublicKey);
+  console.log('📝 User collateral ATA:', userCollateralAccount.toBase58());
+
+  // 3. Build instruction data (discriminator from IDL: [29, 116, 45, 182, 143, 7, 59, 218])
+  const discriminator = new Uint8Array([29, 116, 45, 182, 143, 7, 59, 218]);
+
+  // Serialize collateral_denom as String (length u32 + bytes)
+  const denomBytes = new TextEncoder().encode(collateralDenom);
+  const denomLengthBuffer = new Uint8Array(4);
+  new DataView(denomLengthBuffer.buffer).setUint32(0, denomBytes.length, true);
+
+  // Combine all data
+  const totalLength = discriminator.length + denomLengthBuffer.length + denomBytes.length;
+  const data = new Uint8Array(totalLength);
+  let offset = 0;
+  data.set(discriminator, offset);
+  offset += discriminator.length;
+  data.set(denomLengthBuffer, offset);
+  offset += denomLengthBuffer.length;
+  data.set(denomBytes, offset);
+
+  console.log('✅ Instruction data serialized, length:', totalLength);
+
+  // 4. Build account metas (9 accounts from IDL lines 2614-2837)
+  const accountMetas: AccountMeta[] = [
+    { pubkey: userPublicKey, isSigner: true, isWritable: true }, // user
+    { pubkey: userStakeAmountPDA, isSigner: false, isWritable: true }, // user_stake_amount
+    { pubkey: userCollateralSnapshotPDA, isSigner: false, isWritable: true }, // user_collateral_snapshot
+    { pubkey: stabilityPoolSnapshotPDA, isSigner: false, isWritable: true }, // stability_pool_snapshot
+    { pubkey: protocolStatePDA, isSigner: false, isWritable: true }, // state
+    { pubkey: userCollateralAccount, isSigner: false, isWritable: true }, // user_collateral_account
+    { pubkey: protocolCollateralVaultPDA, isSigner: false, isWritable: true }, // protocol_collateral_vault (CHECK)
+    { pubkey: totalCollateralAmountPDA, isSigner: false, isWritable: true }, // total_collateral_amount (CHECK)
+    { pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false }, // token_program
+    { pubkey: SystemProgram.programId, isSigner: false, isWritable: false }, // system_program
+  ];
+
+  console.log('📋 Account metas list:');
+  accountMetas.forEach((meta, idx) => {
+    const flags = `${meta.isSigner ? 'S' : '-'}${meta.isWritable ? 'W' : '-'}`;
+    console.log(`  [${idx}] ${meta.pubkey.toBase58()} ${flags}`);
+  });
+
+  const instruction = new TransactionInstruction({
+    keys: accountMetas,
+    programId: PROTOCOL_PROGRAM_ID,
+    data: Buffer.from(data),
+  });
+
+  console.log('✅ withdraw_liquidation_gains instruction built');
+  console.log('📊 Total accounts:', accountMetas.length);
+  console.log('🔗 Program ID:', PROTOCOL_PROGRAM_ID.toBase58());
+
+  return { instruction };
+}
+

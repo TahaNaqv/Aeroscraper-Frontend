@@ -1,89 +1,97 @@
-import React, { FC } from "react";
+import React, { FC, useEffect, useState } from "react";
 import Text from "@/components/Texts/Text";
 import { useNotification } from "@/contexts/NotificationProvider";
-import useAppContract from "@/contracts/app/useAppContract";
-import { isNil } from "lodash";
 import { NumericFormat } from "react-number-format";
-import { PageData } from "../../_types/types";
 import TransactionButton from "@/components/Buttons/TransactionButton";
-import { getIsInjectiveResponse } from "@/utils/contractUtils";
-import useChainAdapter from "@/hooks/useChainAdapter";
+import { useAppKitAccount } from "@reown/appkit/react";
+import { useAppKitConnection } from "@reown/appkit-adapter-solana/react";
+import { useSolanaProtocol } from "@/hooks/useSolanaProtocol";
+import { useProtocolState } from "@/hooks/useProtocolState";
+import { PublicKey } from "@solana/web3.js";
+import { fetchLiquidationGains } from "@/lib/solana/fetchLiquidationGains";
 
-interface Props {
-  pageData: PageData;
-  getPageData: () => void;
-  refreshBalance: () => void;
-  basePrice: number;
-}
+const ClaimRewardTab: FC = () => {
+  const { address, isConnected } = useAppKitAccount();
+  const { connection } = useAppKitConnection();
+  const { withdrawLiquidationGains, loading: protocolLoading } = useSolanaProtocol();
+  const { protocolState } = useProtocolState();
+  const { addNotification } = useNotification();
 
-const ClaimRewardTab: FC<Props> = ({
-  pageData,
-  getPageData,
-  refreshBalance,
-  basePrice,
-}) => {
-  const { baseCoin } = useChainAdapter();
+  const [liquidationGain, setLiquidationGain] = useState<bigint>(BigInt(0));
 
-  const contract = useAppContract();
-  const { addNotification, processLoading, setProcessLoading } =
-    useNotification();
+  // Fetch liquidation gains
+  useEffect(() => {
+    const fetchGains = async () => {
+      if (!address || !connection || !protocolState) {
+        setLiquidationGain(BigInt(0));
+        return;
+      }
+
+      try {
+        const userPublicKey = new PublicKey(address);
+        const gain = await fetchLiquidationGains(connection, userPublicKey, 'SOL');
+        setLiquidationGain(gain);
+      } catch (err) {
+        console.error("Error fetching liquidation gains:", err);
+        setLiquidationGain(BigInt(0));
+      }
+    };
+
+    fetchGains();
+    const interval = setInterval(fetchGains, 5000);
+    return () => clearInterval(interval);
+  }, [address, connection, protocolState]);
 
   const rewardClaim = async () => {
-    setProcessLoading(true);
-
     try {
-      const res: any = await contract.withdrawLiquidationGains();
+      const signature = await withdrawLiquidationGains({ collateralDenom: "SOL" });
+
       addNotification({
         status: "success",
-        directLink: getIsInjectiveResponse(res)
-          ? res?.txHash
-          : res?.transactionHash,
-        message: `${pageData.rewardAmount} ${baseCoin?.name} Reward Received`,
+        directLink: `https://solscan.io/tx/${signature}?cluster=devnet`,
+        message: `${Number(liquidationGain) / 1e9} SOL Reward Received`,
       });
-      getPageData();
-      refreshBalance();
-    } catch (err) {
-      console.log(err);
+
+      // Refresh liquidation gain amount after success
+      if (address && connection) {
+        const userPublicKey = new PublicKey(address);
+        const gain = await fetchLiquidationGains(connection, userPublicKey, 'SOL');
+        setLiquidationGain(gain);
+      }
+    } catch (err: any) {
+      console.error(err);
       addNotification({
-        message: "",
+        message: err.message || "Failed to claim rewards",
         status: "error",
         directLink: "",
       });
     }
-    setProcessLoading(false);
   };
+
+  const rewardAmount = Number(liquidationGain) / 1e9; // Convert from lamports to SOL
+
   return (
     <section>
-      <Text size="3xl">Claim your rewards in {baseCoin?.name ?? ""}</Text>
+      <Text size="3xl">Claim your rewards in SOL</Text>
       <div className="mt-6">
         <div className="w-full bg-cetacean-dark-blue border border-white/10 rounded-xl md:rounded-2xl px-3 pt-4 pb-3 md:px-6 md:py-8 flex items-end justify-between mt-6">
           <div>
             <Text size="sm" weight="mb-2">
               Reward
             </Text>
-            {!isNil(baseCoin) ? (
-              <div className="flex items-center gap-2">
-                <img
-                  alt="token"
-                  src={baseCoin.tokenImage}
-                  className="w-6 h-6"
-                />
-                <Text size="base" weight="font-medium">
-                  {baseCoin.name}
-                </Text>
-              </div>
-            ) : (
-              <Text
-                size="2xl"
-                weight="font-medium"
-                className="flex-1 text-center"
-              >
-                -
+            <div className="flex items-center gap-2">
+              <img
+                alt="SOL"
+                src="/images/token-images/solana.svg"
+                className="w-6 h-6"
+              />
+              <Text size="base" weight="font-medium">
+                SOL
               </Text>
-            )}
+            </div>
           </div>
           <NumericFormat
-            value={pageData.rewardAmount}
+            value={rewardAmount}
             thousandsGroupStyle="thousand"
             thousandSeparator=","
             fixedDecimalScale
@@ -98,8 +106,8 @@ const ClaimRewardTab: FC<Props> = ({
         </div>
         <div className="flex items-center justify-end pr-4 gap-4 mt-10 md:mt-4">
           <TransactionButton
-            loading={processLoading}
-            disabled={pageData.rewardAmount == 0}
+            loading={protocolLoading}
+            disabled={liquidationGain === BigInt(0)}
             disabledText={"No rewards are available."}
             className="w-full md:w-[375px] h-11"
             onClick={() => {
