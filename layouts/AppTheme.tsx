@@ -39,16 +39,50 @@ const AppTheme = () => {
   const { walletInfo, address, isWalletConnected, username } =
     useSolanaAdapter();
   const { connection } = useAppKitConnection();
+  const baseCoin = BaseCoinByChainName[ChainName.SOLANA];
 
   const { disconnect } = useDisconnect();
-  const { formattedBalance, symbol, balanceByDenom, balance } =
+  const { formattedBalance, balance, symbol, balanceByDenom } =
     useSolanaBalance();
+  const [mounted, setMounted] = useState(false);
   const [ausdBalance, setAusdBalance] = useState<bigint>(BigInt(0));
   const { protocolState } = useProtocolState();
-  const [mounted, setMounted] = useState(false);
+  const [accountModal, setAccountModal] = useState(false);
+  const { profileDetail } = useProfile();
 
-  const selectedChainName = ChainName.SOLANA;
-  const baseCoin = BaseCoinByChainName[selectedChainName];
+  useEffect(() => {
+    const fetchAusdBalance = async () => {
+      if (!address || !connection || !protocolState) {
+        setAusdBalance(BigInt(0));
+        return;
+      }
+
+      try {
+        const { getAccount, getAssociatedTokenAddress } = await import(
+          "@solana/spl-token"
+        );
+        const userPublicKey = new PublicKey(address);
+        const userATA = await getAssociatedTokenAddress(
+          protocolState.stablecoinMint,
+          userPublicKey
+        );
+
+        try {
+          const accountInfo = await getAccount(connection, userATA);
+          setAusdBalance(accountInfo.amount);
+        } catch (err) {
+          setAusdBalance(BigInt(0));
+        }
+      } catch (err) {
+        console.error("Error fetching aUSD balance:", err);
+        setAusdBalance(BigInt(0));
+      }
+    };
+
+    fetchAusdBalance();
+    const interval = setInterval(fetchAusdBalance, 5000);
+    return () => clearInterval(interval);
+  }, [address, connection, protocolState]);
 
   useEffect(() => {
     setMounted(true);
@@ -103,10 +137,6 @@ const AppTheme = () => {
   // const { addNotification } = useNotification();
   // const { balanceByDenom } = useBalances();
 
-  const { profileDetail } = useProfile();
-
-  const [accountModal, setAccountModal] = useState(false);
-
   // const disconnectWallet = () => {
   //   if (selectedChainName === ChainName.XION) {
   //     disconnectXion();
@@ -154,40 +184,6 @@ const AppTheme = () => {
   //     });
   //   }
   // }, [selectedWallet, isWalletConnected]);
-
-  useEffect(() => {
-    const fetchAusdBalance = async () => {
-      if (!address || !connection || !protocolState) {
-        setAusdBalance(BigInt(0));
-        return;
-      }
-
-      try {
-        const { getAccount, getAssociatedTokenAddress } = await import(
-          "@solana/spl-token"
-        );
-        const userPublicKey = new PublicKey(address);
-        const userATA = await getAssociatedTokenAddress(
-          protocolState.stablecoinMint,
-          userPublicKey
-        );
-
-        try {
-          const accountInfo = await getAccount(connection, userATA);
-          setAusdBalance(accountInfo.amount);
-        } catch (err) {
-          setAusdBalance(BigInt(0));
-        }
-      } catch (err) {
-        console.error("Error fetching aUSD balance:", err);
-        setAusdBalance(BigInt(0));
-      }
-    };
-
-    fetchAusdBalance();
-    const interval = setInterval(fetchAusdBalance, 5000);
-    return () => clearInterval(interval);
-  }, [address, connection, protocolState]);
 
   const [chainData, setChainData] = useState<any>(ChainData);
 
@@ -286,10 +282,10 @@ const AppTheme = () => {
                 <NotificationDropdown />
               </div>
               <button
+                className="flex ml-12 gap-2 items-center hover:blur-[1px] transition-all duration-300"
                 onClick={() => {
                   setAccountModal(true);
                 }}
-                className="flex ml-12 gap-2 items-center hover:blur-[1px] transition-all duration-300"
               >
                 <img
                   alt="user-profile-image"
@@ -317,7 +313,6 @@ const AppTheme = () => {
                   <Text size="sm">
                     {address?.slice(0, 6)}...{address?.slice(-6)}
                   </Text>
-                  <div></div>
                 </div>
                 <button
                   className="w-12 h-12 flex items-center justify-center hover:blur-[1px] transition-all duration-300"

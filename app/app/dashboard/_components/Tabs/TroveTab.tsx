@@ -90,10 +90,17 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
   }, [isConnected, fetchBalance]);
 
   useEffect(() => {
-    if (isConnected) {
-      fetchBalanceMemoized();
-    }
-  }, [isConnected, fetchBalanceMemoized]);
+    if (!isConnected) return;
+
+    const loadBalance = async () => {
+      const res = await fetchBalance();
+      setBalance(res);
+    };
+    loadBalance();
+
+    // only run when connection state changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isConnected]);
 
   const baseMinCollateralRatio = 115;
 
