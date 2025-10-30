@@ -1082,6 +1082,63 @@ export function useSolanaProtocol() {
         }
     };
 
+    const liquidateTrove = async (targetUser: PublicKey) => {
+        if (!isConnected || !walletProvider || !address) {
+            throw new Error('Wallet not connected');
+        }
+        if (!connection) {
+            throw new Error('Connection not available');
+        }
+        if (!protocolState) {
+            throw new Error('Protocol state not loaded');
+        }
+
+        try {
+            setLoading(true);
+            setError(null);
+
+            const userPublicKey = new PublicKey(address);
+            const { collateralMint, stablecoinMint, oracleProgramId, oracleState } = protocolState;
+
+            console.log('🔨 Building single liquidate_trove for', targetUser.toBase58());
+
+            const { buildLiquidateTroveInstruction } = await import('@/lib/solana/buildInstructions');
+            const { instruction } = await buildLiquidateTroveInstruction(
+                userPublicKey,
+                targetUser,
+                'SOL',
+                collateralMint,
+                stablecoinMint,
+                oracleProgramId,
+                oracleState,
+            );
+
+            const tx = new Transaction().add(instruction);
+            tx.feePayer = walletProvider.publicKey;
+            tx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
+
+            console.log('🔍 Simulating liquidate_trove transaction...');
+            const simulation = await connection.simulateTransaction(tx);
+            console.log('📊 Simulation result:');
+            console.log('- Error:', simulation.value.err);
+            console.log('- Logs:', simulation.value.logs);
+            console.log('- Units consumed:', simulation.value.unitsConsumed);
+            if (simulation.value.err) {
+                throw new Error(`Simulation failed: ${JSON.stringify(simulation.value.err)}`);
+            }
+
+            const signature = await walletProvider.signAndSendTransaction(tx);
+            console.log('✅ Single liquidate transaction sent:', signature);
+            return signature;
+        } catch (err: any) {
+            console.error('❌ Liquidate trove error:', err);
+            setError(err.message || 'Failed to liquidate trove');
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const redeem = async (params: {
         redeemAmount: number;
     }) => {
@@ -1352,6 +1409,7 @@ export function useSolanaProtocol() {
         stake,
         unstake,
         liquidateTroves,
+        liquidateTrove,
         redeem,
         withdrawLiquidationGains,
         loading,
