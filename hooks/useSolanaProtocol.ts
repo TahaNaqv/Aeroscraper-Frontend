@@ -1138,36 +1138,36 @@ export function useSolanaProtocol() {
                 console.log(`  ${idx + 1}. ${trove.owner.toBase58()} - ICR: ${icrDisplay.toFixed(2)}%, Debt: ${Number(trove.debt) / 1e18} aUSD`);
             });
 
-            // 3. Select troves to redeem from (maximum 3 troves)
+            // 3. Select troves to redeem from (maximum 3 troves) and validate against NET amount after protocol fee
             const MAX_TROVES_PER_REDEMPTION = 3;
             const selectedTroves: PublicKey[] = [];
-            let cumulativeDebt = BigInt(0);
-            let remainingAmount = redeemAmountInSmallestUnit;
+
+            // Determine fee percent (fallback to 5%)
+            const feePercent = 0.05;
+            const netRequested = redeemAmountInSmallestUnit - BigInt(
+                Math.floor(Number(redeemAmountInSmallestUnit) * feePercent)
+            );
+
+            let coveredNet = BigInt(0);
+            let remainingNet = netRequested;
 
             for (const trove of sortedTroves) {
-                if (selectedTroves.length >= MAX_TROVES_PER_REDEMPTION) {
-                    break;
-                }
-
-                if (trove.debt > 0) {
+                if (selectedTroves.length >= MAX_TROVES_PER_REDEMPTION) break;
+                if (trove.debt > BigInt(0)) {
                     selectedTroves.push(trove.owner);
-                    const troveDebt = trove.debt;
-                    const redeemFromTrove = remainingAmount < troveDebt ? remainingAmount : troveDebt;
-
-                    cumulativeDebt += troveDebt;
-                    remainingAmount -= redeemFromTrove;
-
-                    console.log(`Selected trove: ${trove.owner.toBase58()}, Debt: ${Number(troveDebt) / 1e18} aUSD`);
-
-                    if (remainingAmount <= 0) {
-                        break;
-                    }
+                    const take = remainingNet < trove.debt ? remainingNet : trove.debt;
+                    coveredNet += take;
+                    remainingNet -= take;
+                    console.log(`Selected trove: ${trove.owner.toBase58()}, Debt: ${Number(trove.debt) / 1e18} aUSD`);
+                    if (remainingNet <= BigInt(0)) break;
                 }
             }
 
-            // 4. Validate we have enough liquidity
-            if (cumulativeDebt < redeemAmountInSmallestUnit) {
-                throw new Error(`Insufficient liquidity. Available: ${Number(cumulativeDebt) / 1e18} aUSD, Requested: ${params.redeemAmount} aUSD`);
+            // 4. Validate we have enough liquidity (compare NET)
+            if (coveredNet < netRequested) {
+                throw new Error(
+                    `Insufficient liquidity (3 lowest-ICR troves). Available net: ${Number(coveredNet) / 1e18} aUSD, Required net: ${Number(netRequested) / 1e18} aUSD`
+                );
             }
 
             console.log(`Selected ${selectedTroves.length} troves for redemption`);
