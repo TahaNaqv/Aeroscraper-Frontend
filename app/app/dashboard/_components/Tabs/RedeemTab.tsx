@@ -12,6 +12,7 @@ import {
   Logo,
   LogoSecondary,
   RedeemIcon,
+  SolanaIcon,
 } from "@/components/Icons/Icons";
 import BorderedNumberInput from "@/components/Input/BorderedNumberInput";
 import BorderedContainer from "@/components/Containers/BorderedContainer";
@@ -208,11 +209,12 @@ const RedeemTab: FC = () => {
         </div>
         <div className="w-full bg-cetacean-dark-blue border border-white/10 rounded-xl md:rounded-2xl px-3 pt-6 pb-3 md:px-6 md:py-8 flex items-center justify-between mt-6">
           <div className="flex items-center gap-2">
-            <img
+            {/* <img
               alt="sol"
               src="/images/token-images/sol.svg"
               className="w-6 h-6"
-            />
+            /> */}
+             <SolanaIcon />
             <Text size="base" weight="font-medium">
               SOL
             </Text>
