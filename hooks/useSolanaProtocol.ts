@@ -21,6 +21,13 @@ export function useSolanaProtocol() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const { protocolState, loading: stateLoading } = useProtocolState();
+    const mapLiquidationError = (err: any): string => {
+        const raw = err?.message ?? err?.toString?.() ?? '';
+        if (raw.includes('AccountDidNotSerialize') || raw.includes('Failed to serialize the account')) {
+            return 'Stability pool snapshot account is missing on this cluster. Please initialize the stability pool snapshot PDA and try again.';
+        }
+        return raw || 'Failed to process liquidation transaction';
+    };
 
     const openTrove = async (params: {
         collateralAmount: number; // SOL in lamports
@@ -1054,9 +1061,10 @@ export function useSolanaProtocol() {
             return signature;
         } catch (err: any) {
             console.error('❌ Liquidate troves error:', err);
+            const friendlyMessage = mapLiquidationError(err);
             setLoading(false);
-            setError(err.message || 'Failed to liquidate troves');
-            throw err;
+            setError(friendlyMessage);
+            throw new Error(friendlyMessage);
         } finally {
             setLoading(false);
         }
@@ -1112,8 +1120,9 @@ export function useSolanaProtocol() {
             return signature;
         } catch (err: any) {
             console.error('❌ Liquidate trove error:', err);
-            setError(err.message || 'Failed to liquidate trove');
-            throw err;
+            const friendlyMessage = mapLiquidationError(err);
+            setError(friendlyMessage);
+            throw new Error(friendlyMessage);
         } finally {
             setLoading(false);
         }

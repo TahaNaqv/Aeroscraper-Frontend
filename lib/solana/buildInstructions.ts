@@ -769,6 +769,10 @@ export async function buildLiquidateTrovesInstruction(
     [Buffer.from('total_collateral_amount'), Buffer.from(collateralDenom)],
     PROTOCOL_PROGRAM_ID
   );
+  const [stabilityPoolSnapshotPDA] = PublicKey.findProgramAddressSync(
+    [Buffer.from('stability_pool_snapshot'), Buffer.from(collateralDenom)],
+    PROTOCOL_PROGRAM_ID
+  );
 
   // 2. Build instruction data (discriminator from IDL: [151, 204, 230, 0, 127, 203, 57, 28])
   const discriminator = new Uint8Array([151, 204, 230, 0, 127, 203, 57, 28]);
@@ -884,6 +888,7 @@ export async function buildLiquidateTrovesInstruction(
     { pubkey: oracleState, isSigner: false, isWritable: true }, // oracle_state
     { pubkey: SOL_PYTH_PRICE_FEED, isSigner: false, isWritable: false }, // pyth_price_account
     { pubkey: SYSVAR_CLOCK_PUBKEY, isSigner: false, isWritable: false }, // clock
+    { pubkey: stabilityPoolSnapshotPDA, isSigner: false, isWritable: true }, // stability_pool_snapshot
     { pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false }, // token_program
     { pubkey: SystemProgram.programId, isSigner: false, isWritable: false }, // system_program
   ];
@@ -1138,6 +1143,10 @@ export async function buildLiquidateTroveInstruction(
     [Buffer.from('liquidity_threshold'), targetUser.toBuffer()],
     PROTOCOL_PROGRAM_ID
   );
+  const [stabilityPoolSnapshotPDA] = PublicKey.findProgramAddressSync(
+    [Buffer.from('stability_pool_snapshot'), Buffer.from(collateralDenom)],
+    PROTOCOL_PROGRAM_ID
+  );
 
   // Target user's collateral ATA
   const userCollateralATA = await getAssociatedTokenAddress(collateralMint, targetUser);
@@ -1175,6 +1184,7 @@ export async function buildLiquidateTroveInstruction(
     { pubkey: oracleState, isSigner: false, isWritable: true },
     { pubkey: SOL_PYTH_PRICE_FEED, isSigner: false, isWritable: false },
     { pubkey: SYSVAR_CLOCK_PUBKEY, isSigner: false, isWritable: false },
+    { pubkey: stabilityPoolSnapshotPDA, isSigner: false, isWritable: true },
     { pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false },
     { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
   ];

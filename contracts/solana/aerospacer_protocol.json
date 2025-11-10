@@ -1174,6 +1174,46 @@
           "address": "SysvarC1ock11111111111111111111111111111111"
         },
         {
+          "name": "stability_pool_snapshot",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  98,
+                  105,
+                  108,
+                  105,
+                  116,
+                  121,
+                  95,
+                  112,
+                  111,
+                  111,
+                  108,
+                  95,
+                  115,
+                  110,
+                  97,
+                  112,
+                  115,
+                  104,
+                  111,
+                  116
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "params.collateral_denom"
+              }
+            ]
+          }
+        },
+        {
           "name": "token_program",
           "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
         },
@@ -1356,6 +1396,46 @@
             "Clock sysvar for timestamp validation"
           ],
           "address": "SysvarC1ock11111111111111111111111111111111"
+        },
+        {
+          "name": "stability_pool_snapshot",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  98,
+                  105,
+                  108,
+                  105,
+                  116,
+                  121,
+                  95,
+                  112,
+                  111,
+                  111,
+                  108,
+                  95,
+                  115,
+                  110,
+                  97,
+                  112,
+                  115,
+                  104,
+                  111,
+                  116
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "params.collateral_denom"
+              }
+            ]
+          }
         },
         {
           "name": "token_program",
@@ -3380,6 +3460,16 @@
       "code": 6025,
       "name": "InvalidSnapshot",
       "msg": "Invalid snapshot"
+    },
+    {
+      "code": 6026,
+      "name": "MissingSnapshotAccount",
+      "msg": "Missing snapshot account in remaining_accounts"
+    },
+    {
+      "code": 6027,
+      "name": "InvalidSnapshotAccount",
+      "msg": "Invalid snapshot account - does not match expected PDA"
     }
   ],
   "types": [
