@@ -6,19 +6,6 @@ import {
   AccountMeta,
 } from '@solana/web3.js';
 import { TOKEN_PROGRAM_ID, getAssociatedTokenAddress } from '@solana/spl-token';
-import { serialize } from 'borsh';
-
-// Define the schema structure
-interface BorshField {
-  kind: string;
-  fields: any[];
-}
-
-interface BorshSchema {
-  struct: { kind: string; fields: any[] };
-}
-import { OpenTroveParams, OpenTroveParamsSchema } from './instructionSchemas';
-import { RedeemParams, RedeemParamsSchema } from './instructionSchemas';
 import { deriveProtocolPDAs } from './derivePDAs';
 import {
   PROTOCOL_PROGRAM_ID,
@@ -369,7 +356,7 @@ export async function buildBorrowLoanInstruction(
   oracleState: PublicKey,
   feesProgramId: PublicKey,
   feesState: PublicKey,
-  loanAmount: number, // in smallest unit (1e18 for aUSD)
+  loanAmount: bigint, // in smallest unit (1e18 for aUSD)
   collateralDenom: string = 'SOL',
   neighborHints: PublicKey[] = []
 ): Promise<{ instruction: TransactionInstruction }> {
@@ -474,7 +461,7 @@ export async function buildRepayLoanInstruction(
   stablecoinMint: PublicKey,
   oracleProgramId: PublicKey,
   oracleState: PublicKey,
-  repayAmount: number,
+  repayAmount: bigint,
   collateralDenom: string = 'SOL',
   neighborHints: PublicKey[] = []
 ): Promise<{ instruction: TransactionInstruction }> {
@@ -567,7 +554,7 @@ export async function buildRepayLoanInstruction(
 export async function buildStakeInstruction(
   userPublicKey: PublicKey,
   stablecoinMint: PublicKey,
-  stakeAmount: number, // in smallest unit (1e18 for aUSD)
+  stakeAmount: bigint, // in smallest unit (1e18 for aUSD)
 ): Promise<{ instruction: TransactionInstruction }> {
   console.log('🔨 Building stake instruction...');
   console.log('User:', userPublicKey.toBase58());
@@ -653,7 +640,7 @@ export async function buildStakeInstruction(
 export async function buildUnstakeInstruction(
   userPublicKey: PublicKey,
   stablecoinMint: PublicKey,
-  unstakeAmount: number, // in smallest unit (1e18 for aUSD)
+  unstakeAmount: bigint, // in smallest unit (1e18 for aUSD)
 ): Promise<{ instruction: TransactionInstruction }> {
   console.log('🔨 Building unstake instruction...');
   console.log('User:', userPublicKey.toBase58());

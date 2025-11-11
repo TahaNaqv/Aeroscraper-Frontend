@@ -29,6 +29,7 @@ import { PublicKey } from "@solana/web3.js";
 import { useProtocolState } from "@/hooks/useProtocolState";
 import { getPrice as getOraclePrice } from "@/lib/solana/getSolPriceInUsd";
 import { validateSolBalance, validateCollateralBalance, validateAusdBalance } from "@/lib/solana/validateBalances";
+import { decimalToBigInt } from "@/lib/solana/units";
 
 // Preload dynamic imports for better performance
 let splTokenLoaded = false;
@@ -485,7 +486,8 @@ const TroveTab: FC = () => {
       // Convert SOL to lamports (9 decimals)
       const collateralInLamports = openTroveAmount * 1_000_000_000;
       // Convert aUSD to base units (18 decimals)
-      const loanAmountStr = (borrowAmount * Math.pow(10, 18)).toString();
+      const loanAmount = decimalToBigInt(borrowAmount, 18);
+      const loanAmountStr = loanAmount.toString();
 
       // Validate balances before transaction
       await validateSolBalance(connection, userPublicKey);
@@ -606,7 +608,7 @@ const TroveTab: FC = () => {
       const userPublicKey = new PublicKey(address);
 
       // Convert AUSD to smallest unit (18 decimals)
-      const loanInSmallestUnit = Math.floor(borrowingAmount * 1e18);
+      const loanInSmallestUnit = decimalToBigInt(borrowingAmount, 18);
 
       // Validate SOL balance for transaction fees
       await validateSolBalance(connection, userPublicKey);
@@ -645,7 +647,7 @@ const TroveTab: FC = () => {
       const userPublicKey = new PublicKey(address);
 
       // Convert AUSD to smallest unit (18 decimals)
-      const repayInSmallestUnit = Math.floor(borrowingAmount * 1e18);
+      const repayInSmallestUnit = decimalToBigInt(borrowingAmount, 18);
 
       // Validate balances before transaction
       await validateSolBalance(connection, userPublicKey);

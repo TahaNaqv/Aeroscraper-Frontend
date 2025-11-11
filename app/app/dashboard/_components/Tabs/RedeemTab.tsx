@@ -23,6 +23,7 @@ import { useProtocolState } from "@/hooks/useProtocolState";
 import { PublicKey, Connection } from "@solana/web3.js";
 import { fetchAllTroves } from "@/lib/solana/fetchTroves";
 import { validateSolBalance, validateAusdBalance } from "@/lib/solana/validateBalances";
+import { decimalToBigInt } from "@/lib/solana/units";
 
 const RedeemTab: FC = () => {
   const { address, isConnected } = useAppKitAccount();
@@ -117,7 +118,7 @@ const RedeemTab: FC = () => {
     }
     const effectiveGross = grossCap > 0 ? Math.min(redeemAmount || grossCap, grossCap) : 0;
     const effectiveNet = effectiveGross * (1 - feePercent);
-    let remainingAmount = BigInt(Math.floor(effectiveNet * 1e18));
+    let remainingAmount = decimalToBigInt(effectiveNet, 18);
     let totalCollateralToReceive = BigInt(0);
     for (const t of sortedTroves) {
       if (remainingAmount <= BigInt(0)) break;
@@ -172,7 +173,7 @@ const RedeemTab: FC = () => {
       const userPublicKey = new PublicKey(address);
 
       // Convert redeemAmount to smallest unit (18 decimals)
-      const redeemAmountInSmallestUnit = BigInt(Math.floor(redeemAmount * 1e18));
+      const redeemAmountInSmallestUnit = decimalToBigInt(redeemAmount, 18);
 
       // Validate balances before transaction
       await validateSolBalance(connection, userPublicKey);

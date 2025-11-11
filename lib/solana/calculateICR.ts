@@ -1,11 +1,11 @@
 /**
  * Calculate Individual Collateralization Ratio (ICR) in micro-percent (1e-6 per 1%).
- *
+ * 
  * This mirrors the on-chain calculation while staying purely integer-based:
  * 1. Convert lamport collateral to USD (scaled by 1e6) using the live SOL price.
  * 2. Convert aUSD-denominated debt (1e18) to USD scaled by 1e6.
  * 3. Return (collateral_usd / debt_usd) * 100%, scaled by 1e6.
- *
+ * 
  * @param collateralAmountLamports Amount of collateral in lamports (1e9 lamports = 1 SOL).
  * @param loanAmountSmallest Debt amount in aUSD smallest unit (1e18).
  * @param solPriceUsd Current SOL price in USD (floating number from oracle/API).
