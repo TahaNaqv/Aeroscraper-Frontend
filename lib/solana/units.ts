@@ -8,12 +8,27 @@ const powBigInt = (base: bigint, exponent: number): bigint => {
 
 export const decimalToBigInt = (amount: number, decimals: number): bigint => {
   const scale = powBigInt(BigInt(10), decimals);
-  const amountStr = amount.toString();
+
+  if (!Number.isFinite(amount)) {
+    throw new Error(`Cannot convert non-finite number (${amount}) to BigInt`);
+  }
+
+  let amountStr = amount.toString();
+
+  // Handle scientific notation by converting to a fixed-point decimal string
+  if (/[eE]/.test(amountStr)) {
+    amountStr = amount.toFixed(decimals);
+  }
+
   const [integerPartRaw, fractionalRaw = ""] = amountStr.split(".");
   const integerPart = integerPartRaw === "" ? "0" : integerPartRaw;
-  const fractionalPart = fractionalRaw.padEnd(decimals, "0").slice(0, decimals);
+
+  let sanitizedFractional = fractionalRaw.replace(/[^0-9]/g, "");
+  sanitizedFractional = sanitizedFractional.padEnd(decimals, "0").slice(0, decimals);
+
   const integerValue = BigInt(integerPart);
   const fractionalValue =
-    fractionalPart.length > 0 ? BigInt(fractionalPart || "0") : BigInt(0);
+    sanitizedFractional.length > 0 ? BigInt(sanitizedFractional || "0") : BigInt(0);
+
   return integerValue * scale + fractionalValue;
 };

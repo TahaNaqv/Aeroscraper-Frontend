@@ -112,11 +112,13 @@ const RedeemTab: FC = () => {
     const grossCapRaw = netCap > 0 ? netCap / (1 - feePercent) : 0;
     const grossCapFloored = Math.floor(grossCapRaw * 1e6) / 1e6; // floor to 6 decimals
     const grossCap = Math.min(grossCapFloored, userAusd, 999);
-    setMaxRedeemableGross(grossCap);
-    if (grossCap > 0 && Math.abs(redeemAmount - grossCap) > 1e-12) {
-      setRedeemAmount(grossCap);
+    const clampedGrossCap = grossCap < 1e-6 ? 0 : grossCap;
+    setMaxRedeemableGross(clampedGrossCap);
+    if (clampedGrossCap > 0 && Math.abs(redeemAmount - clampedGrossCap) > 1e-12) {
+      setRedeemAmount(clampedGrossCap);
     }
-    const effectiveGross = grossCap > 0 ? Math.min(redeemAmount || grossCap, grossCap) : 0;
+    const effectiveGross =
+      clampedGrossCap > 0 ? Math.min(redeemAmount || clampedGrossCap, clampedGrossCap) : 0;
     const effectiveNet = effectiveGross * (1 - feePercent);
     let remainingAmount = decimalToBigInt(effectiveNet, 18);
     let totalCollateralToReceive = BigInt(0);
@@ -199,6 +201,23 @@ const RedeemTab: FC = () => {
     }
   };
 
+  const formatAusdAmount = useCallback(
+    (value: number) => {
+      if (!Number.isFinite(value) || value === 0) {
+        return "0.000000";
+      }
+      const abs = Math.abs(value);
+      if (abs < 1e-6) {
+        return "0.000000";
+      }
+      return value.toLocaleString(undefined, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 6,
+      });
+    },
+    []
+  );
+
   return (
     <section>
       <Text size="3xl">Convert your AUSD directly to SOL</Text>
@@ -240,7 +259,9 @@ const RedeemTab: FC = () => {
                 {loadingTroves ? (
                   <span className="inline-block ml-2 w-24 h-4 rounded bg-white/10 animate-pulse" />
                 ) : (
-                  <span className="font-regular ml-2">{maxRedeemableGross} AUSD</span>
+                  <span className="font-regular ml-2">
+                    {formatAusdAmount(maxRedeemableGross)} AUSD
+                  </span>
                 )}
               </Text>
             )}

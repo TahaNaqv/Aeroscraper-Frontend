@@ -1268,8 +1268,9 @@ export async function buildWithdrawLiquidationGainsInstruction(
     { pubkey: stabilityPoolSnapshotPDA, isSigner: false, isWritable: true }, // stability_pool_snapshot
     { pubkey: protocolStatePDA, isSigner: false, isWritable: true }, // state
     { pubkey: userCollateralAccount, isSigner: false, isWritable: true }, // user_collateral_account
-    { pubkey: protocolCollateralVaultPDA, isSigner: false, isWritable: true }, // protocol_collateral_vault (CHECK)
-    { pubkey: totalCollateralAmountPDA, isSigner: false, isWritable: true }, // total_collateral_amount (CHECK)
+    { pubkey: collateralMint, isSigner: false, isWritable: false }, // collateral_mint
+    { pubkey: protocolCollateralVaultPDA, isSigner: false, isWritable: true }, // protocol_collateral_vault
+    { pubkey: totalCollateralAmountPDA, isSigner: false, isWritable: true }, // total_collateral_amount
     { pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false }, // token_program
     { pubkey: SystemProgram.programId, isSigner: false, isWritable: false }, // system_program
   ];
