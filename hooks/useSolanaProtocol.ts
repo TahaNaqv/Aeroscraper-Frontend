@@ -7,6 +7,7 @@ import { useAppKitConnection } from '@reown/appkit-adapter-solana/react';
 import { buildOpenTroveInstruction } from '@/lib/solana/buildInstructions';
 import { getNeighborHints } from '@/lib/solana/getNeighborHints';
 import { useProtocolState } from './useProtocolState';
+import { getPrice as getSolPrice } from '@/lib/solana/getSolPriceInUsd';
 
 interface SolanaWalletProvider {
     publicKey: PublicKey;
@@ -397,8 +398,12 @@ export function useSolanaProtocol() {
 
             // 4. Validate new ICR won't drop below minimum (115%)
             const MINIMUM_ICR = 115; // 115%
-            const estimatedPrice = 140; // Conservative SOL price estimate in USD
-            const collateralValueUSD = (newTotalCollateral / 1e9) * estimatedPrice;
+            const solPriceUsd = await getSolPrice('SOL');
+            console.log('🔍 SOL price:', solPriceUsd);
+            if (!Number.isFinite(solPriceUsd) || solPriceUsd <= 0) {
+                throw new Error('Unable to fetch current SOL price for ICR validation. Please try again.');
+            }
+            const collateralValueUSD = (newTotalCollateral / 1e9) * solPriceUsd;
             const debtValueUSD = Number(currentDebt) / 1e18;
             const newICR = (collateralValueUSD / debtValueUSD) * 100;
 
@@ -531,8 +536,12 @@ export function useSolanaProtocol() {
 
             // 4. Validate new ICR stays above minimum (115%)
             const MINIMUM_ICR = 115; // 115%
-            const estimatedPrice = 140; // Conservative SOL price estimate in USD
-            const collateralValueUSD = (currentCollateral / 1e9) * estimatedPrice;
+            const solPriceUsd = await getSolPrice('SOL');
+            console.log('🔍 SOL price:', solPriceUsd);
+            if (!Number.isFinite(solPriceUsd) || solPriceUsd <= 0) {
+                throw new Error('Unable to fetch current SOL price for ICR validation. Please try again.');
+            }
+            const collateralValueUSD = (currentCollateral / 1e9) * solPriceUsd;
             const newDebtValueUSD = newTotalDebt / 1e18;
             const newICR = (collateralValueUSD / newDebtValueUSD) * 100;
 
