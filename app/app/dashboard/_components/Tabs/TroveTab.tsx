@@ -38,7 +38,7 @@ const preloadSplToken = () => {
     import("@solana/spl-token").then(() => {
       splTokenLoaded = true;
     });
-    import("@/lib/solana/fetchTroveState").then(() => {});
+    import("@/lib/solana/fetchTroveState").then(() => { });
   }
 };
 
@@ -129,6 +129,7 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
     removeCollateral,
     borrowLoan,
     repayLoan,
+    closeTrove,
     loading: processLoading,
   } = useSolanaProtocol();
   const { protocolState } = useProtocolState();
@@ -141,9 +142,9 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
     () =>
       userTroveState
         ? {
-            amount: Number(userTroveState.collateralAmount) / 1e9, // Convert from lamports to SOL
-            denom: selectedAsset.denom,
-          }
+          amount: Number(userTroveState.collateralAmount) / 1e9, // Convert from lamports to SOL
+          denom: selectedAsset.denom,
+        }
         : { amount: 0, denom: selectedAsset.denom },
     [userTroveState, selectedAsset.denom]
   );
@@ -421,6 +422,12 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
     [borrowingAmount, userTroveState] // Changed from repaymentAmount
   );
 
+  const closeTroveDisabled = useMemo(() => {
+    if (!userTroveState) return true;
+    if (userTroveState.debt <= BigInt(0)) return true;
+    return ausdBalance < userTroveState.debt;
+  }, [userTroveState, ausdBalance]);
+
   // Optimized handlers with useCallback to prevent recreation on every render
   const changeOpenTroveAmount = useCallback((values: NumberFormatValues) => {
     const newValue = Number(values.value || 0);
@@ -458,7 +465,7 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
       }
 
       const userPublicKey = new PublicKey(address);
-      
+
       // Convert SOL to lamports (9 decimals)
       const collateralInLamports = openTroveAmount * 1_000_000_000;
       // Convert aUSD to base units (18 decimals)
@@ -503,7 +510,7 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
       }
 
       const userPublicKey = new PublicKey(address);
-      
+
       // Convert SOL to lamports (9 decimals)
       const collateralInLamports = collateralAmount * 1_000_000_000;
 
@@ -543,7 +550,7 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
       }
 
       const userPublicKey = new PublicKey(address);
-      
+
       // Convert SOL to lamports (9 decimals)
       const collateralInLamports = collateralAmount * 1_000_000_000;
 
@@ -582,7 +589,7 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
       }
 
       const userPublicKey = new PublicKey(address);
-      
+
       // Convert AUSD to smallest unit (18 decimals)
       const loanInSmallestUnit = Math.floor(borrowingAmount * 1e18);
 
@@ -621,7 +628,7 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
       }
 
       const userPublicKey = new PublicKey(address);
-      
+
       // Convert AUSD to smallest unit (18 decimals)
       const repayInSmallestUnit = Math.floor(borrowingAmount * 1e18);
 
@@ -648,6 +655,46 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
       addNotification({
         status: "error",
         message: err.message || "Failed to repay loan",
+        directLink: "",
+      });
+      console.error(err);
+    }
+  };
+
+  const handleCloseTrove = async () => {
+    try {
+      if (!address || !connection || !protocolState || !userTroveState) {
+        throw new Error("Wallet not connected or trove not loaded");
+      }
+
+      const userPublicKey = new PublicKey(address);
+      const debtAmount = userTroveState.debt;
+      if (debtAmount <= BigInt(0)) {
+        throw new Error("No outstanding debt to close");
+      }
+
+      await validateSolBalance(connection, userPublicKey);
+      await validateAusdBalance(connection, userPublicKey, protocolState.stablecoinMint, debtAmount);
+
+      const signature = await closeTrove();
+
+      addNotification({
+        status: "success",
+        directLink: `https://solscan.io/tx/${signature}?cluster=devnet`,
+        message: "Trove closed successfully",
+      });
+
+      setCollateralAmount(0);
+      setBorrowAmount(0);
+      setOpenTroveAmount(0);
+      setBorrowingAmount(0);
+
+      await Promise.all([refreshTroveState(), refreshAusdBalance()]);
+      getPageData?.();
+    } catch (err: any) {
+      addNotification({
+        status: "error",
+        message: err.message || "Failed to close trove",
         directLink: "",
       });
       console.error(err);
@@ -751,9 +798,8 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-20 md:gap-6 gap-y-4 mt-4 md:mt-0 md:p-4">
                   <StatisticCard
                     title="Management Fee"
-                    description={`${managementFee} ${
-                      selectedAsset?.shortName ?? ""
-                    } (0.5%)`}
+                    description={`${managementFee} ${selectedAsset?.shortName ?? ""
+                      } (0.5%)`}
                     tooltip="This amount is deducted from the collateral amount as a management fee. There are no recurring fees for borrowing, which is thus interest-free."
                   />
 
@@ -901,6 +947,20 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
                   />
                 </div>
                 <div className="flex items-center justify-end pr-4 gap-4 mt-6">
+                  {/* <OutlinedButton
+                    disabled={closeTroveDisabled}
+                    disabledText={
+                      ausdBalance < (userTroveState?.debt ?? BigInt(0))
+                        ? "You must hold enough AUSD in your wallet to repay the full trove debt before closing."
+                        : "No trove debt available to close."
+                    }
+                    loading={processLoading}
+                    onClick={handleCloseTrove}
+                    className="min-w-[142px] md:min-w-[201px] h-11"
+                    rounded="lg"
+                  >
+                    <Text>Close Trove</Text>
+                  </OutlinedButton> */}
                   <OutlinedButton
                     disabled={repayDisabled}
                     disabledText={"Enter the AUSD amount to repay."}
@@ -1042,9 +1102,8 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
             <StatisticCard
               title="Management Fee"
               isNumeric
-              description={`${openTroveManagementFee} ${
-                selectedAsset?.shortName ?? ""
-              } (0.5%)`}
+              description={`${openTroveManagementFee} ${selectedAsset?.shortName ?? ""
+                } (0.5%)`}
               className="w-full h-14"
               tooltip="This amount is deducted from the collateral amount as a management fee. There are no recurring fees for borrowing, which is thus interest-free."
             />

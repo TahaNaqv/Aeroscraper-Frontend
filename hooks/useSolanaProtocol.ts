@@ -201,20 +201,19 @@ export function useSolanaProtocol() {
                 throw new Error(`Transaction would fail: ${simError.message}`);
             }
 
-            console.log('✍️  Sending transaction to wallet for signing...');
-            const signature = await walletProvider.signAndSendTransaction(tx);
-            console.log('✅ Transaction sent, signature:', signature);
+            try {
+                const signature = await walletProvider.signAndSendTransaction(tx);
+                console.log('✅ Sent, signature:', signature);
+                await connection.confirmTransaction({ signature, blockhash, lastValidBlockHeight });
 
-            // Wait for confirmation
-            console.log('⏳ Waiting for confirmation...');
-            await connection.confirmTransaction({
-                signature,
-                blockhash,
-                lastValidBlockHeight,
-            });
-            console.log('✅ Transaction confirmed!');
-
-            return signature;
+                return signature;
+            } catch (err: any) {
+                console.error('❌ signAndSendTransaction failed:', err);
+                if (err?.logs) console.error('RPC logs:', err.logs);
+                const cause = err?.cause ?? (err?.message ? { message: err.message } : err);
+                console.error('💡 Full error payload:', JSON.stringify(cause, Object.getOwnPropertyNames(cause)));
+                throw err;
+            }
         } catch (err: any) {
             // Enhanced error logging for debugging
             console.error(' 🚨 Failed to open trove: ', err);
@@ -1128,6 +1127,80 @@ export function useSolanaProtocol() {
         }
     };
 
+    const closeTrove = async () => {
+        if (!isConnected || !walletProvider || !address) {
+            throw new Error('Wallet not connected');
+        }
+        if (!connection) {
+            throw new Error('Connection not available');
+        }
+        if (!protocolState) {
+            throw new Error('Protocol state not loaded');
+        }
+
+        try {
+            setLoading(true);
+            setError(null);
+
+            const userPublicKey = new PublicKey(address);
+            const { collateralMint, stablecoinMint } = protocolState;
+
+            const { fetchUserTroveState } = await import('@/lib/solana/fetchTroveState');
+            const troveState = await fetchUserTroveState(connection, userPublicKey, 'SOL');
+
+            if (!troveState || troveState.debt <= BigInt(0)) {
+                throw new Error('Trove must have outstanding debt before it can be closed.');
+            }
+
+            const requiredDebt = troveState.debt;
+
+            const { getAssociatedTokenAddress, getAccount } = await import('@solana/spl-token');
+            const userStablecoinAccount = await getAssociatedTokenAddress(stablecoinMint, userPublicKey);
+
+            const stablecoinAccountInfo = await getAccount(connection, userStablecoinAccount);
+            if (stablecoinAccountInfo.amount < requiredDebt) {
+                throw new Error(
+                    `Insufficient aUSD balance to close trove. Required: ${Number(requiredDebt) / 1e18} aUSD, Available: ${Number(
+                        stablecoinAccountInfo.amount,
+                    ) / 1e18} aUSD`,
+                );
+            }
+
+            const { buildCloseTroveInstruction } = await import('@/lib/solana/buildInstructions');
+            const { instruction } = await buildCloseTroveInstruction(userPublicKey, collateralMint, stablecoinMint, 'SOL');
+
+            const tx = new Transaction().add(instruction);
+            tx.feePayer = walletProvider.publicKey;
+            const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash('confirmed');
+            tx.recentBlockhash = blockhash;
+
+            console.log('🔍 Simulating close_trove transaction...');
+            const simulation = await connection.simulateTransaction(tx);
+            console.log('📊 Simulation result:');
+            console.log('- Error:', simulation.value.err);
+            console.log('- Logs:', simulation.value.logs);
+            console.log('- Units consumed:', simulation.value.unitsConsumed);
+
+            if (simulation.value.err) {
+                throw new Error(`Simulation failed: ${JSON.stringify(simulation.value.err)}`);
+            }
+
+            console.log('✍️ Sending close_trove transaction to wallet for signing...');
+            const signature = await walletProvider.signAndSendTransaction(tx);
+
+            console.log('✅ close_trove transaction sent:', signature);
+            await connection.confirmTransaction({ signature, blockhash, lastValidBlockHeight });
+            console.log('✅ close_trove transaction confirmed!');
+            return signature;
+        } catch (err: any) {
+            console.error('❌ Close trove error:', err);
+            setError(err.message || 'Failed to close trove');
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const redeem = async (params: {
         redeemAmount: number;
     }) => {
@@ -1401,6 +1474,7 @@ export function useSolanaProtocol() {
         liquidateTrove,
         redeem,
         withdrawLiquidationGains,
+        closeTrove,
         loading,
         error,
     };

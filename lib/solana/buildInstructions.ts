@@ -1306,3 +1306,65 @@ export async function buildWithdrawLiquidationGainsInstruction(
   return { instruction };
 }
 
+export async function buildCloseTroveInstruction(
+  userPublicKey: PublicKey,
+  collateralMint: PublicKey,
+  stablecoinMint: PublicKey,
+  collateralDenom: string = 'SOL',
+): Promise<{ instruction: TransactionInstruction }> {
+  console.log('🔨 Building close_trove instruction...');
+  console.log('User:', userPublicKey.toBase58());
+  console.log('Collateral denom:', collateralDenom);
+
+  const pdas = deriveProtocolPDAs(userPublicKey, collateralDenom);
+  const userStablecoinAccount = await getAssociatedTokenAddress(stablecoinMint, userPublicKey);
+  const userCollateralAccount = await getAssociatedTokenAddress(collateralMint, userPublicKey);
+
+  const discriminator = new Uint8Array([235, 126, 65, 193, 10, 36, 99, 96]);
+  const denomBytes = new TextEncoder().encode(collateralDenom);
+  const denomLengthBuffer = new Uint8Array(4);
+  new DataView(denomLengthBuffer.buffer).setUint32(0, denomBytes.length, true);
+
+  const totalLength = discriminator.length + denomLengthBuffer.length + denomBytes.length;
+  const data = new Uint8Array(totalLength);
+  let offset = 0;
+  data.set(discriminator, offset);
+  offset += discriminator.length;
+  data.set(denomLengthBuffer, offset);
+  offset += denomLengthBuffer.length;
+  data.set(denomBytes, offset);
+
+  const accountMetas: AccountMeta[] = [
+    { pubkey: userPublicKey, isSigner: true, isWritable: true }, // user
+    { pubkey: pdas.userDebtAmount, isSigner: false, isWritable: true }, // user_debt_amount
+    { pubkey: pdas.userCollateralAmount, isSigner: false, isWritable: true }, // user_collateral_amount
+    { pubkey: pdas.liquidityThreshold, isSigner: false, isWritable: true }, // liquidity_threshold
+    { pubkey: pdas.protocolState, isSigner: false, isWritable: true }, // state
+    { pubkey: userStablecoinAccount, isSigner: false, isWritable: true }, // user_stablecoin_account
+    { pubkey: userCollateralAccount, isSigner: false, isWritable: true }, // user_collateral_account
+    { pubkey: pdas.protocolCollateralAccount, isSigner: false, isWritable: true }, // protocol_collateral_vault
+    { pubkey: stablecoinMint, isSigner: false, isWritable: true }, // stable_coin_mint
+    { pubkey: pdas.totalCollateralAmount, isSigner: false, isWritable: true }, // total_collateral_amount
+    { pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false }, // token_program
+    { pubkey: SystemProgram.programId, isSigner: false, isWritable: false }, // system_program
+  ];
+
+  console.log('📋 Account metas list:');
+  accountMetas.forEach((meta, idx) => {
+    const flags = `${meta.isSigner ? 'S' : '-'}${meta.isWritable ? 'W' : '-'}`;
+    console.log(`  [${idx}] ${meta.pubkey.toBase58()} ${flags}`);
+  });
+
+  const instruction = new TransactionInstruction({
+    keys: accountMetas,
+    programId: PROTOCOL_PROGRAM_ID,
+    data: Buffer.from(data),
+  });
+
+  console.log('✅ close_trove instruction built');
+  console.log('📊 Total accounts:', accountMetas.length);
+  console.log('🔗 Program ID:', PROTOCOL_PROGRAM_ID.toBase58());
+
+  return { instruction };
+}
+

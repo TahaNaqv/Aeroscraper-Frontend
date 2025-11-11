@@ -9,7 +9,7 @@ import { getOrCreateAssociatedTokenAccount, getMint, mintTo } from '@solana/spl-
 
 const RPC_ENDPOINT = process.env.SOLANA_RPC ?? 'https://api.devnet.solana.com';
 const MINT_AUTHORITY_SECRET = process.env.FAUCET_MINT_AUTHORITY_SECRET;
-const COLLATERAL_MINT = process.env.COLLATERAL_MINT ?? 'Hygyfy8RBxLvoz5b3ffsg9PAvEkT3BJXXdTpVu6ftZYz';
+const COLLATERAL_MINT = process.env.COLLATERAL_MINT ?? 'E8FKTy79cbAcZNKsqxbYD4kToZWN637t5WoN23qc5DP9';
 
 function decodeSecretKey(secret: string): Keypair {
   try {
