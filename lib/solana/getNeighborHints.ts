@@ -4,6 +4,7 @@ import { fetchAllTroves } from './fetchTroves';
 import { sortTrovesByICR, findNeighbors, buildNeighborAccounts } from './sortTroves';
 import { calculateICR } from './calculateICR';
 import { PROTOCOL_PROGRAM_ID } from '@/lib/constants/solana';
+import { getPrice as getSolPrice } from './getSolPriceInUsd';
 
 /**
  * Get neighbor hints for trove insertion validation
@@ -42,19 +43,20 @@ export async function getNeighborHints(
     );
   });
 
-  // 3. Calculate ICR for new trove
-  // Using simplified price estimate ($100/SOL)
-  // Production should fetch actual price from Pyth oracle
-  const estimatedSolPrice = BigInt(100);
+  // 3. Calculate ICR for new trove using live SOL price
+  const solPriceUsd = await getSolPrice('SOL');
+  if (!Number.isFinite(solPriceUsd) || solPriceUsd <= 0) {
+    throw new Error('Unable to fetch current SOL price for neighbor hint calculation.');
+  }
   const collateralAmountBigInt = BigInt(collateralAmount);
   const loanAmountBigInt = BigInt(loanAmount);
 
-  const newICR = calculateICR(collateralAmountBigInt, loanAmountBigInt, estimatedSolPrice);
+  const newICR = calculateICR(collateralAmountBigInt, loanAmountBigInt, solPriceUsd);
   console.log('[neighborHints] new trove params:', {
     user: userPublicKey.toBase58(),
     collateralAmount,
     loanAmount,
-    estimatedSolPrice: estimatedSolPrice.toString(),
+    solPriceUsd,
     newICR: newICR.toString(),
   });
 

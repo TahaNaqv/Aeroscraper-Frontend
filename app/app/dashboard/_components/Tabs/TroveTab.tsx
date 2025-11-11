@@ -247,7 +247,6 @@ const TroveTab: FC = () => {
   // Calculate collateral ratio for new troves (when opening trove)
   const collateralRatioCalculate = useMemo(() => {
     if (!borrowAmount || borrowAmount <= 0) return 0;
-    //estimate SOL price
     const estimatedSolPrice = oracleSolPrice;
     // Convert SOL → USD
     const collateralValueUSD = (openTroveAmount || 0) * estimatedSolPrice;
