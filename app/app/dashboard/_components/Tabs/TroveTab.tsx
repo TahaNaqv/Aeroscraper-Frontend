@@ -14,7 +14,6 @@ import OutlinedButton from "@/components/Buttons/OutlinedButton";
 import { useNotification } from "@/contexts/NotificationProvider";
 import { convertAmount, getRatioColor } from "@/utils/contractUtils";
 import { isNil } from "lodash";
-import { PageData } from "../../_types/types";
 import StatisticCard from "@/components/Cards/StatisticCard";
 import BorderedNumberInput from "@/components/Input/BorderedNumberInput";
 import Checkbox from "@/components/Checkbox";
@@ -47,13 +46,7 @@ enum TABS {
   BORROWING,
 }
 
-type Props = {
-  pageData?: PageData;
-  getPageData?: () => void;
-  basePrice?: number;
-};
-
-const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
+const TroveTab: FC = () => {
   const selectedChainName = ChainName.SOLANA;
   const { fetchBalance } = useAppKitBalance();
   const { address, isConnected } = useAppKitAccount();
@@ -169,12 +162,36 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
   }, [userTroveState]);
 
   const borrowingCapacity = useMemo(() => {
-    if (!userTroveState || !basePrice) return 0;
-    return (
-      ((selectedCollateral.amount ?? 0) * basePrice * 100) / 115 -
-      Number(userTroveState.debt) / 1e18
+    if (!userTroveState || !oracleSolPrice) {
+      console.log(
+        "[BorrowingCapacity] Missing prerequisites",
+        JSON.stringify({
+          hasTroveState: Boolean(userTroveState),
+          oracleSolPrice,
+        })
+      );
+      return 0;
+    }
+
+    const collateralSol = selectedCollateral.amount ?? 0;
+    const currentDebtAusd = Number(userTroveState.debt) / 1e18;
+    const maxDebtAtMinimumRatio =
+      (collateralSol * oracleSolPrice * 100) / 115;
+    const capacity = maxDebtAtMinimumRatio - currentDebtAusd;
+
+    console.log(
+      "[BorrowingCapacity] Calculated",
+      JSON.stringify({
+        collateralSol,
+        oracleSolPrice,
+        maxDebtAtMinimumRatio,
+        currentDebtAusd,
+        capacity,
+      })
     );
-  }, [selectedCollateral.amount, basePrice, userTroveState]);
+
+    return capacity;
+  }, [selectedCollateral.amount, oracleSolPrice, userTroveState]);
 
   // Memoize management fee calculation
   const managementFee = useMemo(() => {
@@ -492,7 +509,6 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
 
       // Refresh data immediately after success
       await Promise.all([refreshTroveState(), refreshAusdBalance()]);
-      getPageData?.();
     } catch (err: any) {
       addNotification({
         status: "error",
@@ -690,7 +706,6 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
       setBorrowingAmount(0);
 
       await Promise.all([refreshTroveState(), refreshAusdBalance()]);
-      getPageData?.();
     } catch (err: any) {
       addNotification({
         status: "error",
@@ -798,8 +813,7 @@ const TroveTab: FC<Props> = ({ pageData, getPageData, basePrice }) => {
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-20 md:gap-6 gap-y-4 mt-4 md:mt-0 md:p-4">
                   <StatisticCard
                     title="Management Fee"
-                    description={`${managementFee} ${selectedAsset?.shortName ?? ""
-                      } (0.5%)`}
+                    description={`${managementFee} ${"AUSD"} (0.5%)`}
                     tooltip="This amount is deducted from the collateral amount as a management fee. There are no recurring fees for borrowing, which is thus interest-free."
                   />
 
