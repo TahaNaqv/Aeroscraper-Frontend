@@ -194,15 +194,28 @@ const TroveTab: FC = () => {
     return capacity;
   }, [selectedCollateral.amount, oracleSolPrice, userTroveState]);
 
-  // Memoize management fee calculation
-  const managementFee = useMemo(() => {
-    return (collateralAmount * 0.005).toFixed(3);
-  }, [collateralAmount]);
+  const protocolFeePercentage = useMemo(
+    () => (protocolState ? Number(protocolState.protocolFee) : 0),
+    [protocolState?.protocolFee]
+  );
 
-  // Memoize management fee for open trove
+  // Memoize management fee calculation (based on borrow amount)
+  const managementFee = useMemo(() => {
+    if (!protocolFeePercentage || borrowingAmount <= 0) {
+      return "0.000";
+    }
+    const fee = (borrowingAmount * protocolFeePercentage) / 100;
+    return fee.toFixed(3);
+  }, [borrowingAmount, protocolFeePercentage]);
+
+  // Memoize management fee for open trove (based on initial borrow amount)
   const openTroveManagementFee = useMemo(() => {
-    return (openTroveAmount * 0.005).toFixed(3);
-  }, [openTroveAmount]);
+    if (!protocolFeePercentage || borrowAmount <= 0) {
+      return "0.000";
+    }
+    const fee = (borrowAmount * protocolFeePercentage) / 100;
+    return fee.toFixed(3);
+  }, [borrowAmount, protocolFeePercentage]);
 
   // Optimized refresh functions that can be called after transactions
   const refreshTroveState = useCallback(async () => {
@@ -814,8 +827,8 @@ const TroveTab: FC = () => {
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-20 md:gap-6 gap-y-4 mt-4 md:mt-0 md:p-4">
                   <StatisticCard
                     title="Management Fee"
-                    description={`${managementFee} ${"AUSD"} (0.5%)`}
-                    tooltip="This amount is deducted from the collateral amount as a management fee. There are no recurring fees for borrowing, which is thus interest-free."
+                    description={`${managementFee} AUSD (${protocolFeePercentage}%)`}
+                    tooltip="A one-time fee calculated on the borrowed AUSD amount. There are no recurring borrowing fees."
                   />
 
                   <StatisticCard
@@ -1117,10 +1130,9 @@ const TroveTab: FC = () => {
             <StatisticCard
               title="Management Fee"
               isNumeric
-              description={`${openTroveManagementFee} ${selectedAsset?.shortName ?? ""
-                } (0.5%)`}
+              description={`${openTroveManagementFee} AUSD (${protocolFeePercentage}%)`}
               className="w-full h-14"
-              tooltip="This amount is deducted from the collateral amount as a management fee. There are no recurring fees for borrowing, which is thus interest-free."
+              tooltip="A one-time fee calculated on the AUSD you borrow when opening the trove."
             />
             <StatisticCard
               title="Total Debt"
