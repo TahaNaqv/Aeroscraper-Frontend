@@ -32,3 +32,34 @@ export const decimalToBigInt = (amount: number, decimals: number): bigint => {
 
   return integerValue * scale + fractionalValue;
 };
+
+export const bigIntToDecimalString = (
+  amount: bigint,
+  decimals: number,
+  precision = decimals
+): string => {
+  const isNegative = amount < BigInt(0);
+  const absoluteAmount = isNegative ? -amount : amount;
+
+  if (decimals === 0) {
+    return `${isNegative ? "-" : ""}${absoluteAmount.toString()}`;
+  }
+
+  const digits = absoluteAmount.toString().padStart(decimals + 1, "0");
+  const integerPart = digits.slice(0, digits.length - decimals) || "0";
+  let fractionalPart = digits.slice(digits.length - decimals);
+
+  if (precision < fractionalPart.length) {
+    fractionalPart = fractionalPart.slice(0, precision);
+  }
+
+  fractionalPart = fractionalPart.replace(/0+$/, "");
+
+  const sign = isNegative ? "-" : "";
+
+  if (!fractionalPart) {
+    return `${sign}${integerPart}`;
+  }
+
+  return `${sign}${integerPart}.${fractionalPart}`;
+};
