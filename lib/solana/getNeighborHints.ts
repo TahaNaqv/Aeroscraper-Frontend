@@ -75,15 +75,20 @@ export async function getNeighborHints(
     liquidityThresholdAccount: liquidityThresholdPDA,
   };
 
-  // 5. Insert into sorted position
-  const insertIndex = sortedTroves.findIndex((t) => t.icr > newICR);
-  const finalIndex = insertIndex === -1 ? sortedTroves.length : insertIndex;
+  // 5. Remove the user's existing trove (if any) before inserting preview
+  const trovesExcludingUser = sortedTroves.filter(
+    (trove) => !trove.owner.equals(userPublicKey)
+  );
+
+  // Insert into sorted position using filtered list
+  const insertIndex = trovesExcludingUser.findIndex((t) => t.icr > newICR);
+  const finalIndex = insertIndex === -1 ? trovesExcludingUser.length : insertIndex;
   console.log('[neighborHints] insertIndex:', insertIndex, 'finalIndex:', finalIndex);
 
   const newSortedTroves = [
-    ...sortedTroves.slice(0, finalIndex),
+    ...trovesExcludingUser.slice(0, finalIndex),
     newTrove,
-    ...sortedTroves.slice(finalIndex),
+    ...trovesExcludingUser.slice(finalIndex),
   ];
 
   // 6. Find neighbors
