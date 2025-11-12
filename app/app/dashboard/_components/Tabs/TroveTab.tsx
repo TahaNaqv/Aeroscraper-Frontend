@@ -240,8 +240,8 @@ const TroveTab: FC = () => {
   const isTroveOpened = useMemo(
     () =>
       userTroveState !== null &&
-      userTroveState.collateralAmount > 0 &&
-      userTroveState.debt > 0,
+      userTroveState.collateralAmount >= 0 &&
+      userTroveState.debt >= 0,
     [userTroveState]
   );
 
